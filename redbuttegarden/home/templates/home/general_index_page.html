@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <div class="row-fluid">
+        {% image page.banner original class="responsive" %}
+    </div>
+    <br>
+
+    {% for block in page.body %}
+        {% if block.block_type == 'tan_bg_text' %}
+            <div class="tan-bg">
+                {% include_block block %}
+            </div>
+        {% else %}
+            {% include_block block %}
+        {% endif %}
+    {% endfor %}
+
+    <div class="row-fluid col xs-12">
+        {% for sub in sub_pages %}
+            <div class="col-sm-4">
+                {% with sub=sub.specific %}
+                    <a href="{% pageurl sub %}">
+                        <div class="eventwrapsmall hover">
+                            {% image sub.thumbnail original %}
+                            <div class="eventinfo">
+                                <div class="eventname">{{ sub.title }}</div>
+                            </div>
+                        </div>
+                    </a>
+                {% endwith %}
+            </div>
+        {% empty %}
+            <br>
+            <br>
+            <div class="row-fluid">
+                <div class="tan-bg">
+                    <h4 class="text-center green">
+                        Please check back later when we've added more specific information!
+                    </h4>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

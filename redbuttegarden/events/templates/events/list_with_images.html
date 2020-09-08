@@ -1,0 +1,28 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="row-fluid">
+    <div class="col-md-9 col-md-offset-1">
+        <ul class="tan-bg list-unstyled">
+            {% for list_item in value.list_items %}
+                <li>
+                    <div class="media">
+                        <div class="media-left media-middle">
+                            {% if list_item.link_url %}
+                                <a href="{{ list.link_url }}">
+                                    <img class="img-rounded" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
+                                </a>
+                            {% else %}
+                                <img class="img-rounded" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
+                            {% endif %}
+                        </div>
+                        <div class="media-body">
+                            <h2 class="text-center">{{ list_item.title|upper }}</h2>
+                            <h4 class="text-center green">{{ list_item.sub_title }}</h4>
+                            {% include_block list_item.text %}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>

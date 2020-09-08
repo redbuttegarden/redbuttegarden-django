@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <div class="row-fluid">
+        {% image page.banner original class="responsive" %}
+    </div>
+    <div class="row-fluid col xs-12">
+        {% for event in events %}
+            <div class="col-sm-4">
+                {% with event=event.specific %}
+                    <a href="{% pageurl event %}">
+                        <div class="eventwrapsmall hover">
+                            {% image event.image original %}
+                            <div class="eventinfo">
+                                <div class="eventname">{{ event.title }}</div>
+                                <div class="eventdate">{{ event.event_dates }}</div>
+                                <div class="eventnotes">{{ event.notes|richtext }}</div>
+                            </div>
+                        </div>
+                    </a>
+                {% endwith %}
+            </div>
+        {% empty %}
+            <br>
+            <br>
+            <div class="row-fluid">
+                <div class="tan-bg">
+                    <h4 class="text-center green">
+                        There are currently no planned events in the near future. Please check back soon!
+                    </h4>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <br>
+    <br>
+
+    <div class="row-fluid">
+        {% for block in page.body %}
+            {% if block.block_type == "green_heading" %}
+                <h4 class="green">
+                    {% include_block block %}
+                </h4>
+            {% elif block.block_type == "image" %}
+                <br>
+
+                <div class="text-center">
+                    {% image block.value width-200 %}
+                </div>
+
+                <br>
+            {% else %}
+                {% include_block block %}
+                <br>
+
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

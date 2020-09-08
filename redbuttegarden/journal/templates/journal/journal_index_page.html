@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <div class="row-fluid">
+        {% image page.banner original class="responsive" %}
+    </div>
+    <div class="row-fluid col xs-12">
+        {% for post in posts %}
+            <div class="col-sm-4">
+                {% with post=post.specific %}
+                    <a href="{% pageurl post %}">
+                        <div class="eventwrapsmall hover">
+                            {% image post.image original %}
+                            <div class="eventinfo">
+                                <div class="eventname">{{ post.title }}</div>
+                                <div class="eventdate">{{ post.date }}</div>
+                            </div>
+                        </div>
+                    </a>
+                {% endwith %}
+            </div>
+        {% empty %}
+            <br>
+            <br>
+            <div class="row-fluid">
+                <div class="tan-bg">
+                    <h4 class="text-center green">
+                        There are currently no published journal posts. Please check back soon!
+                    </h4>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

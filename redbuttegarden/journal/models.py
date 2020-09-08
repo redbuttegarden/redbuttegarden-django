@@ -1,0 +1,149 @@
+from django import forms
+from django.conf import settings
+from django.db import models
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
+from modelcluster.contrib.taggit import ClusterTaggableManager
+from modelcluster.fields import ParentalManyToManyField, ParentalKey
+from taggit.models import TaggedItemBase, Tag as TaggitTag
+
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
+from wagtail.core.fields import StreamField
+from wagtail.core.models import Page, Orderable
+from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.snippets.models import register_snippet
+
+from events.models import BLOCK_TYPES
+
+
+@register_snippet
+class JournalCategory(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, max_length=80)
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('slug'),
+    ]
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categories")
+
+
+@register_snippet
+class Tag(TaggitTag):
+    class Meta:
+        proxy = True
+
+
+class JournalPageTag(TaggedItemBase):
+    content_object = ParentalKey('JournalPage', related_name='journal_tags')
+
+
+class JournalIndexPage(RoutablePageMixin, Page):
+    banner = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
+    content_panels = Page.content_panels + [
+        ImageChooserPanel('banner'),
+    ]
+
+    subpage_types = ['journal.JournalPage']
+
+    def get_context(self, request, *args, **kwargs):
+        # Update context to include only published posts, ordered by reverse-chron
+        context = super().get_context(request)
+        posts = self.get_children().live().order_by('-first_published_at')
+        context['posts'] = posts
+        return context
+
+    def get_posts(self):
+        return JournalPage.objects.descendant_of(self).live()
+
+    @route(r'^tag/(?P<tag>[-\w]+)/$')
+    def post_by_tag(self, request, tag, *args, **kwargs):
+        self.search_type = 'tag'
+        self.search_term = tag
+        self.posts = self.get_posts().filter(tags__slug=tag)
+        return Page.serve(self, request, *args, **kwargs)
+
+    @route(r'^category/(?P<category>[-\w]+)/$')
+    def post_by_category(self, request, category, *args, **kwargs):
+        self.search_type = 'category'
+        self.search_term = category
+        self.posts = self.get_posts().filter(categories__slug=category)
+        return Page.serve(self, request, *args, **kwargs)
+
+    @route(r'^$')
+    def post_list(self, request, *args, **kwargs):
+        self.posts = self.get_posts()
+        return Page.serve(self, request, *args, **kwargs)
+
+
+class JournalPage(Page):
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        verbose_name=_('Author'),
+        on_delete=models.SET_NULL,
+        related_name='author_pages',
+    )
+    date = models.DateTimeField(verbose_name="Post date", default=timezone.now)
+    categories = ParentalManyToManyField('journal.JournalCategory', blank=True)
+    tags = ClusterTaggableManager(through='journal.JournalPageTag', blank=True)
+    body = StreamField(BLOCK_TYPES)
+
+    content_panels = Page.content_panels + [
+        ImageChooserPanel('image', help_text=_('Main image displayed on Journal index page')),
+        FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
+        FieldPanel('tags'),
+        InlinePanel('gallery_images', label=_('gallery images')),
+        StreamFieldPanel('body'),
+    ]
+
+    parent_page_types = ['journal.JournalIndexPage']
+
+    @property
+    def journal_index_page(self):
+        return self.get_parent().specific
+
+    def get_context(self, request, *args, **kwargs):
+        context = super(JournalPage, self).get_context(request, *args, **kwargs)
+        context['journal_index_page'] = self.journal_index_page
+        context['post'] = self
+        return context
+
+    def save_revision(self, *args, **kwargs):
+        if not self.author:
+            self.author = self.owner
+        return super().save_revision(*args, **kwargs)
+
+
+class JournalPageGalleryImage(Orderable):
+    page = ParentalKey(JournalPage, blank=True, null=True, on_delete=models.SET_NULL, related_name='gallery_images')
+    image = models.ForeignKey(
+        'wagtailimages.Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='+'
+    )
+    caption = models.CharField(blank=True, max_length=255)
+
+    panels = [
+        ImageChooserPanel('image'),
+        FieldPanel('caption'),
+    ]

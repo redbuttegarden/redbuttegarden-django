@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <div class="row-fluid">
+        {% image page.banner original class="responsive" %}
+    </div>
+    <br>
+    {% for block in page.body %}
+        {% if block.block_type == 'image' %}
+            {% image block.value original class="responsive" %}
+        {% else %}
+            <section class="block-{{ block.block_type }}">
+                {% include_block block %}
+            </section>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" src="{% static 'js/two_col_general.js' %}"></script>
+{% endblock %}

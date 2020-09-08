@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  web:
+    env_file:
+      - /Users/u6000791/redbuttegarden_web.env
+    build: redbuttegarden/
+    volumes:
+      - ./redbuttegarden:/code
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+    command: gunicorn --pythonpath redbuttegarden redbuttegarden.wsgi:application --bind 0.0.0.0:8000 --workers 3
+  db:
+    image: "postgres:11"
+    env_file:
+      - /Users/u6000791/redbuttegarden_db.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:

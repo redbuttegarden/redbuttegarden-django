@@ -1,0 +1,23 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<div class="row-fluid">
+    {% for list_item in value.list_items %}
+        <div class="col-sm-4">
+            <div class="eventwrapsmall hover collapsed" data-target="#{{ forloop.counter }}" data-toggle="collapse"
+                 href="#{{ forloop.counter }}" aria-expanded="false">
+                <img class="img-rounded" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
+                <div class="eventinfo">
+                    <div class="eventname">{{ list_item.title|truncatewords:7 }}</div>
+                </div>
+            </div>
+            <div id="{{ forloop.counter }}" class="panel-border collapse" aria-expanded="false" style="height: 1px;">
+                <div class="tan-bg">
+                    <div class="row-fluid" style="margin-left: 15px;">
+                        <h4 class="green">{{ list_item.title }}</h4>
+                        {% include_block list_item.text %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

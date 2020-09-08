@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <a href="https://redbuttegarden.tickfly.com">
+                {% image page.banner original class="responsive" %}
+            </a>
+            <div class="tan-bg">
+                <br>
+                <div class="row-fluid">
+                    {{ page.intro|richtext }}
+                </div>
+                <a href="/concert-donors">
+                    <div class="concertbanner hover">
+                        {% image page.donor_banner original as donor_banner %}
+                        <img src="{{ donor_banner.url }}" alt="Banner of concert donor logos">
+                    </div>
+                </a>
+            </div>
+            <div id="concertcontent" class="container-fluid container-fluid-no-padding">
+                <div class="row-fluid" style="max-width: 1280px; float: none; margin: auto;">
+                    <a href="/how-to-buy-tickets">
+                        <div class="col-xs-6 col-sm-3 " style="clear:left;">
+                            <div class="concertinfo hover green-bg">HOW TO BUY</div>
+                        </div>
+                    </a>
+
+                    <a href="/donor-ticket-packages">
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="concertinfo hover green-bg">TICKET PACKAGES</div>
+                        </div>
+                    </a>
+
+                    <a href="/concert-faq">
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="concertinfo hover green-bg">FAQ'S</div>
+                        </div>
+                    </a>
+
+                    <a href="/past-concerts">
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="concertinfo hover green-bg">PAST CONCERTS</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <br>
+            <div class="row-fluid clearfix">
+                <div id="future">
+
+                    {% for concert in page.concerts.all %}
+                        <div class="infowrapper">
+                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 concertwrapper">
+                                <a href="https://redbuttegarden.ticketfly.com/">
+                                    <div class="bandpic hover">
+                                        {% image concert.band_img original %}
+                                    </div>
+                                </a>
+
+                                <div class="textwrapper">
+                                    <div class="concerttext">
+                                        <div class="con-band-wrap">
+                                            <br>
+                                            <div class="con-title caps">
+                                                <a href="{{ concert.band_url }}">{{ concert.band_name }}</a>
+                                            </div>
+                                            <div class="con-opener">
+                                                <a href="{{ concert.opener_url }}">{{ concert.opener_name }}</a>
+                                            </div>
+                                        </div>
+
+                                        <div class="con-but-wrap">
+                                            <div class="con-date">{{ concert.concert_date }}</div>
+                                            <div class="con-times">Gates at {{ concert.gates_time }} / Show at {{ concert.show_time }}</div>
+                                            <div class="con-price">Garden members: ${{ concert.member_price }} / Public: ${{ concert.public_price }}</div>
+                                            <br>
+                                            <div class="row-fluid">
+                                                <a href="https://redbuttegarden.ticketfly.com">
+                                                    <img class="responsive con-button hover" src="{% static 'img/buy-tickets.png' %}"
+                                                         alt="Buy tickets for the Red Butte Garden Concert Series" title="Buy Tickets for the Red Butte Garden Concert Series">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

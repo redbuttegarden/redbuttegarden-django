@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block extra_css %}{% endblock extra_css %}
+
+{% block extra_includes %}
+    {% include 'home/includes/facebook-plugin.html' %}
+
+    <div id="slider-wrapper">
+        <div id="inner-slider-wrapper1">
+            <div id="inner-slider-wrapper2">
+
+                <!-- Jssor Slider Begin -->
+                <div id="slider1_container">
+                    <!-- Slides Container -->
+                    <div id="slides" u="slides">
+                        {% include 'home/includes/eventslides.html' %}
+                    </div>
+
+                    <!-- bullet navigator container -->
+                    <div u="navigator" class="jssorb21" style="top: 68px;">
+                        <!-- bullet navigator item prototype -->
+                        <div u="prototype"></div>
+                    </div>
+
+                    <!-- Arrow Left -->
+                    <span u="arrowleft" class="jssora21l" style="top: 123px; left: 8px;"></span>
+
+                    <!-- Arrow Right -->
+                    <span u="arrowright" class="jssora21r" style="top: 123px; right: 8px;"></span>
+                </div>
+                <!-- Jssor Slider End -->
+
+                <!-- Begin Page Down Code -->
+                <div id="page-down2" class="col-xs-12">
+                    <span class="page-down-icon"><img alt="downward-arrow" src="{% static 'img/down-arrow.png' %}" /></span>
+                    <!-- Code for Sprite Option -->
+                    <!-- <span class="page-down-icon" style="background-color:red;"><span class="jssora21l"></span></span> -->
+                </div>
+                <!-- End Page Down Code -->
+            </div>
+        </div>
+        <!-- Begin Inner Info Div -->
+        <div id="rbg-info-wrapper1">
+            <div id="rbginfobg">
+                <div id="rbginfo" class="row-fluid clearfix">
+
+                    <div id="rbghours" class="col-xs-3"><a href="/general-info"><div class="rbghours hover"></div></a>
+                        <!-- <div class="red text-center bold">The Garden is Closed Today due to Inclement Weather</div> -->
+                        <div id="gardenHours"><span class="red text-center"></span></div>
+                        <div id="gardenStatus"></div>
+                        <div id="otherNotes"></div>
+                    </div>
+
+                    <div id="rbgadmission" class="col-xs-3" onclick="admissionHoverOn()"><a href="#"><div class="rbgadmission hover"></div></a></div>
+                    <div id="rbgdirections" class="col-xs-3"><a href="/directions.html"><div class="rbgdirections hover"></div></a></div>
+                    <div id="rbgweather" class="col-xs-3"><a href="https://weather.com/weather/today/l/84108:4:US" target="_blank"><div class="rbgweather hover"></div></a></div>
+
+                    <!-- Begin Page Down Code for Slides on Mobile -->
+                    <div id="page-down" class="col-xs-12">
+                        <span class="page-down-icon"><img alt="downward-arrow" src="{% static 'img/down-arrow.png' %}" /></span>
+                        <!-- Code for Sprite Option -->
+                        <!-- <span class="page-down-icon" style="background-color:red;"><span class="jssora21l"></span></span> -->
+                    </div>
+                    <!-- End Page Down Code for Slides on Mobile -->
+                </div>
+            </div>
+        </div>
+        <!-- End Inner Info Div-->
+    </div>
+
+    <!-- Begin Outer Info Div -->
+
+    <div id="rbg-info-wrapper2">
+        <div id="rbginfobg2">
+            <div id="rbginfo" class="row">
+                <div id="rbghours" class="col-sm-3">
+                    <br />
+                    <b>GARDEN HOURS (MDT)</b>
+                    <!-- <div class="text-center red bold">The Garden is Closed Today due to Inclement Weather</div> -->
+                    <div id="gardenHours2"><span class="red text-center"></span></div>
+                    <div id="gardenStatus2"></div>
+                    <div id="otherNotes2"></div><br />
+                    <div>Only Service Animals are allowed in the garden</div><br />
+                    <a href="/general-info" style="text-decoration:none;color:#FFFFFF;font-size:12px">CLICK TO SEE ALL HOURS</a>
+                    <br /><br />
+                </div>
+
+                <div id="rbgadmission2" class="col-sm-3">
+                    {% include 'home/includes/admission.html' %}
+                </div>
+
+                <div id="rbgdirections" class="col-sm-3">
+                    <div class="memfaqwrap">
+                        <br />
+                        <a href="/directions"><div class="memfaq volbutton">HOW TO GET HERE</div></a>
+                        <br />
+                    </div>
+                </div>
+
+                <div id="rbgweather" class="col-sm-3">
+                    <div class="memfaqwrap">
+                        <br />
+                        <a href="https://weather.com/weather/today/l/84108:4:US" target="_blank"><div class="memfaq volbutton">TODAY'S WEATHER</div></a>
+                        <br />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- End Outer Info Div -->
+{% endblock %}
+
+{% block extra_js %}
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+    <script src="{% static 'js/hours.js' %}?v={% include 'includes/css-js-versions.html' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jssor.slider.mini.js' %}"></script>
+    {% include 'includes/seasonal-css-js.html' %}
+
+    {% include 'home/includes/jssor-slideshow-js.html' %}
+
+    {% include 'home/includes/page-down.html' %}
+{% endblock %}
+
+{% block content %}
+    <br />
+
+    <div>
+        <hr class="hr-separator">
+        <div class="separator">MEDIA</div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="col-sm-6"><a href="/whats-blooming"><img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'img/blog1.jpg' %}"></a></div>
+        <div class="col-sm-6"><a href="/social-media"><img alt="hand holding smartphone" class="hover" src="{% static 'img/socialMedia-small.png' %}"></a></div>
+    </div>
+
+    <br />
+    <br />
+    <br />
+
+    <div>
+        <hr class="hr-separator">
+        <div class="separator">EVENTS</div>
+    </div>
+
+    <br />
+
+    <div class="row-fluid">
+        <div class="col-sm-12"><a href="/calendar"><img alt="text says whats happening over picture of red butte garden amphitheater" class="hover" src="{% static 'img/whats-happening.jpg' %}"></a></div>
+    </div>
+
+    <br />
+    <br />
+    <br />
+
+
+    <br />
+{% endblock content %}

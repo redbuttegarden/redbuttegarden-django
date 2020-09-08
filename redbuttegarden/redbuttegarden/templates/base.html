@@ -1,0 +1,122 @@
+{% load static wagtailuserbar %}
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <!-- meta tags for SEO and indexing -->
+    <meta name="keywords" content="{% include 'includes/keywords.html' %}, {{ page.keywords }}">
+    <meta name="description" content="{{ page.title }}">
+    <meta name="author" content="Red Butte Garden">
+    <!-- Tag for UDS Google Analytics (Marketing and Communications)-->
+    <meta name="google-site-verification" content="SYzG0-ATvEy8GqOjJfv4OER9xYw3IUVMpB0mYLHTwWE"/>
+    <!-- KSL Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T5L8MRQ');
+    </script>
+    <!-- End KSL Google Tag Manager -->
+    <!-- Chrome, Firefox OS, Opera and Vivaldi -->
+    <meta name="theme-color" content="#196143">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#196143">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="#196143">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        {% block title %}
+            {% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}
+        {% endblock %}
+        {% block title_suffix %}
+            {% with self.get_site.site_name as site_name %}
+                {% if site_name %}- {{ site_name }}{% endif %}
+            {% endwith %}
+        {% endblock %}
+    </title>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    {% include "includes/favicon.html" %}
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" /> <!-- Font 'Open Sans' Hosted by Google -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/summer.css' %}?v={% include 'includes/css-js-versions.html' %}"> <!-- Additional local CSS -->
+
+    <!-- Facebook Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1644186115889541');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+                   src="https://www.facebook.com/tr?id=1644186115889541&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Facebook Pixel Code -->
+
+    {% include "includes/searchbar-toggle.html" %}
+    {% include "includes/marketing-header.html" %}
+
+    {# Global stylesheets #}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/redbuttegarden.css' %}">
+
+    {% block extra_css %}
+        {# Override this in templates to add extra stylesheets #}
+    {% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+{% wagtailuserbar %}
+
+<!-- KSL Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T5L8MRQ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End KSL Google Tag Manager (noscript) -->
+
+{% include 'includes/navbar.html' %}
+{% include 'includes/marketing-body.html' %}
+
+{% block extra_includes %}{% endblock %}
+
+<div id="rbgdefaultbody" class="container-fluid">
+  <div class="row">
+  	  <div class="col-sm-12">
+        {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+<!-- Google Analytics Code -->
+{% if not request.is_preview %}
+    {% include 'includes/google-analytics.html' %}
+{% endif %}
+
+{# Global javascript #}
+<script type="text/javascript" src="{% static 'js/redbuttegarden.js' %}"></script>
+
+{% block extra_js %}
+    {# Override this in templates to add extra javascript #}
+{% endblock %}
+</body>
+
+{% include 'includes/footer.html' %}
+{% include 'includes/seasonal-css-js.html' %}
+
+</html>

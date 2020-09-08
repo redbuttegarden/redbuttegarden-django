@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <!-- Begin First Column -->
+    <div class="row-fluid">
+        <div class="col-sm-3">
+            <!-- Event Picture-->
+            <div class="event-pic">
+                {% image page.image fill-300x300 %}
+            </div>
+
+            <div class="ev-title-mobile">
+                <br>
+                <div class="ev-title caps">{{ page.title }}</div>
+                <div class="ev-sub">{{ page.sub_heading }}</div>
+            </div>
+
+            <div class="ev-date-mobile">
+                {{ page.event_dates }}
+            </div>
+
+            <br>
+
+            <div class="ev-info-header green">LOCATION:</div>
+            <div class="ev-location">
+                {{ page.location }}
+            </div>
+
+            <br>
+
+            <!-- Registration Info -->
+            {% if page.additional_info %}
+                <div class="ev-info-header green">ADDITIONAL INFO:</div>
+                <div class="ev-member-sale">
+                    {{ page.additional_info }}
+                </div>
+
+                <br>
+            {% endif %}
+
+            <!-- Instructor Info -->
+            {% if page.instructor %}
+                <div class="ev-info-header green">INSTRUCTOR:</div>
+                <div>
+                    {{ page.instructor }}
+                </div>
+
+                <br>
+            {% endif %}
+
+            <!-- Price Info -->
+            <div class="ev-info-header green">COST:</div>
+
+            <div>
+                <div class="inline"><strong>Garden Members:&nbsp;</strong></div>
+                <div class="ev-member-cost">{{ page.member_cost }}</div>
+            </div>
+
+            <div>
+                <div class="inline"><strong>General Public:&nbsp;</strong></div>
+                <div class="ev-public-cost"><span class="green bold">{{ page.public_cost }}</span></div>
+            </div>
+
+            <br>
+
+        </div>
+        <!-- End First Column -->
+
+        <!-- Begin Second Column -->
+        <div class="col-sm-9">
+            <div class="ev-title-reg">
+                <div class="ev-title">{{ page.title|upper }}</div>
+                <div class="ev-sub">{{ page.sub_heading }}</div>
+            </div>
+
+            <br>
+
+            <div class="ev-date">{{ page.event_dates }}</div>
+
+            <br>
+            <br>
+
+            <div class="ev-desc">
+                <div>
+                    {% for block in page.body %}
+                        {% if block.block_type == 'tan_bg_text' %}
+                            <div class="tan-bg">
+                                {% include_block block %}
+                            </div>
+                        {% elif block.block_type == 'green_heading' %}
+                            <h4 class="text-center green">
+                                {% include_block block %}
+                            </h4>
+                        {% elif block.block_type == 'image' %}
+                            {% image block.value original class="responsive" %}
+                        {% else %}
+                            {% include_block block %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

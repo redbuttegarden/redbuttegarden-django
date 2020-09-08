@@ -1,0 +1,209 @@
+{% load static wagtailcore_tags %}
+
+<!-- Begin Footer Code-->
+<div id="prefooterbg">
+    <div id="prefooter" class="container">
+        <div class="row">
+            <div class="col-xs-4"><a href="/memberships"><img alt="outline of human" src="{% static 'img/footer/prefooter-membership.png' %}" class="responsive"/></a></div>
+            <div class="col-xs-4"><a href="{% include 'includes/give-link.html' %}"><img alt="dollar sign" src="{% static 'img/footer/prefooter-donate.png' %}" class="responsive"/></a></div>
+            <div class="col-xs-4"><a href="/volunteer"><img alt="outline of shovel" src="{% static 'img/footer/prefooter-volunteer.png' %}" class="responsive"/></a></div>
+        </div>
+    </div>
+</div>
+
+<div id="rbgfooterbg">
+    <div id="rbgfooter" class="container">
+        <br />
+        <div id="social-media-wrapper">
+            <ul>
+                <li><a href="http://www.yelp.com/biz/red-butte-garden-and-arboretum-salt-lake-city"><div class="yelp"></div></a></li>
+                <li><a href="http://www.tripadvisor.com/Attraction_Review-g60922-d269627-Reviews-Red_Butte_Garden-Salt_Lake_City_Utah.html"><div class="tripadvisor"></div></a></li>
+                <li><a href="https://www.facebook.com/redbutte"><div class="facebook"></div></a></li>
+                <li><a href="https://instagram.com/redbuttegarden/"><div class="instagram"></div></a></li>
+                <li><a href="https://twitter.com/redbuttegarden"><div class="twitter"></div></a></li>
+                <li><a href="https://www.youtube.com/user/RedButteGarden"><div class="youtube"></div></a></li>
+                <li><a href="http://www.reddit.com/r/redbuttegarden"><div class="reddit"></div></a></li>
+                <li><a href="https://www.pinterest.com/redbuttegarden/"><div class="pinterest"></div></a>
+            </ul>
+        </div>
+
+        <div class="space"><hr></div><div class="space"><hr></div><div class="space"><hr></div>
+
+        <!-- BEGIN DESKTOP-FRIENDLY FOOTER LINKS -->
+        <div class="rbgfooterlinks hide-mobile">
+            <ul>
+                <li><a href="{% slugurl 'contact-us' %}">CONTACT US</a><span class="hide-mobile">|</span></li>
+                <li><a href="/advisory-board">BOARD</a><span class="hide-mobile">|</span></li>
+                <li><a href="/local-retail-partners">LOCAL RETAIL PARTNERS</a><span class="hide-mobile"></span></li>
+                <li><a href="/public-relations">PUBLIC RELATIONS</a><span class="hide-mobile">|</span></li>
+                <li><a href="/general-info">INFO &amp; POLICIES</a><span class="hide-mobile">|</span></li>
+                <li><a href="/employment">EMPLOYMENT</a><span class="hide-mobile">|</span></li>
+                <li><a href="https://redbuttegarden.formstack.com/forms/donation_request_form" target="_blank">DONATION REQUEST</a><span class="hide-mobile"></span></li>
+                <li><a href="https://redbuttegarden.formstack.com/forms/info_update" target="_blank">UPDATE YOUR INFO</a><span class="hide-mobile"></span></li>
+                <li><a href="https://55218.blackbaudhosting.com/55218/page.aspx?pid=201" target="_blank">SIGN UP FOR OUR EVENT EBLASTS</a></li>
+            </ul>
+        </div>
+        <!-- END DESKTOP-FRIENDLY FOOTER LINKS -->
+
+        <!-- BEGIN MOBILE-FRIENDLY FOOTER LINKS -->
+        <div class="hide-desktop">
+            <br />
+            <div class="row-fluid">
+                <div class="col-xs-6">
+                    <div class="memfaqwrap">
+                        <a href="{% slugurl 'contact-us' %}">
+                            <input type="submit" value="CONTACT US" class="footer-button hover" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="memfaqwrap">
+                        <a href="/advisory-board">
+                            <input type="submit" value="BOARD" class="footer-button hover" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="memfaqwrap">
+                        <a href="/local-retail-partners">
+                            <input type="submit" value="LOCAL RETAIL PARTNERS" class="footer-button hover" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="memfaqwrap">
+                        <a href="/public-relations">
+                            <input type="submit" value="PUBLIC RELATIONS" class="footer-button hover" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="memfaqwrap">
+                        <a href="/general-info">
+                            <input type="submit" value="INFO &amp; POLICIES" class="footer-button hover" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="memfaqwrap">
+                        <a href="/employment">
+                            <input type="submit" value="EMPLOYMENT" class="footer-button hover" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="memfaqwrap">
+                        <a href="https://redbuttegarden.formstack.com/forms/donation_request_form" target="_blank">
+                            <input type="submit" value="DONATION REQUEST" class="footer-button hover" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="memfaqwrap">
+                        <a href="https://redbuttegarden.formstack.com/forms/info_update" target="_blank">
+                            <input type="submit" value="UPDATE YOUR INFO" class="footer-button hover" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="memfaqwrap">
+                        <a href="https://55218.blackbaudhosting.com/55218/page.aspx?pid=201" target="_blank">
+                            <input type="submit" value="SIGN UP FOR OUR EVENT EBLASTS" class="footer-button hover" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </div>
+        <!-- END MOBILE-FRIENDLY FOOTER LINKS -->
+
+        <div class="space"><hr></div>
+
+        <div class="row">
+            <div id="uofu" class="col-xs-4"><a href="https://www.utah.edu"><img alt="University of Utah logo" src="{% static 'img/footer/footer-uofu-logo.png' %}" class="responsive img-center hover" /></a></div>
+            <div id="footerlogo" class="col-xs-4"><a href="https://www.redbuttegarden.org"><img alt="Red Butte Garden logo" src="{% static 'img/footer/rbg-footer-logo-new-stack.png' %}" class="responsive img-center hover" /></a></div>
+            <div id="zap" class="col-xs-4"><a href="http://www.zapisyou.org"><img alt="Salt Lake County ZAP logo" src="{% static 'img/footer/footer-zap-logo.png' %}" class="responsive img-center hover" /></a></div>
+        </div>
+
+        <div class="space"><hr></div>
+        <div class="space"><hr></div>
+
+        <div class="row">
+            <div id="contactinfo1" class="col-sm-12"><a href="tel:8015850556" style="color:white">801.585.0556</a> | 300 WAKARA WAY, SALT LAKE CITY, UT 84108</div>
+            <div id="contactinfo2" class="col-sm-12">Copyright &copy; {% include 'includes/current-year.html' %} Red Butte Garden</div>
+        </div>
+
+        <div class="space"><hr></div>
+
+        <!-- BEGIN DESKTOP-FRIENDLY FOOTER LINKS -->
+        <div class="rbgfooterlinks hide-mobile">
+            <ul>
+                <li><a href="http://www.utah.edu/nondiscrimination/">NONDISCRIMINATION &amp; ACCESSIBILITY</a><span class="hide-mobile">|</span></li>
+                <li><a href="http://www.utah.edu/disclaimer/">DISCLAIMER</a><span class="hide-mobile">|</span></li>
+                <li><a href="http://www.utah.edu/privacy/">PRIVACY</a><span class="hide-mobile">|</span></li>
+                <li><a href="http://www.utah.edu/credits.php">CREDITS &amp; ATTRIBUTIONS</a></li>
+            </ul>
+        </div>
+        <!-- END DESKTOP-FRIENDLY FOOTER LINKS -->
+
+        <!-- BEGIN MOBILE-FRIENDLY FOOTER LINKS -->
+        <div class="hide-desktop">
+            <br />
+            <div class="row-fluid">
+                <div class="col-xs-12">
+                    <div class="memfaqwrap">
+                        <a href="http://www.utah.edu/nondiscrimination/" target="_blank">
+                            <input type="submit" value="NONDISCRIMINATION &amp; ACCESSIBILITY" class="footer-button hover" style="background-color:#BE122B;" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="memfaqwrap">
+                        <a href="http://www.utah.edu/disclaimer/" target="_blank">
+                            <input type="submit" value="DISCLAIMER" class="footer-button hover" style="background-color:#BE122B;" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="memfaqwrap">
+                        <a href="http://www.utah.edu/privacy/" target="_blank">
+                            <input type="submit" value="PRIVACY" class="footer-button hover" style="background-color:#BE122B;" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="memfaqwrap">
+                        <a href="http://www.utah.edu/credits.php" target="_blank">
+                            <input type="submit" value="CREDITS &amp; ATTRIBUTIONS" class="footer-button hover" style="background-color:#BE122B;" />
+                        </a>
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </div>
+        <!-- END MOBILE-FRIENDLY FOOTER LINKS -->
+    </div>
+</div>
+<!-- End Footer Code -->

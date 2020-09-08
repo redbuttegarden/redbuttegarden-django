@@ -1,0 +1,5 @@
+/.idea/
+/redbuttegarden/.env.dev
+/redbuttegarden/.env.local
+/redbuttegarden/zappa_settings.json
+/ve/

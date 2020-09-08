@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <div class="row-fluid">
+        {% image page.banner original class="responsive" %}
+    </div>
+    <br>
+    {% include_block page.intro|richtext %}
+    <div class="panel-group" id="accordion">
+		    <div class="panel panel-default">
+		      <a data-toggle="collapse" data-parent="#accordion" href="#PC" class="" aria-expanded="true">
+		      	<div class="panel-heading">
+			        <div class="panel-title text-center">Click Here for More Info on our Types of Plant Collections</div>
+				</div>
+		      </a>
+		      <div id="PC" class="panel-collapse collapse" aria-expanded="false">
+		        <div class="panel-body">
+		        	{% include_block page.more_info_modal|richtext %}
+				</div>
+		      </div>
+		    </div>
+		</div>
+    {% with collections=page.plant_collections.all %}
+        {% if collections %}
+            {% for collection in collections %}
+                <div class="row-fluid">
+                    <div class="col-sm-6">
+                        <a href="{{ collection.slideshow_link }}" target="_blank">
+                            <div class="collectionswrap hover">
+                                {% image collection.image width-385 %}
+                                <div class="eventinfo">
+                                    <div class="eventname">{{ collection.title }}</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="collectionswrap green">
+                            <h4 class="text-center">{{ collection.title }}</h4>
+                            {% include_block collection.text|richtext %}
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <a href="{{ collection.slideshow_link }}" target="_blank">
+                                    <button class="apply-button hover">View Our Slideshow</button>
+                                </a>
+                            </div>
+                            <div class="col-sm-6">
+                                <a href="{{ collection.collection_doc.file.url }}">
+                                    <button class="apply-button hover">More Information</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <hr>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+{% endblock %}
