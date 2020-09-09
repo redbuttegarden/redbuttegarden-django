@@ -10,7 +10,7 @@ DEBUG = True
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ['127.0.0.1', 'pzr1yumqbe.execute-api.us-east-1.amazonaws.com', 'dev.redbuttegarden.org']
+ALLOWED_HOSTS = ['0.0.0.0', 'pzr1yumqbe.execute-api.us-east-1.amazonaws.com', 'dev.redbuttegarden.org']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
