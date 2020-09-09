@@ -3,7 +3,7 @@ version: '3'
 services:
   web:
     env_file:
-      - /Users/$USER/redbuttegarden_web.env
+      - redbuttegarden/.env.dev
     build: redbuttegarden/
     volumes:
       - ./redbuttegarden:/code
@@ -15,7 +15,7 @@ services:
   db:
     image: "postgres:11"
     env_file:
-      - /Users/$USER/redbuttegarden_db.env
+      - redbuttegarden/.env.dev
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
