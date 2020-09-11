@@ -1,27 +1,24 @@
+{% load static %}
 <script>
-
     // Code to load new CSS file to change dropdown colors for different seasons
-
     function getStylesheet() {
-
         var month = new Date().getMonth() + 1;
 
-        if ( (month == 9) || (month == 10 ) || (month == 11) ) {
-            document.write("<link rel='stylesheet' href='/CSS/fall.css?v=2' type='text/css'>");
+        if ((month === 9) || (month === 10) || (month === 11)) {
+            document.write("<link rel='stylesheet' href='{% static 'css/fall.css?v=2' %}' type='text/css'>");
         }
 
-        if ( (month == 12) || (month == 1 ) || (month == 2) ) {
-            document.write("<link rel='stylesheet' href='/CSS/winter.css?v=2' type='text/css'>");
+        if ((month === 12) || (month === 1) || (month === 2)) {
+            document.write("<link rel='stylesheet' href='{% static 'css/winter.css?v=2' %}' type='text/css'>");
         }
 
-        if ( (month == 3) || (month == 4 ) || (month == 5) ) {
-            document.write("<link rel='stylesheet' href='/CSS/spring.css?v=2' type='text/css'>");
+        if ((month === 3) || (month === 4) || (month === 5)) {
+            document.write("<link rel='stylesheet' href='{% static 'css/spring.css?v=2' %}' type='text/css'>");
         }
-
     }
-
     getStylesheet();
-
 </script>
 
-<noscript><link href="CSS/summer.css" rel="stylesheet"></noscript>
+<noscript>
+    <link href="{% static 'css/summer.css' %}" rel="stylesheet">
+</noscript>
