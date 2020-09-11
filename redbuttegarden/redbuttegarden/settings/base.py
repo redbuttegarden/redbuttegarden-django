@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'search',
 
     'wagtail.contrib.forms',
+    "wagtail.contrib.frontend_cache",
     'wagtail.contrib.redirects',
     'wagtail.contrib.routable_page',
     'wagtail.embeds',
@@ -47,8 +48,9 @@ INSTALLED_APPS = [
     'wagtail.admin',
     'wagtail.core',
 
-    'django_s3_storage',
+    'corsheaders',
     'modelcluster',
+    'storages',
     'taggit',
 
     'django.contrib.admin',
@@ -60,6 +62,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    # TODO - re-enable Django-CSP
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

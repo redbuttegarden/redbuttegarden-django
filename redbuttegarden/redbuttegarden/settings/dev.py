@@ -29,25 +29,76 @@ DATABASES = {
 }
 
 # Static files
-MY_S3_BUCKET = "zappa-rbg-dev-static-east"
+AWS_STORAGE_BUCKET_NAME = 'zappa-rbg-dev-static-east'
+AWS_S3_REGION_NAME = 'us-east-1'
+STATIC_BUCKET = 'zappa-rbg-dev-static-east'
+STATICFILES_STORAGE = 'home.custom_storages.StaticStorage'
+MEDIA_BUCKET = 'zappa-rbg-dev-static-east'
+DEFAULT_FILE_STORAGE = 'home.custom_storages.MediaStorage'
+AWS_S3_CUSTOM_DOMAIN = 'dhsyi82ptcyu5.cloudfront.net'
 
-STATICFILES_STORAGE = "django_s3_storage.storage.StaticS3Storage"  # Based on Zappa docs
-AWS_S3_BUCKET_NAME_STATIC = MY_S3_BUCKET  # Based on Zappa docs
-AWS_S3_BUCKET_NAME = MY_S3_BUCKET  # Based on django_s3_storage docs
-DEFAULT_FILE_STORAGE = "django_s3_storage.storage.S3Storage"  # Based on django_s3_storage docs
-
-# These next two lines will serve the static files directly
-# from the s3 bucket
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % MY_S3_BUCKET
-STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
-
-AWS_S3_BUCKET_AUTH = False
-AWS_S3_MAX_AGE_SECONDS = 60 * 60 * 24 * 365  # 1 year.
-# The AWS region to connect to.
-AWS_REGION = "us-east-1"
+WAGTAILFRONTENDCACHE = {
+    'cloudfront': {
+        'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
+        'DISTRIBUTION_ID': 'E5BZL9629SKXT',
+    },
+}
 
 # The AWS access key to use.
 AWS_ACCESS_KEY_ID = os.environ.get("STATIC_ACCESS_KEY_ID")
 
 # The AWS secret access key to use.
 AWS_SECRET_ACCESS_KEY = os.environ.get("STATIC_SECRET_ACCESS_KEY")
+
+# Keep our policy as strict as possible
+CSP_DEFAULT_SRC = ("'self'",
+                   "'unsafe-inline'",
+                   'dev.redbuttegarden.org',
+                   'dhsyi82ptcyu5.cloudfront.net',
+                   'pzr1yumqbe.execute-api.us-east-1.amazonaws.com',
+                   'zappa-rbg-dev.s3.amazonaws.com',
+                   'zappa-rbg-dev-static-east.s3.amazonaws.com')
+CSP_STYLE_SRC = ("'self'",
+                 "'unsafe-inline'",
+                 'dev.redbuttegarden.org',
+                 'dhsyi82ptcyu5.cloudfront.net',
+                 'fonts.googleapis.com',
+                 'maxcdn.bootstrapcdn.com',
+                 'pzr1yumqbe.execute-api.us-east-1.amazonaws.com',
+                 'zappa-rbg-dev.s3.amazonaws.com',
+                 'zappa-rbg-dev-static-east.s3.amazonaws.com')
+CSP_SCRIPT_SRC = ("'self'",
+                  "'unsafe-inline'",
+                  'dev.redbuttegarden.org',
+                  'dhsyi82ptcyu5.cloudfront.net',
+                  'www.googletagmanager.com',
+                  'www.google-analytics.com',
+                  'maxcdn.bootstrapcdn.com',
+                  'ajax.googleapis.com',
+                  'connect.facebook.net',
+                  'pzr1yumqbe.execute-api.us-east-1.amazonaws.com',
+                  'zappa-rbg-dev.s3.amazonaws.com',
+                  'zappa-rbg-dev-static-east.s3.amazonaws.com')
+CSP_FONT_SRC = ("'self'",
+                'dev.redbuttegarden.org',
+                'dhsyi82ptcyu5.cloudfront.net',
+                'fonts.gstatic.com',
+                'maxcdn.bootstrapcdn.com',
+                'pzr1yumqbe.execute-api.us-east-1.amazonaws.com',
+                'zappa-rbg-dev.s3.amazonaws.com',
+                'zappa-rbg-dev-static-east.s3.amazonaws.com')
+CSP_IMG_SRC = ("'self'",
+               'dev.redbuttegarden.org',
+               'dhsyi82ptcyu5.cloudfront.net',
+               'www.gravatar.com',
+               'pzr1yumqbe.execute-api.us-east-1.amazonaws.com',
+               'zappa-rbg-dev.s3.amazonaws.com',
+               'zappa-rbg-dev-static-east.s3.amazonaws.com')
+
+# CORS_ALLOWED_ORIGINS = [
+#     "https://pzr1yumqbe.execute-api.us-east-1.amazonaws.com",
+#     "https://zappa-rbg-dev-static-east.s3.amazonaws.com",
+#     "http://0.0.0.0:8000",
+# ]
+
+CORS_ORIGIN_ALLOW_ALL = True
