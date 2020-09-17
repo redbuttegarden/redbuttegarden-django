@@ -10,7 +10,7 @@ DEBUG = True
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ['0.0.0.0', 'pzr1yumqbe.execute-api.us-east-1.amazonaws.com', 'dev.redbuttegarden.org']
+ALLOWED_HOSTS = ['0.0.0.0', 'trjxa2b547.execute-api.us-east-1.amazonaws.com', 'dhsyi82ptcyu5.cloudfront.net', 'dev.redbuttegarden.org']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -36,6 +36,8 @@ STATICFILES_STORAGE = 'home.custom_storages.StaticStorage'
 MEDIA_BUCKET = 'zappa-rbg-dev-static-east'
 DEFAULT_FILE_STORAGE = 'home.custom_storages.MediaStorage'
 AWS_S3_CUSTOM_DOMAIN = 'dhsyi82ptcyu5.cloudfront.net'
+STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
+MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
 
 WAGTAILFRONTENDCACHE = {
     'cloudfront': {
@@ -43,12 +45,6 @@ WAGTAILFRONTENDCACHE = {
         'DISTRIBUTION_ID': 'E5BZL9629SKXT',
     },
 }
-
-# The AWS access key to use.
-AWS_ACCESS_KEY_ID = os.environ.get("STATIC_ACCESS_KEY_ID")
-
-# The AWS secret access key to use.
-AWS_SECRET_ACCESS_KEY = os.environ.get("STATIC_SECRET_ACCESS_KEY")
 
 # Keep our policy as strict as possible
 CSP_DEFAULT_SRC = ("'self'",
@@ -102,3 +98,4 @@ CSP_IMG_SRC = ("'self'",
 # ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
