@@ -163,7 +163,6 @@ AUTH_USER_MODEL = 'custom_user.User'
 
 
 # Wagtail settings
-
 WAGTAIL_SITE_NAME = "redbuttegarden"
 WAGTAILEMBEDS_RESPONSIVE_HTML = True
 WAGTAIL_USER_EDIT_FORM = 'custom_user.forms.CustomUserEditForm'
@@ -176,3 +175,7 @@ BASE_URL = 'https://redbuttegarden.org'
 
 # Safe to do this as since our docs/images shouldn't contain sensitive info. Info: https://docs.wagtail.io/en/v2.8/reference/settings.html?highlight=images#documents
 WAGTAILDOCS_SERVE_METHOD = 'direct'
+
+# Zappa settings to strip the stage name from urls (requires X_FORWARDED_HOST custom header in Cloudfront)
+USE_X_FORWARDED_HOST = True
+FORCE_SCRIPT_NAME = ''
