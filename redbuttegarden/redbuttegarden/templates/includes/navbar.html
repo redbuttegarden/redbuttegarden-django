@@ -1,4 +1,4 @@
-{% load static %}
+{% load static wagtailcore_tags %}
 
 <!-- Begin Navbar -->
 <div class="navbar-wrapper">
@@ -23,9 +23,9 @@
                             <ul class="dropdown-menu">
                                 <li><a href="{% url 'home:general-info' %}">GENERAL INFO</a></li>
                                 <li><a href="{% url 'home:about-us' %}">ABOUT US</a></li>
-                                <li><a href="/garden-maps">GARDEN MAPS</a></li>
-                                <li><a href="/gift-shop">GIFT SHOP</a></li>
-                                <li><a href="/free-garden-events">FREE DAYS<br />&amp; EVENTS</a></li>
+                                <li><a href="{% slugurl 'garden-maps' %}">GARDEN MAPS</a></li>
+                                <li><a href="{% slugurl 'gift-shop' %}">GIFT SHOP</a></li>
+                                <li><a href="{% slugurl 'free-garden-events' %}">FREE DAYS<br />&amp; EVENTS</a></li>
                                 <li><a href="/garden-tours">GARDEN TOURS</a></li>
                                 <li><a href="/taleblazer">PLAY TALEBLAZER</a></li>
                                 <li><a href="/poetry">POETRY IN <br />THE GARDEN</a></li>
