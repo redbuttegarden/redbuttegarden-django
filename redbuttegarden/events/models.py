@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.db import models
 
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
@@ -68,6 +69,18 @@ class EventIndexPage(Page):
     ]
 
     subpage_types = ['events.EventPage']
+
+    def get_event_items(self):
+        # This returns a Django paginator of blog items in this section
+        return Paginator(self.get_children().live().type(EventPage), 10)
+
+    def get_cached_paths(self):
+        # Yield the main URL
+        yield '/'
+
+        # Yield one URL per page in the paginator to make sure all pages are purged
+        for page_number in range(1, self.get_event_items().num_pages + 1):
+            yield '/?page=' + str(page_number)
 
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
