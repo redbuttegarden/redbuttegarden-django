@@ -46,9 +46,9 @@ class Heading(blocks.CharBlock):
 class ButtonBlock(blocks.StructBlock):
     GREEN = 'green'
     TAN = 'tan'
-    DARK_TAN = 'dark-tan'
+    DARK_TAN = 'dk-tn'
     RED = 'red'
-    ORANGE = 'orange'
+    ORANGE = 'org'
     COLOR_CHOICES = [
         (DARK_TAN, 'Dark Tan'),
         (GREEN, 'Green'),
@@ -108,6 +108,7 @@ class GeneralPage(Page):
         help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
     )
     body = StreamField(block_types=[
+        ('button', ButtonBlock()),
         ('heading', Heading(classname='full title')),
         ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
         ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
