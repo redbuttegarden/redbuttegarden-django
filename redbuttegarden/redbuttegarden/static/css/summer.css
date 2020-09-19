@@ -1993,9 +1993,6 @@ no-repeat 5px 3px;
 }
 
 .green-button, .tan-button, .dk-tn-button, .red-button, .org-button {
-	border: none;
-	padding: 10px 15px 10px 15px;
-	font-size: 18px;
 	color: #FFF;
 	font-weight: bold;
 }

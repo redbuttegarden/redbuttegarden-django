@@ -6,31 +6,3 @@ figcaption {
 hr {
     width: 95%;
 }
-
-button {
-	border: none;
-	padding: 10px 15px 10px 15px;
-	font-size: 18px;
-	color: #FFF;
-	font-weight: bold;
-}
-
-.dark-tan-button {
-    background-color:#C4B59E;
-}
-
-.green-button {
-	background-color: #196143;
-}
-
-.orange-button {
-    background-color: #FF7744;
-}
-
-.red-button {
-    background-color: red;
-}
-
-.tan-button {
-    background-color: #F2EDE4;
-}
