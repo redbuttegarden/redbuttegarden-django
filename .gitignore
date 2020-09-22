@@ -3,3 +3,4 @@
 /redbuttegarden/.env.local
 /redbuttegarden/zappa_settings.json
 /ve/
+/redbuttegarden/static/
