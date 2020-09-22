@@ -232,7 +232,7 @@ class GeneralIndexPage(Page):
         StreamFieldPanel('body'),
     ]
 
-    subpage_types = ['home.GeneralIndexPage', 'home.GeneralPage']
+    subpage_types = ['home.GeneralIndexPage', 'home.GeneralPage', 'home.TwoColumnGeneralPage']
 
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
