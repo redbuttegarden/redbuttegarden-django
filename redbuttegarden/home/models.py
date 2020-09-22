@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from modelcluster.fields import ParentalKey
@@ -233,6 +234,18 @@ class GeneralIndexPage(Page):
     ]
 
     subpage_types = ['home.GeneralIndexPage', 'home.GeneralPage', 'home.TwoColumnGeneralPage']
+
+    def get_general_items(self):
+        # This returns a Django paginator of blog items in this section
+        return Paginator(self.get_children().live(), 10)
+
+    def get_cached_paths(self):
+        # Yield the main URL
+        yield '/'
+
+        # Yield one URL per page in the paginator to make sure all pages are purged
+        for page_number in range(1, self.get_general_items().num_pages + 1):
+            yield '/?page=' + str(page_number)
 
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
