@@ -261,7 +261,7 @@ class GeneralIndexPage(Page):
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
         context = super().get_context(request)
-        sub_pages = self.get_children().live().order_by('-first_published_at')
+        sub_pages = self.get_children().live().order_by('-latest_revision_created_at')
         context['sub_pages'] = sub_pages
         return context
 
