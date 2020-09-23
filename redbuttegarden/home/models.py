@@ -229,6 +229,14 @@ class GeneralIndexPage(Page):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    thumbnail = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
+    )
     body = StreamField(block_types=[
         ('heading', Heading(classname='full title')),
         ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
@@ -240,7 +248,10 @@ class GeneralIndexPage(Page):
     ], blank=True)
 
     content_panels = Page.content_panels + [
-        ImageChooserPanel('banner'),
+        MultiFieldPanel([
+            ImageChooserPanel('banner'),
+            ImageChooserPanel('thumbnail'),
+        ], classname="collapsible"),
         StreamFieldPanel('body'),
     ]
 
