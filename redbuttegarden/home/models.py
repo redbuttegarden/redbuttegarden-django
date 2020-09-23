@@ -72,7 +72,8 @@ class ButtonBlock(blocks.StructBlock):
 
 
 class ColumnBlock(blocks.StreamBlock):
-    heading = Heading(classname='full title')
+    heading = Heading(classname='full title',
+                      help_text=_('Text will be green and centered'))
     paragraph = blocks.RichTextBlock()
     image = ImageChooserBlock()
     document = DocumentChooserBlock()
@@ -110,7 +111,8 @@ class GeneralPage(Page):
     )
     body = StreamField(block_types=[
         ('button', ButtonBlock()),
-        ('heading', Heading(classname='full title')),
+        ('heading', Heading(classname='full title',
+                            help_text=_('Text will be green and centered'))),
         ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
         ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
                                              help_text="Paragraph with a tan background")),
@@ -145,7 +147,8 @@ class TwoColumnGeneralPage(Page):
         help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
     )
     body = StreamField(block_types=([
-        ('heading', Heading(classname='full title')),
+        ('heading', Heading(classname='full title',
+                            help_text=_('Text will be green and centered'))),
         ('paragraph', blocks.RichTextBlock()),
         ('image', ImageChooserBlock()),
         ('document', DocumentChooserBlock()),
@@ -238,7 +241,8 @@ class GeneralIndexPage(Page):
         help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
     )
     body = StreamField(block_types=[
-        ('heading', Heading(classname='full title')),
+        ('heading', Heading(classname='full title',
+                            help_text=_('Text will be green and centered'))),
         ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
         ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
                                              help_text="Paragraph with a tan background")),
