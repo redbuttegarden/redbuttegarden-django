@@ -37,6 +37,26 @@ class ImageListDropdownInfo(blocks.StructBlock):
         template = 'blocks/image_list_dropdown_info.html'
 
 
+class SingleListButtonDropdownInfo(blocks.StructBlock):
+    button_text = blocks.CharBlock(
+        label='Button Text',
+        max_length=200,
+    )
+    info_text = blocks.RichTextBlock(
+        label='Info Text'
+    )
+
+
+class ButtonListDropdownInfo(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        SingleListButtonDropdownInfo(),
+        label="Button"
+    )
+
+    class Meta:
+        template = 'blocks/button_list_dropdown_info.html'
+
+
 class Heading(blocks.CharBlock):
     class Meta:
         template = 'blocks/heading.html'
@@ -119,6 +139,7 @@ class GeneralPage(Page):
         ('image', ImageChooserBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
+        ('dropdown_button_list', ButtonListDropdownInfo()),
     ], blank=False)
 
     content_panels = Page.content_panels + [
@@ -156,6 +177,7 @@ class TwoColumnGeneralPage(Page):
         ('embedded_video', EmbedBlock(icon='media')),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
+        ('dropdown_button_list', ButtonListDropdownInfo()),
     ]), null=True, blank=True)
 
     content_panels = Page.content_panels + [
@@ -249,6 +271,7 @@ class GeneralIndexPage(Page):
         ('image', ImageChooserBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
+        ('dropdown_button_list', ButtonListDropdownInfo()),
     ], blank=True)
 
     content_panels = Page.content_panels + [
