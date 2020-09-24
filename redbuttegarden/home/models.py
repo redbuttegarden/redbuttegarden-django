@@ -64,6 +64,15 @@ class Heading(blocks.CharBlock):
         label = 'Heading'
 
 
+class EmphaticText(blocks.CharBlock):
+    """For displaying red italic text"""
+
+    class Meta:
+        template = 'blocks/emphatic_text.html'
+        icon = 'italic'
+        label = 'Emphatic Text'
+
+
 class ButtonBlock(blocks.StructBlock):
     GREEN = 'green'
     TAN = 'tan'
@@ -94,6 +103,8 @@ class ButtonBlock(blocks.StructBlock):
 class ColumnBlock(blocks.StreamBlock):
     heading = Heading(classname='full title',
                       help_text=_('Text will be green and centered'))
+    emphatic_text = EmphaticText(classname='full title',
+                                 help_text=_('Text will be red, italic and centered'))
     paragraph = blocks.RichTextBlock()
     image = ImageChooserBlock()
     document = DocumentChooserBlock()
@@ -133,6 +144,8 @@ class GeneralPage(Page):
         ('button', ButtonBlock()),
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
+        ('emphatic_text', EmphaticText(classname='full title',
+                                       help_text=_('Text will be red, italic and centered'))),
         ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
         ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
                                              help_text="Paragraph with a tan background")),
@@ -170,6 +183,8 @@ class TwoColumnGeneralPage(Page):
     body = StreamField(block_types=([
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
+        ('emphatic_text', EmphaticText(classname='full title',
+                                       help_text=_('Text will be red, italic and centered'))),
         ('paragraph', blocks.RichTextBlock()),
         ('image', ImageChooserBlock()),
         ('document', DocumentChooserBlock()),
@@ -265,6 +280,8 @@ class GeneralIndexPage(Page):
     body = StreamField(block_types=[
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
+        ('emphatic_text', EmphaticText(classname='full title',
+                                       help_text=_('Text will be red, italic and centered'))),
         ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
         ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
                                              help_text="Paragraph with a tan background")),
