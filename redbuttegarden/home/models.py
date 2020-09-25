@@ -37,13 +37,44 @@ class ImageListDropdownInfo(blocks.StructBlock):
         template = 'blocks/image_list_dropdown_info.html'
 
 
+class SingleListImageCardInfo(blocks.StructBlock):
+    image = ImageChooserBlock(
+        label='Image',
+        required=False,
+    )
+    text = blocks.RichTextBlock(
+        label='Text',
+        features=['h4', 'h5', 'bold', 'italic', 'link', 'ul'],
+        help_text=_('Note that h4 elements will be colored green and h5 elements will be colored purple')
+    )
+    button_text = blocks.CharBlock(
+        label='Button Text',
+        required=False,
+    )
+    button_url = blocks.CharBlock(
+        label='Button URL',
+        required=False,
+    )
+
+
+class ImageListCardInfo(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        SingleListImageCardInfo(),
+        label="Image Card List Item"
+    )
+
+    class Meta:
+        template = 'blocks/image_list_card_info.html'
+
+
 class SingleListButtonDropdownInfo(blocks.StructBlock):
     button_text = blocks.CharBlock(
         label='Button Text',
         max_length=200,
     )
     info_text = blocks.RichTextBlock(
-        label='Info Text'
+        label='Info Text',
+        features=['h4', 'h5', 'bold', 'italic', 'link', 'ul']
     )
 
 
@@ -153,6 +184,7 @@ class GeneralPage(Page):
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
+        ('card_info_list', ImageListCardInfo()),
     ], blank=False)
 
     content_panels = Page.content_panels + [

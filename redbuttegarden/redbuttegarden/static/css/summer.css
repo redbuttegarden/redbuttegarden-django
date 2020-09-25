@@ -1441,8 +1441,8 @@ no-repeat 5px 3px;
 }
 
 .lowpadding {
-	padding: 0 5px 0 5px !important;
-	margin: 0 !important;
+	padding: 0 5px 0 5px;
+	margin: 0;
 }
 
 .nopadding {

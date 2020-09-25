@@ -6,3 +6,7 @@ figcaption {
 hr {
     width: 95%;
 }
+
+#image-list-card-info.lowpadding {
+    margin-bottom: 10px;
+}
