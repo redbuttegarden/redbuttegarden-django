@@ -1,5 +1,6 @@
 from django import forms
 from django.conf import settings
+from django.core.paginator import Paginator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -63,12 +64,27 @@ class JournalIndexPage(RoutablePageMixin, Page):
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
         context = super().get_context(request)
-        posts = self.get_children().live().order_by('-first_published_at')
+        posts = self.get_children().live().order_by('-latest_revision_created_at')
         context['posts'] = posts
         return context
 
     def get_posts(self):
+        """
+        Method of returning JournalPage objects that can be further filtered
+        """
         return JournalPage.objects.descendant_of(self).live()
+
+    def get_journal_items(self):
+        # This returns a Django paginator of blog items in this section
+        return Paginator(self.get_children().live(), 6)
+
+    def get_cached_paths(self):
+        # Yield the main URL
+        yield '/'
+
+        # Yield one URL per page in the paginator to make sure all pages are purged
+        for page_number in range(1, self.get_journal_items().num_pages + 1):
+            yield '/?page=' + str(page_number)
 
     @route(r'^tag/(?P<tag>[-\w]+)/$')
     def post_by_tag(self, request, tag, *args, **kwargs):
@@ -86,7 +102,7 @@ class JournalIndexPage(RoutablePageMixin, Page):
 
     @route(r'^$')
     def post_list(self, request, *args, **kwargs):
-        self.posts = self.get_posts()
+        self.posts = self.get_journal_items()
         return Page.serve(self, request, *args, **kwargs)
 
 
