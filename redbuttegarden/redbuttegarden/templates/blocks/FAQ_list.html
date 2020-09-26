@@ -1,0 +1,19 @@
+{% load wagtailcore_tags %}
+
+<div class="panel-group">
+    {% for list_item in value.list_items %}
+        <div class="panel panel-default">
+            <a data-toggle="collapse" href="#{{ block.id }}-{{ forloop.counter }}" class="" aria-expanded="false">
+                <div class="panel-heading">
+                    <div class="panel-title">{{ list_item.title_question }}</div>
+                </div>
+            </a>
+            <div id="{{ block.id }}-{{ forloop.counter }}" class="panel-collapse collapse" aria-expanded="false" style="height: 0;">
+                <div class="panel-body">
+                    {% include_block list_item.text %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+

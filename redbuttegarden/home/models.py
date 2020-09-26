@@ -14,6 +14,26 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
 
 
+class FAQItem(blocks.StructBlock):
+    title_question = blocks.CharBlock(
+        label='Title/Question',
+        max_length=200,
+    )
+    text = blocks.RichTextBlock(
+        label='Answer'
+    )
+
+
+class FAQList(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        FAQItem(),
+        label="Question & Answer"
+    )
+
+    class Meta:
+        template = 'blocks/FAQ_list.html'
+
+
 class SingleListImageDropdownInfo(blocks.StructBlock):
     image = ImageChooserBlock(
         label='Image'
@@ -351,6 +371,30 @@ class GeneralIndexPage(Page):
         sub_pages = self.get_children().live().order_by('-latest_revision_created_at')
         context['sub_pages'] = sub_pages
         return context
+
+
+class FAQPage(Page):
+    banner = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+    body = StreamField(block_types=[
+        ('heading', Heading(classname='full title',
+                            help_text=_('Text will be green and centered'))),
+        ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
+        ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
+                                             help_text="Paragraph with a tan background")),
+        ('FAQ_list', FAQList()),
+    ])
+    content_panels = Page.content_panels + [
+        MultiFieldPanel([
+            ImageChooserPanel('banner'),
+        ], classname="collapsible"),
+        StreamFieldPanel('body'),
+    ]
 
 
 class HomePage(Page):
