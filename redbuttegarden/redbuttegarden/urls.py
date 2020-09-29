@@ -1,3 +1,5 @@
+import cas.views
+
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
@@ -13,6 +15,10 @@ urlpatterns = [
     path('concerts/', include('concerts.urls', namespace='concerts')),
 
     path('django-admin/', admin.site.urls),
+
+    # CAS
+    path('admin/login/', cas.views.login, name='login'),
+    path('admin/logout/', cas.views.logout, name='logout'),
 
     path('admin/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),

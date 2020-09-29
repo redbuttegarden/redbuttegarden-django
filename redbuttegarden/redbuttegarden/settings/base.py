@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'wagtail.admin',
     'wagtail.core',
 
+    'cas',
     'corsheaders',
     'modelcluster',
     'storages',
@@ -179,3 +180,15 @@ WAGTAILDOCS_SERVE_METHOD = 'direct'
 # Zappa settings to strip the stage name from urls (requires X_FORWARDED_HOST custom header in Cloudfront)
 USE_X_FORWARDED_HOST = True
 FORCE_SCRIPT_NAME = ''
+
+# CAS
+MIDDLEWARE_CLASSES = (
+    'cas.middleware.CASMiddleware',
+)
+CAS_SERVER_URL = "https://go.utah.edu/cas/"
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'cas.backends.CASBackend',
+)
+CAS_LOGOUT_COMPLETELY = True
+CAS_PROVIDE_URL_TO_LOGOUT = True
