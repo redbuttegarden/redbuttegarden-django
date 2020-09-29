@@ -8,7 +8,7 @@ from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalManyToManyField, ParentalKey
 from taggit.models import TaggedItemBase, Tag as TaggitTag
 
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, ObjectList, StreamFieldPanel, TabbedInterface
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, Orderable
@@ -64,7 +64,7 @@ class JournalIndexPage(RoutablePageMixin, Page):
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
         context = super().get_context(request)
-        posts = self.get_children().live().order_by('-latest_revision_created_at')
+        posts = JournalPage.objects.child_of(self).order_by('-date')
         context['posts'] = posts
         return context
 
@@ -133,6 +133,17 @@ class JournalPage(Page):
         InlinePanel('gallery_images', label=_('gallery images')),
         StreamFieldPanel('body'),
     ]
+
+    promote_panels = Page.promote_panels + [
+        FieldPanel('author', help_text=_("If left blank, this will be set to the currently logged in user")),
+        FieldPanel('date')
+    ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(promote_panels, heading='Promote'),
+        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
+    ])
 
     parent_page_types = ['journal.JournalIndexPage']
 
