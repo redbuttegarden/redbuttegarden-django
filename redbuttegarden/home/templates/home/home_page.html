@@ -111,6 +111,21 @@
         </div>
     </div>
 
+    <!-- Dump the RBG Hours snippit info for our hours.js script to consume -->
+    <div id="rbg_hours_info" style="display: none;">
+        <div id="hours_override">{{ page.hours.allow_override }}</div>
+        <div id="hours_man_open">{{ page.hours.garden_open }}</div>
+        <div id="hours_man_close">{{ page.hours.garden_close }}</div>
+        <div id="hours_man_add_msg">{{ page.hours.additional_message }}</div>
+        <div id="hours_man_add_emph_msg">{{ page.hours.additional_emphatic_mesg }}</div>
+        <div id="hours_holiday_day">{{ page.hours.holiday_party_close_time.day }}</div>
+        <div id="hours_holiday_hour">{{ page.hours.holiday_party_close_time.hour }}</div>
+        <div id="hours_holiday_minute">{{ page.hours.holiday_party_close_time.minute }}</div>
+        <div id="hours_gad_start">{{ page.hours.gad_start }}</div>
+        <div id="hours_gad_end">{{ page.hours.gad_end }}</div>
+    </div>
+
+
     <!-- End Outer Info Div -->
 {% endblock %}
 

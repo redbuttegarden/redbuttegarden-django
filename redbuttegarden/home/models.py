@@ -1,17 +1,23 @@
+import json
+
+from django.contrib.postgres.fields import DateRangeField
 from django.core.paginator import Paginator
 from django.db import models
+from django.forms import DateInput
 from django.utils.translation import ugettext_lazy as _
 from modelcluster.fields import ParentalKey
 
 from wagtail.core import blocks
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel
+from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel, FieldRowPanel
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
+from wagtail.snippets.models import register_snippet
 
 
 class FAQItem(blocks.StructBlock):
@@ -397,5 +403,72 @@ class FAQPage(Page):
     ]
 
 
+@register_snippet
+class RBGHours(models.Model):
+    """
+    Model for setting variables used by hours.js on the HomePage.
+    """
+    # Set a name for this hours object
+    name = models.CharField(max_length=200, help_text=_("Create a name for this set of hours"))
+
+    # Allow users to manually set hour options independent of hours.js
+    allow_override = models.BooleanField(help_text=_("Override hours.js script and manually set all hours options"),
+                                         default=False)
+    garden_open = models.TimeField(null=True, blank=True,
+                                   help_text=_(
+                                       "When override set to True, this time will be shown as the time the garden opens"))
+    garden_close = models.TimeField(null=True, blank=True,
+                                    help_text=_(
+                                        "When override set to True, this time will be shown as the time the garden closes"))
+    additional_message = models.CharField(max_length=200, null=True, blank=True,
+                                          help_text=_("Message under the hours; e.g. 'Last entry at 3:30 PM'"))
+    additional_emphatic_mesg = models.CharField(max_length=200, null=True, blank=True,
+                                                help_text=_("Message under hours in RED text"))
+
+    # Day and time we close for Holiday Party in December
+    holiday_party_close_time = models.DateTimeField(help_text=_("Day and time we close for Holiday Party in December"))
+    """
+    Originally created start and end dates for Garden After Dark but this won't work well
+    when GAD occurs on non-consecutive dates.
+    
+    Changed to a StreamField Model so as many or as few dates could be selected.
+    
+    When GAD occurs over so many days, it would be inconvenient to create them all individually,
+    the user can user the manual override option instead.
+    """
+    gad_dates = StreamField(block_types=[
+        ('date', blocks.DateBlock(verbose_name="Garden After Dark date", help_text=_("Date that GAD takes place")))
+    ], help_text=_("Choose the dates of GAD. If there are many, using the manual override might be easier"))
+
+    panels = [
+        FieldPanel('name'),
+        MultiFieldPanel([
+            FieldPanel('allow_override'),
+            FieldPanel('garden_open'),
+            FieldPanel('garden_close'),
+            FieldPanel('additional_message'),
+            FieldPanel('additional_emphatic_mesg'),
+        ], heading="Manual override settings", classname="collapsible collapsed"),
+        FieldPanel('holiday_party_close_time'),
+        StreamFieldPanel('gad_dates'),
+    ]
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "RBG Hours"
+
+
 class HomePage(Page):
-    pass
+    hours = models.ForeignKey(
+        'home.RBGHours',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
+    content_panels = Page.content_panels + [
+        SnippetChooserPanel('hours', help_text=_("Choose the set of hours to display on the home page"))
+    ]
