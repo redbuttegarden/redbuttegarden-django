@@ -1,5 +1,7 @@
 from .dev import *
 
+DEBUG = True
+
 # Use local static file storage when running locally
 AWS_STORAGE_BUCKET_NAME = ''
 AWS_S3_REGION_NAME = 'us-east-1'
