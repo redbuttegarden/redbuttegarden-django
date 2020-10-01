@@ -1,4 +1,4 @@
-import cas.views
+import os
 
 from django.conf import settings
 from django.urls import include, path
@@ -10,15 +10,24 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from search import views as search_views
 
-urlpatterns = [
+urlpatterns = []
+"""
+Needed to use this wonky method of defining urlpatterns to avoid having the local
+environment try to authenticate using CAS.
+"""
+if not os.environ.get('DJANGO_SETTINGS_MODULE') == 'redbuttegarden.settings.local':
+    import cas.views
+    urlpatterns = [
+        # CAS
+        path('admin/login/', cas.views.login, name='login'),
+        path('admin/logout/', cas.views.logout, name='logout'),
+    ]
+
+urlpatterns += [
     path('', include('home.urls', namespace='home')),
     path('concerts/', include('concerts.urls', namespace='concerts')),
 
     path('django-admin/', admin.site.urls),
-
-    # CAS
-    path('admin/login/', cas.views.login, name='login'),
-    path('admin/logout/', cas.views.logout, name='logout'),
 
     path('admin/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
