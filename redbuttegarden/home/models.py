@@ -407,6 +407,7 @@ class FAQPage(Page):
 class RBGHours(models.Model):
     """
     Model for setting variables used by hours.js on the HomePage.
+    # TODO - Write tests to make sure hours display correctly for various times of day/year
     """
     # Set a name for this hours object
     name = models.CharField(max_length=200, help_text=_("Create a name for this set of hours"))
@@ -438,7 +439,8 @@ class RBGHours(models.Model):
     """
     gad_dates = StreamField(block_types=[
         ('date', blocks.DateBlock(verbose_name="Garden After Dark date", help_text=_("Date that GAD takes place")))
-    ], help_text=_("Choose the dates of GAD. If there are many, using the manual override might be easier"))
+    ], help_text=_("Choose the dates of GAD. If there are many, using the manual override might be easier"),
+        blank=True, null=True)
 
     panels = [
         FieldPanel('name'),
