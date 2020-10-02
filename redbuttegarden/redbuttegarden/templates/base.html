@@ -94,6 +94,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 {% block extra_includes %}{% endblock %}
 
+{% block abnormal_content %}
 <div id="rbgdefaultbody" class="container-fluid">
   <div class="row">
   	  <div class="col-sm-12">
@@ -101,6 +102,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 </div>
+{% endblock %}
 
 <!-- Google Analytics Code -->
 {% if not request.is_preview %}
