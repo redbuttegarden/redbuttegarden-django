@@ -10,3 +10,39 @@ hr {
 #image-list-card-info.lowpadding {
     margin-bottom: 10px;
 }
+
+#journalpostbody {
+    margin: 0 auto 0 auto;
+    padding: 65px 15px 15px 15px;
+}
+
+#journalpostbody img {
+    display: block;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 15px;
+}
+
+.tags div {
+    display: inline-block;
+    margin-bottom: 3px;
+}
+
+/* Used for categories in journal_page.html */
+.tags ul li {
+    border: 1px solid rgba(25,97,67,.7);
+    border-radius: 10px;
+}
+
+#journalpostbody img.richtext-image.left {
+    float: left;
+}
+
+#journalpostbody img.richtext-image.right {
+    float: right;
+}
+
+#journalpostbody .col-sm-3 {
+    border-right: 1px solid rgba(25,97,67,.7);
+}
