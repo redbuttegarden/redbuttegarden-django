@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core import blocks
@@ -16,10 +17,12 @@ class SingleListImage(blocks.StructBlock):
     title = blocks.CharBlock(
         label='Title',
         max_length=200,
+        help_text=_("Displayed right of image in h2 tag, centered and uppercase")
     )
     sub_title = blocks.CharBlock(
         label='Subtitle',
         max_length=200,
+        help_text=_("Displayed under title, centered and green")
     )
     text = blocks.RichTextBlock(
         label='Text',
@@ -28,6 +31,7 @@ class SingleListImage(blocks.StructBlock):
         label='Link URL',
         max_length=200,
         required=False,
+        help_text=_("If provided, the link will be applied to the image")
     )
 
 
@@ -35,6 +39,7 @@ class ListWithImagesBlock(blocks.StructBlock):
     list_items = blocks.ListBlock(
         SingleListImage(),
         label="List Item",
+        help_text=_("Images displayed with text to the right, all with a tan background")
     )
 
     class Meta:
