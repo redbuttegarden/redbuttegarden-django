@@ -1,16 +1,12 @@
-import json
-
-from django.contrib.postgres.fields import DateRangeField
 from django.core.paginator import Paginator
 from django.db import models
-from django.forms import DateInput
 from django.utils.translation import ugettext_lazy as _
 from modelcluster.fields import ParentalKey
 
 from wagtail.core import blocks
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel, FieldRowPanel
+from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.embeds.blocks import EmbedBlock
