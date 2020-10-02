@@ -130,7 +130,8 @@ class JournalPage(Page):
         ImageChooserPanel('image', help_text=_('Main image displayed on Journal index page')),
         FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
         FieldPanel('tags'),
-        InlinePanel('gallery_images', label=_('gallery images')),
+        InlinePanel('gallery_images', label=_('gallery images'),
+                    help_text=_("Gallery images are displayed along the left side of the page")),
         StreamFieldPanel('body'),
     ]
 
@@ -168,7 +169,7 @@ class JournalPageGalleryImage(Orderable):
     image = models.ForeignKey(
         'wagtailimages.Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='+'
     )
-    caption = models.CharField(blank=True, max_length=255)
+    caption = models.CharField(blank=True, max_length=255, help_text=_("Displayed below the image in italics"))
 
     panels = [
         ImageChooserPanel('image'),
