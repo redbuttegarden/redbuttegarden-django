@@ -11,7 +11,7 @@ def register_centertext_feature(features):
     # Step 1
     feature_name = "center"
     type_ = "CENTERTEXT"
-    tag = "div"
+    tag = "span"
 
     # Step 2
     control = {
