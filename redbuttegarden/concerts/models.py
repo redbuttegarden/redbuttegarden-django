@@ -1,10 +1,11 @@
 import datetime
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from modelcluster.fields import ParentalKey
 
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -18,6 +19,8 @@ class ConcertPage(Page):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    banner_link = models.URLField(default='/',
+                                  help_text=_("Where to direct the banner image link"))
     intro = RichTextField(blank=True)
     donor_banner = models.ForeignKey(
         'wagtailimages.Image',
@@ -26,11 +29,44 @@ class ConcertPage(Page):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    button_one = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    button_two = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    button_three = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    button_four = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('banner'),
+        FieldPanel('banner_link'),
         FieldPanel('intro', classname="full"),
         ImageChooserPanel('donor_banner'),
+        PageChooserPanel('button_one'),
+        PageChooserPanel('button_two'),
+        PageChooserPanel('button_three'),
+        PageChooserPanel('button_four'),
         InlinePanel('concerts', label='Concerts')
     ]
 
@@ -68,3 +104,13 @@ class Concert(Orderable):
         FieldPanel('member_price'),
         FieldPanel('public_price'),
     ]
+
+
+class DonorPackagePage(Page):
+    banner = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )

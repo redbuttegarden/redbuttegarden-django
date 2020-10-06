@@ -4,7 +4,7 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-12">
-            <a href="https://redbuttegarden.tickfly.com">
+            <a href="{{ page.banner_link }}">
                 {% image page.banner original class="responsive" %}
             </a>
             <div class="tan-bg">
@@ -12,7 +12,7 @@
                 <div class="row-fluid">
                     {{ page.intro|richtext }}
                 </div>
-                <a href="/concert-donors">
+                <a href="{% slugurl 'concert-donors' %}">
                     <div class="concertbanner hover">
                         {% image page.donor_banner original as donor_banner %}
                         <img src="{{ donor_banner.url }}" alt="Banner of concert donor logos">
@@ -21,29 +21,37 @@
             </div>
             <div id="concertcontent" class="container-fluid container-fluid-no-padding">
                 <div class="row-fluid" style="max-width: 1280px; float: none; margin: auto;">
-                    <a href="/how-to-buy-tickets">
-                        <div class="col-xs-6 col-sm-3 " style="clear:left;">
-                            <div class="concertinfo hover green-bg">HOW TO BUY</div>
-                        </div>
-                    </a>
+                    {% if page.button_one is not None %}
+                        <a href="{% pageurl page.button_one %}">
+                            <div class="col-xs-6 col-sm-3">
+                                <div class="concertinfo hover green-bg">{{ page.button_one.title }}</div>
+                            </div>
+                        </a>
+                    {% endif %}
 
-                    <a href="/donor-ticket-packages">
-                        <div class="col-xs-6 col-sm-3">
-                            <div class="concertinfo hover green-bg">TICKET PACKAGES</div>
-                        </div>
-                    </a>
+                    {% if page.button_two is not None %}
+                        <a href="{% pageurl page.button_two %}">
+                            <div class="col-xs-6 col-sm-3">
+                                <div class="concertinfo hover green-bg">{{ page.button_two.title }}</div>
+                            </div>
+                        </a>
+                    {% endif %}
 
-                    <a href="/concert-faq">
-                        <div class="col-xs-6 col-sm-3">
-                            <div class="concertinfo hover green-bg">FAQ'S</div>
-                        </div>
-                    </a>
+                    {% if page.button_three is not None %}
+                        <a href="{% pageurl page.button_three %}">
+                            <div class="col-xs-6 col-sm-3">
+                                <div class="concertinfo hover green-bg">{{ page.button_three.title }}</div>
+                            </div>
+                        </a>
+                    {% endif %}
 
-                    <a href="/past-concerts">
-                        <div class="col-xs-6 col-sm-3">
-                            <div class="concertinfo hover green-bg">PAST CONCERTS</div>
-                        </div>
-                    </a>
+                    {% if page.button_four is not None %}
+                        <a href="{% pageurl page.button_four %}">
+                            <div class="col-xs-6 col-sm-3">
+                                <div class="concertinfo hover green-bg">{{ page.button_four.title }}</div>
+                            </div>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
             <br>
