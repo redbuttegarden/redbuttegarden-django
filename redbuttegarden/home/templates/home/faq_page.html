@@ -12,6 +12,10 @@
             <div class="tan-bg">
                 {% include_block block %}
             </div>
+        {% elif block.block_type == 'image' %}
+            <div class="responsive">
+                {% include_block block %}
+            </div>
         {% else %}
             {% include_block block %}
         {% endif %}

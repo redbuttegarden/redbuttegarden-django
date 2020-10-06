@@ -389,14 +389,19 @@ class FAQPage(Page):
         ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
         ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
                                              help_text="Paragraph with a tan background")),
+        ('image', ImageChooserBlock()),
         ('FAQ_list', FAQList()),
     ])
+
     content_panels = Page.content_panels + [
         MultiFieldPanel([
             ImageChooserPanel('banner'),
         ], classname="collapsible"),
         StreamFieldPanel('body'),
     ]
+
+    class Meta:
+        verbose_name = "FAQ Page"
 
 
 @register_snippet
