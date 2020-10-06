@@ -46,3 +46,7 @@ hr {
 #journalpostbody .col-sm-3 {
     border-right: 1px solid rgba(25,97,67,.7);
 }
+
+span {
+    display: block;
+}
