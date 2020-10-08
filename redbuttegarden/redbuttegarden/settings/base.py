@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "wagtail.contrib.frontend_cache",
     'wagtail.contrib.redirects',
     'wagtail.contrib.routable_page',
+    "wagtail.contrib.table_block",
     'wagtail.embeds',
     'wagtail.sites',
     'wagtail.users',
