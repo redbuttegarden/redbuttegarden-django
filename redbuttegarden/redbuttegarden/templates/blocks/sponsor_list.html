@@ -1,0 +1,12 @@
+{% load wagtailimages_tags %}
+
+<div id="sponsor-list" class="row-fluid text-center">
+    {% for sponsor in value.list_items %}
+    <div class="info-table-card">
+        <h3>{{  sponsor.sponsor_title }}</h3>
+        <a href="{{ sponsor.sponsor_url }}">
+            {% image sponsor.sponsor_logo height-100 %}
+        </a>
+    </div>
+    {% endfor %}
+</div>
