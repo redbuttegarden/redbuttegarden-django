@@ -14,7 +14,7 @@ from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
 
-from home.models import Heading, EmphaticText
+from home.models import Heading, EmphaticText, AlignedParagraphBlock
 
 donor_table_options = {
     'minSpareRows': 0,
@@ -85,7 +85,7 @@ class ButtonTable(blocks.StructBlock):
 class TableInfoCard(blocks.StructBlock):
     body = StreamBlock([
         ('heading', Heading()),
-        ('paragraph', blocks.RichTextBlock()),
+        ('paragraph', AlignedParagraphBlock()),
         ('table', TableBlock(table_options=info_card_table_options))
     ])
 
@@ -208,7 +208,7 @@ class DonorPackagePage(Page):
                             help_text=_('Text will be green and centered'))),
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
-        ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
+        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
         ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
                                              help_text="Paragraph with a tan background")),
         ('image', ImageChooserBlock()),

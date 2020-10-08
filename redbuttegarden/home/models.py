@@ -16,6 +16,14 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 
+class AlignedParagraphBlock(blocks.StructBlock):
+    alignment = blocks.ChoiceBlock([('left', 'Left'), ('center', 'Center'), ('right', 'Right')], default='left')
+    paragraph = blocks.RichTextBlock()
+
+    class Meta:
+        template = 'blocks/aligned_paragraph.html'
+
+
 class FAQItem(blocks.StructBlock):
     title_question = blocks.CharBlock(
         label='Title/Question',
@@ -199,7 +207,7 @@ class GeneralPage(Page):
                             help_text=_('Text will be green and centered'))),
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
-        ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
+        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
         ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
                                              help_text="Paragraph with a tan background")),
         ('image', ImageChooserBlock()),
@@ -239,7 +247,7 @@ class TwoColumnGeneralPage(Page):
                             help_text=_('Text will be green and centered'))),
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
-        ('paragraph', blocks.RichTextBlock()),
+        ('paragraph', AlignedParagraphBlock()),
         ('image', ImageChooserBlock()),
         ('document', DocumentChooserBlock()),
         ('two_columns', TwoColumnBlock()),
@@ -336,7 +344,7 @@ class GeneralIndexPage(Page):
                             help_text=_('Text will be green and centered'))),
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
-        ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
+        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
         ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
                                              help_text="Paragraph with a tan background")),
         ('image', ImageChooserBlock()),
@@ -386,7 +394,7 @@ class FAQPage(Page):
     body = StreamField(block_types=[
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
-        ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
+        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
         ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
                                              help_text="Paragraph with a tan background")),
         ('image', ImageChooserBlock()),
