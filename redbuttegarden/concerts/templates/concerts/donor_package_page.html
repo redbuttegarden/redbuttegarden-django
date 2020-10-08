@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block content %}
+    <div class="row-fluid">
+        {% image page.banner original class="responsive" %}
+    </div>
+    <br>
+
+    {% for block in page.body %}
+        {% if block.block_type == 'tan_bg_text' %}
+            <div class="tan-bg">
+                {% include_block block %}
+            </div>
+        {% else %}
+            {% include_block block %}
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/bootstrap_table_block.js' %}"></script>
+    <script src="{% static 'js/emphasize_waitlist.js' %}"></script>
+{% endblock %}
