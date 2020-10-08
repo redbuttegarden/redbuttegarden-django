@@ -47,6 +47,26 @@ hr {
     border-right: 1px solid rgba(25,97,67,.7);
 }
 
-span {
-    display: block;
+#sponsor-list, #table-info-card-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#sponsor-list .info-table-card {
+    min-height: 200px;
+    margin: 5px 50px;
+}
+
+.sponinfo table caption {
+    color: #A26BA2;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#table-info-card-list thead th {
+    background-color: #196143;
+    color: white;
+    text-align: center;
+    border: 1px solid black;
 }

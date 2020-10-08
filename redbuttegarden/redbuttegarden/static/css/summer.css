@@ -1850,6 +1850,7 @@ no-repeat 5px 3px;
 	border: 1px solid black;
 	font-size: 12px;
 	border-radius: 2px;
+	margin: 5px auto;
 }
 
 .sponinfo td {
