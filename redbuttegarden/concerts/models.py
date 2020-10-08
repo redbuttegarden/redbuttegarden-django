@@ -4,11 +4,100 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from modelcluster.fields import ParentalKey
+from wagtail.admin import blocks
+from wagtail.contrib.table_block.blocks import TableBlock
+from wagtail.core.blocks import StreamBlock
+from wagtail.images.blocks import ImageChooserBlock
 
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, StreamFieldPanel
 from wagtail.core.models import Page, Orderable
-from wagtail.core.fields import RichTextField
+from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
+
+from home.models import Heading, EmphaticText
+
+donor_table_options = {
+    'minSpareRows': 0,
+    'startRows': 3,
+    'startCols': 6,
+    'colHeaders': True,
+    'rowHeaders': True,
+    'contextMenu': True,
+    'editor': 'text',
+    'stretchH': 'all',
+    'height': 216,
+    'language': 'en-US',
+    'renderer': 'text',
+    'autoColumnSize': False,
+}
+
+info_card_table_options = {
+    'minSpareRows': 0,
+    'startRows': 2,
+    'startCols': 4,
+    'colHeaders': True,
+    'rowHeaders': True,
+    'contextMenu': True,
+    'editor': 'text',
+    'stretchH': 'all',
+    'height': 216,
+    'language': 'en-US',
+    'renderer': 'text',
+    'autoColumnSize': False,
+}
+
+
+class Sponsors(blocks.StructBlock):
+    sponsor_title = blocks.CharBlock(
+        label='Sponsor Title',
+        max_length=200,
+    )
+    sponsor_url = blocks.URLBlock(
+        label="URL to sponsor website"
+    )
+    sponsor_logo = ImageChooserBlock()
+
+
+class SponsorList(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        Sponsors(),
+        label="Sponsors"
+    )
+
+    class Meta:
+        template = 'blocks/sponsor_list.html'
+
+
+class ButtonTable(blocks.StructBlock):
+    button_text = blocks.CharBlock(
+        label="Button text"
+    )
+    table_list = blocks.StreamBlock([
+        ('title', Heading()),
+        ('table', TableBlock(table_options=donor_table_options,
+                             help_text=_("Right-click to add/remove rows/columns"))),
+    ])
+
+    class Meta:
+        template = 'blocks/button_table.html'
+
+
+class TableInfoCard(blocks.StructBlock):
+    body = StreamBlock([
+        ('heading', Heading()),
+        ('paragraph', blocks.RichTextBlock()),
+        ('table', TableBlock(table_options=info_card_table_options))
+    ])
+
+
+class TableInfoCardList(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        TableInfoCard(),
+        label="List of info cards with tables"
+    )
+
+    class Meta:
+        template = 'blocks/table_info_card_list.html'
 
 
 class ConcertPage(Page):
@@ -114,3 +203,22 @@ class DonorPackagePage(Page):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    body = StreamField(block_types=[
+        ('heading', Heading(classname='full title',
+                            help_text=_('Text will be green and centered'))),
+        ('emphatic_text', EmphaticText(classname='full title',
+                                       help_text=_('Text will be red, italic and centered'))),
+        ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
+        ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
+                                             help_text="Paragraph with a tan background")),
+        ('image', ImageChooserBlock()),
+        ('html', blocks.RawHTMLBlock()),
+        ('sponsor_list', SponsorList()),
+        ('button_table', ButtonTable()),
+        ('table_cards', TableInfoCardList()),
+    ], blank=False)
+
+    content_panels = Page.content_panels + [
+        ImageChooserPanel('banner'),
+        StreamFieldPanel('body'),
+    ]
