@@ -170,6 +170,7 @@ WAGTAILEMBEDS_RESPONSIVE_HTML = True
 WAGTAIL_USER_EDIT_FORM = 'custom_user.forms.CustomUserEditForm'
 WAGTAIL_USER_CREATION_FORM = 'custom_user.forms.CustomUserCreationForm'
 WAGTAIL_USER_CUSTOM_FIELDS = ['title']
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = 4.5 * 1024 * 1024  # i.e. 4.5MB - Needed to avoid hitting AWS API Gateway payload limits
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
