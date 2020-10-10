@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'wagtail.admin',
     'wagtail.core',
 
-    'cas',
+    'cas',  # Sometimes necessary to comment this app out to dump database
     'corsheaders',
     'modelcluster',
     'storages',
