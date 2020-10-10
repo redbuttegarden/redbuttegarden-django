@@ -29,7 +29,7 @@ class FAQItem(blocks.StructBlock):
         label='Title/Question',
         max_length=200,
     )
-    text = blocks.RichTextBlock(
+    text = AlignedParagraphBlock(
         label='Answer'
     )
 
