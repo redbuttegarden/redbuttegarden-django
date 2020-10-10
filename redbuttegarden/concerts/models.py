@@ -4,9 +4,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from modelcluster.fields import ParentalKey
-from wagtail.admin import blocks
 from wagtail.contrib.table_block.blocks import TableBlock
-from wagtail.core.blocks import StreamBlock
+from wagtail.core import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, StreamFieldPanel
@@ -83,7 +82,7 @@ class ButtonTable(blocks.StructBlock):
 
 
 class TableInfoCard(blocks.StructBlock):
-    body = StreamBlock([
+    body = blocks.StreamBlock([
         ('heading', Heading()),
         ('paragraph', AlignedParagraphBlock()),
         ('table', TableBlock(table_options=info_card_table_options))
