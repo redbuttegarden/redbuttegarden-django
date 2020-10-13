@@ -82,3 +82,11 @@ hr {
 .right {
     text-align: right;
 }
+
+img.right {
+    float: right;
+}
+
+img.left {
+    float: left;
+}
