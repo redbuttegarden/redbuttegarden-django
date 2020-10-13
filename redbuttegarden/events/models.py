@@ -75,7 +75,7 @@ class EventIndexPage(Page):
         StreamFieldPanel('body', classname="full"),
     ]
 
-    subpage_types = ['events.EventPage']
+    subpage_types = ['events.EventPage', 'home.GeneralPage']
 
     def get_event_items(self):
         # This returns a Django paginator of blog items in this section
