@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'home',
     'journal',
     'search',
+    'shop',
 
     'wagtail.contrib.forms',
     "wagtail.contrib.frontend_cache",
