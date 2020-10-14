@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel
@@ -64,6 +65,10 @@ class SnipcartSettings(BaseSetting):
 class ShopIndexPage(Page):
 
     subpage_types = ['shop.Product']
+
+    def get_product_items(self):
+        # This returns a Django paginator of blog items in this section
+        return Paginator(self.get_children().live(), 6)
 
     def get_context(self, request, **kwargs):
         context = super().get_context(request, **kwargs)
