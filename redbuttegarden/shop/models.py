@@ -62,6 +62,9 @@ class SnipcartSettings(BaseSetting):
 
 
 class ShopIndexPage(Page):
+
+    subpage_types = ['shop.Product']
+
     def get_context(self, request, **kwargs):
         context = super().get_context(request, **kwargs)
 
