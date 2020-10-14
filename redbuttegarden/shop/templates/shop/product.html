@@ -53,4 +53,15 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.custom-field-select').onchange = function(event) {
+                if (event.target.dataset.field) {
+                    document.querySelector('.snipcart-add-item')
+                        .dataset['itemCustom' + event.target.dataset.field + 'Value'] = event.target.value;
+                }
+            };
+        },false);
+    </script>
 {% endblock %}
