@@ -45,3 +45,12 @@ class SnipcartSettings(BaseSetting):
         max_length=255,
         help_text='Your Snipcart public API key'
     )
+
+
+class ShopIndexPage(Page):
+    def get_context(self, request, **kwargs):
+        context = super().get_context(request, **kwargs)
+
+        context['products'] = Product.objects.child_of(self).live()
+
+        return context
