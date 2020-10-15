@@ -11,7 +11,7 @@
             {% image block.value original class="responsive" %}
         {% else %}
             <section class="block-{{ block.block_type }}">
-                {% include_block block %}
+                {% include_block block with id=block.id %}
             </section>
         {% endif %}
     {% endfor %}

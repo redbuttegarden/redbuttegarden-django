@@ -13,7 +13,7 @@
                 {% include_block block %}
             </div>
         {% else %}
-            {% include_block block %}
+            {% include_block block with id=block.id %}
         {% endif %}
     {% endfor %}
 {% endblock %}
