@@ -85,8 +85,17 @@ hr {
 
 img.right {
     float: right;
+    width: 100%;
+    height: auto;
 }
 
 img.left {
     float: left;
+    width: 100%;
+    height: auto;
+}
+
+img.full-width {
+    width: 100%;
+    height: auto;
 }
