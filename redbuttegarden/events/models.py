@@ -9,7 +9,7 @@ from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.blocks import ImageChooserBlock
 
-from home.models import AlignedParagraphBlock
+from home.models import AlignedParagraphBlock, GeneralPage
 
 
 class SingleListImage(blocks.StructBlock):
@@ -75,11 +75,11 @@ class EventIndexPage(Page):
         StreamFieldPanel('body', classname="full"),
     ]
 
-    subpage_types = ['events.EventPage', 'home.GeneralPage']
+    subpage_types = ['events.EventPage', 'events.EventGeneralPage']
 
     def get_event_items(self):
-        # This returns a Django paginator of blog items in this section
-        return Paginator(self.get_children().live().type(EventPage), 10)
+        # This returns a Django paginator of event items in this section
+        return Paginator(self.get_children().live(), 10)
 
     def get_cached_paths(self):
         # Yield the main URL
@@ -127,6 +127,19 @@ class EventPage(Page):
         FieldPanel('event_dates'),
         FieldPanel('notes'),
         StreamFieldPanel('body'),
+    ]
+
+    parent_page_types = ['events.EventIndexPage']
+
+
+class EventGeneralPage(GeneralPage):
+    event_dates = models.CharField(max_length=200)
+    notes = RichTextField(blank=True, help_text="Notes will appear on the thumbnail image of the event on the event index page")
+    image = GeneralPage.thumbnail  # just to match EventPage so the EventIndexPage template doesn't need to be changed
+
+    content_panels = GeneralPage.content_panels + [
+        FieldPanel('event_dates'),
+        FieldPanel('notes'),
     ]
 
     parent_page_types = ['events.EventIndexPage']
