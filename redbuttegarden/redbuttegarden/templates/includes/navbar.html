@@ -22,33 +22,35 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">VISIT <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a title="Link to info page for visiting the garden while following COVID-19 guidlines" href="{% slugurl 'plan-your-garden-visit' %}">PLAN YOUR VISIT</a></li>
-                                <li><a href="{% url 'home:general-info' %}">GENERAL INFO</a></li>
-                                <li><a href="{% url 'home:about-us' %}">ABOUT US</a></li>
-                                <li><a href="{% slugurl 'garden-maps' %}">GARDEN MAPS</a></li>
-                                <li><a href="{% slugurl 'gift-shop' %}">GIFT SHOP</a></li>
-                                <li><a href="{% slugurl 'free-garden-events' %}">FREE DAYS<br />&amp; EVENTS</a></li>
-                                <li><a href="{% slugurl 'garden-tours' %}">GARDEN TOURS</a></li>
-                                <li><a href="{% slugurl 'poetry' %}">POETRY IN <br />THE GARDEN</a></li>
+                                <li><a title="Link to general information page with prices, hours, directions, etcetera" href="{% url 'home:general-info' %}">GENERAL INFO</a></li>
+                                <li><a title="Link to page about Red Butte Garden including mission statement and brief history" href="{% url 'home:about-us' %}">ABOUT US</a></li>
+                                <li><a title="Link to page with maps of the garden" href="{% slugurl 'garden-maps' %}">GARDEN MAPS</a></li>
+                                <li><a title="Link to page discribing our garden gift shop" href="{% slugurl 'gift-shop' %}">GIFT SHOP</a></li>
+                                <li><a title="Link to page listing free admission days and free events" href="{% slugurl 'free-garden-events' %}">FREE DAYS<br />&amp; EVENTS</a></li>
+                                <li><a title="Link to page descriping how to schedule private garden tours" href="{% slugurl 'garden-tours' %}">GARDEN TOURS</a></li>
+                                <li><a title="Link to our poetry box map, poetry walk info, and contest" href="{% slugurl 'poetry' %}">POETRY IN <br />THE GARDEN</a></li>
                             </ul>
                         </li>
 
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">PLANTS &amp; GARDENS <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="https://herbaria.plants.ox.ac.uk/bol/rbbg/">INTERACTIVE<br/>PLANT MAP</a></li>
-                                <li><a href="{% slugurl 'themed-gardens' %}">THEMED GARDENS</a></li>
-                                <li><a href="{% slugurl 'plant-collections' %}">PLANT COLLECTIONS</a></li>
-                                <li><a href="{% slugurl 'gardening-information' %}">GARDENING INFORMATION</a></li>
-                                <li><a href="{% slugurl 'conservation-research' %}">PLANT CONSERVATION<br />RESEARCH</a></li>
-                                <li><a href="{% slugurl 'whats-blooming-now' %}">WHAT'S BLOOMING<br /> NOW BLOG</a></li>
+                                <li><a title="Link to map displaying plant location in the garden" href="https://herbaria.plants.ox.ac.uk/bol/rbbg/">INTERACTIVE<br/>PLANT MAP</a></li>
+                                <li><a title="Link to page with info about our themed gardens" href="{% slugurl 'themed-gardens' %}">THEMED GARDENS</a></li>
+                                <li><a title="Link to slideshows and descriptions of our various plant collections" href="{% slugurl 'plant-collections' %}">PLANT COLLECTIONS</a></li>
+                                <li><a title="Tips and tricks for doing your own gardening" href="{% slugurl 'gardening-information' %}">GARDENING INFORMATION</a></li>
+                                <li><a title="Desciptions of what's going on in our Conservation Department" href="{% slugurl 'conservation-research' %}">PLANT CONSERVATION<br />RESEARCH</a></li>
+                                <li><a title="A blog for keeping up with blooms at the garden" href="{% slugurl 'whats-blooming-now' %}">WHAT'S BLOOMING<br /> NOW BLOG</a></li>
                             </ul>
                         </li>
 
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">EVENTS <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <a href="/concerts"><span class="concert-li"><li>OUTDOOR CONCERT SERIES</li></span></a>
-                                <a href="/spring"><li>SPRING EVENTS</li></a>
+                                <li><a title="Link to page listing concert schedules and general information" href="{% slugurl 'concerts' %}">
+                                    <span class="concert-li">OUTDOOR CONCERT SERIES</span>
+                                </a></li>
+                                <li><a title="Links to events going on during the Spring season" href="{% slugurl 'spring-events' %}">SPRING EVENTS</a></li>
                                 <a href="/summer"><li>SUMMER EVENTS</li></a>
                                 <a href="/fall"><li>FALL EVENTS</li></a>
                                 <a href="/winter"><li>WINTER EVENTS</li></a>
