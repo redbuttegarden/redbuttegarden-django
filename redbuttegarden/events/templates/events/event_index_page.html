@@ -51,6 +51,20 @@
                 </div>
 
                 <br>
+
+            {% elif block.block_type == "page_link" %}
+                {% with spage=block.value.specific %}
+                    <div class="col-sm-4">
+                        <a href="{% pageurl spage %}">
+                            <div class="eventwrapsmall hover">
+                                {% image spage.thumbnail original %}
+                                <div class="eventinfo">
+                                    <div class="eventname">{{ spage.title }}</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endwith %}
             {% else %}
                 {% include_block block %}
                 <br>

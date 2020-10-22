@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core import blocks
+from wagtail.core.blocks import PageChooserBlock
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -68,7 +69,7 @@ class EventIndexPage(Page):
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    body = StreamField(BLOCK_TYPES, blank=True)
+    body = StreamField(BLOCK_TYPES + [('page_link', PageChooserBlock())], blank=True)
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('banner'),
