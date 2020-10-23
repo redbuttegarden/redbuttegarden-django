@@ -1,0 +1,16 @@
+{% load wagtailimages_tags %}
+
+<div id="image-link-list-{{ id }}" class="row-fluid xs-12">
+    {% for image_item in value.list_items %}
+    <div class="col-sm-4">
+        <a href="{{ image_item.url }}">
+            <div class="eventwrapsmall hover">
+                {% image image_item.image original %}
+                <div class="eventinfo">
+                    <div class="eventname">{{ image_item.title }}</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>

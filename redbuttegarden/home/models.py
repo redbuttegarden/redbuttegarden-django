@@ -16,6 +16,27 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 
+class ImageLink(blocks.StructBlock):
+    title = blocks.CharBlock(
+        label='Title',
+        max_length=200,
+    )
+    url = blocks.URLBlock(
+        label="URL"
+    )
+    image = ImageChooserBlock()
+
+
+class ImageLinkList(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        ImageLink(),
+        label="Image Links"
+    )
+
+    class Meta:
+        template = 'blocks/image_link_list.html'
+
+
 class AlignedParagraphBlock(blocks.StructBlock):
     alignment = blocks.ChoiceBlock([('left', 'Left'), ('center', 'Center'), ('right', 'Right')], default='left')
     paragraph = blocks.RichTextBlock()
@@ -351,6 +372,7 @@ class GeneralIndexPage(Page):
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
+        ('image_link_list', ImageLinkList()),
     ], blank=True)
 
     content_panels = Page.content_panels + [
