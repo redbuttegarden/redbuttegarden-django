@@ -84,19 +84,21 @@
             <div class="ev-desc">
                 <div>
                     {% for block in page.body %}
-                        {% if block.block_type == 'tan_bg_text' %}
-                            <div class="tan-bg">
+                        <div class="row-fluid">
+                            {% if block.block_type == 'tan_bg_text' %}
+                                <div class="tan-bg">
+                                    {% include_block block %}
+                                </div>
+                            {% elif block.block_type == 'green_heading' %}
+                                <h4 class="text-center green">
+                                    {% include_block block %}
+                                </h4>
+                            {% elif block.block_type == 'image' %}
+                                {% image block.value original class="responsive" %}
+                            {% else %}
                                 {% include_block block %}
-                            </div>
-                        {% elif block.block_type == 'green_heading' %}
-                            <h4 class="text-center green">
-                                {% include_block block %}
-                            </h4>
-                        {% elif block.block_type == 'image' %}
-                            {% image block.value original class="responsive" %}
-                        {% else %}
-                            {% include_block block %}
-                        {% endif %}
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
             </div>
