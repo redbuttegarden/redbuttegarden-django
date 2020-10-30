@@ -35,14 +35,6 @@ hr {
     border-radius: 10px;
 }
 
-#journalpostbody img.richtext-image.left {
-    float: left;
-}
-
-#journalpostbody img.richtext-image.right {
-    float: right;
-}
-
 #journalpostbody .col-sm-3 {
     border-right: 1px solid rgba(25,97,67,.7);
 }
@@ -81,6 +73,10 @@ hr {
 
 .right {
     text-align: right;
+}
+
+img.richtext-image {
+    padding: 0 10px;
 }
 
 img.right {
