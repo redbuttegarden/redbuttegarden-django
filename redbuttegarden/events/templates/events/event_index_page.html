@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
     <div class="row-fluid text-center">
@@ -24,7 +24,7 @@
         {% empty %}
             <br>
             <br>
-            <div class="row-fluid">
+            <div id="empty-msg" class="row-fluid">
                 <div class="tan-bg">
                     <h4 class="text-center green">
                         There are currently no planned events in the near future. Please check back soon!
@@ -55,7 +55,7 @@
             {% elif block.block_type == "page_link" %}
                 <!-- spage is just short for specific page -->
                 {% with spage=block.value.specific %}
-                    <div class="col-sm-4">
+                    <div class="col-sm-4 page-link">
                         <a href="{% pageurl spage %}">
                             <div class="eventwrapsmall hover">
                                 {% if spage.thumbnail %}
@@ -77,4 +77,8 @@
             {% endif %}
         {% endfor %}
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/no_children_page_links.js' %}"></script>
 {% endblock %}
