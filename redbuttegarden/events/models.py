@@ -70,10 +70,12 @@ class EventIndexPage(Page):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    intro = RichTextField(blank=True)
     body = StreamField(BLOCK_TYPES + [('page_link', PageChooserBlock())], blank=True)
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('banner'),
+        FieldPanel('intro'),
         StreamFieldPanel('body', classname="full"),
     ]
 

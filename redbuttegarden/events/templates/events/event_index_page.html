@@ -5,6 +5,13 @@
     <div class="row-fluid text-center">
         {% image page.banner max-1280x500 %}
     </div>
+
+    <br>
+
+    <div class="row-fluid text-center">
+        {{ page.intro|richtext }}
+    </div>
+
     <div class="row-fluid col xs-12">
         {% for event in events %}
             <div class="col-sm-4">
