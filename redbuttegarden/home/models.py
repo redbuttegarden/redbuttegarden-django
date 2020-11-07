@@ -20,6 +20,7 @@ class ImageLink(blocks.StructBlock):
     title = blocks.CharBlock(
         label='Title',
         max_length=200,
+        required=False,
     )
     url = blocks.URLBlock(
         label="URL"

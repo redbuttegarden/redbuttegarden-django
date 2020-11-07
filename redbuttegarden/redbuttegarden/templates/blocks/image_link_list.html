@@ -6,9 +6,11 @@
         <a href="{{ image_item.url }}">
             <div class="eventwrapsmall hover">
                 {% image image_item.image original %}
-                <div class="eventinfo">
-                    <div class="eventname">{{ image_item.title }}</div>
-                </div>
+                {% if image_item.title %}
+                    <div class="eventinfo">
+                        <div class="eventname">{{ image_item.title }}</div>
+                    </div>
+                {% endif %}
             </div>
         </a>
     </div>

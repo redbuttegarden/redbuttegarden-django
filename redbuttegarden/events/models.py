@@ -10,7 +10,7 @@ from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.blocks import ImageChooserBlock
 
-from home.models import AlignedParagraphBlock, EmphaticText, GeneralPage
+from home.models import AlignedParagraphBlock, EmphaticText, GeneralPage, ImageLinkList
 
 
 class SingleListImage(blocks.StructBlock):
@@ -57,6 +57,7 @@ BLOCK_TYPES = [
         ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
                                              help_text="Paragraph with a tan background")),
         ('image', ImageChooserBlock()),
+        ('image_link_list', ImageLinkList()),
         ('html', blocks.RawHTMLBlock(required=False)),
         ('image_list', ListWithImagesBlock(required=False)),
     ]
