@@ -29,6 +29,8 @@ class SingleListImage(blocks.StructBlock):
     )
     text = blocks.RichTextBlock(
         label='Text',
+        required=False,
+        help_text=_("Optional text to be displayed alongside image")
     )
     link_url = blocks.URLBlock(
         label='Link URL',
