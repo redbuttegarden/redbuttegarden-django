@@ -10,7 +10,7 @@ from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.blocks import ImageChooserBlock
 
-from home.models import AlignedParagraphBlock, EmphaticText, GeneralPage, ImageLinkList
+from home.models import AlignedParagraphBlock, ButtonBlock, EmphaticText, GeneralPage, ImageLinkList
 
 
 class SingleListImage(blocks.StructBlock):
@@ -53,6 +53,7 @@ class ListWithImagesBlock(blocks.StructBlock):
 
 
 BLOCK_TYPES = [
+        ('button', ButtonBlock()),
         ('green_heading', blocks.CharBlock(max_length=200, help_text="Green centered text")),
         ('emphatic_text', EmphaticText(required=False, help_text="Red italic text")),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
