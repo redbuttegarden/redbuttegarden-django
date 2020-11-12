@@ -2,15 +2,45 @@ from django.core.paginator import Paginator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, PageChooserPanel
 from wagtail.core import blocks
 from wagtail.core.blocks import PageChooserBlock
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.blocks import ImageChooserBlock
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
+from wagtail.snippets.models import register_snippet
 
 from home.models import AlignedParagraphBlock, ButtonBlock, EmphaticText, GeneralPage, ImageLinkList
+
+
+@register_snippet
+class PolicyLink(models.Model):
+    """
+    Model for maintaining links to policy pages that can be used on many pages
+    """
+    name = models.CharField(max_length=100, help_text=_("Create a name for this policy"))
+    link_text = models.CharField(max_length=500, help_text=_("This text will link to the provided policy page"))
+    policy_page = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('link_text'),
+        PageChooserPanel('policy_page'),
+    ]
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Policy Link"
 
 
 class SingleListImage(blocks.StructBlock):
@@ -121,6 +151,13 @@ class EventPage(Page):
     event_dates = models.CharField(max_length=200)
     notes = RichTextField(blank=True, help_text="Notes will appear on the thumbnail image of the event on the event index page")
     body = StreamField(BLOCK_TYPES)
+    policy = models.ForeignKey(
+        'events.PolicyLink',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('image'),
@@ -133,6 +170,7 @@ class EventPage(Page):
         FieldPanel('event_dates'),
         FieldPanel('notes'),
         StreamFieldPanel('body'),
+        SnippetChooserPanel('policy', help_text=_("Optionally choose a policy link to include on the page"))
     ]
 
     parent_page_types = ['events.EventIndexPage']

@@ -96,6 +96,21 @@
                             {% endif %}
                         </div>
                     {% endfor %}
+
+                    {% if page.policy.name %}
+
+                        <br>
+
+                        <div class="row-fluid">
+                            <p class="text-center">
+                                {% with policy_page=page.policy.policy_page.specific %}
+                                    <a href="{% pageurl policy_page %}">
+                                        {{ page.policy.link_text }}
+                                    </a>
+                                {% endwith %}
+                            </p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
