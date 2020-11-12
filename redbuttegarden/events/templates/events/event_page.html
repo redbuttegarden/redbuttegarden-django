@@ -85,11 +85,7 @@
                 <div>
                     {% for block in page.body %}
                         <div class="row-fluid">
-                            {% if block.block_type == 'tan_bg_text' %}
-                                <div class="tan-bg">
-                                    {% include_block block %}
-                                </div>
-                            {% elif block.block_type == 'green_heading' %}
+                            {% if block.block_type == 'green_heading' %}
                                 <h4 class="text-center green">
                                     {% include_block block %}
                                 </h4>

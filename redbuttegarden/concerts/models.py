@@ -208,8 +208,6 @@ class DonorPackagePage(Page):
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
-        ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
-                                             help_text="Paragraph with a tan background")),
         ('image', ImageChooserBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('sponsor_list', SponsorList()),

@@ -40,6 +40,9 @@ class ImageLinkList(blocks.StructBlock):
 
 class AlignedParagraphBlock(blocks.StructBlock):
     alignment = blocks.ChoiceBlock([('left', 'Left'), ('center', 'Center'), ('right', 'Right')], default='left')
+    background_color = blocks.ChoiceBlock([('default', 'Default'), ('tan-bg', 'Tan'), ('green-bg', 'Green'),
+                                           ('dark-tan-bg', 'Dark Tan'), ('white-bg', 'White'), ('red-bg', 'Red'),
+                                           ('orange-bg', 'Orange')], default='default')
     paragraph = blocks.RichTextBlock()
 
     class Meta:
@@ -230,8 +233,6 @@ class GeneralPage(Page):
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
-        ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
-                                             help_text="Paragraph with a tan background")),
         ('image', ImageChooserBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
@@ -367,8 +368,6 @@ class GeneralIndexPage(Page):
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
-        ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
-                                             help_text="Paragraph with a tan background")),
         ('image', ImageChooserBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
@@ -418,8 +417,6 @@ class FAQPage(Page):
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
-        ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
-                                             help_text="Paragraph with a tan background")),
         ('image', ImageChooserBlock()),
         ('FAQ_list', FAQList()),
     ])

@@ -8,11 +8,7 @@
     <br>
 
     {% for block in page.body %}
-        {% if block.block_type == 'tan_bg_text' %}
-            <div class="tan-bg">
-                {% include_block block %}
-            </div>
-        {% elif block.block_type == 'image' %}
+        {% if block.block_type == 'image' %}
             <div class="responsive">
                 {% include_block block %}
             </div>

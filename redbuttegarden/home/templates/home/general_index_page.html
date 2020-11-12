@@ -8,13 +8,7 @@
     <br>
 
     {% for block in page.body %}
-        {% if block.block_type == 'tan_bg_text' %}
-            <div class="tan-bg">
-                {% include_block block %}
-            </div>
-        {% else %}
-            {% include_block block with id=block.id %}
-        {% endif %}
+        {% include_block block with id=block.id %}
     {% endfor %}
 
     <hr>

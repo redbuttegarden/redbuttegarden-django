@@ -2269,6 +2269,8 @@ no-repeat 5px 3px;
 }
 
 .green-bg {
+	color: white;  /* Black text is too difficult to read with green background */
+	padding: 10px;
 	background-color: #196143;
 }
 
@@ -2288,11 +2290,13 @@ no-repeat 5px 3px;
 }
 
 .red-bg {
+	color: white;  /* Better color contrast makes it easier to read with white text */
 	padding: 10px;
 	background-color: red;
 }
 
 .orange-bg {
+	font-weight: bold;  /* Again, makes text easier to read this way */
 	padding: 10px;
 	background-color: #FF7744;
 }

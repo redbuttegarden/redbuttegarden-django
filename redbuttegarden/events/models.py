@@ -57,8 +57,6 @@ BLOCK_TYPES = [
         ('green_heading', blocks.CharBlock(max_length=200, help_text="Green centered text")),
         ('emphatic_text', EmphaticText(required=False, help_text="Red italic text")),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
-        ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
-                                             help_text="Paragraph with a tan background")),
         ('image', ImageChooserBlock()),
         ('image_link_list', ImageLinkList()),
         ('html', blocks.RawHTMLBlock(required=False)),
