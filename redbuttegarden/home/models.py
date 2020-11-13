@@ -144,10 +144,12 @@ class ButtonListDropdownInfo(blocks.StructBlock):
 
 
 class Heading(blocks.CharBlock):
+    """Green centered h2 element"""
+
     class Meta:
         template = 'blocks/heading.html'
         icon = 'grip'
-        label = 'Heading'
+        label = 'Green Centered Heading'
 
 
 class EmphaticText(blocks.CharBlock):
@@ -266,8 +268,8 @@ class TwoColumnGeneralPage(Page):
         help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
     )
     body = StreamField(block_types=([
-        ('heading', Heading(classname='full title',
-                            help_text=_('Text will be green and centered'))),
+        ('green_heading', Heading(classname='full title',
+                                  help_text=_('Text will be green and centered'))),
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
         ('paragraph', AlignedParagraphBlock()),

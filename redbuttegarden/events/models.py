@@ -12,7 +12,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from home.models import AlignedParagraphBlock, ButtonBlock, EmphaticText, GeneralPage, ImageLinkList
+from home.models import AlignedParagraphBlock, ButtonBlock, EmphaticText, GeneralPage, ImageLinkList, Heading
 
 
 @register_snippet
@@ -83,15 +83,16 @@ class ListWithImagesBlock(blocks.StructBlock):
 
 
 BLOCK_TYPES = [
-        ('button', ButtonBlock()),
-        ('green_heading', blocks.CharBlock(max_length=200, help_text="Green centered text")),
-        ('emphatic_text', EmphaticText(required=False, help_text="Red italic text")),
-        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
-        ('image', ImageChooserBlock()),
-        ('image_link_list', ImageLinkList()),
-        ('html', blocks.RawHTMLBlock(required=False)),
-        ('image_list', ListWithImagesBlock(required=False)),
-    ]
+    ('button', ButtonBlock()),
+    ('green_heading', Heading(classname='full title',
+                              help_text=_('Text will be green and centered'))),
+    ('emphatic_text', EmphaticText(required=False, help_text="Red italic text")),
+    ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
+    ('image', ImageChooserBlock()),
+    ('image_link_list', ImageLinkList()),
+    ('html', blocks.RawHTMLBlock(required=False)),
+    ('image_list', ListWithImagesBlock(required=False)),
+]
 
 
 class EventIndexPage(Page):
@@ -149,7 +150,8 @@ class EventPage(Page):
 
     sub_heading = models.CharField(max_length=200, blank=True, help_text="e.g. 500,000 Blooming Bulbs")
     event_dates = models.CharField(max_length=200)
-    notes = RichTextField(blank=True, help_text="Notes will appear on the thumbnail image of the event on the event index page")
+    notes = RichTextField(blank=True,
+                          help_text="Notes will appear on the thumbnail image of the event on the event index page")
     body = StreamField(BLOCK_TYPES)
     policy = models.ForeignKey(
         'events.PolicyLink',
@@ -178,7 +180,8 @@ class EventPage(Page):
 
 class EventGeneralPage(GeneralPage):
     event_dates = models.CharField(max_length=200)
-    notes = RichTextField(blank=True, help_text="Notes will appear on the thumbnail image of the event on the event index page")
+    notes = RichTextField(blank=True,
+                          help_text="Notes will appear on the thumbnail image of the event on the event index page")
     image = GeneralPage.thumbnail  # just to match EventPage so the EventIndexPage template doesn't need to be changed
 
     content_panels = GeneralPage.content_panels + [

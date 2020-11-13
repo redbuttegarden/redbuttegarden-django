@@ -46,11 +46,7 @@
 
     <div class="row-fluid">
         {% for block in page.body %}
-            {% if block.block_type == "green_heading" %}
-                <h4 class="green">
-                    {% include_block block %}
-                </h4>
-            {% elif block.block_type == "image" %}
+            {% if block.block_type == "image" %}
                 <br>
 
                 <div class="text-center">
