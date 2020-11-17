@@ -1,0 +1,45 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<hr>
+
+{% for image_item in value.list_items %}
+    <div class="row-fluid">
+        <div class="col-sm-3">
+            <br class="br-hide">
+            <div class="eventwrapsmall">
+                {% image image_item.image original class="responsive" %}
+                <div class="eventinfo">
+                    <div class="eventname">{{ image_item.title }}</div>
+                    <div class="eventdate">{{ image_item.subtitle }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-9">
+            <h3 class="text-center green">{{ image_item.info_title }}</h3>
+            <p class="text-center">{{ image_item.info_subtitle }}</p>
+            <div class="tan-bg text-center">
+
+                <br>
+
+                <div class="bold green">
+                    {{ image_item.tan_bg_info|richtext }}
+                </div>
+                <div class="green-bg btn">
+                    <a href="{{ image_item.tan_bg_button_url }}">
+                            {{ image_item.tan_bg_button_text }}
+                    </a>
+
+                    <br>
+
+                </div>
+            </div>
+
+            <br>
+
+            <div class="text-center">
+                {{ image_item.additional_info|richtext }}
+            </div>
+        </div>
+    </div>
+{% endfor %}

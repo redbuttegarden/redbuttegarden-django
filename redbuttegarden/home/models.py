@@ -16,6 +16,61 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 
+class ImageInfo(blocks.StructBlock):
+    image = ImageChooserBlock()
+    title = blocks.CharBlock(
+        label='Image Title',
+        help_text=_("Overlayed on image"),
+        max_length=100,
+        required=False,
+    )
+    subtitle = blocks.CharBlock(
+        label='Image Sub-title',
+        help_text=_("Overlayed on image below title"),
+        max_length=100,
+        required=False,
+    )
+    info_title = blocks.CharBlock(
+        label='Information Title',
+        help_text=_('Title heading for info displayed to the right of the image'),
+        max_length=500,
+        required=True,
+    )
+    info_subtitle = blocks.CharBlock(
+        label='Information Sub-title',
+        help_text=_('Subheading for info displayed beneath the Information Title'),
+        max_length=500,
+        required=False,
+    )
+    tan_bg_info = blocks.RichTextBlock(
+        label='Tan background info text',
+        help_text=_('Text is centered, bold and green inside a tan background element'),
+    )
+    tan_bg_button_text = blocks.CharBlock(
+        label='Button text',
+        help_text=_('Text for button within tan background element'),
+        required=False
+    )
+    tan_bg_button_url = blocks.URLBlock(
+        help_text=_('URL for button'),
+        required=False
+    )
+    additional_info = blocks.RichTextBlock(
+        help_text=_('Text displayed below tan background element'),
+        required=False
+    )
+
+
+class ImageInfoList(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        ImageInfo(),
+        label="Image Information"
+    )
+
+    class Meta:
+        template = 'blocks/image_info_list.html'
+
+
 class ImageLink(blocks.StructBlock):
     title = blocks.CharBlock(
         label='Title',
@@ -240,6 +295,7 @@ class GeneralPage(Page):
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
         ('card_info_list', ImageListCardInfo()),
+        ('image_info_list', ImageInfoList()),
     ], blank=False)
 
     content_panels = Page.content_panels + [
