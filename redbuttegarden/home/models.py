@@ -431,6 +431,7 @@ class GeneralIndexPage(Page):
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
         ('image_link_list', ImageLinkList()),
+        ('button', ButtonBlock()),
     ], blank=True)
 
     content_panels = Page.content_panels + [

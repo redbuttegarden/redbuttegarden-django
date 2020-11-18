@@ -1338,7 +1338,6 @@ no-repeat 5px 3px;
 .membutton, .apply-button {
 	background-color: #196143;
 	color: #FFF;
-	width: 190px;
 	height: 40px;
 	font-size: 16px;
 	border: 1px solid black;
@@ -1990,6 +1989,32 @@ no-repeat 5px 3px;
 .green-button, .tan-button, .dk-tn-button, .red-button, .org-button {
 	color: #FFF;
 	font-weight: bold;
+	font-size: 16px;
+	border: 1px solid black;
+	min-height: 60px;
+	min-width: 100px;
+	border-radius: 8px;
+	margin: 5px 0 5px;
+}
+
+.green-button {
+	background-color: #196143;
+}
+
+.tan-button {
+	background-color: #F2EDE4
+}
+
+.dk-tn-button {
+	background-color:#C4B59E;
+}
+
+.red-button {
+	background-color: red;
+}
+
+.org-button {
+	background-color: #FF7744;
 }
 
 #rbgdefaultbody .green-button-wrap a, #rbgdefaultbody .green-button-wrap a:link {
