@@ -243,6 +243,61 @@ class ButtonBlock(blocks.StructBlock):
         template = 'blocks/button_block.html'
 
 
+class SingleThreeColumnDropdownInfoPanel(blocks.StructBlock):
+    col_one_header = blocks.RichTextBlock(
+        label='Column One Panel Header',
+        help_text=_('Header for first column of dropdown panel'),
+        required=True,
+    )
+    col_two_header = blocks.RichTextBlock(
+        label='Column Two Panel Header',
+        help_text=_('Header for second column of dropdown panel'),
+        required=True,
+    )
+    col_three_header = blocks.RichTextBlock(
+        label='Column Three Panel Header',
+        help_text=_('Header for third column of dropdown panel'),
+        required=True,
+    )
+    class_info_subheaders = blocks.BooleanBlock(
+        label='Subheaders for Classes',
+        help_text=_('Select this option to include class-related subheadings for all columns (e.g. Grade, Ages, '
+                    'Session, Location, Cost'),
+    )
+    col_one_top_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears after the "GRADE:" subheading')
+    )
+    col_two_top_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears after the "AGES:" subheading')
+    )
+    col_three_top_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears after the "SESSION:" subheading')
+    )
+    middle_info = AlignedParagraphBlock(
+        help_text=_('Text info appearing inside expanded panel between top and bottom subheader content')
+    )
+    button = ButtonBlock(required=False)
+    col_one_bottom_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears beside the "LOCATION:" subheading')
+    )
+    col_two_bottom_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears beside the "COST:" subheading')
+    )
+    col_three_bottom_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears beside the "CONTACT INFORMATION:" subheading')
+    )
+
+
+class ThreeColumnDropdownInfoPanel(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        SingleThreeColumnDropdownInfoPanel(),
+        label="Thee Column Dropdown Info Panel",
+    )
+
+    class Meta:
+        template = 'blocks/three_column_dropdown_info_panel.html'
+
+
 class ColumnBlock(blocks.StreamBlock):
     heading = Heading(classname='full title',
                       help_text=_('Text will be green and centered'))
@@ -296,6 +351,7 @@ class GeneralPage(Page):
         ('dropdown_button_list', ButtonListDropdownInfo()),
         ('card_info_list', ImageListCardInfo()),
         ('image_info_list', ImageInfoList()),
+        ('three_column_dropdown_info_panel', ThreeColumnDropdownInfoPanel()),
     ], blank=False)
 
     content_panels = Page.content_panels + [
