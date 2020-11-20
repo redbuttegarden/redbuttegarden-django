@@ -244,6 +244,9 @@ class ButtonBlock(blocks.StructBlock):
 
 
 class SingleThreeColumnDropdownInfoPanel(blocks.StructBlock):
+    background_color = blocks.ChoiceBlock([('default-panel', 'Default'), ('purple-panel', 'Purple'),
+                                           ('orange-panel', 'Orange'), ('blue-panel', 'Blue'), ('green-panel', 'Green'),
+                                           ], default='default-panel')
     col_one_header = blocks.RichTextBlock(
         label='Column One Panel Header',
         help_text=_('Header for first column of dropdown panel'),

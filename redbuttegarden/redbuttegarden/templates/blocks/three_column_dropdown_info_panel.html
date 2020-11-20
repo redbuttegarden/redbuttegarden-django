@@ -4,19 +4,19 @@
     {% for panel in value.list_items %}
         <div class="panel panel-default">
             <a data-toggle="collapse" data-parent="#accordion-{{ id }}" href="#{{ id }}-{{ forloop.counter }}" class="collapsed" aria-expanded="false">
-                <div class="panel-heading">
+                <div class="{{ panel.background_color }}">
                     <div class="panel-title">
                         <div class="row">
                             <div class="col-xs-4">
-                                <div class="text-center white">{{ panel.col_one_header|richtext }}</div>
+                                <div class="text-center">{{ panel.col_one_header|richtext }}</div>
                             </div>
 
                             <div class="col-xs-4">
-                                <div class="text-center white">{{ panel.col_two_header|richtext }}</div>
+                                <div class="text-center">{{ panel.col_two_header|richtext }}</div>
                             </div>
 
                             <div class="col-xs-4">
-                                <div class="text-center white">{{ panel.col_three_header|richtext }}</div>
+                                <div class="text-center">{{ panel.col_three_header|richtext }}</div>
                             </div>
                         </div>
                     </div>

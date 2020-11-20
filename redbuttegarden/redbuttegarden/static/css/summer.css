@@ -1537,9 +1537,48 @@ no-repeat 5px 3px;
 /* End CSS for RBG Banner Images*/
 
 /* Begin Accordion Panel Colors */
-
-.panel-heading {
+.default-panel .panel-title {
 	background-color: #F2EDE4;
+}
+
+.panel:nth-child(odd) .purple-panel {
+	background-color: #92278f;
+}
+.panel:nth-child(even) .purple-panel {
+	background-color: #efc3ed;
+}
+.purple-panel h2, .purple-panel h3, .purple-panel h4, .purple-panel .panel-title {
+	color: white;
+}
+
+.panel:nth-child(odd) .orange-panel {
+	background-color: #fbaf40;
+}
+.panel:nth-child(even) .orange-panel {
+	background-color: #fdc778;
+}
+.orange-panel h2, .orange-panel h3, .orange-panel h4, .orange-panel .panel-title {
+	color: white;
+}
+
+.panel:nth-child(odd) .blue-panel {
+	background-color: #64b7e5;
+}
+.panel:nth-child(even) .blue-panel {
+	background-color: #91cced;
+}
+.blue-panel h2, .blue-panel h3, .blue-panel h4, .blue-panel .panel-title {
+	color: white;
+}
+
+.panel:nth-child(odd) .green-panel {
+	background-color: #b9d64f;
+}
+.panel:nth-child(even) .green-panel {
+	background-color: #cce282;
+}
+.green-panel h2, .green-panel h3, .green-panel h4, .green-panel .panel-title {
+	color: white;
 }
 
 #rbgdefaultbody .panel-default a, #rbgdefaultbody .panel-default a:link, #rbgdefaultbody .panel-default a:visited, #rbgdefaultbody .panel-default a:active { /* sets link color for panels to black with no underline  */
