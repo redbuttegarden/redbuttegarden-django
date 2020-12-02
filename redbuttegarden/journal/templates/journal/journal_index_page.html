@@ -5,6 +5,13 @@
     <div class="row-fluid text-center">
         {% image page.banner max-1280x500 %}
     </div>
+    <br>
+
+    {% for block in page.body %}
+        {% include_block block with id=block.id %}
+    {% endfor %}
+
+    <hr>
     <div class="row-fluid col xs-12">
         {% for post in posts %}
             <div class="col-sm-4">
