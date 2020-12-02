@@ -54,9 +54,11 @@ class JournalIndexPage(RoutablePageMixin, Page):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    body = StreamField(block_types=BLOCK_TYPES, blank=True, null=True)
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('banner'),
+        StreamFieldPanel('body'),
     ]
 
     subpage_types = ['journal.JournalPage']
