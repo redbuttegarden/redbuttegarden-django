@@ -55,9 +55,11 @@
         <div class="col-sm-9">
             <h2>{{ post.title }}</h2>
             <h5>Submitted: {{ post.date }}</h5>
-            <p>
-                <strong>By: {{ post.author.first_name }} {{ post.author.last_name }},</strong> <em>{{ post.author.title }}</em>
-            </p>
+            {% if post.author %}
+                <p>
+                    <strong>By: {{ post.author.first_name }} {{ post.author.last_name }},</strong> <em>{{ post.author.title }}</em>
+                </p>
+            {% endif %}
             <br>
 
             {% include_block post.body %}
