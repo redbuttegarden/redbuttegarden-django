@@ -62,7 +62,9 @@
             {% endif %}
             <br>
 
-            {% include_block post.body %}
+            {% for block in page.body %}
+                {% include_block block with id=block.id %}
+            {% endfor %}
         </div>
     </div>
 {% endblock %}
