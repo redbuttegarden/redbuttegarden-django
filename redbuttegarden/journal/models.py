@@ -109,7 +109,14 @@ class JournalIndexPage(RoutablePageMixin, Page):
 
 
 class JournalPage(Page):
-    image = models.ForeignKey(
+    banner = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    thumbnail = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
         blank=True,
@@ -129,7 +136,8 @@ class JournalPage(Page):
     body = StreamField(BLOCK_TYPES)
 
     content_panels = Page.content_panels + [
-        ImageChooserPanel('image', help_text=_('Main image displayed on Journal index page')),
+        ImageChooserPanel('banner'),
+        ImageChooserPanel('thumbnail', help_text=_('Main image displayed on Journal index page')),
         FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
         FieldPanel('tags'),
         InlinePanel('gallery_images', label=_('gallery images'),
