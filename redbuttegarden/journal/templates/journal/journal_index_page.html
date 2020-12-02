@@ -18,7 +18,7 @@
                 {% with post=post.specific %}
                     <a href="{% pageurl post %}">
                         <div class="eventwrapsmall hover">
-                            {% image post.image original %}
+                            {% image post.thumbnail original %}
                             <div class="eventinfo">
                                 <div class="eventname">{{ post.title }}</div>
                                 <div class="eventdate">{{ post.date|date:"F j, Y" }}</div>
