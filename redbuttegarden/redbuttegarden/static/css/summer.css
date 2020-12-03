@@ -2001,7 +2001,7 @@ no-repeat 5px 3px;
 }
 
 .responsive, .responsive img {
-	width: 100%;
+	max-width: 100%;
 	height: auto;
 }
 
