@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from modelcluster.fields import ParentalKey
 
 from wagtail.core import blocks
-from wagtail.core.models import Page, Orderable
+from wagtail.core.models import Collection, Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel
 from wagtail.documents.blocks import DocumentChooserBlock
@@ -12,6 +12,7 @@ from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.images.models import Image
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
@@ -69,6 +70,15 @@ class ImageInfoList(blocks.StructBlock):
 
     class Meta:
         template = 'blocks/image_info_list.html'
+
+
+class ImageCarousel(blocks.StructBlock):
+    images = blocks.ListBlock(
+        ImageChooserBlock(),
+    )
+
+    class Meta:
+        template = 'blocks/image_carousel.html'
 
 
 class ImageLink(blocks.StructBlock):
@@ -360,6 +370,7 @@ class GeneralPage(Page):
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
         ('multi_column_paragraph', MultiColumnAlignedParagraphBlock()),
         ('image', ImageChooserBlock()),
+        ('image_carousel', ImageCarousel()),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
