@@ -104,6 +104,16 @@ class AlignedParagraphBlock(blocks.StructBlock):
         template = 'blocks/aligned_paragraph.html'
 
 
+class MultiColumnAlignedParagraphBlock(AlignedParagraphBlock):
+    title = blocks.CharBlock(max_length=100, help_text=_('Green centered heading above column content'))
+    paragraph = blocks.ListBlock(
+        blocks.RichTextBlock(),
+    )
+
+    class Meta:
+        template = 'blocks/multi_col_aligned_paragraph.html'
+
+
 class FAQItem(blocks.StructBlock):
     title_question = blocks.CharBlock(
         label='Title/Question',
@@ -348,6 +358,7 @@ class GeneralPage(Page):
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
+        ('multi_column_paragraph', MultiColumnAlignedParagraphBlock()),
         ('image', ImageChooserBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
