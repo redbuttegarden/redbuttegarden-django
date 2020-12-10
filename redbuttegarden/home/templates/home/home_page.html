@@ -47,7 +47,7 @@
             <div id="rbginfobg">
                 <div id="rbginfo" class="row-fluid clearfix">
 
-                    <div id="rbghours" class="col-xs-3"><a href="{% url 'home:general-info' %}"><div class="rbghours hover"></div></a>
+                    <div id="rbghours" class="col-xs-3"><a href="{% slugurl 'general-info' %}"><div class="rbghours hover"></div></a>
                         <div id="gardenHours"></div>
                         <div id="gardenStatus"></div>
                         <div id="gardenEmphatic" class="red text-center"></div>
@@ -55,7 +55,7 @@
                     </div>
 
                     <div id="rbgadmission" class="col-xs-3" onclick="admissionHoverOn()"><a href="#"><div class="rbgadmission hover"></div></a></div>
-                    <div id="rbgdirections" class="col-xs-3"><a href="{% url 'home:directions' %}"><div class="rbgdirections hover"></div></a></div>
+                    <div id="rbgdirections" class="col-xs-3"><a href="{% slugurl 'directions' %}"><div class="rbgdirections hover"></div></a></div>
                     <div id="rbgweather" class="col-xs-3"><a href="https://weather.com/weather/today/l/84108:4:US" target="_blank"><div class="rbgweather hover"></div></a></div>
 
                     <!-- Begin Page Down Code for Slides on Mobile -->
