@@ -66,8 +66,11 @@ hr {
     border: 1px solid black;
 }
 
+/* Vertical Center */
 .center {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .left {
