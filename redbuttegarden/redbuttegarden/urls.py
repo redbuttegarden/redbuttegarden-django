@@ -24,7 +24,6 @@ if not os.environ.get('DJANGO_SETTINGS_MODULE') == 'redbuttegarden.settings.loca
     ]
 
 urlpatterns += [
-    path('', include('home.urls', namespace='home')),
     path('concerts/', include('concerts.urls', namespace='concerts')),
 
     path('django-admin/', admin.site.urls),
