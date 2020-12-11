@@ -28,8 +28,8 @@ class Product(Page):
         InlinePanel('custom_fields', label='Custom fields'),
     ]
 
-    def get_context(self, request, **kwargs):
-        context = super().get_context(request, **kwargs)
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
         fields = []
         for f in self.custom_fields.get_object_list():  # custom_fields defined in ProductCustomField model
             if f.options:
@@ -70,8 +70,8 @@ class ShopIndexPage(Page):
         # This returns a Django paginator of blog items in this section
         return Paginator(self.get_children().live(), 6)
 
-    def get_context(self, request, **kwargs):
-        context = super().get_context(request, **kwargs)
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
 
         context['products'] = Product.objects.child_of(self).live()
 

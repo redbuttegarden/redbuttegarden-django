@@ -128,7 +128,7 @@ class EventIndexPage(Page):
 
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
-        context = super().get_context(request)
+        context = super().get_context(request, *args, **kwargs)
         events = self.get_children().live().order_by('-first_published_at')
         context['events'] = events
         return context

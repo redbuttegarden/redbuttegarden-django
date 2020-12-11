@@ -65,7 +65,7 @@ class JournalIndexPage(RoutablePageMixin, Page):
 
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
-        context = super().get_context(request)
+        context = super().get_context(request, *args, **kwargs)
         posts = JournalPage.objects.child_of(self).order_by('-date')
         context['posts'] = posts
         return context
