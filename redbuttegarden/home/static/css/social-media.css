@@ -1,0 +1,333 @@
+/* Social Media Landing Page CSS Start */
+@import url('https://fonts.googleapis.com/css?family=Work+Sans:400,600');
+
+body {
+    background: white;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 800;
+    /* position: relative;    /* FIXES HORZ. SCROLL/ */
+}
+
+html {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+img {
+    image-rendering: auto; /* Makes images render smoother in Chrome (and Safari) - if you don't have this they can appear blurry */
+    /* image-rendering: -webkit-optimize-contrast; Chrome (and Safari) */
+}
+
+h4 {
+    color: white;
+    text-align: center;
+}
+
+.tab-wrapper {
+    margin: 0 auto;
+}
+
+/* Style of the tab */
+.tab {
+    border: none;
+    display: flex;
+    justify-content: center;
+    background-color: transparent;
+    width: 100%;
+    margin: 0 auto;
+    animation: 1.2s ease-out 0s 1 fadeEffect;
+}
+
+/* Style of the buttons that are used to open the tab content */
+.tab button {
+    outline: none;
+    cursor: pointer;
+    transition: 0.4s;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 800;
+    font-size: 0.95vw;
+    margin-right: 100px;
+    /* position: relative; */
+}
+
+.tab button p {
+    position: relative;
+    top: 125px;
+    /* right: 30px; */
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    color: green;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    color: green;
+}
+
+.tc-wrapper {
+    margin: 0 auto;
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Style the tab content */
+.tabcontent {
+    /* display: inline-block;
+    left: 500px;
+    height: 800px; */
+    top: 220px;
+    margin: 0 auto;
+    width: 100%;
+    text-align: center;
+    padding-right: 100px;
+    animation: 1.2s ease-out 0s 1 slideInFromBottom;
+}
+
+.tablinks {
+    border: none;
+    background-color: white;
+}
+
+@-webkit-keyframes fadeEffect {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeEffect {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromBottom {
+    0% {
+        transform: translateY(100%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* #RBG-Header {
+  overflow: none;
+  position: relative;
+  top: -234px;
+  left: 72px;
+  margin: auto;
+  width: 100%;
+  left: 0px;
+  display: inline-block;
+} */
+
+#Twitter-Logo {
+    text-align: center;
+    transform: scale(0.8);
+    display: inline-block;
+    opacity: 1;
+    transition: opacity 1s;
+}
+
+#Twitter-Logo:hover {
+    opacity: 0.7;
+    transition: opacity .2s ease-in-out;
+}
+
+#Facebook-Logo {
+    text-align: center;
+    transform: scale(0.85);
+    display: inline-block;
+    opacity: 1;
+    transition: opacity 1s;
+}
+
+#Facebook-Logo:hover {
+    opacity: 0.7;
+    transition: opacity .2s ease-in-out;
+}
+
+#Pinterest-Logo {
+    text-align: center;
+    transform: scale(0.9);
+    display: inline-block;
+    opacity: 1;
+    transition: opacity 1s;
+}
+
+#Pinterest-Logo:hover {
+    opacity: 0.7;
+    transition: opacity .2s ease-in-out;
+}
+
+#Youtube-Logo {
+    text-align: center;
+    transform: scale(1.04);
+    display: inline-block;
+    opacity: 1;
+    transition: opacity 1s;
+}
+
+#Youtube-Logo:hover {
+    opacity: 0.7;
+    transition: opacity .2s ease-in-out;
+}
+
+#Instagram-Logo {
+    text-align: center;
+    transform: scale(0.79);
+    display: inline-block;
+    opacity: 1;
+    transition: opacity 1s;
+}
+
+#Instagram-Logo:hover {
+    opacity: 0.7;
+    transition: opacity .2s ease-in-out;
+}
+
+#Facebook {
+    /* width: 100%; */
+    margin: auto;
+}
+
+#Twitter {
+    width: 100%;
+}
+
+#Pinterest {
+    width: 100%;
+}
+
+#Youtube {
+    /* overflow: hidden;
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0; */
+}
+
+#Youtube iframe {
+    /* position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; */
+}
+
+
+/*************************************************************/
+/**************** MEDIA QUERIES *****************************/
+/*************************************************************/
+
+/* 800px for tablets and phones. */
+@media all and (max-width:800px) {
+
+    .tc-wrapper {
+        margin-top: 0px;
+        width: 0%;
+        display: block;
+        float: right;
+    }
+
+    .tab {
+        /* width: auto; */
+        margin-right: 50px;
+        display: block;
+        float: left;
+    }
+
+    .tab button p {
+        display: none;
+    }
+
+    .tabcontent {
+        padding-right: 500px;
+    }
+
+    #Facebook {
+        max-width: 350px;
+        max-height: 600px;
+    }
+
+    #Instagram {
+        width: 180%;
+        position: absolute;
+        padding: inherit;
+        height: auto;
+        top: 0;
+        left: 150%;
+    }
+
+    #Youtube {
+        margin-left: -152px;
+    }
+
+    #Youtube iframe {
+        transform: scale(0.4);
+    }
+}
+
+/* 500px for iPhones/Androids. */
+@media all and (max-width:500px) {
+
+    .tab-wrapper {
+        margin: 0 auto;
+        display: flex;
+    }
+
+    .tc-wrapper {
+        width: 100%;
+        justify-content: right;
+        flex: 1;
+    }
+
+    .tab {
+        flex: 1;
+        float: left;
+    }
+
+    .tab button p {
+        display: none;
+    }
+
+    .tabcontent {
+        padding-right: 500px;
+    }
+
+    #Facebook {
+        max-width: 275px;
+        max-height: 600px;
+    }
+
+    #Instagram {
+        width: 150%;
+        position: absolute;
+        padding: inherit;
+        height: auto;
+        top: 0;
+    }
+
+    #Youtube {
+        margin-left: -152px;
+    }
+
+    #Youtube iframe {
+        transform: scale(0.4);
+    }
+}
