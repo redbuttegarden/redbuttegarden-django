@@ -663,7 +663,8 @@ class EventSlides(Orderable):
         related_name='+',
     )
     text = RichTextField(max_length=100,
-                         features=['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic'])
+                         features=['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic'],
+                         null=True, blank=True)
 
     panels = [
         ImageChooserPanel('image'),
