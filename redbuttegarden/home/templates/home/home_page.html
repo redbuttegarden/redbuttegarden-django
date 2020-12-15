@@ -16,7 +16,7 @@
                 <div id="slider1_container">
                     <!-- Slides Container -->
                     <div id="slides" u="slides">
-                        {% include 'home/includes/eventslides.html' %}
+                        {% include 'home/includes/eventslides.html' with slides=page.event_slides.all %}
                     </div>
 
                     <!-- bullet navigator container -->

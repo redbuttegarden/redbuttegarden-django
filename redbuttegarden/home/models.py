@@ -6,7 +6,7 @@ from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.models import Collection, Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel
+from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.embeds.blocks import EmbedBlock
@@ -641,5 +641,32 @@ class HomePage(Page):
     )
 
     content_panels = Page.content_panels + [
-        SnippetChooserPanel('hours', help_text=_("Choose the set of hours to display on the home page"))
+        SnippetChooserPanel('hours', help_text=_("Choose the set of hours to display on the home page")),
+        InlinePanel('event_slides', label=_('Slideshow Images'))
+    ]
+
+
+class EventSlides(Orderable):
+    page = ParentalKey(HomePage, on_delete=models.CASCADE, related_name='event_slides')
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+    link = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    text = RichTextField(max_length=100,
+                         features=['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic'])
+
+    panels = [
+        ImageChooserPanel('image'),
+        PageChooserPanel('link'),
+        FieldPanel('text'),
     ]
