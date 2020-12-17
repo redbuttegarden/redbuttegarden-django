@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, PageChooserPanel
+from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, PageChooserPanel, MultiFieldPanel
 from wagtail.core import blocks
 from wagtail.core.blocks import PageChooserBlock
 from wagtail.core.fields import RichTextField, StreamField
@@ -103,11 +103,23 @@ class EventIndexPage(Page):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    thumbnail = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text=_('The thumbnail image is used when this page is displayed on another index page or is linked to via '
+                    'a page link')
+    )
     intro = RichTextField(blank=True)
     body = StreamField(BLOCK_TYPES + [('page_link', PageChooserBlock())], blank=True)
 
     content_panels = Page.content_panels + [
-        ImageChooserPanel('banner'),
+        MultiFieldPanel([
+            ImageChooserPanel('banner'),
+            ImageChooserPanel('thumbnail'),
+        ], classname="collapsible"),
         FieldPanel('intro'),
         StreamFieldPanel('body', classname="full"),
     ]
