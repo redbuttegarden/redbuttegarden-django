@@ -76,8 +76,9 @@
         <div id="hours_override">{{ page.hours.allow_override }}</div>
         <div id="hours_man_open">{{ page.hours.garden_open|date:"g:i A" }}</div>
         <div id="hours_man_close">{{ page.hours.garden_close|date:"g:i A" }}</div>
-        <div id="hours_man_add_msg">{{ page.hours.additional_message }}</div>
-        <div id="hours_man_add_emph_msg">{{ page.hours.additional_emphatic_mesg }}</div>
+        <!-- used default_if_none filter to prevent None from appearing literally if message not set -->
+        <div id="hours_man_add_msg">{{ page.hours.additional_message|default_if_none:"" }}</div>
+        <div id="hours_man_add_emph_msg">{{ page.hours.additional_emphatic_mesg|default_if_none:"" }}</div>
         <div id="hours_holiday_day">{{ page.hours.holiday_party_close_time.day }}</div>
         <div id="hours_holiday_hour">{{ page.hours.holiday_party_close_time.hour }}</div>
         <div id="hours_holiday_minute">{{ page.hours.holiday_party_close_time.minute }}</div>
