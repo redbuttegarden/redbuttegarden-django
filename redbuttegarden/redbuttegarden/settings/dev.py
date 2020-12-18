@@ -44,7 +44,11 @@ MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
 WAGTAILFRONTENDCACHE = {
     'cloudfront': {
         'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
-        'DISTRIBUTION_ID': 'E5BZL9629SKXT',
+        'DISTRIBUTION_ID': {
+            'dev.redbuttegarden.org': 'E5BZL9629SKXT',
+            'dev-shop.redbuttegarden.org': 'E1ILRLJZBMHT88',
+            'dev-train.redbuttegarden.org': 'EV5FN74YZ4XU0',
+        },
     },
 }
 
