@@ -596,7 +596,8 @@ class RBGHours(models.Model):
                                                 help_text=_("Message under hours in RED text"))
 
     # Day and time we close for Holiday Party in December
-    holiday_party_close_time = models.DateTimeField(help_text=_("Day and time we close for Holiday Party in December"))
+    holiday_party_close_time = models.DateTimeField(null=True, blank=True,
+                                                    help_text=_("Day and time we close for Holiday Party in December"))
     """
     Originally created start and end dates for Garden After Dark but this won't work well
     when GAD occurs on non-consecutive dates.
