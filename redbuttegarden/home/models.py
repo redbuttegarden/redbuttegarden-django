@@ -6,7 +6,8 @@ from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.models import Collection, Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel
+from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel, \
+    TabbedInterface, ObjectList
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.embeds.blocks import EmbedBlock
@@ -15,6 +16,8 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import Image
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
+
+from home.abstract_models import AbstractBase
 
 
 class ImageInfo(blocks.StructBlock):
@@ -345,22 +348,7 @@ class TwoColumnBlock(blocks.StructBlock):
         label = 'Two Columns'
 
 
-class GeneralPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
-    thumbnail = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
-    )
+class GeneralPage(AbstractBase):
     body = StreamField(block_types=[
         ('button', ButtonBlock()),
         ('heading', Heading(classname='full title',
@@ -379,31 +367,12 @@ class GeneralPage(Page):
         ('three_column_dropdown_info_panel', ThreeColumnDropdownInfoPanel()),
     ], blank=False)
 
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            ImageChooserPanel('banner'),
-            ImageChooserPanel('thumbnail'),
-        ], classname="collapsible"),
+    content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
     ]
 
 
-class TwoColumnGeneralPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
-    thumbnail = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
-    )
+class TwoColumnGeneralPage(AbstractBase):
     body = StreamField(block_types=([
         ('green_heading', Heading(classname='full title',
                                   help_text=_('Text will be green and centered'))),
@@ -419,28 +388,16 @@ class TwoColumnGeneralPage(Page):
         ('dropdown_button_list', ButtonListDropdownInfo()),
     ]), null=True, blank=True)
 
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            ImageChooserPanel('banner'),
-            ImageChooserPanel('thumbnail'),
-        ], classname="collapsible"),
+    content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
     ]
 
 
-class PlantCollectionsPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
+class PlantCollectionsPage(AbstractBase):
     intro = RichTextField()
     more_info_modal = RichTextField()
 
-    content_panels = Page.content_panels + [
-        ImageChooserPanel('banner'),
+    content_panels = AbstractBase.content_panels + [
         FieldPanel('intro'),
         FieldPanel('more_info_modal'),
         InlinePanel('plant_collections', label=_('Plant Collection')),
@@ -485,22 +442,7 @@ class PlantCollections(Orderable):
     ]
 
 
-class GeneralIndexPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
-    thumbnail = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
-    )
+class GeneralIndexPage(AbstractBase):
     body = StreamField(block_types=[
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
@@ -515,11 +457,7 @@ class GeneralIndexPage(Page):
         ('button', ButtonBlock()),
     ], blank=True)
 
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            ImageChooserPanel('banner'),
-            ImageChooserPanel('thumbnail'),
-        ], classname="collapsible"),
+    content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
     ]
 
@@ -546,14 +484,7 @@ class GeneralIndexPage(Page):
         return context
 
 
-class FAQPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
+class FAQPage(AbstractBase):
     body = StreamField(block_types=[
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
@@ -562,10 +493,7 @@ class FAQPage(Page):
         ('FAQ_list', FAQList()),
     ])
 
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            ImageChooserPanel('banner'),
-        ], classname="collapsible"),
+    content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
     ]
 

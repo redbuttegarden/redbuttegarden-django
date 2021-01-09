@@ -13,6 +13,7 @@ from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
 
+from home.abstract_models import AbstractBase
 from home.models import Heading, EmphaticText, AlignedParagraphBlock
 
 donor_table_options = {
@@ -99,14 +100,7 @@ class TableInfoCardList(blocks.StructBlock):
         template = 'blocks/table_info_card_list.html'
 
 
-class ConcertPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
+class ConcertPage(AbstractBase):
     banner_link = models.URLField(default='/',
                                   help_text=_("Where to direct the banner image link"))
     intro = RichTextField(blank=True)
@@ -146,8 +140,7 @@ class ConcertPage(Page):
         related_name='+',
     )
 
-    content_panels = Page.content_panels + [
-        ImageChooserPanel('banner'),
+    content_panels = AbstractBase.content_panels + [
         FieldPanel('banner_link'),
         FieldPanel('intro', classname="full"),
         ImageChooserPanel('donor_banner'),
@@ -194,14 +187,7 @@ class Concert(Orderable):
     ]
 
 
-class DonorPackagePage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
+class DonorPackagePage(AbstractBase):
     body = StreamField(block_types=[
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
@@ -215,7 +201,6 @@ class DonorPackagePage(Page):
         ('table_cards', TableInfoCardList()),
     ], blank=False)
 
-    content_panels = Page.content_panels + [
-        ImageChooserPanel('banner'),
+    content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
     ]

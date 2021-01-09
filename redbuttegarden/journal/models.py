@@ -16,6 +16,7 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from events.models import BLOCK_TYPES
+from home.abstract_models import AbstractBase
 
 
 @register_snippet
@@ -46,18 +47,10 @@ class JournalPageTag(TaggedItemBase):
     content_object = ParentalKey('JournalPage', related_name='journal_tags')
 
 
-class JournalIndexPage(RoutablePageMixin, Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
+class JournalIndexPage(RoutablePageMixin, AbstractBase):
     body = StreamField(block_types=BLOCK_TYPES, blank=True, null=True)
 
-    content_panels = Page.content_panels + [
-        ImageChooserPanel('banner'),
+    content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
     ]
 
@@ -108,21 +101,7 @@ class JournalIndexPage(RoutablePageMixin, Page):
         return Page.serve(self, request, *args, **kwargs)
 
 
-class JournalPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-    )
-    thumbnail = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-    )
+class JournalPage(AbstractBase):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
@@ -135,9 +114,7 @@ class JournalPage(Page):
     tags = ClusterTaggableManager(through='journal.JournalPageTag', blank=True)
     body = StreamField(BLOCK_TYPES)
 
-    content_panels = Page.content_panels + [
-        ImageChooserPanel('banner'),
-        ImageChooserPanel('thumbnail', help_text=_('Main image displayed on Journal index page')),
+    content_panels = AbstractBase.content_panels + [
         FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
         FieldPanel('tags'),
         InlinePanel('gallery_images', label=_('gallery images'),
@@ -145,16 +122,10 @@ class JournalPage(Page):
         StreamFieldPanel('body'),
     ]
 
-    promote_panels = Page.promote_panels + [
+    promote_panels = AbstractBase.promote_panels + [
         FieldPanel('author', help_text=_("If left blank, this will be set to the currently logged in user")),
         FieldPanel('date')
     ]
-
-    edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Content'),
-        ObjectList(promote_panels, heading='Promote'),
-        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
-    ])
 
     parent_page_types = ['journal.JournalIndexPage']
 

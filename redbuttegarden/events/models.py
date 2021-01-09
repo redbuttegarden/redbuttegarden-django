@@ -12,6 +12,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
+from home.abstract_models import AbstractBase
 from home.models import AlignedParagraphBlock, ButtonBlock, EmphaticText, GeneralPage, ImageLinkList, Heading
 
 
@@ -95,31 +96,11 @@ BLOCK_TYPES = [
 ]
 
 
-class EventIndexPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
-    thumbnail = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        help_text=_('The thumbnail image is used when this page is displayed on another index page or is linked to via '
-                    'a page link')
-    )
+class EventIndexPage(AbstractBase):
     intro = RichTextField(blank=True)
     body = StreamField(BLOCK_TYPES + [('page_link', PageChooserBlock())], blank=True)
 
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            ImageChooserPanel('banner'),
-            ImageChooserPanel('thumbnail'),
-        ], classname="collapsible"),
+    content_panels = AbstractBase.content_panels + [
         FieldPanel('intro'),
         StreamFieldPanel('body', classname="full"),
     ]
