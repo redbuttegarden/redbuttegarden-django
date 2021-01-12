@@ -101,8 +101,8 @@ class TableInfoCardList(blocks.StructBlock):
 
 
 class ConcertPage(AbstractBase):
-    banner_link = models.URLField(default='/',
-                                  help_text=_("Where to direct the banner image link"))
+    banner_link = models.URLField(help_text=_("Where to direct the banner image link"),
+                                  blank=True)
     intro = RichTextField(blank=True)
     donor_banner = models.ForeignKey(
         'wagtailimages.Image',
