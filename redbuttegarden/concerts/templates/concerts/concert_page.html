@@ -89,7 +89,11 @@
 
                                         <div class="con-but-wrap">
                                             <div class="con-date">{{ concert.concert_date }}</div>
-                                            <div class="con-times">Gates at {{ concert.gates_time }} / Show at {{ concert.show_time }}</div>
+                                            <div class="con-times">
+                                                {% if concert.gate_time %}
+                                                    Gates at {{ concert.gates_time }} /
+                                                {% endif %}
+                                                Show at {{ concert.show_time }}</div>
                                             <div class="con-price">Garden members: ${{ concert.member_price }} / Public: ${{ concert.public_price }}</div>
                                             <br>
                                             <div class="row-fluid">
