@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.db.models import BooleanField
 from django.utils.translation import ugettext_lazy as _
 
 from modelcluster.fields import ParentalKey
@@ -8,7 +9,7 @@ from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.core import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, StreamFieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, StreamFieldPanel, MultiFieldPanel
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -161,6 +162,7 @@ class Concert(Orderable):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    virtual = BooleanField(default=False, help_text=_('Is this a virtual concert?'))
     # Band/opener names and url properties replaced with single RichTextField to account for wide variety in how the
     # bands info may be displayed
     band_info = RichTextField(help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
@@ -174,6 +176,9 @@ class Concert(Orderable):
 
     panels = [
         ImageChooserPanel('band_img'),
+        MultiFieldPanel([
+            FieldPanel('virtual')
+        ], heading=_('Virtual Concert Settings'), classname="collapsible collapsed"),
         FieldPanel('band_info'),
 
         FieldPanel('concert_date'),
