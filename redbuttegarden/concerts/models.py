@@ -167,7 +167,7 @@ class Concert(Orderable):
     opener_url = models.URLField(blank=True)
 
     concert_date = models.DateField(blank=True)
-    gates_time = models.TimeField(default=datetime.time(hour=18), blank=True)
+    gates_time = models.TimeField(default=datetime.time(hour=18), blank=True, null=True)
     show_time = models.TimeField(default=datetime.time(hour=19))
     member_price = models.IntegerField()
     public_price = models.IntegerField()
