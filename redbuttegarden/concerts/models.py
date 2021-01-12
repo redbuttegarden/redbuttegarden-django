@@ -161,10 +161,10 @@ class Concert(Orderable):
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    band_name = models.CharField(max_length=255, blank=False)
-    band_url = models.URLField()
-    opener_name = models.CharField(max_length=255, blank=True)
-    opener_url = models.URLField(blank=True)
+    # Band/opener names and url properties replaced with single RichTextField to account for wide variety in how the
+    # bands info may be displayed
+    band_info = RichTextField(help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
+                                          ' centered.'))
 
     concert_date = models.DateField(blank=True)
     gates_time = models.TimeField(default=datetime.time(hour=18), blank=True, null=True)
@@ -174,10 +174,7 @@ class Concert(Orderable):
 
     panels = [
         ImageChooserPanel('band_img'),
-        FieldPanel('band_name'),
-        FieldPanel('band_url'),
-        FieldPanel('opener_name'),
-        FieldPanel('opener_url'),
+        FieldPanel('band_info'),
 
         FieldPanel('concert_date'),
         FieldPanel('gates_time'),

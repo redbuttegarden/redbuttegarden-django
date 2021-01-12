@@ -79,12 +79,7 @@
                                     <div class="concerttext">
                                         <div class="con-band-wrap">
                                             <br>
-                                            <div class="con-title caps">
-                                                <a href="{{ concert.band_url }}">{{ concert.band_name }}</a>
-                                            </div>
-                                            <div class="con-opener">
-                                                <a href="{{ concert.opener_url }}">{{ concert.opener_name }}</a>
-                                            </div>
+                                            {{ concert.band_info|richtext }}
                                         </div>
 
                                         <div class="con-but-wrap">

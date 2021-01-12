@@ -2436,13 +2436,6 @@ no-repeat 5px 3px;
 
 }
 
-.con-title {
-	font-size: 1.5em !important;
-	font-weight: bold;
-	text-decoration: none;
-	color: #000 !important;
-}
-
 .con-smaller {
 	font-size: 1.25em !important;
 }
@@ -2475,12 +2468,6 @@ no-repeat 5px 3px;
 	font-weight: normal;
 	text-decoration: none;
 	color: #000;
-}
-
-.con-opener {
-	font-size: 1.0em;
-	text-transform: capitalize;
-	color: #000 !important;
 }
 
 #rbgdefaultbody .con-opener a, #rbgdefaultbody .con-opener a:link, #rbgdefaultbody .con-opener a:visited, #rbgdefaultbody .con-opener a:active {
