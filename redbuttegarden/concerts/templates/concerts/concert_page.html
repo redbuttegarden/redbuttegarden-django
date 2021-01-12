@@ -94,7 +94,13 @@
                                                     Gates at {{ concert.gates_time }} /
                                                 {% endif %}
                                                 Show at {{ concert.show_time }}</div>
-                                            <div class="con-price">Garden members: ${{ concert.member_price }} / Public: ${{ concert.public_price }}</div>
+                                            <div class="con-price">
+                                                {% if concert.member_price %}
+                                                    Garden members: {{ concert.member_price }} / Public: {{ concert.public_price }}
+                                                {% else %}
+                                                    {{ concert.public_price }}
+                                                {% endif %}
+                                            </div>
                                             <br>
                                             <div class="row-fluid">
                                                 <a href="https://redbuttegarden.ticketfly.com">

@@ -169,8 +169,8 @@ class Concert(Orderable):
     concert_date = models.DateField(blank=True)
     gates_time = models.TimeField(default=datetime.time(hour=18), blank=True, null=True)
     show_time = models.TimeField(default=datetime.time(hour=19))
-    member_price = models.IntegerField()
-    public_price = models.IntegerField()
+    member_price = models.CharField(default='$', max_length=100, blank=True, null=True)
+    public_price = models.CharField(default='$', max_length=100)
 
     panels = [
         ImageChooserPanel('band_img'),
