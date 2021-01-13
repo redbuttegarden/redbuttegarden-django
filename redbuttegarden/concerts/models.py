@@ -164,6 +164,8 @@ class Concert(Orderable):
         related_name='+'
     )
     virtual = BooleanField(default=False, help_text=_('Is this a virtual concert?'))
+    canceled = BooleanField(default=False)
+    postponed = BooleanField(default=False)
     sold_out = BooleanField(default=False)
     # Virtual concert will remain available on demand until this date
     available_until = models.DateField(blank=True, null=True,
@@ -185,9 +187,11 @@ class Concert(Orderable):
     panels = [
         ImageChooserPanel('band_img'),
         FieldRowPanel([
-            FieldPanel('virtual'),
+            FieldPanel('canceled'),
+            FieldPanel('postponed'),
             FieldPanel('sold_out'),
         ]),
+        FieldPanel('virtual'),
         FieldPanel('available_until'),
         FieldPanel('band_info'),
 

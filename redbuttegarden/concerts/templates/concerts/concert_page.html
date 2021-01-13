@@ -72,6 +72,12 @@
                                 <a href="{{ concert.ticket_url }}">
                                     <div class="bandpic hover">
                                         {% image concert.band_img original %}
+                                        <div class="soldout {% if not concert.canceled %}hide{% endif %}">
+                                            <img src="{% static 'img/canceled.png' %}" alt="Concert canceled">
+                                        </div>
+                                        <div class="soldout {% if not concert.postponed %}hide{% endif %}">
+                                            <img src="{% static 'img/postponed.png' %}" alt="Concert postponed">
+                                        </div>
                                         <div class="soldout {% if not concert.sold_out %}hide{% endif %}">
                                             <img src="{% static 'img/SoldOut.png' %}" alt="Sold out concert">
                                         </div>
