@@ -9,7 +9,8 @@ from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.core import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, StreamFieldPanel, MultiFieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, StreamFieldPanel, MultiFieldPanel, \
+    FieldRowPanel
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -163,6 +164,7 @@ class Concert(Orderable):
         related_name='+'
     )
     virtual = BooleanField(default=False, help_text=_('Is this a virtual concert?'))
+    sold_out = BooleanField(default=False)
     # Virtual concert will remain available on demand until this date
     available_until = models.DateField(blank=True, null=True,
                                        help_text=_('Date that on-demand virtual concert will remain available until'))
@@ -182,7 +184,10 @@ class Concert(Orderable):
 
     panels = [
         ImageChooserPanel('band_img'),
-        FieldPanel('virtual'),
+        FieldRowPanel([
+            FieldPanel('virtual'),
+            FieldPanel('sold_out'),
+        ]),
         FieldPanel('available_until'),
         FieldPanel('band_info'),
 
