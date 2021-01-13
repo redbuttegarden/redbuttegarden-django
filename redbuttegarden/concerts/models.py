@@ -214,9 +214,13 @@ class Concert(Orderable):
     def on_demand_expired(self):
         """
         Boolean indicating if the on-demand performance is still available.
+
+        Returns True if concert is virtual but does not offer on-demand.
         """
         if self.available_until:
             return datetime.date.today() > self.available_until
+        elif self.virtual and self.available_until is None:
+            return True
 
 
 class DonorPackagePage(AbstractBase):
