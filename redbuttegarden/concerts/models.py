@@ -163,6 +163,9 @@ class Concert(Orderable):
         related_name='+'
     )
     virtual = BooleanField(default=False, help_text=_('Is this a virtual concert?'))
+    # Virtual concert will remain available on demand until this date
+    available_until = models.DateField(blank=True, null=True,
+                                       help_text=_('Date that on-demand virtual concert will remain available until'))
     # Band/opener names and url properties replaced with single RichTextField to account for wide variety in how the
     # bands info may be displayed
     band_info = RichTextField(help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
@@ -177,7 +180,8 @@ class Concert(Orderable):
     panels = [
         ImageChooserPanel('band_img'),
         MultiFieldPanel([
-            FieldPanel('virtual')
+            FieldPanel('virtual'),
+            FieldPanel('available_until'),
         ], heading=_('Virtual Concert Settings'), classname="collapsible collapsed"),
         FieldPanel('band_info'),
 
@@ -187,6 +191,21 @@ class Concert(Orderable):
         FieldPanel('member_price'),
         FieldPanel('public_price'),
     ]
+
+    @property
+    def live_in_the_past(self):
+        """
+        Boolean indicating if the concert's live performance has already occurred.
+        """
+        return datetime.date.today() > self.concert_date
+
+    @property
+    def on_demand_expired(self):
+        """
+        Boolean indicating if the on-demand performance is still available.
+        """
+        if self.available_until:
+            return datetime.date.today() > self.available_until
 
 
 class DonorPackagePage(AbstractBase):

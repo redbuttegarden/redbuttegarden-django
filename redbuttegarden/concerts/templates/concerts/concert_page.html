@@ -67,7 +67,7 @@
                 <div id="future">
 
                     {% for concert in page.concerts.all %}
-                        <div class="infowrapper">
+                        <div class="infowrapper {% if not concert.virtual and concert.live_in_the_past or concert.on_demand_expired %}past{% endif %}">
                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 concertwrapper">
                                 <a href="https://redbuttegarden.ticketfly.com/">
                                     <div class="bandpic hover">
@@ -83,12 +83,17 @@
                                         </div>
 
                                         <div class="con-but-wrap">
-                                            <div class="con-date">{{ concert.concert_date }}</div>
-                                            <div class="con-times">
-                                                {% if concert.gate_time %}
-                                                    Gates at {{ concert.gates_time }} /
-                                                {% endif %}
-                                                Show at {{ concert.show_time }}</div>
+                                            {% if concert.virtual %}
+                                                Available On Demand
+                                                <div class="con-date">Until {{ concert.available_until }}</div>
+                                            {% else %}
+                                                <div class="con-date">{{ concert.concert_date }}</div>
+                                                <div class="con-times">
+                                                    {% if concert.gate_time %}
+                                                        Gates at {{ concert.gates_time }} /
+                                                    {% endif %}
+                                                    Show at {{ concert.show_time }}</div>
+                                            {% endif %}
                                             <div class="con-price">
                                                 {% if concert.member_price %}
                                                     Garden members: {{ concert.member_price }} / Public: {{ concert.public_price }}
