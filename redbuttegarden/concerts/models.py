@@ -177,12 +177,13 @@ class Concert(Orderable):
     member_price = models.CharField(default='$', max_length=100, blank=True, null=True)
     public_price = models.CharField(default='$', max_length=100)
 
+    # Added a ticket URL for concerts that are sold from a non-standard URL
+    ticket_url = models.URLField(default='https://redbuttegarden.ticketfly.com')
+
     panels = [
         ImageChooserPanel('band_img'),
-        MultiFieldPanel([
-            FieldPanel('virtual'),
-            FieldPanel('available_until'),
-        ], heading=_('Virtual Concert Settings'), classname="collapsible collapsed"),
+        FieldPanel('virtual'),
+        FieldPanel('available_until'),
         FieldPanel('band_info'),
 
         FieldPanel('concert_date'),
@@ -190,6 +191,7 @@ class Concert(Orderable):
         FieldPanel('show_time'),
         FieldPanel('member_price'),
         FieldPanel('public_price'),
+        FieldPanel('ticket_url'),
     ]
 
     @property

@@ -69,7 +69,7 @@
                     {% for concert in page.concerts.all %}
                         <div class="infowrapper {% if not concert.virtual and concert.live_in_the_past or concert.on_demand_expired %}past{% endif %}">
                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 concertwrapper">
-                                <a href="https://redbuttegarden.ticketfly.com/">
+                                <a href="{{ concert.ticket_url }}">
                                     <div class="bandpic hover">
                                         {% image concert.band_img original %}
                                     </div>
@@ -103,7 +103,7 @@
                                             </div>
                                             <br>
                                             <div class="row-fluid">
-                                                <a href="https://redbuttegarden.ticketfly.com">
+                                                <a href="{{ concert.ticket_url }}">
                                                     <img class="responsive con-button hover" src="{% static 'img/buy-tickets.png' %}"
                                                          alt="Buy tickets for the Red Butte Garden Concert Series" title="Buy Tickets for the Red Butte Garden Concert Series">
                                                 </a>
