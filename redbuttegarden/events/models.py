@@ -105,7 +105,7 @@ class EventIndexPage(AbstractBase):
         StreamFieldPanel('body', classname="full"),
     ]
 
-    subpage_types = ['events.EventPage', 'events.EventGeneralPage']
+    subpage_types = ['events.EventPage', 'events.EventGeneralPage', 'events.EventIndexPage']
 
     def get_event_items(self):
         # This returns a Django paginator of event items in this section
