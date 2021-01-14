@@ -47,8 +47,13 @@ let minutesBeforeOpeningOrClosing = 60 - minutes;
 
 function setHours() {
 	if (manualOverrideTrue) {
-		busHours = document.getElementById("hours_man_open").textContent + " &ndash; " + document.getElementById("hours_man_close").textContent;
-		document.getElementById("gardenHours").innerHTML = busHours;
+		const openHour = document.getElementById("hours_man_open").textContent;
+		const closeHour = document.getElementById("hours_man_close").textContent;
+		busHours = openHour + " &ndash; " + closeHour;
+		// Check if hours_man_open and hours_man_close is actually set before setting the gardenHours content, otherwise we end up with just the '-'
+		if (openHour && closeHour) {
+			document.getElementById("gardenHours").innerHTML = busHours;
+		}
 		document.getElementById("gardenStatus").innerHTML = document.getElementById("hours_man_add_msg").textContent;
 		document.getElementById("gardenEmphatic").innerHTML = document.getElementById("hours_man_add_emph_msg").textContent;
 	} else {
