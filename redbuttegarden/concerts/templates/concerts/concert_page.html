@@ -94,7 +94,7 @@
                                         </div>
 
                                         <div class="con-but-wrap">
-                                            {% if concert.virtual and concert.available_until %}
+                                            {% if concert.virtual and concert.available_until and concert.live_in_the_past %}
                                                 Available On Demand
                                                 <div class="con-date">Until {{ concert.available_until }}</div>
                                             {% else %}
