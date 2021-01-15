@@ -118,7 +118,9 @@ class AlignedParagraphBlock(blocks.StructBlock):
 
 
 class MultiColumnAlignedParagraphBlock(AlignedParagraphBlock):
-    title = blocks.CharBlock(max_length=100, help_text=_('Green centered heading above column content'))
+    title = blocks.CharBlock(max_length=100,
+                             required=False,
+                             help_text=_('Green centered heading above column content'))
     paragraph = blocks.ListBlock(
         blocks.RichTextBlock(),
     )
