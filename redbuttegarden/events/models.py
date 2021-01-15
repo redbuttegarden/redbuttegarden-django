@@ -13,7 +13,8 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from home.abstract_models import AbstractBase
-from home.models import AlignedParagraphBlock, ButtonBlock, EmphaticText, GeneralPage, ImageLinkList, Heading
+from home.models import AlignedParagraphBlock, ButtonBlock, EmphaticText, GeneralPage, ImageLinkList, Heading, \
+    MultiColumnAlignedParagraphBlock
 
 
 @register_snippet
@@ -89,6 +90,7 @@ BLOCK_TYPES = [
                               help_text=_('Text will be green and centered'))),
     ('emphatic_text', EmphaticText(required=False, help_text="Red italic text")),
     ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
+    ('multi_column_paragraph', MultiColumnAlignedParagraphBlock()),
     ('image', ImageChooserBlock()),
     ('image_link_list', ImageLinkList()),
     ('html', blocks.RawHTMLBlock(required=False)),
