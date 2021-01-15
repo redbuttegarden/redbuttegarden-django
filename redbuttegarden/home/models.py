@@ -359,7 +359,7 @@ class GeneralPage(AbstractBase):
                                        help_text=_('Text will be red, italic and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
         ('multi_column_paragraph', MultiColumnAlignedParagraphBlock()),
-        ('image', ImageChooserBlock()),
+        ('image', ImageChooserBlock(help_text=_('Centered image'))),
         ('image_carousel', ImageCarousel()),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
