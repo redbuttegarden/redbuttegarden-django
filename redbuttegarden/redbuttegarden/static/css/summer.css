@@ -36,13 +36,17 @@ hr {
 	opacity: .9;
 }
 
-#rbgdefaultbody a, #rbgdefaultbody a:link, #rbgdefaultbody a:visited, #rbgdefaultbody a:active {
+a, a:link, a:visited, a:active {
 	color: #A7916E;		/* hyperlink color for default pages */
 	font-weight: bold;
 	text-decoration: underline;
 }
 
-#rbgdefaultbody a:hover {
+#navbarbg a, #navbarbg a:link, #navbarbg a:visited, #navbarbg a:active {
+	text-decoration: none;
+}
+
+a:hover {
 	color: #C4B59E;		/* color when hyperlinks hovered over on default pages*/
 }
 
@@ -1020,7 +1024,7 @@ no-repeat 5px 3px;
 	color: #FFF;
 }
 
-.rbgfooterlinks a:link, a:visited, a:active {
+.rbgfooterlinks a:link,.rbgfooterlinks a:visited,.rbgfooterlinks a:active {
 	color: #FFF;
 	font-weight: bold;
 	text-decoration: none;
