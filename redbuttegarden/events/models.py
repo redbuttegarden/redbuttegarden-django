@@ -1,14 +1,13 @@
 from django.core.paginator import Paginator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, PageChooserPanel, MultiFieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, PageChooserPanel
 from wagtail.core import blocks
 from wagtail.core.blocks import PageChooserBlock
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
@@ -84,6 +83,13 @@ class ListWithImagesBlock(blocks.StructBlock):
         icon = 'fa-id-card-o'
 
 
+class ImageRow(blocks.StructBlock):
+    images = blocks.ListBlock(ImageChooserBlock())
+
+    class Meta:
+        template = 'blocks/image_row.html'
+
+
 BLOCK_TYPES = [
     ('button', ButtonBlock()),
     ('green_heading', Heading(classname='full title',
@@ -95,6 +101,7 @@ BLOCK_TYPES = [
     ('image_link_list', ImageLinkList()),
     ('html', blocks.RawHTMLBlock(required=False)),
     ('image_list', ListWithImagesBlock(required=False)),
+    ('image_row', ImageRow()),
 ]
 
 
