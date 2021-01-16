@@ -140,9 +140,10 @@ class EventPage(Page):
     location = models.CharField(max_length=100)
     additional_info = RichTextField(blank=True)
     instructor = models.CharField(max_length=100, blank=True)
-    member_cost = models.CharField(max_length=100, help_text="Accepts numbers or text. e.g. Free!")
-    public_cost = models.CharField(max_length=200, help_text="Accepts numbers or text. e.g. $35")
-
+    member_cost = models.CharField(max_length=100, blank=True, null=True,
+                                   help_text="Accepts numbers or text. e.g. Free!")
+    public_cost = models.CharField(max_length=200, blank=True, null=True,
+                                   help_text="Accepts numbers or text. e.g. $35")
     sub_heading = models.CharField(max_length=200, blank=True, help_text="e.g. 500,000 Blooming Bulbs")
     event_dates = models.CharField(max_length=200)
     notes = RichTextField(blank=True,
