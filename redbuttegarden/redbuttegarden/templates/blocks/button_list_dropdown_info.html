@@ -1,7 +1,35 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 <div class="row-fluid">
-    {% if value.list_items|length_is:"3" %}
+    {% if value.list_items|length_is:"1" %}
+        {% for list_item in value.list_items %}
+            <div class="lowpadding btn-block">
+                    <span class="no-button-outline">
+                        <button class="volbutton hover green-bg" data-target="#{{ id }}-{{ forloop.counter }}"
+                                data-toggle="collapse" href="#{{ id }}-{{ forloop.counter }}">
+                            {{ list_item.button_text }}
+                        </button>
+                    </span>
+                <div class="collapse tan-bg" id="{{ id }}-{{ forloop.counter }}">
+                    {{ list_item.info_text }}
+                </div>
+            </div>
+        {% endfor %}
+    {% elif value.list_items|length_is:"2" %}
+        {% for list_item in value.list_items %}
+            <div class="col-sm-6 lowpadding">
+                    <span class="no-button-outline">
+                        <button class="volbutton hover green-bg" data-target="#{{ id }}-{{ forloop.counter }}"
+                                data-toggle="collapse" href="#{{ id }}-{{ forloop.counter }}">
+                            {{ list_item.button_text }}
+                        </button>
+                    </span>
+                <div class="collapse tan-bg" id="{{ id }}-{{ forloop.counter }}">
+                    {{ list_item.info_text }}
+                </div>
+            </div>
+        {% endfor %}
+    {% elif value.list_items|length_is:"3" %}
         {% for list_item in value.list_items %}
             <div class="col-sm-4 lowpadding">
                 <span class="no-button-outline">
