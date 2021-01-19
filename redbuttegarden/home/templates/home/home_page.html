@@ -114,7 +114,8 @@
 
     <div class="row-fluid">
         <div class="col-sm-6"><a href="{% slugurl 'whats-blooming-now' %}"><img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'img/blog1.jpg' %}"></a></div>
-        <div class="col-sm-6"><a href="{% slugurl 'social-media' %}"><img alt="hand holding smartphone" class="hover" src="{% static 'img/socialMedia-small.png' %}"></a></div>
+        {# Social media page is the only non watail page. It's served from a view in the home app #}
+        <div class="col-sm-6"><a href="/social-media"><img alt="hand holding smartphone" class="hover" src="{% static 'img/socialMedia-small.png' %}"></a></div>
     </div>
 
     <br />
