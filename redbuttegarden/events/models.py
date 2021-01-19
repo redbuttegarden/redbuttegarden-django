@@ -136,7 +136,9 @@ class EventIndexPage(AbstractBase):
         return context
 
 
-class EventPage(Page):
+class EventPage(AbstractBase):
+    # TODO - Delete image once all existing pages have a thumbnail set
+    #   TODO - When that's done, you can also delete the save override which tries to set thumbnail to image
     image = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -165,7 +167,6 @@ class EventPage(Page):
     )
 
     content_panels = Page.content_panels + [
-        ImageChooserPanel('image'),
         FieldPanel('location'),
         FieldPanel('additional_info'),
         FieldPanel('instructor'),
@@ -179,6 +180,10 @@ class EventPage(Page):
     ]
 
     parent_page_types = ['events.EventIndexPage']
+
+    def save(self, clean=True, user=None, log_action=False, **kwargs):
+        if self.thumbnail is None:
+            self.thumbnail = self.image
 
 
 class EventGeneralPage(GeneralPage):

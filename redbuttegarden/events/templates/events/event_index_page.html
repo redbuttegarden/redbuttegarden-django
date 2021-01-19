@@ -18,7 +18,7 @@
                 {% with event=event.specific %}
                     <a href="{% pageurl event %}">
                         <div class="eventwrapsmall hover">
-                            {% image event.image original %}
+                            {% image event.thumbnail original %}
                             <div class="eventinfo">
                                 <div class="eventname">{{ event.title }}</div>
                                 <div class="eventdate">{{ event.event_dates }}</div>
@@ -61,11 +61,7 @@
                     <div class="col-sm-4 page-link">
                         <a href="{% pageurl spage %}">
                             <div class="eventwrapsmall hover">
-                                {% if spage.thumbnail %}
-                                    {% image spage.thumbnail original %}
-                                {% else %}
-                                    {% image spage.image original %}
-                                {% endif %}
+                                {% image spage.thumbnail original %}
                                 <div class="eventinfo">
                                     <div class="eventname">{{ spage.title }}</div>
                                 </div>
