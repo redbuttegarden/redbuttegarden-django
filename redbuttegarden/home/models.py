@@ -331,10 +331,12 @@ class ColumnBlock(blocks.StreamBlock):
                       help_text=_('Text will be green and centered'))
     emphatic_text = EmphaticText(classname='full title',
                                  help_text=_('Text will be red, italic and centered'))
+    aligned_paragraph = AlignedParagraphBlock()
     paragraph = blocks.RichTextBlock()
     image = ImageChooserBlock()
     document = DocumentChooserBlock()
     button = ButtonBlock()
+    html = blocks.RawHTMLBlock()
 
     class Meta:
         template = 'blocks/column.html'
