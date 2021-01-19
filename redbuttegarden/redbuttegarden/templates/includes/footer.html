@@ -4,9 +4,9 @@
 <div id="prefooterbg">
     <div id="prefooter" class="container">
         <div class="row">
-            <div class="col-xs-4"><a href="/memberships"><img alt="outline of human" src="{% static 'img/footer/prefooter-membership.png' %}" class="responsive"/></a></div>
+            <div class="col-xs-4"><a href="{% slugurl 'memberships' %}"><img alt="outline of human" src="{% static 'img/footer/prefooter-membership.png' %}" class="responsive"/></a></div>
             <div class="col-xs-4"><a href="{% include 'includes/give-link.html' %}"><img alt="dollar sign" src="{% static 'img/footer/prefooter-donate.png' %}" class="responsive"/></a></div>
-            <div class="col-xs-4"><a href="/volunteer"><img alt="outline of shovel" src="{% static 'img/footer/prefooter-volunteer.png' %}" class="responsive"/></a></div>
+            <div class="col-xs-4"><a href="{% slugurl 'volunteer-at-red-butte-garden' %}"><img alt="outline of shovel" src="{% static 'img/footer/prefooter-volunteer.png' %}" class="responsive"/></a></div>
         </div>
     </div>
 </div>
@@ -33,11 +33,11 @@
         <div class="rbgfooterlinks hide-mobile">
             <ul>
                 <li><a href="{% slugurl 'contact-us' %}">CONTACT US</a><span class="hide-mobile">|</span></li>
-                <li><a href="/advisory-board">BOARD</a><span class="hide-mobile">|</span></li>
-                <li><a href="/local-retail-partners">LOCAL RETAIL PARTNERS</a><span class="hide-mobile"></span></li>
-                <li><a href="/public-relations">PUBLIC RELATIONS</a><span class="hide-mobile">|</span></li>
-                <li><a href="/general-info">INFO &amp; POLICIES</a><span class="hide-mobile">|</span></li>
-                <li><a href="/employment">EMPLOYMENT</a><span class="hide-mobile">|</span></li>
+                <li><a href="{% slugurl 'advisory-board' %}">BOARD</a><span class="hide-mobile">|</span></li>
+                <li><a href="{% slugurl 'local-retail-partners' %}">LOCAL RETAIL PARTNERS</a><span class="hide-mobile"></span></li>
+                <li><a href="{% slugurl 'public-relations' %}">PUBLIC RELATIONS</a><span class="hide-mobile">|</span></li>
+                <li><a href="{% slugurl 'general-info' %}">INFO &amp; POLICIES</a><span class="hide-mobile">|</span></li>
+                <li><a href="{% slugurl 'employment' %}">EMPLOYMENT</a><span class="hide-mobile">|</span></li>
                 <li><a href="https://redbuttegarden.formstack.com/forms/donation_request_form" target="_blank">DONATION REQUEST</a><span class="hide-mobile"></span></li>
                 <li><a href="https://redbuttegarden.formstack.com/forms/info_update" target="_blank">UPDATE YOUR INFO</a><span class="hide-mobile"></span></li>
                 <li><a href="https://55218.blackbaudhosting.com/55218/page.aspx?pid=201" target="_blank">SIGN UP FOR OUR EVENT EBLASTS</a></li>
@@ -60,7 +60,7 @@
 
                 <div class="col-xs-6">
                     <div class="memfaqwrap">
-                        <a href="/advisory-board">
+                        <a href="{% slugurl 'advisory-board' %}">
                             <input type="submit" value="BOARD" class="footer-button hover" />
                         </a>
                     </div>
@@ -69,7 +69,7 @@
 
                 <div class="col-xs-6">
                     <div class="memfaqwrap">
-                        <a href="/local-retail-partners">
+                        <a href="{% slugurl 'local-retail-partners' %}">
                             <input type="submit" value="LOCAL RETAIL PARTNERS" class="footer-button hover" />
                         </a>
                     </div>
@@ -78,7 +78,7 @@
 
                 <div class="col-xs-6">
                     <div class="memfaqwrap">
-                        <a href="/public-relations">
+                        <a href="{% slugurl 'public-relations' %}">
                             <input type="submit" value="PUBLIC RELATIONS" class="footer-button hover" />
                         </a>
                     </div>
@@ -87,7 +87,7 @@
 
                 <div class="col-xs-6">
                     <div class="memfaqwrap">
-                        <a href="/general-info">
+                        <a href="{% slugurl 'general-info' %}">
                             <input type="submit" value="INFO &amp; POLICIES" class="footer-button hover" />
                         </a>
                     </div>
@@ -96,7 +96,7 @@
 
                 <div class="col-xs-6">
                     <div class="memfaqwrap">
-                        <a href="/employment">
+                        <a href="{% slugurl 'employment' %}">
                             <input type="submit" value="EMPLOYMENT" class="footer-button hover" />
                         </a>
                     </div>
