@@ -63,37 +63,36 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">EDUCATION <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a title="List of activities to bust that boredom" href="{% slugurl 'boredom-busters' %}">BOREDOM BUSTERS</a></li>
-                                <li><a title="Educational activities for adults" href="{% slugurl 'adult-education' %}">CLASSES &amp; WORKSHOPS<br>FOR ADULTS</a></li>
-                                <li><a title="Garden Adventures are classes for children ages 4-12 and a parent" href="{% slugurl 'garden-adventures' %}">GARDEN ADVENTURES<br>CLASSES FOR KIDS</a></li>
-                                <a href="/summer-camp"><li>SUMMER CAMP</li></a>
-                                <a href="/lil-buds"><li>LIL' BUDS CLASSES</li></a>
-                                <a href="/lectures"><li>LECTURES</li></a>
-                                <a href="/teachers-and-students"><li>TEACHERS &amp; STUDENTS</li></a>
+                                <li><a title="Virtual educational resources and activities" href="{% slugurl 'online-classes-virtual-resources' %}">Virtual Resources</a></li>
+                                <li><a title="Educational activities for adults" href="{% slugurl 'adult-education' %}">CLASSES &amp; WORKSHOPS<br />FOR ADULTS</a></li>
+                                <li><a title="Classes for kids" href="{% slugurl 'kids-classes' %}">SUMMER CAMP &<br />Classes For Kids</a></li>
+                                <li><a title="Play the Taleblazer mobile application" href="{% slugurl 'taleblazer-mobile-game' %}">PLAY TALEBLAZER</a></li>
+                                <li><a title="Info for teachers and students" href="{% slugurl 'teachers-and-students' %}">TEACHERS &amp; STUDENTS</a></li>
                             </ul>
                         </li>
 
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">GET INVOLVED <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <a href="/volunteer"><li>VOLUNTEER</li></a>
-                                <a href="{% include 'includes/give-link.html' %}"><li>GIVE</li></a>
-                                <a href="{% slugurl 'memberships' %}"><li>MEMBERSHIP</li></a>
-                                <a href="/memorials-and-tributes"><li>MEMORIALS &amp;<br />TRIBUTES</li></a>
-                                <a href="/ways-to-give"><li>WAYS TO GIVE</li></a>
-                                <a href="/corporate-sponsorship"><li>CORPORATE <br />SPONSORSHIP</li></a>
-                                <a href="/employment"><li>EMPLOYMENT</li></a>
+                                <li><a title="Various volunteer opportunities at the garden" href="{% slugurl 'volunteer-at-red-butte-garden' %}">VOLUNTEER</a></li>
+                                <li><a title="Link to donate to Red Butte Garden" href="{% include 'includes/give-link.html' %}">GIVE</a></li>
+                                <li><a title="Become a Red Butte Garden member today!" href="{% slugurl 'memberships' %}">MEMBERSHIP</a></li>
+                                <li><a title="Options for giving in memoriam" href="{% slugurl 'memorials-and-tributes' %}">MEMORIALS &amp;<br />TRIBUTES</a></li>
+                                <li><a title="35 Days of Giving blog post series" href="{% slugurl '35-days-of-giving' %}">35 DAYS OF GIVING</a></li>
+                                <li><a title="Become a corporate sponsor" href="{% slugurl 'corporate-sponsors' %}">CORPORATE <br />SPONSORSHIP</a></li>
+                                <li><a title="Join the Red Butte Garden team" href="{% slugurl 'employment' %}">EMPLOYMENT</a></li>
                             </ul>
                         </li>
 
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">PRIVATE EVENTS <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <a href="/weddings-and-receptions"><li>WEDDINGS<br />&amp; RECEPTIONS</li></a>
-                                <a href="/private-parties"><li>CORPORATE EVENTS <br />&amp; PRIVATE PARTIES</li></a>
-                                <a href="/rental-sites"><li>RENTAL SITES</li></a>
-                                <a href="/rental-availability"><li>RENTAL AVAILABILITY</li></a>
-                                <a href="/rental-rates-and-catering"><li>RENTAL PRICING<br />&amp; CATERING</li></a>
-                                <a href="/photo-policy"><li>PHOTO POLICY</li></a>
+                                <li><a title="Hold your wedding or reception at the garden" href="{% slugurl 'weddings-receptions' %}">WEDDINGS<br />&amp; RECEPTIONS</a></li>
+                                <li><a title="Event space for corporate events and private parties" href="{% slugurl 'corporate-events-private-parties' %}">CORPORATE EVENTS <br />&amp; PRIVATE PARTIES</a></li>
+                                <li><a title="Descriptions of the various areas available for rental" href="{% slugurl 'rental-sites' %}">RENTAL SITES</a></li>
+                                <li><a title="Calendar displaying rental availability" href="{% slugurl 'rental-availability' %}">RENTAL AVAILABILITY</a></li>
+                                <li><a title="Cost information for renting and catering" href="{% slugurl 'rental-rates-catering' %}">RENTAL PRICING<br />&amp; CATERING</a></li>
+                                <li><a title="Our policy for photography at the garden" href="{% slugurl 'photo-policy' %}">PHOTO POLICY</a></li>
                             </ul>
                         </li>
 
@@ -106,11 +105,11 @@
                         </li>
 
                         <li class="dropdown navbutton" id="navhide2">
-                            <a class="dropdown-toggle" href="/memberships">JOIN</a>
+                            <a class="dropdown-toggle" href="{% slugurl 'memberships' %}">JOIN</a>
                         </li>
 
                         <li class="dropdown navbutton" id="navhide3">
-                            <a class="dropdown-toggle" href="/volunteer">VOLUNTEER</a>
+                            <a class="dropdown-toggle" href="{% slugurl 'volunteer-at-red-butte-garden' %}">VOLUNTEER</a>
                         </li>
                     </ul>
                 </div>
