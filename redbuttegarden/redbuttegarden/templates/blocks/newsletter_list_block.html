@@ -1,0 +1,10 @@
+<div class="container-fluid">
+    {% for newsletter in value.list_items %}
+        <div class="col-sm-4">
+            <h5 class="green text-center">
+                {{ newsletter.title }}
+            </h5>
+            {{ newsletter.embed }}
+        </div>
+    {% endfor %}
+</div>

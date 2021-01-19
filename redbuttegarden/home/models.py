@@ -268,6 +268,18 @@ class ButtonBlock(blocks.StructBlock):
         template = 'blocks/button_block.html'
 
 
+class NewsletterBlock(blocks.StructBlock):
+    title = blocks.CharBlock(max_length=100, required=False)
+    embed = blocks.RawHTMLBlock(required=True)
+
+
+class NewsletterListBlock(blocks.StructBlock):
+    list_items = blocks.ListBlock(NewsletterBlock())
+
+    class Meta:
+        template = 'blocks/newsletter_list_block.html'
+
+
 class SingleThreeColumnDropdownInfoPanel(blocks.StructBlock):
     background_color = blocks.ChoiceBlock([('default-panel', 'Default'), ('purple-panel', 'Purple'),
                                            ('orange-panel', 'Orange'), ('blue-panel', 'Blue'), ('green-panel', 'Green'),
@@ -369,6 +381,7 @@ class GeneralPage(AbstractBase):
         ('card_info_list', ImageListCardInfo()),
         ('image_info_list', ImageInfoList()),
         ('three_column_dropdown_info_panel', ThreeColumnDropdownInfoPanel()),
+        ('newsletters', NewsletterListBlock()),
     ], blank=False)
 
     content_panels = AbstractBase.content_panels + [
