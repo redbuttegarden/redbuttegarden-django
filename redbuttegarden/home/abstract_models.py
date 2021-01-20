@@ -20,7 +20,7 @@ class AbstractBase(Page):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
-        help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
+        help_text=_('You only need to add a thumbnail if this page is the child of a another page')
     )
 
     class Meta:
