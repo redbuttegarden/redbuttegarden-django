@@ -166,7 +166,7 @@ class EventPage(AbstractBase):
         related_name='+'
     )
 
-    content_panels = Page.content_panels + [
+    content_panels = AbstractBase.content_panels + [
         FieldPanel('location'),
         FieldPanel('additional_info'),
         FieldPanel('instructor'),
