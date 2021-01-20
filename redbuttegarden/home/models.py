@@ -477,8 +477,8 @@ class GeneralIndexPage(AbstractBase):
         StreamFieldPanel('body'),
     ]
 
-    subpage_types = ['events.EventPage', 'home.GeneralIndexPage', 'home.GeneralPage', 'home.TwoColumnGeneralPage',
-                     'concerts.ConcertPage', 'journal.JournalIndexPage']
+    subpage_types = ['events.EventPage', 'events.EventIndexPage', 'home.GeneralIndexPage', 'home.GeneralPage',
+                     'home.TwoColumnGeneralPage', 'concerts.ConcertPage', 'journal.JournalIndexPage']
 
     def get_general_items(self):
         # This returns a Django paginator of blog items in this section
