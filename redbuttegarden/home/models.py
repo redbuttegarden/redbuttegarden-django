@@ -6,8 +6,7 @@ from modelcluster.fields import ParentalKey
 from wagtail.core import blocks
 from wagtail.core.models import Collection, Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel, \
-    TabbedInterface, ObjectList
+from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.embeds.blocks import EmbedBlock
@@ -478,8 +477,8 @@ class GeneralIndexPage(AbstractBase):
         StreamFieldPanel('body'),
     ]
 
-    subpage_types = ['home.GeneralIndexPage', 'home.GeneralPage', 'home.TwoColumnGeneralPage', 'concerts.ConcertPage',
-                     'journal.JournalIndexPage']
+    subpage_types = ['events.EventPage', 'home.GeneralIndexPage', 'home.GeneralPage', 'home.TwoColumnGeneralPage',
+                     'concerts.ConcertPage', 'journal.JournalIndexPage']
 
     def get_general_items(self):
         # This returns a Django paginator of blog items in this section
