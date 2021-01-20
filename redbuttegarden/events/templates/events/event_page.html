@@ -50,7 +50,9 @@
             {% endif %}
 
             <!-- Price Info -->
-            <div class="ev-info-header green">COST:</div>
+            {% if page.member_cost or page.public_cost %}
+                <div class="ev-info-header green">COST:</div>
+            {% endif %}
 
             {% if page.member_cost %}
                 <div>
