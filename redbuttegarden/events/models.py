@@ -179,7 +179,7 @@ class EventPage(AbstractBase):
         SnippetChooserPanel('policy', help_text=_("Optionally choose a policy link to include on the page"))
     ]
 
-    parent_page_types = ['events.EventIndexPage']
+    parent_page_types = ['events.EventIndexPage', 'home.GeneralIndexPage']
 
     def save(self, clean=True, user=None, log_action=False, **kwargs):
         if self.thumbnail is None:
