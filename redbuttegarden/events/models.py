@@ -185,6 +185,8 @@ class EventPage(AbstractBase):
         if self.thumbnail is None:
             self.thumbnail = self.image
 
+        super().save(**kwargs)
+
 
 class EventGeneralPage(GeneralPage):
     event_dates = models.CharField(max_length=200)
