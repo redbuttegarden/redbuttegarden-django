@@ -101,7 +101,7 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
 
 
 class JournalPage(AbstractBase):
-    authors = models.ManyToManyField(
+    authors = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
         blank=True,
         verbose_name=_('Authors'),
@@ -138,7 +138,7 @@ class JournalPage(AbstractBase):
         return context
 
     def save_revision(self, *args, **kwargs):
-        if not self.authors:
+        if not self.authors.all():
             self.authors.add(self.owner)
         return super().save_revision(*args, **kwargs)
 

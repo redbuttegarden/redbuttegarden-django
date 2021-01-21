@@ -62,7 +62,7 @@
             <div class="col-sm-9">
                 <h2>{{ post.title }}</h2>
                 <h5>Submitted: {{ post.date }}</h5>
-                {% if post.authors %}
+                {% if post.authors.all %}
                     <div>
                         <strong>By: </strong>
                         {% for author in post.authors.all %}
