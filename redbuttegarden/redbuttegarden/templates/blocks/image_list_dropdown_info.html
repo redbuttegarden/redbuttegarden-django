@@ -2,7 +2,7 @@
 
 <div class="row-fluid">
     {% for list_item in value.list_items %}
-        <div class="col-sm-4">
+        <div class="col-sm-4 image-list-dropdown">
             <div class="eventwrapsmall hover collapsed" data-target="#{{ id }}-{{ forloop.counter }}" data-toggle="collapse"
                  href="#{{ id }}-{{ forloop.counter }}" aria-expanded="false">
                 <img class="img-rounded" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">

@@ -119,3 +119,7 @@ img.full-width {
 ul, ol {
     list-style-position: inside;
 }
+
+.image-list-dropdown {
+    max-height: 266px;
+}
