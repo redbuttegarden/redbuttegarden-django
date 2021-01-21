@@ -62,11 +62,17 @@
             <div class="col-sm-9">
                 <h2>{{ post.title }}</h2>
                 <h5>Submitted: {{ post.date }}</h5>
-                {% if post.author %}
-                    <p>
-                        <strong>By: {{ post.author.first_name }} {{ post.author.last_name }},</strong>
-                        <em>{{ post.author.title }}</em>
-                    </p>
+                {% if post.authors %}
+                    <div>
+                        <strong>By: </strong>
+                        {% for author in post.authors.all %}
+                            <strong>{{ author.first_name }} {{ author.last_name }},</strong>
+                            <em>{{ author.title }}</em>
+                            {% if not forloop.last %}
+                                <span> and </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 {% endif %}
                 <br>
 

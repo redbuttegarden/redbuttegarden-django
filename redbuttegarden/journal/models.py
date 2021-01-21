@@ -101,12 +101,11 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
 
 
 class JournalPage(AbstractBase):
-    author = models.ForeignKey(
+    authors = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        blank=True, null=True,
-        verbose_name=_('Author'),
-        on_delete=models.SET_NULL,
-        related_name='author_pages',
+        blank=True,
+        verbose_name=_('Authors'),
+        related_name='author_posts'
     )
     date = models.DateTimeField(verbose_name="Post date", default=timezone.now)
     categories = ParentalManyToManyField('journal.JournalCategory', blank=True)
@@ -122,7 +121,7 @@ class JournalPage(AbstractBase):
     ]
 
     promote_panels = AbstractBase.promote_panels + [
-        FieldPanel('author', help_text=_("If left blank, this will be set to the currently logged in user")),
+        FieldPanel('authors', help_text=_("If left blank, this will be set to the currently logged in user")),
         FieldPanel('date')
     ]
 
@@ -139,8 +138,8 @@ class JournalPage(AbstractBase):
         return context
 
     def save_revision(self, *args, **kwargs):
-        if not self.author:
-            self.author = self.owner
+        if not self.authors:
+            self.authors.add(self.owner)
         return super().save_revision(*args, **kwargs)
 
 
