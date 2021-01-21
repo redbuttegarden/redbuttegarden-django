@@ -121,5 +121,5 @@ ul, ol {
 }
 
 .image-list-dropdown {
-    max-height: 266px;
+    min-height: 266px;
 }
