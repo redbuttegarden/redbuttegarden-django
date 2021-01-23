@@ -117,6 +117,11 @@ class EventIndexPage(AbstractBase):
 
     subpage_types = ['events.EventPage', 'events.EventGeneralPage', 'events.EventIndexPage']
 
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('intro'),
+        index.SearchField('body'),
+    ]
+
     def get_event_items(self):
         # This returns a Django paginator of event items in this section
         return Paginator(self.get_children().live(), 10)
