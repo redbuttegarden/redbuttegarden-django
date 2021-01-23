@@ -12,6 +12,7 @@ from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, Orderable
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
 from events.models import BLOCK_TYPES
@@ -126,6 +127,12 @@ class JournalPage(AbstractBase):
     ]
 
     parent_page_types = ['journal.JournalIndexPage']
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+        index.SearchField('authors'),
+        index.FilterField('date')
+    ]
 
     @property
     def journal_index_page(self):
