@@ -388,6 +388,10 @@ class GeneralPage(AbstractBase):
         StreamFieldPanel('body'),
     ]
 
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+    ]
+
 
 class TwoColumnGeneralPage(AbstractBase):
     body = StreamField(block_types=([
