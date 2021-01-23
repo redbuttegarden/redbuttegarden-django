@@ -420,6 +420,11 @@ class PlantCollectionsPage(AbstractBase):
         InlinePanel('plant_collections', label=_('Plant Collection')),
     ]
 
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('intro'),
+        index.SearchField('more_info_modal')
+    ]
+
 
 class PlantCollections(Orderable):
     page = ParentalKey(
