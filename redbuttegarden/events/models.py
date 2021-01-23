@@ -189,7 +189,7 @@ class EventPage(AbstractBase):
 
     search_fields = AbstractBase.search_fields + [
         index.SearchField('instructor'),
-        index.SearchField('subheading'),
+        index.SearchField('sub_heading'),
         index.SearchField('event_dates'),
         index.SearchField('notes'),
         index.SearchField('body'),
