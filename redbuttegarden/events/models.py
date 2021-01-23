@@ -182,6 +182,14 @@ class EventPage(AbstractBase):
 
     parent_page_types = ['events.EventIndexPage', 'home.GeneralIndexPage']
 
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('instructor'),
+        index.SearchField('subheading'),
+        index.SearchField('event_dates'),
+        index.SearchField('notes'),
+        index.SearchField('body'),
+    ]
+
     def save(self, clean=True, user=None, log_action=False, **kwargs):
         if self.thumbnail is None:
             self.thumbnail = self.image
