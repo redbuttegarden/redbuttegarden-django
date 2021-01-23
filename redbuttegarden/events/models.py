@@ -8,6 +8,7 @@ from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
@@ -200,3 +201,8 @@ class EventGeneralPage(GeneralPage):
     ]
 
     parent_page_types = ['events.EventIndexPage']
+
+    search_fields = GeneralPage.search_fields + [
+        index.SearchField('event_dates'),
+        index.SearchField('notes')
+    ]
