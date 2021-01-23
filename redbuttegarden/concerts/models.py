@@ -14,6 +14,7 @@ from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPane
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.search import index
 
 from home.abstract_models import AbstractBase
 from home.models import Heading, EmphaticText, AlignedParagraphBlock
@@ -239,4 +240,8 @@ class DonorPackagePage(AbstractBase):
 
     content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
+    ]
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
     ]
