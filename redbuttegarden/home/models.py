@@ -481,6 +481,10 @@ class GeneralIndexPage(AbstractBase):
     subpage_types = ['events.EventPage', 'events.EventIndexPage', 'home.GeneralIndexPage', 'home.GeneralPage',
                      'home.TwoColumnGeneralPage', 'concerts.ConcertPage', 'journal.JournalIndexPage']
 
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+    ]
+
     def get_general_items(self):
         # This returns a Django paginator of blog items in this section
         return Paginator(self.get_children().live(), 10)
