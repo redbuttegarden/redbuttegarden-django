@@ -154,6 +154,10 @@ class ConcertPage(AbstractBase):
         InlinePanel('concerts', label='Concerts')
     ]
 
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('intro'),
+    ]
+
 
 class Concert(Orderable):
     page = ParentalKey(ConcertPage, on_delete=models.CASCADE, related_name='concerts')
