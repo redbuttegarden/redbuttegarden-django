@@ -120,6 +120,10 @@ ul, ol {
     list-style-position: inside;
 }
 
+#search ul {
+    list-style-position: outside;
+}
+
 .image-list-dropdown {
     min-height: 266px;
 }
