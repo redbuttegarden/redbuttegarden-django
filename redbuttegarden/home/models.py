@@ -409,6 +409,10 @@ class TwoColumnGeneralPage(AbstractBase):
         StreamFieldPanel('body'),
     ]
 
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body')
+    ]
+
 
 class PlantCollectionsPage(AbstractBase):
     intro = RichTextField()
