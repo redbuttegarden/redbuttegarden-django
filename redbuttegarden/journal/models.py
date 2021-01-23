@@ -56,6 +56,10 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
 
     subpage_types = ['journal.JournalPage']
 
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+    ]
+
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
         context = super().get_context(request, *args, **kwargs)
