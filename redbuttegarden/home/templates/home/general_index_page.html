@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
     <div class="row-fluid text-center responsive">
@@ -13,7 +13,7 @@
 
     <hr>
 
-    <div class="row-fluid col xs-12">
+    <div id="wagtail-children" class="row-fluid col xs-12">
         {% for sub in sub_pages %}
             <div class="col-sm-4">
                 {% with sub=sub.specific %}
@@ -39,4 +39,8 @@
             </div>
         {% endfor %}
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" src="{% static 'js/non_wagtail_child.js' %}"></script>
 {% endblock %}
