@@ -15,7 +15,8 @@ urlpatterns = []
 Needed to use this wonky method of defining urlpatterns to avoid having the local
 environment try to authenticate using CAS.
 """
-if not os.environ.get('DJANGO_SETTINGS_MODULE') == 'redbuttegarden.settings.local':
+if not os.environ.get('DJANGO_SETTINGS_MODULE') in ['redbuttegarden.settings.local',
+                                                    'redbuttegarden.settings.testing']:
     import cas.views
     urlpatterns = [
         # CAS
