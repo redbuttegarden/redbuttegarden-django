@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group
 from wagtail.core.models import Page
 from wagtail.tests.utils import WagtailPageTests, get_user_model
-from wagtail.tests.utils.form_data import inline_formset, nested_form_data, rich_text, streamfield
+from wagtail.tests.utils.form_data import inline_formset, nested_form_data, streamfield
 
 from concerts.models import ConcertPage, DonorPackagePage
 
@@ -27,4 +27,13 @@ class ConcertPageInstanceTests(WagtailPageTests):
                                  {'title': 'Concert Test Page',
                                   'concerts': inline_formset([])  # Need to pass empty list to avoid ValidationError
                                   }
+                             ))
+
+    def test_can_create_donor_package(self):
+        self.assertCanCreate(self.home, DonorPackagePage,
+                             nested_form_data(
+                                 {'title': 'Donor Package Test Page',
+                                  'body': streamfield([
+                                      ('html', '<p>Testing!</p>')
+                                  ])}
                              ))
