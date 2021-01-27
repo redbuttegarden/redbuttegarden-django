@@ -213,7 +213,7 @@ class EventGeneralPage(GeneralPage):
         FieldPanel('notes'),
     ]
 
-    parent_page_types = ['events.EventIndexPage']
+    parent_page_types = ['events.EventIndexPage', 'home.GeneralIndexPage']
 
     search_fields = GeneralPage.search_fields + [
         index.SearchField('event_dates'),
