@@ -43,7 +43,7 @@ class EventPageInstanceTests(WagtailPageTests):
     def test_can_create_event_index(self):
         self.assertCanCreate(self.home, EventIndexPage,
                              nested_form_data(
-                                 {'title': 'Event Index Test Page',
+                                 {'title': 'Another Event Index Test Page',
                                   'body': streamfield([])  # Need to pass empty list to avoid ValidationError
                                   }
                              ))
