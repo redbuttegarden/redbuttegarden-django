@@ -180,7 +180,7 @@ class Concert(Orderable):
     band_info = RichTextField(help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
                                           ' centered.'))
 
-    concert_date = models.DateField(blank=True)
+    concert_date = models.DateField()
     gates_time = models.TimeField(default=datetime.time(hour=18), blank=True, null=True)
     show_time = models.TimeField(default=datetime.time(hour=19))
     member_price = models.CharField(default='$', max_length=100, blank=True, null=True)
@@ -244,8 +244,4 @@ class DonorPackagePage(AbstractBase):
 
     content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
-    ]
-
-    search_fields = AbstractBase.search_fields + [
-        index.SearchField('body'),
     ]
