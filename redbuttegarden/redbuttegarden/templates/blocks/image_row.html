@@ -20,6 +20,12 @@
                     {% image img width-600 class='img-center'%}
                 </div>
             {% endfor %}
+        {% else %}
+            <div class="col-sm-12">
+                {% for img in value.images %}
+                    {% image img original class='img-center' %}
+                {% endfor %}
+            </div>
         {% endif %}
     </div>
 </div>
