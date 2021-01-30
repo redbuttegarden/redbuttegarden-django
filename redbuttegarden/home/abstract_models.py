@@ -45,3 +45,17 @@ class AbstractBase(Page):
                        classname='settings'),
         ])
         return edit_handler.bind_to(model=cls)
+
+    def save(self, clean=True, user=None, log_action=False, **kwargs):
+        """
+        If this page is new and it's parent is aliased, created an
+        alias of this page under the alias of the parent as well.
+        """
+        is_new = self.id is None
+        super().save(self, **kwargs)
+
+        parent_aliases = self.get_parent().aliases.all()
+
+        if is_new and parent_aliases:
+            for alias in parent_aliases:
+                self.create_alias(parent=alias, user=self.owner)
