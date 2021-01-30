@@ -29,4 +29,25 @@ class TestMultiColumnAlignedParagraphBlock(WagtailPageTests):
 
         response = self.client.get('/general-test-page', follow=True)
         html = response.content.decode('utf8')
-        self.assertIn('<div class="col-sm-12">\n                        <p>Testing!</p>\n                    </div>', html)
+        self.assertIn('<div class="col-sm-12">\n                        <p>Testing!</p>\n                    </div>',
+                      html)
+
+    def test_view_two_paragraphs(self):
+        general_page = GeneralPage(owner=self.user,
+                                   slug='general-test-page',
+                                   title='General Test Page',
+                                   body=json.dumps([
+                                       {'type': 'multi_column_paragraph', 'value': {
+                                           'alignment': 'left',
+                                           'background_color': 'default',
+                                           'paragraph': ['<p>Testing!</p>', '<p>Second Test Paragraph</p>']
+                                       }}
+                                   ]))
+        Page.objects.get(slug='home').add_child(instance=general_page)
+        general_page.save_revision().publish()
+
+        response = self.client.get('/general-test-page', follow=True)
+        html = response.content.decode('utf8')
+        self.assertIn('<div class="col-sm-6">\n                        <p>Testing!</p>\n                    </div>\n'
+                      '                \n                    <div class="col-sm-6">\n                        <p>Second '
+                      'Test Paragraph</p>\n                    </div>', html)
