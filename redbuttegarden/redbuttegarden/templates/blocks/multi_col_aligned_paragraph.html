@@ -26,6 +26,18 @@
                         {{ col_content|richtext }}
                     </div>
                 {% endfor %}
+            {% elif value.paragraph|length_is:"1" %}
+                {% for col_content in value.paragraph %}
+                    <div class="col-sm-12">
+                        {{ col_content|richtext }}
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% for col_content in value.paragraph %}
+                    <div class="col-sm-2">
+                        {{ col_content|richtext }}
+                    </div>
+                {% endfor %}
             {% endif %}
         </div>
     </div>
