@@ -13,7 +13,7 @@
                 {% if gallery_items %}
                     <div class="col-sm-3">
                 {% else %}
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                 {% endif %}
             {% endwith %}
                 {% if post.tags.all.count %}
@@ -50,7 +50,7 @@
                         {% if gallery_items %}
                             {% for item in post.gallery_images.all %}
                                 <figure>
-                                    {% image item.image width-400 %}
+                                    {% image item.image width-400 class="responsive" %}
                                     <figcaption>{{ item.caption }}</figcaption>
                                 </figure>
                             {% endfor %}
@@ -59,7 +59,13 @@
                 </div>
             </div>
 
-            <div class="col-sm-9">
+            {% with gallery_items=post.gallery_images.all %}
+                {% if gallery_items %}
+                    <div class="col-sm-9">
+                {% else %}
+                    <div class="col-sm-10">
+                {% endif %}
+            {% endwith %}
                 <h2>{{ post.title }}</h2>
                 <h5>Submitted: {{ post.date }}</h5>
                 {% if post.authors.all %}
