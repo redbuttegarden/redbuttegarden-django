@@ -33,6 +33,7 @@ DATABASES = {
 # Static files
 AWS_STORAGE_BUCKET_NAME = 'zappa-rbg-dev-static-east'
 AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_FILE_OVERWRITE = False
 STATIC_BUCKET = 'zappa-rbg-dev-static-east'
 STATICFILES_STORAGE = 'home.custom_storages.StaticStorage'
 MEDIA_BUCKET = 'zappa-rbg-dev-static-east'
