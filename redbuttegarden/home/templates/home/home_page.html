@@ -104,39 +104,45 @@
     {% include 'home/includes/page-down.html' %}
 {% endblock %}
 
-{% block content %}
-    <br />
+{% block abnormal_content %}
+    <div id="rbghomebody" class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <br />
 
-    <div>
-        <hr class="hr-separator">
-        <div class="separator">MEDIA</div>
+                <div>
+                    <hr class="hr-separator">
+                    <div class="separator">MEDIA</div>
+                </div>
+
+                <div class="row-fluid">
+                    <div class="col-sm-6"><a href="{% slugurl 'whats-blooming-now' %}"><img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'img/blog1.jpg' %}"></a></div>
+                    {# Social media page is the only non watail page. It's served from a view in the home app #}
+                    <div class="col-sm-6"><a href="/social-media"><img alt="hand holding smartphone" class="hover" src="{% static 'img/socialMedia-small.png' %}"></a></div>
+                </div>
+
+                <br />
+                <br />
+                <br />
+
+                <div>
+                    <hr class="hr-separator">
+                    <div class="separator">EVENTS</div>
+                </div>
+
+                <br />
+
+                <div class="row-fluid">
+                    <div class="col-sm-12"><a href="{% slugurl 'calendar' %}"><img alt="text says whats happening over picture of red butte garden amphitheater" class="hover" src="{% static 'img/whats-happening.jpg' %}"></a></div>
+                </div>
+
+                <br />
+                <br />
+                <br />
+
+
+                <br />
+            </div>
+        </div>
     </div>
-
-    <div class="row-fluid">
-        <div class="col-sm-6"><a href="{% slugurl 'whats-blooming-now' %}"><img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'img/blog1.jpg' %}"></a></div>
-        {# Social media page is the only non watail page. It's served from a view in the home app #}
-        <div class="col-sm-6"><a href="/social-media"><img alt="hand holding smartphone" class="hover" src="{% static 'img/socialMedia-small.png' %}"></a></div>
-    </div>
-
-    <br />
-    <br />
-    <br />
-
-    <div>
-        <hr class="hr-separator">
-        <div class="separator">EVENTS</div>
-    </div>
-
-    <br />
-
-    <div class="row-fluid">
-        <div class="col-sm-12"><a href="{% slugurl 'calendar' %}"><img alt="text says whats happening over picture of red butte garden amphitheater" class="hover" src="{% static 'img/whats-happening.jpg' %}"></a></div>
-    </div>
-
-    <br />
-    <br />
-    <br />
-
-
-    <br />
-{% endblock content %}
+{% endblock abnormal_content %}
