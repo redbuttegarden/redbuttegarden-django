@@ -127,3 +127,11 @@ ul, ol {
 .image-list-dropdown {
     min-height: 266px;
 }
+
+.foot-btn-wrap {
+    margin: 10px 0;
+}
+
+.footer-btn-inner {
+    min-height: 40px;
+}

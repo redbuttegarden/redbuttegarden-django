@@ -1349,13 +1349,15 @@ no-repeat 5px 3px;
 	border: 1px solid black;
 }
 
-.footer-button {
+.foot-btn-wrap a.footer-button {
 	background-color: #C4B59E;
 	color: #FFF;
 	width: 100%;
-	height: 40px;
-	font-size: .82em;
-	border: 0;
+	-webkit-appearance: button;
+	-moz-appearance: button;
+	appearance: button;
+
+	text-decoration: none;
 }
 
 .membutton {
@@ -1449,7 +1451,7 @@ no-repeat 5px 3px;
 	margin: auto !important;
 }
 
-#rbgdefaultbody .memfaqwrap a, #rbgdefaultbody .memfaqwrap a:hover, #rbgdefaultbody .memfaqwrap a:active, #rbgdefaultbody .memfaqwrap a:visited, #rbgdefaultbody .memfaqwrap a:link {
+#rbgdefaultbody .foot-btn-wrap a, #rbgdefaultbody .foot-btn-wrap a:hover, #rbgdefaultbody .foot-btn-wrap a:active, #rbgdefaultbody .foot-btn-wrap a:visited, #rbgdefaultbody .foot-btn-wrap a:link {
 	text-decoration: none;
 	color: #FFF;
 	font-weight: normal;
