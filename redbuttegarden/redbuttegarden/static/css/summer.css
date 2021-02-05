@@ -1174,6 +1174,7 @@ no-repeat 5px 3px;
 
 #uofu img, #footerlogo img, #zap img {
 	max-width: 170px;
+	width: 100%;
 }
 
 #zap {
