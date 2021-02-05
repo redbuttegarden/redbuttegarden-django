@@ -1356,7 +1356,7 @@ no-repeat 5px 3px;
 	-webkit-appearance: button;
 	-moz-appearance: button;
 	appearance: button;
-
+	display: inherit;
 	text-decoration: none;
 }
 
