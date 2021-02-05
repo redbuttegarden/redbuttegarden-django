@@ -972,6 +972,7 @@ no-repeat 5px 3px;
 	display: block;
 	margin: 10px auto 10px auto;
 	max-width: 166px;
+	width: 100%;
 }
 
 #prefooter img:hover {
