@@ -223,6 +223,35 @@ class ButtonListDropdownInfo(blocks.StructBlock):
         template = 'blocks/button_list_dropdown_info.html'
 
 
+class SingleListCardDropdownInfo(blocks.StructBlock):
+    card_info = AlignedParagraphBlock(
+        label='Card Text',
+    )
+    info_text = blocks.RichTextBlock(
+        label='Info Text',
+    )
+    info_button_text = blocks.CharBlock(
+        max_length=100,
+        help_text=_('Button appears below Info Text'),
+        required=False,
+    )
+    info_button_url = blocks.URLBlock(
+        max_length=200,
+        label='Button URL',
+        required=False
+    )
+
+
+class CardListDropdownInfo(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        SingleListCardDropdownInfo(),
+        label="Card"
+    )
+
+    class Meta:
+        template = 'blocks/card_list_dropdown_info.html'
+
+
 class Heading(blocks.CharBlock):
     """Green centered h2 element"""
 
@@ -378,6 +407,7 @@ class GeneralPage(AbstractBase):
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
+        ('dropdown_card_list', CardListDropdownInfo()),
         ('card_info_list', ImageListCardInfo()),
         ('image_info_list', ImageInfoList()),
         ('three_column_dropdown_info_panel', ThreeColumnDropdownInfoPanel()),

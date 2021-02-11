@@ -1341,7 +1341,8 @@ no-repeat 5px 3px;
 	margin-bottom: 10px;
 }
 
-.membutton, .apply-button {
+.membutton, .apply-button,
+#accordion .apply-button .btn-inner {
 	background-color: #196143;
 	color: #FFF;
 	height: 40px;
@@ -1597,6 +1598,14 @@ no-repeat 5px 3px;
 #rbgdefaultbody .panel-body a, #rbgdefaultbody .panel-body a:link, #rbgdefaultbody .panel-body a:visited, #rbgdefaultbody .panel-body a:active { /* sets link colors inside panels back to site defaults */
 	color: #A7916E;		/* hyperlink color for default pages */
 	text-decoration: underline;
+}
+
+#rbgdefaultbody .panel-body .apply-button a,
+#rbgdefaultbody .panel-body .apply-button a:link,
+#rbgdefaultbody .panel-body .apply-button a:visited,
+#rbgdefaultbody .panel-body .apply-button a:active {
+	color: #A7916E;		/* hyperlink color for default pages */
+	text-decoration: none;
 }
 
 #rbgdefaultbody .panel-body a:hover {
