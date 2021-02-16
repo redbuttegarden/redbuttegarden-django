@@ -11,13 +11,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: define the correct hosts in production!
 ALLOWED_HOSTS = ['0.0.0.0', 'trjxa2b547.execute-api.us-east-1.amazonaws.com', 'dhsyi82ptcyu5.cloudfront.net',
-                 'redbuttegarden.org']
+                 'redbuttegarden.org', 'www.redbuttegarden.org', 'train.redbuttegarden.org']
 
 BASE_URL = 'https://redbuttegarden.org'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -124,7 +121,7 @@ LOGGING = {
     'loggers': {
         '': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'ERROR',
         },
     },
 }
