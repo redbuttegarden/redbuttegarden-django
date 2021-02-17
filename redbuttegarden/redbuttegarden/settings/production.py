@@ -43,9 +43,9 @@ WAGTAILFRONTENDCACHE = {
     'cloudfront': {
         'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
         'DISTRIBUTION_ID': {
-            'dev.redbuttegarden.org': 'E5BZL9629SKXT',
+            'redbuttegarden.org': 'E5BZL9629SKXT',
             'dev-shop.redbuttegarden.org': 'E1ILRLJZBMHT88',
-            'dev-train.redbuttegarden.org': 'EV5FN74YZ4XU0',
+            'train.redbuttegarden.org': 'EV5FN74YZ4XU0',
         },
     },
 }
