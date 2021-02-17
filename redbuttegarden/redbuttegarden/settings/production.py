@@ -44,8 +44,10 @@ WAGTAILFRONTENDCACHE = {
     'cloudfront': {
         'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
         'DISTRIBUTION_ID': {
+            'www.redbuttegarden.org': 'E1XHTB26ZUSUPC',
             'redbuttegarden.org': 'E5BZL9629SKXT',
-            'dev-shop.redbuttegarden.org': 'E1ILRLJZBMHT88',
+            # TODO - Re-enable after adding dev-shop in ALLOWED_HOSTS
+            # 'dev-shop.redbuttegarden.org': 'E1ILRLJZBMHT88',
             'train.redbuttegarden.org': 'EV5FN74YZ4XU0',
         },
     },
