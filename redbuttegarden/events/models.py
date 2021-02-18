@@ -1,3 +1,5 @@
+import datetime
+
 from django.core.paginator import Paginator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -7,7 +9,6 @@ from wagtail.core.blocks import PageChooserBlock
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page
 from wagtail.images.blocks import ImageChooserBlock
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
@@ -137,7 +138,7 @@ class EventIndexPage(AbstractBase):
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
         context = super().get_context(request, *args, **kwargs)
-        events = self.get_children().live().order_by('-first_published_at')
+        events = EventPage.objects.child_of(self).live().order_by('order_date')
         context['events'] = events
         return context
 
@@ -161,6 +162,7 @@ class EventPage(AbstractBase):
                                    help_text="Accepts numbers or text. e.g. $35")
     sub_heading = models.CharField(max_length=200, blank=True, help_text="e.g. 500,000 Blooming Bulbs")
     event_dates = models.CharField(max_length=200)
+    order_date = models.DateField(default=datetime.datetime.today, blank=True, null=True)
     notes = RichTextField(blank=True,
                           help_text="Notes will appear on the thumbnail image of the event on the event index page")
     body = StreamField(BLOCK_TYPES)
@@ -183,6 +185,10 @@ class EventPage(AbstractBase):
         FieldPanel('notes'),
         StreamFieldPanel('body'),
         SnippetChooserPanel('policy', help_text=_("Optionally choose a policy link to include on the page"))
+    ]
+
+    promote_panels = AbstractBase.promote_panels + [
+        FieldPanel('order_date'),
     ]
 
     parent_page_types = ['events.EventIndexPage', 'home.GeneralIndexPage']
