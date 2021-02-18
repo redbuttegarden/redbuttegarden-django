@@ -136,7 +136,7 @@ class EventIndexPage(AbstractBase):
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by order_date
         context = super().get_context(request, *args, **kwargs)
-        events = self.get_children().live().order_by('-first_published_at')
+        events = self.get_children().live().order_by('-latest_revision_created_at')
         context['events'] = events
         return context
 
