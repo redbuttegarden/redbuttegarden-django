@@ -629,7 +629,7 @@ class RBGHours(models.Model):
         verbose_name_plural = "RBG Hours"
 
 
-class HomePage(Page):
+class HomePage(AbstractBase):
     hours = models.ForeignKey(
         'home.RBGHours',
         null=True,

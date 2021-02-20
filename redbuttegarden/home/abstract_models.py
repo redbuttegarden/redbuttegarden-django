@@ -1,9 +1,13 @@
+import logging
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, gettext_lazy
 from wagtail.admin.edit_handlers import MultiFieldPanel, TabbedInterface, ObjectList
 from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.utils.decorators import cached_classmethod
+
+logger = logging.getLogger(__name__)
 
 
 class AbstractBase(Page):
@@ -32,6 +36,20 @@ class AbstractBase(Page):
             ImageChooserPanel('thumbnail'),
         ], classname="collapsible"),
     ]
+
+    def get_context(self, request, *args, **kwargs):
+        from events.models import EventIndexPage
+        context = super(AbstractBase, self).get_context(request, *args, **kwargs)
+        main_event_slug = 'events'
+        try:
+            main_events_page = EventIndexPage.objects.get(slug=main_event_slug)
+            context['main_event_page'] = main_events_page
+        except EventIndexPage.DoesNotExist:
+            logger.error(f'[!] Event page with slug "{main_event_slug}" not found. Is it missing or was the slug '
+                         f'changed?')
+            context['main_event_page'] = None
+
+        return context
 
     @cached_classmethod
     def get_edit_handler(cls):

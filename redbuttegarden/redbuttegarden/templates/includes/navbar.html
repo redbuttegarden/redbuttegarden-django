@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags %}
+{% load static wagtailcore_tags wagtailroutablepage_tags %}
 
 <!-- Begin Navbar -->
 <div class="navbar-wrapper">
@@ -51,11 +51,19 @@
                                     <span class="concert-li">OUTDOOR CONCERT SERIES</span>
                                 </a></li>
                                 <li><a title="Links to live stream concert event schedule and information" href="{% slugurl 'keeping-the-music-alive' %}">LIVE STREAM CONCERTS</a></li>
-                                <li><a title="Info for current and upcoming art displays at the garden" href="{% slugurl 'art-exhibits' %}">ART EXHIBITS</a></li>
-                                <li><a title="Links to events going on during the Spring season" href="{% slugurl 'spring-events' %}">SPRING EVENTS</a></li>
-                                <li><a title="Links to events going on during the Summer season" href="{% slugurl 'summer-events' %}">SUMMER EVENTS</a></li>
-                                <li><a title="Links to events going on during the Fall season" href="{% slugurl 'fall-events' %}">FALL EVENTS</a></li>
-                                <li><a title="Links to events going on during the Winter season" href="{% slugurl 'winter-events' %}">WINTER EVENTS</a></li>
+                                {% if main_event_page %}
+                                    <li><a title="Info for current and upcoming art displays at the garden" href="{% routablepageurl main_event_page 'event_by_category' 'art-exhibits' %}">ART EXHIBITS</a></li>
+                                    <li><a title="Links to events going on during the Spring season" href="{% routablepageurl main_event_page 'event_by_category' 'spring-events' %}">SPRING EVENTS</a></li>
+                                    <li><a title="Links to events going on during the Summer season" href="{% routablepageurl main_event_page 'event_by_category' 'summer-events' %}">SUMMER EVENTS</a></li>
+                                    <li><a title="Links to events going on during the Fall season" href="{% routablepageurl main_event_page 'event_by_category' 'fall-events' %}">FALL EVENTS</a></li>
+                                    <li><a title="Links to events going on during the Winter season" href="{% routablepageurl main_event_page 'event_by_category' 'winter-events' %}">WINTER EVENTS</a></li>
+                                {% else %}
+                                    <li><a title="Info for current and upcoming art displays at the garden" href="{% slugurl 'art-exhibits' %}">ART EXHIBITS</a></li>
+                                    <li><a title="Links to events going on during the Spring season" href="{% slugurl 'spring-events' %}">SPRING EVENTS</a></li>
+                                    <li><a title="Links to events going on during the Summer season" href="{% slugurl 'summer-events' %}">SUMMER EVENTS</a></li>
+                                    <li><a title="Links to events going on during the Fall season" href="{% slugurl 'fall-events' %}">FALL EVENTS</a></li>
+                                    <li><a title="Links to events going on during the Winter season" href="{% slugurl 'winter-events' %}">WINTER EVENTS</a></li>
+                                {% endif %}
                             </ul>
                         </li>
 
