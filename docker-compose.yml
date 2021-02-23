@@ -13,7 +13,7 @@ services:
       - db
     command: gunicorn --pythonpath redbuttegarden redbuttegarden.wsgi:application --bind 0.0.0.0:8000 --workers 3
   db:
-    image: "postgres:11"
+    image: "postgres:12.3"
     env_file:
       - redbuttegarden/.env.dev
     volumes:
