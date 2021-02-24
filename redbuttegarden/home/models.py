@@ -297,6 +297,16 @@ class ButtonBlock(blocks.StructBlock):
         template = 'blocks/button_block.html'
 
 
+class ButtonRow(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        ButtonBlock(),
+        label="Button"
+    )
+
+    class Meta:
+        template = 'blocks/button_row.html'
+
+
 class NewsletterBlock(blocks.StructBlock):
     title = blocks.CharBlock(max_length=100, required=False)
     embed = blocks.RawHTMLBlock(required=True)
@@ -515,6 +525,7 @@ class GeneralIndexPage(AbstractBase):
         ('dropdown_button_list', ButtonListDropdownInfo()),
         ('image_link_list', ImageLinkList()),
         ('button', ButtonBlock()),
+        ('button_row', ButtonRow()),
     ], blank=True)
 
     content_panels = AbstractBase.content_panels + [
