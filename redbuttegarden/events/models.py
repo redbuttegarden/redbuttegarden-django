@@ -177,11 +177,13 @@ class EventIndexPage(RoutablePageMixin, AbstractBase):
         if banner_search:
             self.banner = banner_search[0]
         # We want to grab all events of the given category for each Page type that has event categories
+        # We also want to exclude copies so we check the page has no alias
         events = []
-        event_pages = EventPage.objects.live().filter(event_categories__slug=event_category)
+        event_pages = EventPage.objects.live().filter(event_categories__slug=event_category, alias_of__isnull=True)
         for event in event_pages:
             events.append(event)
-        event_general_pages = EventGeneralPage.objects.live().filter(event_categories__slug=event_category)
+        event_general_pages = EventGeneralPage.objects.live().filter(event_categories__slug=event_category,
+                                                                     alias_of__isnull=True)
         for event in event_general_pages:
             events.append(event)
         self.events = events
