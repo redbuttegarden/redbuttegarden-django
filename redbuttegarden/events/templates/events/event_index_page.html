@@ -18,7 +18,7 @@
                 {% with event=event.specific %}
                     <a href="{% pageurl event %}">
                         <div class="eventwrapsmall hover">
-                            {% image event.thumbnail original %}
+                            {% image event.thumbnail fill-385x385 %}
                             <div class="eventinfo">
                                 <div class="eventname">{{ event.title }}</div>
                                 <div class="eventdate">{{ event.event_dates }}</div>
