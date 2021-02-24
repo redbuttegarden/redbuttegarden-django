@@ -1,7 +1,6 @@
 from django import forms
 from django.core.paginator import Paginator
 from django.db import models
-from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, PageChooserPanel
@@ -10,6 +9,7 @@ from wagtail.core import blocks
 from wagtail.core.blocks import PageChooserBlock
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
@@ -171,6 +171,11 @@ class EventIndexPage(RoutablePageMixin, AbstractBase):
     def event_by_category(self, request, event_category, *args, **kwargs):
         self.search_type = 'event-category'
         self.search_term = event_category
+        self.cat_title = event_category.replace('-', ' ').title()
+        # We need to figure out which banner image to display based on the category
+        banner_search = Image.objects.search(self.cat_title + ' banner')
+        if banner_search:
+            self.banner = banner_search[0]
         # We want to grab all events of the given category for each Page type that has event categories
         events = []
         event_pages = EventPage.objects.live().filter(event_categories__slug=event_category)
