@@ -68,7 +68,7 @@
             <div class="row-fluid clearfix">
                 <div id="future">
 
-                    {% for concert in page.concerts.all %}
+                    {% for concert in concerts %}
                         <div class="infowrapper {% if not concert.virtual and concert.live_in_the_past or concert.on_demand_expired %}past{% endif %}">
                             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 concertwrapper">
                                 <a href="{{ concert.ticket_url }}">

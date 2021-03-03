@@ -1,4 +1,5 @@
 import datetime
+import operator
 
 from django.db import models
 from django.db.models import BooleanField
@@ -15,7 +16,9 @@ from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
+from wagtail.snippets.blocks import SnippetChooserBlock
 
+from concerts.utils import live_in_the_past, on_demand_expired
 from home.abstract_models import AbstractBase
 from home.models import Heading, EmphaticText, AlignedParagraphBlock
 
@@ -103,6 +106,15 @@ class TableInfoCardList(blocks.StructBlock):
         template = 'blocks/table_info_card_list.html'
 
 
+class ConcertBlock(blocks.StructBlock):
+    concert = SnippetChooserBlock('concerts.Concert')
+    dates = blocks.ListBlock(blocks.DateBlock())
+
+
+class ConcertStreamBlock(blocks.StreamBlock):
+    concerts = ConcertBlock()
+
+
 class ConcertPage(AbstractBase):
     banner_link = models.URLField(help_text=_("Where to direct the banner image link"),
                                   blank=True)
@@ -142,6 +154,7 @@ class ConcertPage(AbstractBase):
         on_delete=models.SET_NULL,
         related_name='+',
     )
+    body = StreamField(ConcertStreamBlock(), null=True, blank=True)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('banner_link'),
@@ -151,81 +164,51 @@ class ConcertPage(AbstractBase):
         PageChooserPanel('button_two'),
         PageChooserPanel('button_three'),
         PageChooserPanel('button_four'),
-        InlinePanel('concerts', label='Concerts')
+        StreamFieldPanel('body'),
     ]
 
     search_fields = AbstractBase.search_fields + [
         index.SearchField('intro'),
     ]
 
+    def get_context(self, request, **kwargs):
+        context = super().get_context(request)
+        # Get a list of concert objects and determine the following:
+        # Are they in the past and if they are virtual, is the on-demand offering also in the past?
+        concerts = [concert.value for concert in self.body]
+        for concert in concerts:
+            concert.soonest_date = sorted(concert.concert_dates)
+            concert.live_in_the_past = live_in_the_past(concert)
+            concert.on_demand_expired = on_demand_expired(concert)
 
-class Concert(Orderable):
-    page = ParentalKey(ConcertPage, on_delete=models.CASCADE, related_name='concerts')
-    band_img = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=False,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
-    virtual = BooleanField(default=False, help_text=_('Is this a virtual concert?'))
-    canceled = BooleanField(default=False)
-    postponed = BooleanField(default=False)
-    sold_out = BooleanField(default=False)
+        # Sort concerts by soonest date
+        concerts = sorted(concerts, key=lambda x: x.soonest_date)
+        context['concerts'] = concerts
+        return context
+
+
+class Concert(blocks.StructBlock):
+    band_img = ImageChooserBlock(required=True)
+    virtual = blocks.BooleanBlock(default=False, help_text=_('Is this a virtual concert?'))
+    canceled = blocks.BooleanBlock(default=False)
+    postponed = blocks.BooleanBlock(default=False)
+    sold_out = blocks.BooleanBlock(default=False)
     # Virtual concert will remain available on demand until this date
-    available_until = models.DateField(blank=True, null=True,
+    available_until = blocks.DateBlock(blank=True, null=True,
                                        help_text=_('Date that on-demand virtual concert will remain available until'))
     # Band/opener names and url properties replaced with single RichTextField to account for wide variety in how the
     # bands info may be displayed
-    band_info = RichTextField(help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
-                                          ' centered.'))
-
-    concert_date = models.DateField()
-    gates_time = models.TimeField(default=datetime.time(hour=18), blank=True, null=True)
-    show_time = models.TimeField(default=datetime.time(hour=19))
-    member_price = models.CharField(default='$', max_length=100, blank=True, null=True)
-    public_price = models.CharField(default='$', max_length=100)
+    band_info = blocks.RichTextBlock(
+        help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
+                    ' centered.'))
+    concert_dates = blocks.ListBlock(blocks.DateTimeBlock())
+    gates_time = blocks.TimeBlock(default=datetime.time(hour=18), blank=True, null=True)
+    show_time = blocks.TimeBlock(default=datetime.time(hour=19))
+    member_price = blocks.CharBlock(default='$', max_length=100, blank=True, null=True)
+    public_price = blocks.CharBlock(default='$', max_length=100)
 
     # Added a ticket URL for concerts that are sold from a non-standard URL
-    ticket_url = models.URLField(default='https://redbuttegarden.ticketfly.com')
-
-    panels = [
-        ImageChooserPanel('band_img'),
-        FieldRowPanel([
-            FieldPanel('canceled'),
-            FieldPanel('postponed'),
-            FieldPanel('sold_out'),
-        ]),
-        FieldPanel('virtual'),
-        FieldPanel('available_until'),
-        FieldPanel('band_info'),
-
-        FieldPanel('concert_date'),
-        FieldPanel('gates_time'),
-        FieldPanel('show_time'),
-        FieldPanel('member_price'),
-        FieldPanel('public_price'),
-        FieldPanel('ticket_url'),
-    ]
-
-    @property
-    def live_in_the_past(self):
-        """
-        Boolean indicating if the concert's live performance has already occurred.
-        """
-        return datetime.date.today() > self.concert_date
-
-    @property
-    def on_demand_expired(self):
-        """
-        Boolean indicating if the on-demand performance is still available.
-
-        Returns True if concert is virtual but does not offer on-demand.
-        """
-        if self.available_until:
-            return datetime.date.today() > self.available_until
-        elif self.virtual and self.available_until is None:
-            return True
+    ticket_url = blocks.URLBlock(default='https://redbuttegarden.ticketfly.com')
 
 
 class DonorPackagePage(AbstractBase):
