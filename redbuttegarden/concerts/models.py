@@ -107,8 +107,27 @@ class TableInfoCardList(blocks.StructBlock):
 
 
 class ConcertBlock(blocks.StructBlock):
-    concert = SnippetChooserBlock('concerts.Concert')
-    dates = blocks.ListBlock(blocks.DateBlock())
+    band_img = ImageChooserBlock(required=True)
+    virtual = blocks.BooleanBlock(default=False, help_text=_('Is this a virtual concert?'))
+    canceled = blocks.BooleanBlock(default=False)
+    postponed = blocks.BooleanBlock(default=False)
+    sold_out = blocks.BooleanBlock(default=False)
+    # Virtual concert will remain available on demand until this date
+    available_until = blocks.DateBlock(required=False, blank=True, null=True,
+                                       help_text=_('Date that on-demand virtual concert will remain available until'))
+    # Band/opener names and url properties replaced with single RichTextField to account for wide variety in how the
+    # bands info may be displayed
+    band_info = blocks.RichTextBlock(
+        help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
+                    ' centered.'))
+    concert_dates = blocks.ListBlock(blocks.DateTimeBlock())
+    gates_time = blocks.TimeBlock(default=datetime.time(hour=18), blank=True, null=True)
+    show_time = blocks.TimeBlock(default=datetime.time(hour=19))
+    member_price = blocks.CharBlock(default='$', max_length=100, blank=True, null=True)
+    public_price = blocks.CharBlock(default='$', max_length=100)
+
+    # Added a ticket URL for concerts that are sold from a non-standard URL
+    ticket_url = blocks.URLBlock(default='https://redbuttegarden.ticketfly.com')
 
 
 class ConcertStreamBlock(blocks.StreamBlock):
@@ -172,7 +191,7 @@ class ConcertPage(AbstractBase):
     ]
 
     def get_context(self, request, **kwargs):
-        context = super().get_context(request)
+        context = super().get_context(request, **kwargs)
         # Get a list of concert objects and determine the following:
         # Are they in the past and if they are virtual, is the on-demand offering also in the past?
         concerts = [concert.value for concert in self.body]
@@ -185,30 +204,6 @@ class ConcertPage(AbstractBase):
         concerts = sorted(concerts, key=lambda x: x.soonest_date)
         context['concerts'] = concerts
         return context
-
-
-class Concert(blocks.StructBlock):
-    band_img = ImageChooserBlock(required=True)
-    virtual = blocks.BooleanBlock(default=False, help_text=_('Is this a virtual concert?'))
-    canceled = blocks.BooleanBlock(default=False)
-    postponed = blocks.BooleanBlock(default=False)
-    sold_out = blocks.BooleanBlock(default=False)
-    # Virtual concert will remain available on demand until this date
-    available_until = blocks.DateBlock(blank=True, null=True,
-                                       help_text=_('Date that on-demand virtual concert will remain available until'))
-    # Band/opener names and url properties replaced with single RichTextField to account for wide variety in how the
-    # bands info may be displayed
-    band_info = blocks.RichTextBlock(
-        help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
-                    ' centered.'))
-    concert_dates = blocks.ListBlock(blocks.DateTimeBlock())
-    gates_time = blocks.TimeBlock(default=datetime.time(hour=18), blank=True, null=True)
-    show_time = blocks.TimeBlock(default=datetime.time(hour=19))
-    member_price = blocks.CharBlock(default='$', max_length=100, blank=True, null=True)
-    public_price = blocks.CharBlock(default='$', max_length=100)
-
-    # Added a ticket URL for concerts that are sold from a non-standard URL
-    ticket_url = blocks.URLBlock(default='https://redbuttegarden.ticketfly.com')
 
 
 class DonorPackagePage(AbstractBase):
