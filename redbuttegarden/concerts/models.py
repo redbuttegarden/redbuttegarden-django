@@ -108,20 +108,21 @@ class TableInfoCardList(blocks.StructBlock):
 
 class ConcertBlock(blocks.StructBlock):
     band_img = ImageChooserBlock(required=True)
-    virtual = blocks.BooleanBlock(default=False, help_text=_('Is this a virtual concert?'))
-    canceled = blocks.BooleanBlock(default=False)
-    postponed = blocks.BooleanBlock(default=False)
-    sold_out = blocks.BooleanBlock(default=False)
+    virtual = blocks.BooleanBlock(default=False, help_text=_('Is this a virtual concert?'), required=False)
+    canceled = blocks.BooleanBlock(default=False, required=False)
+    postponed = blocks.BooleanBlock(default=False, required=False)
+    sold_out = blocks.BooleanBlock(default=False, required=False)
     # Virtual concert will remain available on demand until this date
-    available_until = blocks.DateBlock(required=False, blank=True, null=True,
-                                       help_text=_('Date that on-demand virtual concert will remain available until'))
+    available_until = blocks.DateTimeBlock(required=False, blank=True, null=True,
+                                           help_text=_(
+                                               'Date that on-demand virtual concert will remain available until'))
     # Band/opener names and url properties replaced with single RichTextField to account for wide variety in how the
     # bands info may be displayed
     band_info = blocks.RichTextBlock(
         help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
                     ' centered.'))
     concert_dates = blocks.ListBlock(blocks.DateTimeBlock())
-    gates_time = blocks.TimeBlock(default=datetime.time(hour=18), blank=True, null=True)
+    gates_time = blocks.TimeBlock(default=datetime.time(hour=18), required=False, blank=True, null=True)
     show_time = blocks.TimeBlock(default=datetime.time(hour=19))
     member_price = blocks.CharBlock(default='$', max_length=100, blank=True, null=True)
     public_price = blocks.CharBlock(default='$', max_length=100)
@@ -196,7 +197,7 @@ class ConcertPage(AbstractBase):
         # Are they in the past and if they are virtual, is the on-demand offering also in the past?
         concerts = [concert.value for concert in self.body]
         for concert in concerts:
-            concert.soonest_date = sorted(concert.concert_dates)
+            concert.soonest_date = sorted(concert['concert_dates'])[-1]
             concert.live_in_the_past = live_in_the_past(concert)
             concert.on_demand_expired = on_demand_expired(concert)
 
