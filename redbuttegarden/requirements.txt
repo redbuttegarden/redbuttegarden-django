@@ -26,14 +26,14 @@ durationpy==0.5
 et-xmlfile==1.0.1
 future==0.18.2
 hjson==3.0.1
-html5lib==1.0.1
+html5lib==1.1
 idna==2.9
 importlib-metadata==1.5.0
 iniconfig==1.1.1
 jdcal==1.4.1
 jmespath==0.9.4
 kappa==0.6.0
-l18n==2018.5
+l18n==2020.6.1
 openpyxl==3.0.5
 packaging==20.8
 Pillow==6.2.2
@@ -47,7 +47,7 @@ pytest==6.2.2
 pytest-django==4.1.0
 python-dateutil==2.8.0
 python-slugify==4.0.0
-pytz==2019.3
+pytz==2020.1
 PyYAML==5.3.1
 requests==2.23.0
 s3transfer==0.3.3
@@ -61,7 +61,7 @@ tqdm==4.43.0
 troposphere==2.6.0
 Unidecode==1.1.1
 urllib3==1.25.7
-wagtail==2.12.2
+wagtail==2.12.3
 webencodings==0.5.1
 Werkzeug==0.16.1
 Willow==1.4
