@@ -197,6 +197,7 @@ class ConcertPage(AbstractBase):
         # Are they in the past and if they are virtual, is the on-demand offering also in the past?
         concerts = [concert.value for concert in self.body]
         for concert in concerts:
+            concert['concert_dates'] = sorted(concert['concert_dates'])
             concert.soonest_date = sorted(concert['concert_dates'])[-1]
             concert.live_in_the_past = live_in_the_past(concert)
             concert.on_demand_expired = on_demand_expired(concert)

@@ -98,7 +98,17 @@
                                                 Available On Demand
                                                 <div class="con-date">Until {{ concert.available_until }}</div>
                                             {% else %}
-                                                <div class="con-date">{{ concert.concert_date }}</div>
+                                                <div class="con-date">
+                                                    <span>
+                                                        {% for concert_date in concert.concert_dates %}
+                                                            {% if not forloop.last %}
+                                                                {{ concert_date.date|date:"M j" }},&nbsp;
+                                                            {% else %}
+                                                                {{ concert_date.date }}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </span>
+                                                </div>
                                                 <div class="con-times">
                                                     {% if concert.gates_time %}
                                                         Gates at {{ concert.gates_time }} /
