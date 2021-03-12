@@ -147,15 +147,32 @@ class TestConcert(TestCase):
         """
         Concert with date in the future should not have the 'past' class
         """
-        concert_future_date = ConcertDate(date=datetime.date.today() + datetime.timedelta(days=1))
-        self.concert.concert_dates.add(concert_future_date)
-        self.concert.save()
-        self.concert_page.concerts.add(self.concert)
+        concert_future_date = timezone.now() + datetime.timedelta(days=1)
+        self.concert_page.body = json.dumps([
+            {"type": "concerts",
+             "value": {"band_img": 773,
+                       "virtual": False,
+                       "canceled": False,
+                       "postponed": False,
+                       "sold_out": False,
+                       "available_until": None,
+                       "band_info": "<h4><b>Band Info Test</b></h4>",
+                       "concert_dates": [concert_future_date.isoformat()],
+                       "gates_time": "14:00:00",
+                       "show_time": "19:00:00",
+                       "member_price": "BandsInTown Plus Subscription",
+                       "public_price": "BandsInTown Plus Subscription",
+                       "ticket_url": "https://www.awin1.com/cread.php?awinmid=19610&awinaffid=846015&ued="
+                       }}
+        ])
         self.concert_page.save_revision().publish()
 
         response = self.client.get('/concert-test-page', follow=True)
         self.assertNotContains(response, '<div class="infowrapper past">')
-        self.assertFalse(self.concert.live_in_the_past())
+        # Emulate the behavior of ConcertPage.get_context to test live_in_the_past util
+        concert_stream_block = self.concert_page.body[0]
+        concert_block_value = concert_stream_block.value
+        self.assertFalse(live_in_the_past(concert_block_value))
 
     def test_past_present_concert_date_template_logic(self):
         """
