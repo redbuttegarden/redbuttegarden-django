@@ -26,7 +26,7 @@ class ConcertPageInstanceTests(WagtailPageTests):
                              nested_form_data(
                                  {'title': 'Concert Test Page',
                                   'body': streamfield([])  # Need to pass empty list to avoid ValidationError
-                                 }
+                                  }
                              ))
 
     def test_can_create_donor_package(self):

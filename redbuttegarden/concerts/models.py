@@ -134,6 +134,9 @@ class ConcertBlock(blocks.StructBlock):
 class ConcertStreamBlock(blocks.StreamBlock):
     concerts = ConcertBlock()
 
+    class Meta:
+        required = False
+
 
 class ConcertPage(AbstractBase):
     banner_link = models.URLField(help_text=_("Where to direct the banner image link"),
