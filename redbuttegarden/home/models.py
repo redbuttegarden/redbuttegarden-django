@@ -565,6 +565,7 @@ class FAQPage(AbstractBase):
                             help_text=_('Text will be green and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
         ('image', ImageChooserBlock()),
+        ('html', blocks.RawHTMLBlock()),
         ('FAQ_list', FAQList()),
     ])
 
