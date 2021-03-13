@@ -25,8 +25,8 @@ class ConcertPageInstanceTests(WagtailPageTests):
         self.assertCanCreate(self.home, ConcertPage,
                              nested_form_data(
                                  {'title': 'Concert Test Page',
-                                  'concerts': inline_formset([])  # Need to pass empty list to avoid ValidationError
-                                  }
+                                  'body': streamfield([])  # Need to pass empty list to avoid ValidationError
+                                 }
                              ))
 
     def test_can_create_donor_package(self):

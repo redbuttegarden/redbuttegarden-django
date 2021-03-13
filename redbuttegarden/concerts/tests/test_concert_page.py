@@ -15,8 +15,7 @@ class TestConcert(TestCase):
     def setUp(self):
         """
         Concert data can be created like so:
-        body=json.dumps([
-                        {"type": "concerts",
+        body=json.dumps([{"type": "concerts",
                          "value": {"band_img": 773,
                                    "virtual": False,
                                    "canceled": False,
@@ -31,8 +30,8 @@ class TestConcert(TestCase):
                                    "member_price": "BandsInTown Plus Subscription",
                                    "public_price": "BandsInTown Plus Subscription",
                                    "ticket_url": "https://www.awin1.com/cread.php?awinmid=19610&awinaffid=846015&ued="
-                                   }}
-                         ])
+                                   }
+                          }])
         """
         self.image = Image.objects.create(title='Test image', file=get_test_image_file())
         self.user = get_user_model().objects.create_user('Test User', 'test@email.com', 'password')
