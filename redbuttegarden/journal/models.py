@@ -1,3 +1,6 @@
+import logging
+
+from datetime import date
 from django import forms
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -7,16 +10,21 @@ from django.utils.translation import ugettext_lazy as _
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalManyToManyField, ParentalKey
 from taggit.models import TaggedItemBase, Tag as TaggitTag
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel, MultiFieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, Orderable
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
 from events.models import BLOCK_TYPES
 from home.abstract_models import AbstractBase
+from journal.utils import get_season
+
+
+logger = logging.getLogger(__name__)
 
 
 @register_snippet
@@ -50,7 +58,12 @@ class JournalPageTag(TaggedItemBase):
 class JournalIndexPage(RoutablePageMixin, AbstractBase):
     body = StreamField(block_types=BLOCK_TYPES, blank=True, null=True)
 
-    content_panels = AbstractBase.content_panels + [
+    # We'll automatically change the banner based on the season so don't need the banner section
+    # Banner selection for Journal Index Pages will be done with JS
+    content_panels = Page.content_panels + [
+        MultiFieldPanel([
+            ImageChooserPanel('thumbnail'),
+        ], classname="collapsible"),
         StreamFieldPanel('body'),
     ]
 
@@ -117,7 +130,12 @@ class JournalPage(AbstractBase):
     tags = ClusterTaggableManager(through='journal.JournalPageTag', blank=True)
     body = StreamField(BLOCK_TYPES)
 
-    content_panels = AbstractBase.content_panels + [
+    # Again, banner selection will be automatic based on season so we remove the banner selection
+    # Banner selection for Journal Pages will be done when the page is first published
+    content_panels = Page.content_panels + [
+        MultiFieldPanel([
+            ImageChooserPanel('thumbnail'),
+        ], classname="collapsible"),
         FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
         FieldPanel('tags'),
         InlinePanel('gallery_images', label=_('gallery images'),
@@ -149,6 +167,15 @@ class JournalPage(AbstractBase):
         return context
 
     def save_revision(self, *args, **kwargs):
+        if self.banner is None:
+            # Get the appropriate banner based on the current month
+            season = get_season(date.today())
+            banner_query = Image.objects.filter().search("what's blooming now banner " + season)
+            try:
+                banner = banner_query[0]
+                self.banner = banner
+            except IndexError as e:
+                logger.error('[!] Failed to find seasonal banner for Journal Page: ', e)
         if not self.authors.all():
             self.authors.add(self.owner)
         return super().save_revision(*args, **kwargs)
