@@ -125,12 +125,7 @@ class JournalPage(AbstractBase):
     tags = ClusterTaggableManager(through='journal.JournalPageTag', blank=True)
     body = StreamField(BLOCK_TYPES)
 
-    # Again, banner selection will be automatic based on season so we remove the banner selection
-    # Banner selection for Journal Pages will be done when the page is first published
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            ImageChooserPanel('thumbnail'),
-        ], classname="collapsible"),
+    content_panels = AbstractBase.content_panels + [
         FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
         FieldPanel('tags'),
         InlinePanel('gallery_images', label=_('gallery images'),
