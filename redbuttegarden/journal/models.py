@@ -58,12 +58,7 @@ class JournalPageTag(TaggedItemBase):
 class JournalIndexPage(RoutablePageMixin, AbstractBase):
     body = StreamField(block_types=BLOCK_TYPES, blank=True, null=True)
 
-    # We'll automatically change the banner based on the season so don't need the banner section
-    # Banner selection for Journal Index Pages will be done with JS
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            ImageChooserPanel('thumbnail'),
-        ], classname="collapsible"),
+    content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
     ]
 
@@ -167,7 +162,7 @@ class JournalPage(AbstractBase):
         return context
 
     def save_revision(self, *args, **kwargs):
-        if self.banner is None:
+        if self.slug == 'whats-blooming-now' and self.banner is None:
             # Get the appropriate banner based on the current month
             season = get_season(date.today())
             banner_query = Image.objects.filter().search("what's blooming now banner " + season)
