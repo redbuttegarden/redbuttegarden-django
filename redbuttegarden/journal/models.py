@@ -157,7 +157,7 @@ class JournalPage(AbstractBase):
         return context
 
     def save_revision(self, *args, **kwargs):
-        if self.slug == 'whats-blooming-now' and self.banner is None:
+        if self.get_parent().slug == 'whats-blooming-now' and self.banner is None:
             # Get the appropriate banner based on the current month
             season = get_season(date.today())
             banner_query = Image.objects.filter().search("what's blooming now banner " + season)
