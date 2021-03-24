@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from django.core.validators import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from modelcluster.fields import ParentalKey
@@ -671,7 +672,10 @@ class EventSlides(Orderable):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
+        help_text=_('Link to Wagtail page')
     )
+    alternate_link = models.URLField(blank=True, null=True,
+                                     help_text=_('Link to external URL or non-page Wagtail view'))
     text = RichTextField(max_length=100,
                          features=['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic'],
                          null=True, blank=True)
@@ -679,5 +683,10 @@ class EventSlides(Orderable):
     panels = [
         ImageChooserPanel('image'),
         PageChooserPanel('link'),
+        FieldPanel('alternate_link'),
         FieldPanel('text'),
     ]
+
+    def clean(self):
+        if self.link and self.alternate_link:
+            raise ValidationError("Please choose only a page link OR an alternate link, not both")
