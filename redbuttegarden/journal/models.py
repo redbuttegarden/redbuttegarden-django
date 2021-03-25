@@ -1,3 +1,6 @@
+import logging
+
+from datetime import date
 from django import forms
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -7,16 +10,21 @@ from django.utils.translation import ugettext_lazy as _
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalManyToManyField, ParentalKey
 from taggit.models import TaggedItemBase, Tag as TaggitTag
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel, MultiFieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, Orderable
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
 from events.models import BLOCK_TYPES
 from home.abstract_models import AbstractBase
+from journal.utils import get_season
+
+
+logger = logging.getLogger(__name__)
 
 
 @register_snippet
@@ -149,6 +157,15 @@ class JournalPage(AbstractBase):
         return context
 
     def save_revision(self, *args, **kwargs):
+        if self.get_parent().slug == 'whats-blooming-now' and self.banner is None:
+            # Get the appropriate banner based on the current month
+            season = get_season(date.today())
+            banner_query = Image.objects.filter().search("what's blooming now banner " + season)
+            try:
+                banner = banner_query[0]
+                self.banner = banner
+            except IndexError as e:
+                logger.error('[!] Failed to find seasonal banner for Journal Page: ', e)
         if not self.authors.all():
             self.authors.add(self.owner)
         return super().save_revision(*args, **kwargs)

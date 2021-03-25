@@ -2,7 +2,7 @@ from .dev import *
 
 DEBUG = True
 
-ALLOWED_HOSTS += ['shop.dev.redbuttegarden.org']
+ALLOWED_HOSTS += ['train.localhost']
 
 # Use local static file storage when running locally
 AWS_STORAGE_BUCKET_NAME = ''
