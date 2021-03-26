@@ -39,6 +39,16 @@
             </div>
         {% endfor %}
     </div>
+
+    <br>
+    <hr>
+    <br>
+
+    <div class="row-fluid col xs-12">
+        {% for block in page.bottom_button_info %}
+            {% include_block block with id=block.id %}
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {# Enable automatic banner selection only for the What's Blooming Now Blog #}

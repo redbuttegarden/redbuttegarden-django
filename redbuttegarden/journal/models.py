@@ -21,6 +21,7 @@ from wagtail.snippets.models import register_snippet
 
 from events.models import BLOCK_TYPES
 from home.abstract_models import AbstractBase
+from home.models import ButtonListDropdownInfo
 from journal.utils import get_season
 
 
@@ -57,9 +58,12 @@ class JournalPageTag(TaggedItemBase):
 
 class JournalIndexPage(RoutablePageMixin, AbstractBase):
     body = StreamField(block_types=BLOCK_TYPES, blank=True, null=True)
+    bottom_button_info = StreamField(block_types=[('dropdown_button_list', ButtonListDropdownInfo())], blank=True,
+                                     null=True, help_text=_('Dropdown buttons appear below the list of child pages'))
 
     content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
+        StreamFieldPanel('bottom_button_info'),
     ]
 
     subpage_types = ['journal.JournalPage']
