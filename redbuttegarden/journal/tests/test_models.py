@@ -28,7 +28,8 @@ class JournalInstanceTests(WagtailPageTests):
 
         try:
             self.journal_index = JournalIndexPage(title='Journal Index Test Page',
-                                                  body=json.dumps([]))
+                                                  body=json.dumps([]),
+                                                  bottom_button_info=json.dumps([]))
             self.home.add_child(instance=self.journal_index)
         except:
             pass
@@ -46,5 +47,6 @@ class JournalInstanceTests(WagtailPageTests):
     def test_can_create_journal_index(self):
         self.assertCanCreate(self.home, JournalIndexPage, nested_form_data(
             {'title': 'Another Journal Index Test Page',
-             'body': streamfield([])}
+             'body': streamfield([]),
+             'bottom_button_info': streamfield([])}
         ))
