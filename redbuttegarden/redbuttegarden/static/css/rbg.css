@@ -135,3 +135,9 @@ ul, ol {
 .footer-btn-inner {
     min-height: 40px;
 }
+
+/* Pagination navigation */
+nav[role=pagination] {
+    margin-top: 50px;
+    text-align: center;
+}

@@ -3,7 +3,7 @@ import logging
 from datetime import date
 from django import forms
 from django.conf import settings
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -72,10 +72,24 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
         index.SearchField('body'),
     ]
 
+    # Pagination for the index page. We use the `django.core.paginator` as any
+    # standard Django app would, but the difference here being we have it as a
+    # method on the model rather than within a view function
+    def paginate(self, request, *args):
+        page = request.GET.get('page')
+        paginator = Paginator(self.get_posts().order_by('-date'), 9)
+        try:
+            pages = paginator.page(page)
+        except PageNotAnInteger:
+            pages = paginator.page(1)
+        except EmptyPage:
+            pages = paginator.page(paginator.num_pages)
+        return pages
+
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
         context = super().get_context(request, *args, **kwargs)
-        posts = JournalPage.objects.child_of(self).order_by('-date')
+        posts = self.paginate(request, self.get_posts().order_by('-date'))
         context['posts'] = posts
         return context
 
