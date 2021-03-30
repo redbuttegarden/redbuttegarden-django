@@ -186,7 +186,7 @@ class EventIndexPage(RoutablePageMixin, AbstractBase):
                                                                      alias_of__isnull=True)
         for event in event_general_pages:
             events.append(event)
-        self.events = events
+        self.events = sorted(events, key=lambda x: x.latest_revision_created_at, reverse=True)
         return AbstractBase.serve(self, request, *args, **kwargs)
 
     def get_context(self, request, *args, **kwargs):
