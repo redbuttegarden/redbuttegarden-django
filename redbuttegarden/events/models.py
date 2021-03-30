@@ -1,6 +1,7 @@
 from django import forms
 from django.core.paginator import Paginator
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, PageChooserPanel
@@ -137,10 +138,15 @@ BLOCK_TYPES = [
 class EventIndexPage(RoutablePageMixin, AbstractBase):
     intro = RichTextField(blank=True)
     body = StreamField(BLOCK_TYPES + [('page_link', PageChooserBlock())], blank=True)
+    order_date = models.DateTimeField(default=timezone.now)  # Allow editors to control displayed order of pages
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('intro'),
         StreamFieldPanel('body', classname="full"),
+    ]
+
+    promote_panels = AbstractBase.promote_panels + [
+        FieldPanel('order_date'),
     ]
 
     subpage_types = ['events.EventPage', 'events.EventGeneralPage', 'events.EventIndexPage']
@@ -164,7 +170,7 @@ class EventIndexPage(RoutablePageMixin, AbstractBase):
 
     @route(r'^$')
     def event_list(self, request, *args, **kwargs):
-        self.events = self.get_children().live().order_by('-latest_revision_created_at')
+        self.events = sorted(self.get_children().live(), key=lambda x: x.specific.order_date)
         return AbstractBase.serve(self, request, *args, **kwargs)
 
     @route(r'^e-cat/(?P<event_category>[-\w]+)/$')
@@ -186,7 +192,7 @@ class EventIndexPage(RoutablePageMixin, AbstractBase):
                                                                      alias_of__isnull=True)
         for event in event_general_pages:
             events.append(event)
-        self.events = sorted(events, key=lambda x: x.latest_revision_created_at, reverse=True)
+        self.events = sorted(events, key=lambda x: x.specific.order_date)
         return AbstractBase.serve(self, request, *args, **kwargs)
 
     def get_context(self, request, *args, **kwargs):
@@ -226,6 +232,7 @@ class EventPage(AbstractBase):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    order_date = models.DateTimeField(default=timezone.now)  # Allow editors to control displayed order of pages
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('location'),
@@ -239,6 +246,10 @@ class EventPage(AbstractBase):
         FieldPanel('notes'),
         StreamFieldPanel('body'),
         SnippetChooserPanel('policy', help_text=_("Optionally choose a policy link to include on the page"))
+    ]
+
+    promote_panels = AbstractBase.promote_panels + [
+        FieldPanel('order_date'),
     ]
 
     parent_page_types = ['events.EventIndexPage', 'home.GeneralIndexPage']
@@ -264,11 +275,16 @@ class EventGeneralPage(GeneralPage):
                           help_text="Notes will appear on the thumbnail image of the event on the event index page")
     image = GeneralPage.thumbnail  # just to match EventPage so the EventIndexPage template doesn't need to be changed
     event_categories = ParentalManyToManyField(EventCategory, blank=True)
+    order_date = models.DateTimeField(default=timezone.now)  # Allow editors to control displayed order of pages
 
     content_panels = GeneralPage.content_panels + [
         FieldPanel('event_dates'),
         FieldPanel('event_categories', widget=forms.CheckboxSelectMultiple),
         FieldPanel('notes'),
+    ]
+
+    promote_panels = AbstractBase.promote_panels + [
+        FieldPanel('order_date'),
     ]
 
     parent_page_types = ['events.EventIndexPage', 'home.GeneralIndexPage']
