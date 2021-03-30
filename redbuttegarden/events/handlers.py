@@ -21,7 +21,7 @@ def event_page_changed(event_page):
         pages = event_index.get_event_items().object_list
         event_items = [page.specific for page in pages]
         if event_page in event_items:
-            logger.info('Adding event_index to purge list')
+            logger.info(f'Adding {event_index} to purge list')
             batch.add_page(event_index)
 
     # Purge all the event indexes we found in a single request

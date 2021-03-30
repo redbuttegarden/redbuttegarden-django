@@ -1,3 +1,5 @@
+import logging
+
 from django import forms
 from django.core.paginator import Paginator
 from django.db import models
@@ -18,6 +20,9 @@ from wagtail.snippets.models import register_snippet
 from home.abstract_models import AbstractBase
 from home.models import AlignedParagraphBlock, ButtonBlock, EmphaticText, GeneralPage, ImageLinkList, Heading, \
     MultiColumnAlignedParagraphBlock
+
+
+logger = logging.getLogger(__name__)
 
 
 @register_snippet
@@ -262,6 +267,19 @@ class EventPage(AbstractBase):
         index.SearchField('body'),
     ]
 
+    def get_cached_paths(self):
+        """
+        In addition to overriding the URL of this page, we also need
+        to invalidate the event category view of any category to which
+        this page belongs.
+        """
+        yield '/'
+
+        for category in self.event_categories.all():
+            url = '/events/e-cat/' + category.slug
+            logger.info(f'Yielding {url} as cached path')
+            yield url
+
     def save(self, clean=True, user=None, log_action=False, **kwargs):
         if self.thumbnail is None:
             self.thumbnail = self.image
@@ -293,3 +311,16 @@ class EventGeneralPage(GeneralPage):
         index.SearchField('event_dates'),
         index.SearchField('notes')
     ]
+
+    def get_cached_paths(self):
+        """
+        In addition to overriding the URL of this page, we also need
+        to invalidate the event category view of any category to which
+        this page belongs.
+        """
+        yield '/'
+
+        for category in self.event_categories.all():
+            url = '/events/e-cat/' + category.slug
+            logger.info(f'Yielding {url} as cached path')
+            yield url
