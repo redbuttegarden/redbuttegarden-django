@@ -44,7 +44,8 @@ class EventPageInstanceTests(WagtailPageTests):
         self.assertCanCreate(self.home, EventIndexPage,
                              nested_form_data(
                                  {'title': 'Another Event Index Test Page',
-                                  'body': streamfield([])  # Need to pass empty list to avoid ValidationError
+                                  'body': streamfield([]),  # Need to pass empty list to avoid ValidationError
+                                  'order_date': '2021-03-30 19:44:13.041150'
                                   }
                              ))
 
@@ -56,7 +57,9 @@ class EventPageInstanceTests(WagtailPageTests):
                                   'event_dates': 'January',
                                   'body': streamfield([
                                       ('html', '<p>Testing!</p>')
-                                  ])}
+                                  ]),
+                                  'order_date': '2021-03-30 19:44:13.041150'
+                                  }
                              ))
 
     def test_can_create_event_general(self):
@@ -66,6 +69,7 @@ class EventPageInstanceTests(WagtailPageTests):
                                   'event_dates': 'January',
                                   'body': streamfield([
                                       ('html', '<p>Testing!</p>')
-                                  ])
+                                  ]),
+                                  'order_date': '2021-03-30 19:44:13.041150'
                                   }
                              ))
