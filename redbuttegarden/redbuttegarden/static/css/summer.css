@@ -1995,10 +1995,6 @@ no-repeat 5px 3px;
 	text-decoration: underline;
 }
 
-.hover:hover {
-	opacity: .9;
-}
-
 .caps {
 	text-transform: capitalize;
 }
