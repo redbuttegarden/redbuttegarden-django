@@ -19,7 +19,12 @@
                 {% with sub=sub.specific %}
                     <a href="{% pageurl sub %}">
                         <div class="eventwrapsmall hover">
-                            {% image sub.thumbnail fill-385x385 %}
+                            {% comment %}
+                                Added blank alt attribute to image thumbnails since these are primarily to create a
+                                larger surface area for the page links and alt attributes would unnecessarily complicate
+                                page navigation for users using screen readers.
+                            {% endcomment %}
+                            {% image sub.thumbnail fill-385x385 alt="" %}
                             <div class="eventinfo">
                                 <div class="eventname">{{ sub.title }}</div>
                             </div>
