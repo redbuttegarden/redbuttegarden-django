@@ -758,10 +758,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 
 #inner-slider-wrapper1 {
 	position: relative;
-	left: 50%;
-	width: 5000px;
 	text-align: center;
-	margin-left: -2500px;
 }
 
 #inner-slider-wrapper2 {
@@ -771,9 +768,9 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 #slider1_container {
 	visibility: hidden;
 	position: relative;
-	margin: 0 auto;
-	top: 0px;
-	left: 0px;
+	margin: -50px auto 0 auto;
+	top: 0;
+	left: 0;
 	width: 1280px;
 	height: 500px;
 	overflow: hidden;
