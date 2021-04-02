@@ -739,6 +739,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 	color:#fff;
 	padding: 0 5px 0 5px;
 	text-transform: capitalize;
+	background-color: rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 768px) {
