@@ -42,7 +42,7 @@ a, a:link, a:visited, a:active {
 	text-decoration: underline;
 }
 
-#navbarbg a, #navbarbg a:link, #navbarbg a:visited, #navbarbg a:active {
+nav a, nav a:link, nav a:visited, nav a:active {
 	text-decoration: none;
 }
 
@@ -54,18 +54,9 @@ a:hover {
 /************** Begin Nav Bar **************/
 /*******************************************/
 
-.navbar-wrapper {
-	position: absolute;
-	width: 100%;
-}
-
 /* Fixes rounded corners issue in Bootstrap navbar */
 .navbar-inverse {
 	border-radius: 0;
-}
-
-#rbgnavbar a:hover, li, .dropdown-menu li:hover {
-	color: #000;
 }
 
 .dropdown-menu li:hover {
@@ -74,14 +65,16 @@ a:hover {
 }
 
 /* Makes dropdown menu headers change color when selected or clicked, as well as mobile menu icon (Hamburger Menu icon) change to same color */
-.dropdown-toggle:active, 					/*  */
-.open .dropdown-toggle, 					/*  */
-.dropdown-toggle:hover, 					/*  */
-.navbar-inverse .navbar-toggle:active, 		/* menu icon background color when button is active */
-.navbar-inverse .navbar-toggle:focus, 		/* menu icon background color when it is clicked into */
-.navbar-inverse .navbar-toggle:hover 		/* menu icon background color when hovered over */
+nav ul.nav li.dropdown > a:active,
+nav ul.nav li.dropdown > a:focus,
+nav ul.nav li.dropdown > a:hover
 {
-	background-color: #FF7744 !important; /* Overwrites Bootstrap's !important */
+	background-color: #FF7744;
+}
+
+#navhide1 > a:focus, #navhide2 > a:focus, #navhide3 > a:focus,
+#navhide1 > a:hover, #navhide2 > a:hover, #navhide3 > a:hover {
+	background-color: #FF7744;
 }
 
 /* Underlines the last three items in the navbar */
@@ -101,14 +94,7 @@ a:hover {
 
 /* Changes color of last 3 dropdown menu items to yellow */
 #navhide1 > a, #navhide2 > a, #navhide3 > a {
-	/* color: yellow !important; */
-	/* background-color: #468068; */
 	background-color: #2f7055;
-	/* background-color: #C4B59E; */
-	/* border-radius: 30px 30px 30px 30px; */
-	/* background-color: #299e6d; */
-	/* background-color: #238a5f; */
-	/* background-color: #FF6A32; */
 }
 
 @media (max-width: 1280px) {
@@ -118,32 +104,17 @@ a:hover {
 	}
 }
 
-/*
-#navhide1 > a:hover, #navhide2 > a:hover, #navhide3 > a:hover {
-	  background-color: red !important;
-	 opacity: .7;
-}
-*/
-
 .dropdown-menu li {
 	background-color: #FFF;
 }
 
-.dropdown-menu li:hover {
+.dropdown-menu li:hover, .dropdown-menu li:focus {
 	background-color: #F2EDE4;
 }
 
-.dropdown-menu a:hover li {
+.dropdown-menu a:hover li, .dropdown-menu a:focus li {
 	background-color: #F2EDE4;
 	text-decoration: none;
-}
-
-.dropdown-menu a:hover {
-	text-decoration: none;
-}
-
-.navbar-inverse a:hover {
-	color: #FFF;
 }
 
 /* Changes background color of OUTDOOR CONCERT SERIES link in navbar */
@@ -152,8 +123,11 @@ a:hover {
 }
 
 /* Changes the color of link text <a> after navbar has collapsed for small screen or mobile mode */
-.navbar-inverse .navbar-nav .open .dropdown-menu > li > a, .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:visited {
+.navbar-inverse .navbar-nav .open .dropdown-menu > li > a,
+.navbar-inverse .navbar-nav .open .dropdown-menu > li > a:visited,
+.navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover {
 	color: #000;
+	font-weight: bold;
 }
 
 .dropdown-menu li, .dropdown-menu a {
@@ -162,15 +136,13 @@ a:hover {
 }
 
 .dropdown {
-	font-size: 12px;
-	padding: 0;
 	font-weight: bold;
 }
 
 .dropdown ul {
-	padding-top: 0px;
-	padding-bottom: 0px;
-	font-size: 10px;
+	padding-top: 0;
+	padding-bottom: 0;
+	font-size: 12px;
 	font-weight: bold;
 }
 
@@ -182,7 +154,8 @@ a:hover {
 }
 
 /* Background color of li in navbar when hovered over */
-.dropdown-menu li > a:hover, .dropdown-menu li > a:focus, .dropdown-submenu:hover > a, .dropdown-menu li:hover {
+.dropdown-submenu:hover > a, .dropdown-menu li > a:hover,  .dropdown-menu li:hover,
+.dropdown-menu li > a:focus, .dropdown-menu li:focus {
 	background-color: #F2EDE4;
 }
 
@@ -191,21 +164,9 @@ a:hover {
 	font-weight: bold;
 }
 
-#navbarbg {
+nav.navbar {
 	background-color: #00502F;
-	width: 100%;
-}
-
-#rbgnavbar {
-	max-width: 1280px;
-	margin-left:auto;
-	margin-right:auto;
-	background-color:#00502F;
-}
-
-#logo {
-	/* margin-top: 13px;
-	padding-right: 30px; */
+	margin-bottom: 0;
 }
 
 #logo img {
@@ -254,23 +215,6 @@ a:hover {
 		height: 0;
 	}
 }
-
-/* Hides Give, Join, and Volunteer Buttons within certain widths
-@media (min-width: 1043px) and (max-width: 1325px) {
-	#navhide1, #navhide2, #navhide3, #navhide4 {
-		display: none;
-	 }
-
-}
-*/
-
-/* Hides Search icon within certain widths
-@media (min-width: 1043px) and (max-width: 1100px) {
-	#navhide4 {
-		display: none;
-	}
-}
-*/
 
 /* Ensures search icon and Give, Join, and Donate buttons clear one another and appear on next line on mobile menu */
 @media (max-width: 1320px) {
@@ -343,17 +287,15 @@ no-repeat 5px 3px;
 	float: left;
 }
 
-@media (max-width:1320px){
-	.searchicon-mobile-menu {
-		display: none;
-	}
+/* Hide the search icon in nav header until mobile media query collapse */
+nav > div.container-fluid > div.navbar-header > #mobile-search {
+	display: none;
 }
 
-@media (min-width:1319px){
-	.searchicon-header {
-		display: none !important;
-	}
+#mobile-search > a:hover, #mobile-search > a:focus {
+	background-color: #FF7744;
 }
+
 
 .searchicon-header {
 	margin-right: 5px;
@@ -393,7 +335,7 @@ no-repeat 5px 3px;
 /************************/
 
 /* Code Collapses Navbar Earlier for more Mobile Compatibility - value must be larger than 1280px due to padding and browser differences */
-@media (min-width: 768px) and (max-width: 1320px) {
+@media (min-width: 768px) and (max-width: 1395px) {
 	.navbar-nav .open .dropdown-menu {
 		position: static;
 		float: none;
@@ -461,6 +403,13 @@ no-repeat 5px 3px;
 	}
 	.collapsing {
 		overflow: hidden!important;
+	}
+	nav > div.container-fluid > div.navbar-header > #mobile-search {
+		display: inherit;
+		float: right;
+	}
+	nav > div.container-fluid > div.navbar-header > button:focus {
+		background-color: #FF7744;
 	}
 }
 
