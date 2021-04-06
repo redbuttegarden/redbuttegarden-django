@@ -1,5 +1,7 @@
+import logging
+
 from django.core.paginator import Paginator
-from django.core.validators import ValidationError
+from django.core.validators import ValidationError, RegexValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from modelcluster.fields import ParentalKey
@@ -19,6 +21,9 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from home.abstract_models import AbstractBase
+
+
+logger = logging.getLogger(__name__)
 
 
 class ImageInfo(blocks.StructBlock):
@@ -690,3 +695,56 @@ class EventSlides(Orderable):
     def clean(self):
         if self.link and self.alternate_link:
             raise ValidationError("Please choose only a page link OR an alternate link, not both")
+
+
+class AddressBlock(blocks.StructBlock):
+    street_address = blocks.CharBlock(max_length=40, required=False)
+    city = blocks.CharBlock(max_length=30, required=False)
+    # Looked up the minimum and maximum zipcode values in the USA
+    zipcode = blocks.IntegerBlock(min_value=501, max_value=99950, required=False)
+    phone = blocks.CharBlock(validators=[RegexValidator(r'\(?[0-9]{3}\)?[-|\s]?[0-9]{3}-?[0-9]{4}',
+                                                        'Please enter a valid phone number')])
+
+    class Meta:
+        template = 'blocks/address_block.html'
+
+
+class RetailPartnerBlock(blocks.StructBlock):
+    name = blocks.CharBlock(max_length=75)
+    addresses = blocks.ListBlock(AddressBlock(), required=False)
+    url = blocks.URLBlock(required=False)
+    info = blocks.RichTextBlock()
+
+    class Meta:
+        template = 'blocks/retail_partner_block.html'
+
+
+class RetailPartnerPage(AbstractBase):
+    body = StreamField(block_types=[
+        ('button', ButtonBlock()),
+        ('green_heading', Heading()),
+        ('paragraph', AlignedParagraphBlock()),
+    ])
+    retail_partners = StreamField(block_types=[
+        ('retail_partner', RetailPartnerBlock())
+    ])
+
+    content_panels = AbstractBase.content_panels + [
+        StreamFieldPanel('body'),
+        StreamFieldPanel('retail_partners')
+    ]
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+        index.SearchField('retail_partners'),
+    ]
+
+    def save_revision(self, *args, **kwargs):
+        if self.banner is None:
+            banner_query = Image.objects.filter().search("Retail Partner Banner")
+            try:
+                banner = banner_query[0]
+                self.banner = banner
+            except IndexError as e:
+                logger.error('[!] Failed to find banner for Retail Partner Page: ', e)
+        return super().save_revision(*args, **kwargs)
