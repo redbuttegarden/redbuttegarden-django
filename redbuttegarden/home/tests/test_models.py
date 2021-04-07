@@ -3,7 +3,8 @@ from wagtail.core.models import Page
 from wagtail.tests.utils import WagtailPageTests, get_user_model
 from wagtail.tests.utils.form_data import nested_form_data, streamfield, inline_formset, rich_text
 
-from home.models import FAQPage, GeneralPage, GeneralIndexPage, HomePage, PlantCollectionsPage, TwoColumnGeneralPage
+from home.models import FAQPage, GeneralPage, GeneralIndexPage, HomePage, PlantCollectionsPage, TwoColumnGeneralPage, \
+    RetailPartnerPage
 
 
 class HomePageTests(WagtailPageTests):
@@ -21,6 +22,9 @@ class HomePageTests(WagtailPageTests):
 
     def test_can_create_plant_collections(self):
         self.assertCanCreateAt(Page, PlantCollectionsPage)
+
+    def test_can_create_retail_partner(self):
+        self.assertCanCreateAt(Page, RetailPartnerPage)
 
     def test_can_create_two_col_general(self):
         self.assertCanCreateAt(Page, TwoColumnGeneralPage)
@@ -68,6 +72,25 @@ class HomePageInstanceTests(WagtailPageTests):
              'more_info_modal': rich_text('Testing!'),
              'plant_collections': inline_formset([])}
         ))
+
+    """
+    Test currently fails with "django.utils.datastructures.MultiValueDictKeyError: 'retail_partners-0-value-addresses-count'"
+    even though addresses ListBlock should be optional
+    """
+    # def test_can_create_retail_partner(self):
+    #     self.assertCanCreate(self.home, RetailPartnerPage, nested_form_data(
+    #         {'title': 'Retail Partner Test Page',
+    #          'body': streamfield([
+    #              ('green_heading', 'Testing!'),
+    #          ]),
+    #          'retail_partners': streamfield([
+    #              ('retail_partner', {
+    #                  'name': 'Test Partner',
+    #                  'url': 'https://example.com',
+    #                  'info': rich_text('Testing!')
+    #              })
+    #          ])}
+    #     ))
 
     def test_can_create_two_col_general(self):
         self.assertCanCreate(self.home, TwoColumnGeneralPage, nested_form_data(
