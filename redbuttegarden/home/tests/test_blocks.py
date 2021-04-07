@@ -161,3 +161,36 @@ class TestRetailPartnerBlock(WagtailPageTests):
         self.assertEqual(response.status_code, 200)
         html = response.content.decode('utf8')
         self.assertIn('<h3 class="green">Test Partner</h3>', html)
+
+    def test_retail_partner_with_one_address(self):
+        retail_partner_page = RetailPartnerPage(owner=self.user,
+                                                title='Retail Partner Test Page',
+                                                banner=self.image,
+                                                body=json.dumps([
+                                                    {'type': 'green_heading', 'value': 'Testing!'}
+                                                ]),
+                                                retail_partners=json.dumps([
+                                                    {'type': 'retail_partner',
+                                                     'value': {
+                                                         'name': 'Test Partner',
+                                                         'addresses': [
+                                                             {'street_address': '123 Test Lane',
+                                                              'city': 'Test City',
+                                                              'zipcode': 12345,
+                                                              'phone': '(123) 123-1234'}
+                                                         ],
+                                                         'url': 'https://example.com',
+                                                         'info': '<p>Testing!</p>'
+                                                     }
+                                                     }
+                                                ]))
+        Page.objects.get(slug='home').add_child(instance=retail_partner_page)
+        retail_partner_page.save_revision().publish()
+        response = self.client.get('/retail-partner-test-page', follow=True)
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode('utf8')
+        self.assertIn('<h3 class="green">Test Partner</h3>', html)
+        self.assertIn("""<h6>123 Test Lane, Test City, 12345
+    -
+    <a href="tel:(123) 123-1234">(123) 123-1234</a>
+</h6>""", html)
