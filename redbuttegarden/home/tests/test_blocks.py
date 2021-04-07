@@ -2,9 +2,10 @@ import json
 
 from django.contrib.auth.models import Group
 from wagtail.core.models import Page
+from wagtail.images.tests.utils import get_image_model, get_test_image_file
 from wagtail.tests.utils import WagtailPageTests, get_user_model
 
-from home.models import GeneralPage
+from home.models import GeneralPage, RetailPartnerPage
 
 
 class TestMultiColumnAlignedParagraphBlock(WagtailPageTests):
@@ -128,3 +129,35 @@ class TestMultiColumnAlignedParagraphBlock(WagtailPageTests):
                       '<div class="col-sm-2">\n                        <p>Fifth Test Paragraph</p>\n                   '
                       ' </div>',
                       html)
+
+
+class TestRetailPartnerBlock(WagtailPageTests):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user('Test User', 'test@email.com', 'password')
+        self.user.groups.add(Group.objects.get(name="Moderators"))
+        self.client.force_login(self.user)
+
+        self.image = get_image_model().objects.create(title='Test image', file=get_test_image_file())
+
+    def test_retail_partner_without_address(self):
+        retail_partner_page = RetailPartnerPage(owner=self.user,
+                                                title='Retail Partner Test Page',
+                                                banner=self.image,
+                                                body=json.dumps([
+                                                    {'type': 'green_heading', 'value': 'Testing!'}
+                                                ]),
+                                                retail_partners=json.dumps([
+                                                    {'type': 'retail_partner',
+                                                     'value': {
+                                                         'name': 'Test Partner',
+                                                         'url': 'https://example.com',
+                                                         'info': '<p>Testing!</p>'
+                                                        }
+                                                     }
+                                                ]))
+        Page.objects.get(slug='home').add_child(instance=retail_partner_page)
+        retail_partner_page.save_revision().publish()
+        response = self.client.get('/retail-partner-test-page', follow=True)
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode('utf8')
+        self.assertIn('<h3 class="green">Test Partner</h3>', html)
