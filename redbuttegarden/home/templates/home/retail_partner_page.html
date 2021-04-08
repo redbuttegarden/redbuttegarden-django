@@ -20,7 +20,7 @@
                     {% include_block partner_block with id=block.id %}
                 </div>
 
-                {% if forloop.counter|divisibleby:3 %}
+                {% if forloop.counter|divisibleby:3 and not forloop.last %}
                     </div>
                     <div class="{% cycle 'default' 'tan-bg' %} row-fluid">
                 {% endif %}
