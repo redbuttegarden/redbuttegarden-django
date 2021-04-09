@@ -141,3 +141,9 @@ nav[role=pagination] {
     margin-top: 50px;
     text-align: center;
 }
+
+.index-thumbnail img {
+    height: 385px;
+    width: 385px;
+    margin-top: 30px;
+}

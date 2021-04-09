@@ -17,13 +17,13 @@
             <div class="col-sm-4">
                 {% with post=post.specific %}
                     <a href="{% pageurl post %}">
-                        <div class="eventwrapsmall hover">
+                        <div class="index-thumbnail hover">
                             {% comment %}
                                 Added blank alt attribute to image thumbnails since these are primarily to create a
                                 larger surface area for the page links and alt attributes would unnecessarily complicate
                                 page navigation for users using screen readers.
                             {% endcomment %}
-                            {% image post.thumbnail original alt="" %}
+                            {% image post.thumbnail fill-385x385 alt="" %}
                             <div class="eventinfo">
                                 <div class="eventname">{{ post.title }}</div>
                                 <div class="eventdate">{{ post.date|date:"F j, Y" }}</div>
