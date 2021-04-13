@@ -1,4 +1,4 @@
-{% load static wagtailuserbar %}
+{% load static wagtailuserbar wagtailaccessibility_tags %}
 
 <!DOCTYPE html>
 <html class="no-js" lang="en">
@@ -81,6 +81,7 @@
 <body class="{% block body_class %}{% endblock %}">
 
 {% wagtailuserbar %}
+{% tota11y %}
 
 <!-- KSL Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T5L8MRQ"
