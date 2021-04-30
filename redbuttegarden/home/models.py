@@ -426,6 +426,7 @@ class GeneralPage(AbstractBase):
         ('dropdown_card_list', CardListDropdownInfo()),
         ('card_info_list', ImageListCardInfo()),
         ('image_info_list', ImageInfoList()),
+        ('image_link_list', ImageLinkList()),
         ('three_column_dropdown_info_panel', ThreeColumnDropdownInfoPanel()),
         ('newsletters', NewsletterListBlock()),
     ], blank=False)
