@@ -21,7 +21,12 @@
             <div class="col-sm-6">
                 <a href="{{ image_item.url }}">
                     <div class="eventwrapsmall hover">
-                        {% image image_item.image original %}
+                        {% comment %}
+                            Added blank alt attribute to image thumbnails since these are primarily to create a
+                            larger surface area for the page links and alt attributes would unnecessarily complicate
+                            page navigation for users using screen readers.
+                        {% endcomment %}
+                        {% image image_item.image fill-385x385 alt="" %}
                         {% if image_item.title %}
                             <div class="eventinfo">
                                 <div class="eventname">{{ image_item.title }}</div>
@@ -36,7 +41,12 @@
             <div class="col-sm-4">
                 <a href="{{ image_item.url }}">
                     <div class="eventwrapsmall hover">
-                        {% image image_item.image original %}
+                        {% comment %}
+                            Added blank alt attribute to image thumbnails since these are primarily to create a
+                            larger surface area for the page links and alt attributes would unnecessarily complicate
+                            page navigation for users using screen readers.
+                        {% endcomment %}
+                        {% image image_item.image fill-385x385 alt="" %}
                         {% if image_item.title %}
                             <div class="eventinfo">
                                 <div class="eventname">{{ image_item.title }}</div>
