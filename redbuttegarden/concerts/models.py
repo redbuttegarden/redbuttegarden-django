@@ -13,7 +13,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, StreamFieldPanel, MultiFieldPanel, \
     FieldRowPanel
 from wagtail.core.models import Page, Orderable
-from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core.fields import BlockField, RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtail.snippets.blocks import SnippetChooserBlock
@@ -209,6 +209,36 @@ class ConcertPage(AbstractBase):
         concerts = sorted(concerts, key=lambda x: x.soonest_date)
         context['concerts'] = concerts
         return context
+
+
+class LineupBlock(blocks.StructBlock):
+    year = blocks.IntegerBlock(min_value=1980, required=True)
+    poster = ImageChooserBlock(required=True)
+    artists = blocks.RichTextBlock(required=True)
+
+    class Meta:
+        template = 'blocks/lineup_block.html'
+
+
+class PastLineupStreamBlock(blocks.StreamBlock):
+    lineup = LineupBlock()
+
+    class Meta:
+        required = True
+
+
+class PastConcertPage(AbstractBase):
+    lineups = StreamField(PastLineupStreamBlock())
+
+    content_panels = AbstractBase.content_panels + [
+        StreamFieldPanel('lineups'),
+    ]
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('lineups'),
+    ]
+
+    parent_page_types = ['concerts.ConcertPage']
 
 
 class DonorPackagePage(AbstractBase):
