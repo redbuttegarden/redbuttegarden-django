@@ -57,6 +57,7 @@ class Sponsors(blocks.StructBlock):
     sponsor_title = blocks.CharBlock(
         label='Sponsor Title',
         max_length=200,
+        required=False,
     )
     sponsor_url = blocks.URLBlock(
         label="URL to sponsor website"
