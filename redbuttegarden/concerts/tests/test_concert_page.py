@@ -17,6 +17,7 @@ class TestConcert(TestCase):
         Concert data can be created like so:
         body=json.dumps([{"type": "concerts",
                          "value": {"band_img": 773,
+                                   "hidden": True,
                                    "virtual": False,
                                    "canceled": False,
                                    "postponed": False,
@@ -53,9 +54,11 @@ class TestConcert(TestCase):
         self.assertNotContains(response, "Show at")
 
     def test_concert_view_default_concert(self):
+        """Default concert with the exception of hidden set to false."""
         self.concert_page.body = json.dumps([
             {"type": "concerts",
              "value": {"band_img": 773,
+                       "hidden": False,
                        "virtual": False,
                        "canceled": False,
                        "postponed": False,
@@ -79,6 +82,50 @@ class TestConcert(TestCase):
         self.assertContains(response, "Show at")
         self.assertContains(response, "Band Info Test")
 
+    def test_multiple_concert_view_default_concert(self):
+        """Default concerts with the exception of hidden set to false."""
+        self.concert_page.body = json.dumps([
+            {"type": "concerts",
+             "value": {"band_img": 773,
+                       "hidden": False,
+                       "virtual": False,
+                       "canceled": False,
+                       "postponed": False,
+                       "sold_out": False,
+                       "available_until": None,
+                       "band_info": "<h4><b>First Concert</b></h4>",
+                       "concert_dates": ["2021-03-11T19:00:00-07:00",
+                                         "2021-03-12T14:00:00-07:00"],
+                       "gates_time": "14:00:00",
+                       "show_time": "19:00:00",
+                       "member_price": "BandsInTown Plus Subscription",
+                       "public_price": "BandsInTown Plus Subscription",
+                       "ticket_url": "https://www.awin1.com/cread.php?awinmid=19610&awinaffid=846015&ued="
+                       }},
+            {"type": "concerts",
+             "value": {"band_img": 773,
+                       "hidden": False,
+                       "virtual": False,
+                       "canceled": False,
+                       "postponed": False,
+                       "sold_out": False,
+                       "available_until": None,
+                       "band_info": "<h4><b>Second Concert</b></h4>",
+                       "concert_dates": ["2021-03-11T19:00:00-07:00",
+                                         "2021-03-12T14:00:00-07:00"],
+                       "gates_time": "14:00:00",
+                       "show_time": "19:00:00",
+                       "member_price": "BandsInTown Plus Subscription",
+                       "public_price": "BandsInTown Plus Subscription",
+                       "ticket_url": "https://www.awin1.com/cread.php?awinmid=19610&awinaffid=846015&ued="
+                       }}
+        ])
+        self.concert_page.save_revision().publish()
+
+        response = self.client.get('/concert-test-page', follow=True)
+        self.assertContains(response, "First Concert")
+        self.assertContains(response, "Second Concert")
+
     def test_single_past_concert_date_template_logic(self):
         """
         Concert with date in the past should have the 'past' class
@@ -87,6 +134,7 @@ class TestConcert(TestCase):
         self.concert_page.body = json.dumps([
             {"type": "concerts",
              "value": {"band_img": 773,
+                       "hidden": False,
                        "virtual": False,
                        "canceled": False,
                        "postponed": False,
@@ -119,6 +167,7 @@ class TestConcert(TestCase):
         self.concert_page.body = json.dumps([
             {"type": "concerts",
              "value": {"band_img": 773,
+                       "hidden": False,
                        "virtual": False,
                        "canceled": False,
                        "postponed": False,
@@ -150,6 +199,7 @@ class TestConcert(TestCase):
         self.concert_page.body = json.dumps([
             {"type": "concerts",
              "value": {"band_img": 773,
+                       "hidden": False,
                        "virtual": False,
                        "canceled": False,
                        "postponed": False,
@@ -183,6 +233,7 @@ class TestConcert(TestCase):
         self.concert_page.body = json.dumps([
             {"type": "concerts",
              "value": {"band_img": 773,
+                       "hidden": False,
                        "virtual": False,
                        "canceled": False,
                        "postponed": False,
@@ -216,6 +267,7 @@ class TestConcert(TestCase):
         self.concert_page.body = json.dumps([
             {"type": "concerts",
              "value": {"band_img": 773,
+                       "hidden": False,
                        "virtual": False,
                        "canceled": False,
                        "postponed": False,
@@ -239,3 +291,53 @@ class TestConcert(TestCase):
         concert_stream_block = self.concert_page.body[0]
         concert_block_value = concert_stream_block.value
         self.assertFalse(live_in_the_past(concert_block_value))
+
+    def test_hidden_concerts(self):
+        """
+        Create two concerts; one with hidden set to false and the other true.
+        Only concert with hidden set to False should be visible.
+        """
+        self.concert_page.body = json.dumps([
+            {"type": "concerts",
+             "value": {"band_img": 773,
+                       "hidden": False,
+                       "virtual": False,
+                       "canceled": False,
+                       "postponed": False,
+                       "sold_out": False,
+                       "available_until": None,
+                       "band_info": "<h4><b>Band Info Test</b></h4>",
+                       "concert_dates": ["2021-03-11T19:00:00-07:00",
+                                         "2021-03-12T14:00:00-07:00"],
+                       "gates_time": "14:00:00",
+                       "show_time": "19:00:00",
+                       "member_price": "BandsInTown Plus Subscription",
+                       "public_price": "BandsInTown Plus Subscription",
+                       "ticket_url": "https://www.awin1.com/cread.php?awinmid=19610&awinaffid=846015&ued="
+                       }},
+            {"type": "concerts",
+             "value": {"band_img": 773,
+                       "hidden": True,
+                       "virtual": False,
+                       "canceled": False,
+                       "postponed": False,
+                       "sold_out": False,
+                       "available_until": None,
+                       "band_info": "<h4><b>Hidden Band Info Test</b></h4>",
+                       "concert_dates": ["2021-03-11T19:00:00-07:00",
+                                         "2021-03-12T14:00:00-07:00"],
+                       "gates_time": "14:00:00",
+                       "show_time": "19:00:00",
+                       "member_price": "BandsInTown Plus Subscription",
+                       "public_price": "BandsInTown Plus Subscription",
+                       "ticket_url": "https://www.awin1.com/cread.php?awinmid=19610&awinaffid=846015&ued="
+                       }}
+        ])
+        self.concert_page.save_revision().publish()
+
+        response = self.client.get('/concert-test-page', follow=True)
+        self.assertNotContains(response, "Available On Demand")
+        self.assertContains(response, "Gates at")
+        self.assertContains(response, "Show at")
+        self.assertContains(response, "Band Info Test")
+        self.assertNotContains(response, "Hidden Band Info Test")

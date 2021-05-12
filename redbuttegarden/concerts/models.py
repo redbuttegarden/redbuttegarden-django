@@ -109,6 +109,8 @@ class TableInfoCardList(blocks.StructBlock):
 
 class ConcertBlock(blocks.StructBlock):
     band_img = ImageChooserBlock(required=True)
+    hidden = blocks. BooleanBlock(default=True, help_text=_('If hidden box checked, concert will not be displayed on '
+                                                            'the page'), required=False)
     virtual = blocks.BooleanBlock(default=False, help_text=_('Is this a virtual concert?'), required=False)
     canceled = blocks.BooleanBlock(default=False, required=False)
     postponed = blocks.BooleanBlock(default=False, required=False)
@@ -199,7 +201,7 @@ class ConcertPage(AbstractBase):
         context = super().get_context(request, **kwargs)
         # Get a list of concert objects and determine the following:
         # Are they in the past and if they are virtual, is the on-demand offering also in the past?
-        concerts = [concert.value for concert in self.body]
+        concerts = [concert.value for concert in self.body if not concert.value['hidden']]
         for concert in concerts:
             concert['concert_dates'] = sorted(concert['concert_dates'])
             concert.soonest_date = sorted(concert['concert_dates'])[-1]
