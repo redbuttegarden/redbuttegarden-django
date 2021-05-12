@@ -19,7 +19,9 @@ def send_to_automate(sender, **kwargs):
     url = os.environ.get('AUTOMATE_URL')
     logger.info(f"Sending publish event to Microsoft Automate at url: {url}")
     values = {
-        "text": f"{instance.title} was published by {instance.owner.username}",
+        "text": f"{instance.title} was published by {instance.owner.first_name} {instance.owner.last_name} "
+                f"({instance.owner.username}).",
+        "url": f"{instance.full_url}",
     }
 
     response = requests.post(url, json=values)
