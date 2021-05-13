@@ -16,11 +16,12 @@ logger = logging.getLogger(__name__)
 # Send POST request to Microsoft Automate
 def send_to_automate(sender, **kwargs):
     instance = kwargs['instance']
+    revision = kwargs['revision']
     url = os.environ.get('AUTOMATE_URL')
     logger.info(f"Sending publish event to Microsoft Automate at url: {url}")
     values = {
-        "text": f"{instance.title} was published by {instance.owner.first_name} {instance.owner.last_name} "
-                f"({instance.owner.username}).",
+        "text": f"{instance.title} was published by {revision.user.first_name} {revision.user.last_name} "
+                f"({revision.user.username}).",
         "url": f"{instance.full_url}",
     }
 
