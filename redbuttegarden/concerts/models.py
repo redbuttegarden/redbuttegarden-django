@@ -111,6 +111,8 @@ class ConcertBlock(blocks.StructBlock):
     band_img = ImageChooserBlock(required=True)
     hidden = blocks. BooleanBlock(default=True, help_text=_('If hidden box is checked, concert will not be displayed on'
                                                             ' the page'), required=False)
+    on_sale = blocks.BooleanBlock(default=True, help_text=_('If unchecked, Buy Tickets button will be grayed out'),
+                                  required=False)
     virtual = blocks.BooleanBlock(default=False, help_text=_('Is this a virtual concert?'), required=False)
     canceled = blocks.BooleanBlock(default=False, required=False)
     postponed = blocks.BooleanBlock(default=False, required=False)

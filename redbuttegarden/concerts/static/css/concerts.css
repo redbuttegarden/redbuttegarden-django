@@ -1,0 +1,8 @@
+.disable-buy {
+    background: gray;
+}
+
+.disable-buy > img {
+    background-color: #249067;
+    opacity: 0.4;
+}
