@@ -126,7 +126,7 @@ class ConcertBlock(blocks.StructBlock):
                     ' centered.'))
     concert_dates = blocks.ListBlock(blocks.DateTimeBlock())
     gates_time = blocks.TimeBlock(default=datetime.time(hour=18), required=False, blank=True, null=True)
-    show_time = blocks.TimeBlock(default=datetime.time(hour=19))
+    show_time = blocks.TimeBlock(default=datetime.time(hour=19), required=False, blank=True, null=True)
     member_price = blocks.CharBlock(default='$', max_length=100, blank=True, null=True)
     public_price = blocks.CharBlock(default='$', max_length=100)
 

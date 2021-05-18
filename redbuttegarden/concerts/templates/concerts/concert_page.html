@@ -111,10 +111,14 @@
                                                     </span>
                                                 </div>
                                                 <div class="con-times">
-                                                    {% if concert.gates_time %}
-                                                        Gates at {{ concert.gates_time }} /
+                                                    {% if concert.gate_time or concert.show_time %}
+                                                        {% if concert.gates_time %}
+                                                            Gates at {{ concert.gates_time }} /
+                                                        {% endif %}
+                                                        Show at {{ concert.show_time }}</div>
+                                                    {% else %}
+                                                        Gate & Show Times TBD
                                                     {% endif %}
-                                                    Show at {{ concert.show_time }}</div>
                                             {% endif %}
                                             <div class="con-price">
                                                 {% if concert.member_price %}
