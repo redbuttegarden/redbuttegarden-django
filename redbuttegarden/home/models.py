@@ -215,7 +215,7 @@ class SingleListButtonDropdownInfo(blocks.StructBlock):
     )
     info_text = blocks.RichTextBlock(
         label='Info Text',
-        features=['h4', 'h5', 'bold', 'italic', 'link', 'ul']
+        features=['h4', 'h5', 'bold', 'italic', 'link', 'document-link', 'ul']
     )
 
 
