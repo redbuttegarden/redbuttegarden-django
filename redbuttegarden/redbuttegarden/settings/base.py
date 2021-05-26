@@ -208,3 +208,11 @@ CAS_AUTO_CREATE_USER = False
 CAS_RESPONSE_CALLBACKS = (
     'custom_user.cas_handler.create_cas_user',
 )
+
+# Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('GMAIL_ACCOUNT')
+EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')

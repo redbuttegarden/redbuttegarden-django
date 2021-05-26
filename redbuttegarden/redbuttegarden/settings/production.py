@@ -15,7 +15,6 @@ ALLOWED_HOSTS = ['0.0.0.0', 'trjxa2b547.execute-api.us-east-1.amazonaws.com', 'd
 # TODO - Allow dev-shop here when we want to continue working on that
 
 BASE_URL = 'https://redbuttegarden.org'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 DATABASES = {
     'default': {
