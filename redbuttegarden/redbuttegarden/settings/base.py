@@ -209,10 +209,15 @@ CAS_RESPONSE_CALLBACKS = (
     'custom_user.cas_handler.create_cas_user',
 )
 
+ADMINS = [('IT', os.environ.get('IT_EMAIL'))]
+
 # Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('GMAIL_ACCOUNT')
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
+WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
+#WAGTAILADMIN_NOTIFICATION_USE_HTML = True

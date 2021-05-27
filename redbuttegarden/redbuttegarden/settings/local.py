@@ -2,7 +2,9 @@ from .dev import *
 
 DEBUG = True
 
-ALLOWED_HOSTS += ['train.localhost']
+ALLOWED_HOSTS += ['train.localhost', 'localhost']
+
+BASE_URL = 'http://localhost:8000'
 
 # Use local static file storage when running locally
 AWS_STORAGE_BUCKET_NAME = ''
