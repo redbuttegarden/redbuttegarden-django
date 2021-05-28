@@ -16,6 +16,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Check environment
+      run: |
+        echo "GITHUB_WORKSPACE = $GITHUB_WORKSPACE"
+        echo "github.workspace = ${{ github.workspace }}"
+        echo "pr.ref = ${{github.event.pull_request.head.ref}}"
+        echo "github.ref = ${{ github.ref }}"
+        echo "$GITHUB_CONTEXT"
     - name: Make envfile
       uses: SpicyPizza/create-envfile@v1.1
       with:
