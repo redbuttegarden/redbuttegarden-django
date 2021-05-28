@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1
+        uses: SpicyPizza/create-envfile@v1.1
         with:
           envkey_SECRET_KEY: thisisatestIrepeatthisisonlyatest
           envkey_PG_PASSWORD: pg_db_password
