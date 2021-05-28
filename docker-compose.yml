@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    container_name: web
+    container_name: rbg-web
     env_file:
       - redbuttegarden/.env.dev
     build: redbuttegarden/
@@ -14,7 +14,7 @@ services:
       - db
     command: gunicorn --pythonpath redbuttegarden redbuttegarden.wsgi:application --bind 0.0.0.0:8000 --workers 3
   db:
-    container_name: db
+    container_name: rbg-db
     image: "postgres:12.3"
     env_file:
       - redbuttegarden/.env.dev
