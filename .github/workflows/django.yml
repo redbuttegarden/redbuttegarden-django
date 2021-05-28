@@ -26,6 +26,7 @@ jobs:
           directory: redbuttegarden
           file_name: .env.dev
   build:
+    needs: create-envfile
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
