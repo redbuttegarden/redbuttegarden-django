@@ -23,7 +23,7 @@ jobs:
           envkey_POSTGRES_USER: pg_db_user
           envkey_POSTGRES_DB: pg_db_db
           envkey_DJANGO_SETTINGS_MODULE: redbuttegarden.settings.local
-          directory: redbuttegarden
+          directory: ./redbuttegarden
           file_name: .env.dev
   build:
     needs: create-envfile
