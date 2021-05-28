@@ -38,4 +38,4 @@ jobs:
       run: docker-compose up -d
     - name: Run Tests
       run: |
-        docker exec -e DJANGO_SETTINGS_MODULE=redbuttegarden.settings.testing redbuttegarden_web_1 pytest
+        docker exec -e DJANGO_SETTINGS_MODULE=redbuttegarden.settings.testing web pytest
