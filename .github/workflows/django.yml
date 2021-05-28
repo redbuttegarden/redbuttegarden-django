@@ -7,8 +7,25 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  create-envfile:
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1
+        with:
+          envkey_SECRET_KEY: thisisatestIrepeatthisisonlyatest
+          envkey_PG_PASSWORD: pg_db_password
+          envkey_PG_USER: pg_db_user
+          envkey_PG_DB: pg_db_db
+          envkey_PG_HOST: pg_db_host
+          envkey_POSTGRES_PASSWORD: pg_db_password
+          envkey_POSTGRES_USER: pg_db_user
+          envkey_POSTGRES_DB: pg_db_db
+          envkey_DJANGO_SETTINGS_MODULE: redbuttegarden.settings.local
+          directory: redbuttegarden
+          file_name: .env.dev
+  build:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
