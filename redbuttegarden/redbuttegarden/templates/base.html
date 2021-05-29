@@ -110,15 +110,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     {% include 'includes/google-analytics.html' %}
 {% endif %}
 
-{# Global javascript #}
-<script type="text/javascript" src="{% static 'js/redbuttegarden.js' %}"></script>
-
 {% block extra_js %}
     {# Override this in templates to add extra javascript #}
 {% endblock %}
 </body>
 
 {% include 'includes/footer.html' %}
-{% include 'includes/seasonal-css-js.html' %}
 
 </html>

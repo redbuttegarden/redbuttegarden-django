@@ -48,7 +48,7 @@ class TestConcert(TestCase):
         html = response.content.decode('utf8')
         self.assertTrue(html.startswith('\n\n<!DOCTYPE html>'))
         self.assertIn('<title>Concert Test Page', html)
-        self.assertTrue(html.endswith('</html>'))
+        self.assertTrue(html.endswith('</html>\n'))
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Available On Demand")
         self.assertNotContains(response, "Gates at")
