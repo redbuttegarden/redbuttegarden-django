@@ -32,5 +32,3 @@ jobs:
       run: python manage.py migrate
     - name: Test
       run: pytest
-      env:
-        DJANGO_SETTINGS_MODULE: redbuttegarden.settings.testing
