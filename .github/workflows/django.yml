@@ -16,25 +16,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Make envfile
-      uses: SpicyPizza/create-envfile@master
-      with:
-        envkey_SECRET_KEY: thisisatestIrepeatthisisonlyatest
-        envkey_PG_PASSWORD: pg_db_password
-        envkey_PG_USER: pg_db_user
-        envkey_PG_DB: pg_db_db
-        envkey_PG_HOST: pg_db_host
-        envkey_POSTGRES_PASSWORD: pg_db_password
-        envkey_POSTGRES_USER: pg_db_user
-        envkey_POSTGRES_DB: pg_db_db
-        envkey_DJANGO_SETTINGS_MODULE: redbuttegarden.settings.local
-        directory: redbuttegarden
-        file_name: .env.dev
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Build stack
-      run: docker-compose -f docker-compose.yml -f docker-compose.GitHubActions.yml up -d
-    - name: Run Tests
-      run: docker exec -e DJANGO_SETTINGS_MODULE=redbuttegarden.settings.testing rbg-web pytest
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r redbuttegarden/requirements.txt
+    - name: Test
+      run: pytest
+      env:
+        DJANGO_SETTINGS_MODULE: redbuttegarden.settings.testing
