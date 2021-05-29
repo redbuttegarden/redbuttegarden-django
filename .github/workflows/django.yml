@@ -35,8 +35,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Build stack
-      run: docker-compose up -d
+      run: docker-compose -f docker-compose.yml -f docker-compose.GitHubActions.yml up -d
     - name: Run Tests
-      run: |
-        docker exec -u root rbg-web echo $USER && chown -R wagtail /code && mkdir media static && ls -la
-        docker exec -e DJANGO_SETTINGS_MODULE=redbuttegarden.settings.testing -u wagtail rbg-web pytest
+      run: docker exec -e DJANGO_SETTINGS_MODULE=redbuttegarden.settings.testing rbg-web pytest
