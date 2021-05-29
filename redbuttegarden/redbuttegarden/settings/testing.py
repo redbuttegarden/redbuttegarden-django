@@ -55,7 +55,7 @@ WAGTAILSEARCH_BACKENDS = {
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-BASE_URL = 'http://redbuttegarden.test'
+BASE_URL = 'http://localhost'
 
 # Disable CAS related settings for testing
 MIDDLEWARE_CLASSES = ()
@@ -77,4 +77,4 @@ CACHES = {
 }
 
 SECRET_KEY = 'Testing'
-ALLOWED_HOSTS = ['redbuttegarden.test', 'localhost', '0.0.0.0']
+ALLOWED_HOSTS = ['localhost', '0.0.0.0']
