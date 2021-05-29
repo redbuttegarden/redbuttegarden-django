@@ -38,5 +38,5 @@ jobs:
       run: docker-compose up -d
     - name: Run Tests
       run: |
-        sudo docker exec -u root rbg-web chown -R $USER:$USER $(pwd) && mkdir media static && ls -la
-        docker exec -e DJANGO_SETTINGS_MODULE=redbuttegarden.settings.testing -u root rbg-web pytest
+        docker exec -u wagtail rbg-web chown -R wagtail /code && mkdir media static && ls -la
+        docker exec -e DJANGO_SETTINGS_MODULE=redbuttegarden.settings.testing -u wagtail rbg-web pytest
