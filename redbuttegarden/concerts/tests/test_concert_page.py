@@ -34,12 +34,13 @@ class TestConcert(TestCase):
                                    }
                           }])
         """
+        self.root_page = Page.objects.get(id=2)
         self.image = Image.objects.create(title='Test image', file=get_test_image_file())
         self.user = get_user_model().objects.create_user('Test User', 'test@email.com', 'password')
         self.concert_page = ConcertPage(owner=self.user,
                                         slug='concert-test-page',
                                         title='Concert Test Page')
-        Page.objects.get(slug='home').add_child(instance=self.concert_page)
+        self.root_page.add_child(instance=self.concert_page)
         self.concert_page.save_revision().publish()
 
     def test_concert_view_without_concerts(self):
