@@ -14,7 +14,7 @@ INSTALLED_APPS = [
 
     'wagtail.contrib.forms',
     "wagtail.contrib.frontend_cache",
-    #'wagtail.contrib.postgres_search',  # Disabled for testing
+    'wagtail.contrib.postgres_search',
     'wagtail.contrib.redirects',
     'wagtail.contrib.routable_page',
     'wagtail.contrib.settings',
@@ -46,16 +46,9 @@ INSTALLED_APPS = [
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
-# Not using postgres for testing so we disable postgres_search backend
-WAGTAILSEARCH_BACKENDS = {
-    'default': {
-        'BACKEND': 'wagtail.search.backends.db',
-    },
-}
-
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-BASE_URL = 'http://localhost'
+BASE_URL = "http://testserver"
 
 # Disable CAS related settings for testing
 MIDDLEWARE_CLASSES = ()
@@ -65,8 +58,12 @@ AUTHENTICATION_BACKENDS = (
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'github_actions',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': '127.0.0.1',
+        'PORT': 5432,
     }
 }
 
