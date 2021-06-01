@@ -44,3 +44,5 @@ jobs:
       run: python manage.py migrate
     - name: Test
       run: pytest
+      env:
+        AUTOMATE_URL: "https://webhook.site/81f38a00-d6a3-4aa6-87f8-1d84dbe054d9"
