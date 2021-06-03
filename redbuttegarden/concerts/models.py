@@ -203,7 +203,7 @@ class ConcertPage(AbstractBase):
         context = super().get_context(request, **kwargs)
         # Get a list of concert objects and determine the following:
         # Are they in the past and if they are virtual, is the on-demand offering also in the past?
-        concerts = [concert.value for concert in self.body if not concert.value['hidden']]
+        concerts = [concert.value for concert in self.body if not concert.value['hidden'] and len(concert.value['concert_dates']) > 0]
         for concert in concerts:
             concert['concert_dates'] = sorted(concert['concert_dates'])
             concert.soonest_date = sorted(concert['concert_dates'])[-1]

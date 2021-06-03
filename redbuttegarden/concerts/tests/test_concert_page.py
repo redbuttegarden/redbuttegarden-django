@@ -408,3 +408,34 @@ class TestConcert(TestCase):
         response = self.client.get('/concert-test-page', follow=True)
         # Looks for alt tags of buy button used in the template
         self.assertContains(response, "Gate & Show Times TBD")
+
+    def test_concert_page_without_dates(self):
+        """
+        Concert page should exclude concerts without dates,
+        otherwise when attempting to sort them, an IndexError
+        would occur.
+        """
+        self.concert_page.body = json.dumps([
+            {"type": "concerts",
+             "value": {"band_img": 773,
+                       "hidden": False,
+                       "on_sale": True,
+                       "virtual": False,
+                       "canceled": False,
+                       "postponed": False,
+                       "sold_out": False,
+                       "available_until": None,
+                       "band_info": "<h4><b>Band Info Test</b></h4>",
+                       "concert_dates": [],
+                       "gates_time": None,
+                       "show_time": None,
+                       "member_price": "BandsInTown Plus Subscription",
+                       "public_price": "BandsInTown Plus Subscription",
+                       "ticket_url": "https://www.awin1.com/cread.php?awinmid=19610&awinaffid=846015&ued="
+                       }}
+        ])
+        self.concert_page.save_revision().publish()
+
+        response = self.client.get('/concert-test-page', follow=True)
+        # Looks for alt tags of buy button used in the template
+        self.assertEqual(response.status_code, 200)
