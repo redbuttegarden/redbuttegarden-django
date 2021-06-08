@@ -1,22 +1,17 @@
 import datetime
-import operator
 
 from django.db import models
-from django.db.models import BooleanField
 from django.utils.translation import ugettext_lazy as _
 
-from modelcluster.fields import ParentalKey
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.core import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, StreamFieldPanel, MultiFieldPanel, \
-    FieldRowPanel
+from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, StreamFieldPanel
 from wagtail.core.models import Page, Orderable
-from wagtail.core.fields import BlockField, RichTextField, StreamField
+from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
-from wagtail.snippets.blocks import SnippetChooserBlock
 
 from concerts.utils import live_in_the_past, on_demand_expired
 from home.abstract_models import AbstractBase
@@ -29,6 +24,38 @@ donor_table_options = {
     'colHeaders': True,
     'rowHeaders': True,
     'contextMenu': True,
+    'editor': 'text',
+    'stretchH': 'all',
+    'height': 216,
+    'language': 'en-US',
+    'renderer': 'text',
+    'autoColumnSize': False,
+}
+
+donor_schedule_table_options = {
+    'contextMenu': [
+        'row_above',
+        'row_below',
+        '---------',
+        'col_left',
+        'col_right',
+        '---------',
+        'remove_row',
+        'remove_col',
+        '---------',
+        'undo',
+        'redo',
+        '---------',
+        'copy',
+        'cut'
+        '---------',
+        'alignment',
+    ],
+    'minSpareRows': 0,
+    'startRows': 3,
+    'startCols': 4,
+    'colHeaders': False,
+    'rowHeaders': True,
     'editor': 'text',
     'stretchH': 'all',
     'height': 216,
@@ -136,8 +163,29 @@ class ConcertBlock(blocks.StructBlock):
     ticket_url = blocks.URLBlock(default='https://redbuttegarden.ticketfly.com')
 
 
+class SimpleConcertBlock(blocks.StructBlock):
+    """
+    Simplified concert info designed for Concert Donor Schedule page.
+    """
+    band_img = ImageChooserBlock(required=True)
+    concert_dates = blocks.ListBlock(blocks.DateTimeBlock())
+    band_info = blocks.RichTextBlock(
+        help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
+                    ' centered.'))
+
+    class Meta:
+        template = 'blocks/simple_concert_block.html'
+
+
 class ConcertStreamBlock(blocks.StreamBlock):
     concerts = ConcertBlock()
+
+    class Meta:
+        required = False
+
+
+class SimpleConcertStreamBlock(blocks.StreamBlock):
+    concerts = SimpleConcertBlock()
 
     class Meta:
         required = False
@@ -262,4 +310,28 @@ class DonorPackagePage(AbstractBase):
 
     content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
+    ]
+
+
+class DonorSchedulePage(AbstractBase):
+    body = StreamField(block_types=[
+        ('heading', Heading(classname='full title',
+                            help_text=_('Text will be green and centered'))),
+        ('emphatic_text', EmphaticText(classname='full title',
+                                       help_text=_('Text will be red, italic and centered'))),
+        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
+        ('image', ImageChooserBlock()),
+        ('html', blocks.RawHTMLBlock()),
+        ('table', TableBlock(table_options=donor_schedule_table_options,
+                             help_text=_("Right-click to add/remove rows/columns"))),
+        ('concerts', SimpleConcertStreamBlock()),
+    ], blank=False)
+
+
+    content_panels = AbstractBase.content_panels + [
+        StreamFieldPanel('body'),
+    ]
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
     ]

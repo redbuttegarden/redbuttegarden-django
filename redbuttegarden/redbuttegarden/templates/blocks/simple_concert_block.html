@@ -1,0 +1,36 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<div class="infowrapper">
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 concertwrapper">
+
+        <a href="https://redbuttegarden.org/concerts">
+            <div class="bandpic hover">
+                {% image value.band_img fill-385x385 %}
+            </div>
+        </a>
+
+        <div class="textwrapper">
+
+            <div class="concerttext donor-height">
+
+                <div class="con-band-wrap">
+                    {{ value.band_info|richtext }}
+                </div>
+
+                <div class="con-but-wrap" style="width:100%">
+                    <div class="con-date">
+                        <span>
+                            {% for concert_date in value.concert_dates %}
+                                {{ concert_date.date|date:"l, F n" }}
+                            {% endfor %}
+                        </span>
+                    </div>
+
+                    <br />
+                    <hr style="width:80%">
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
