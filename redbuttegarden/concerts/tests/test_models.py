@@ -1,9 +1,9 @@
 from django.contrib.auth.models import Group
 from wagtail.core.models import Page
 from wagtail.tests.utils import WagtailPageTests, get_user_model
-from wagtail.tests.utils.form_data import inline_formset, nested_form_data, streamfield
+from wagtail.tests.utils.form_data import nested_form_data, streamfield
 
-from concerts.models import ConcertPage, DonorPackagePage
+from concerts.models import ConcertPage, DonorPackagePage, DonorSchedulePage
 
 
 class ConcertPageTests(WagtailPageTests):
@@ -12,6 +12,9 @@ class ConcertPageTests(WagtailPageTests):
 
     def test_can_create_donor_package(self):
         self.assertCanCreateAt(Page, DonorPackagePage)
+
+    def test_can_create_donor_schedule(self):
+        self.assertCanCreateAt(Page, DonorSchedulePage)
 
 
 class ConcertPageInstanceTests(WagtailPageTests):
@@ -35,5 +38,14 @@ class ConcertPageInstanceTests(WagtailPageTests):
                                  {'title': 'Donor Package Test Page',
                                   'body': streamfield([
                                       ('html', '<p>Testing!</p>')
+                                  ])}
+                             ))
+
+    def test_can_create_donor_schedule(self):
+        self.assertCanCreate(self.home, DonorSchedulePage,
+                             nested_form_data(
+                                 {'title': 'Donor Schedule Test Page',
+                                  'body': streamfield([
+                                      ('table', '{\"data\": [[\"ARTIST\", \"FULL PACKAGE\", \"OPENER A\", \"OPENER B\"], [\"BELA FLECK AND THE FLECKTONES WITH BILLY STRINGS\", \"YES\", \"NO\", \"YES\"], [\"LITTLE FEAT\", \"YES\", \"YES\", \"NO\"]], \"cell\": [], \"first_row_is_table_header\": true, \"first_col_is_header\": false, \"table_caption\": \"2019 Donor Season Ticket Packages\"}'),
                                   ])}
                              ))
