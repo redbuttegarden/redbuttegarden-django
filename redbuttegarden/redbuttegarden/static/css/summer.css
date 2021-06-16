@@ -1601,10 +1601,13 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 	}
 }
 
+.concertwrapper {
+	max-width: 420px;
+}
+
 @media (max-width: 768px) {
 
 	.concertwrapper{
-		max-width: 420px;
 		margin-left: auto;
 		margin-right: auto;
 		float: none;
@@ -1685,12 +1688,6 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 	position: absolute;
 	bottom: 0;
 }
-
-/*
-	.con-but-wrap hr {
-		background-color: #E86730 !important;
-	}
-*/
 
 .soldout {
 	margin: 0 auto 0 auto;
