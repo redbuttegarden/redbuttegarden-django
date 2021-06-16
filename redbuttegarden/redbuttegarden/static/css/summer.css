@@ -1678,6 +1678,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 	position: absolute;
 	top: 0;
 	width: 100%;
+	padding-top: 5px;
 }
 
 .con-but-wrap {

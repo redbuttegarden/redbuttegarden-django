@@ -6,3 +6,7 @@
     background-color: #249067;
     opacity: 0.4;
 }
+
+.con-but-wrap > .row-fluid {
+    padding-top: 5px;
+}
