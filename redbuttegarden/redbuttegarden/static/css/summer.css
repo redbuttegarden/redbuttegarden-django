@@ -1666,14 +1666,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 }
 
 .textwrapper {
-	z-index: 3;
 	text-align:  center;
-	text-wrap: normal;
-	position: relative;
-	overflow: hidden;
-	width: 95%;
-	/* height: 300px; */
-	margin:auto;
 }
 
 .textcenter {
