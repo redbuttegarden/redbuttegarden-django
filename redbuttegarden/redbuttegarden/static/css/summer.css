@@ -1601,23 +1601,10 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 	}
 }
 
-.concertwrapper{
-	position: relative;
-	opacity: 1;
-	margin: 0 0 0 0;
-	text-align:center;
-	padding: 0 0 0 0;
-	z-index: 45;
-}
-
 @media (max-width: 768px) {
 
 	.concertwrapper{
 		max-width: 420px;
-		margin-left: auto;
-		margin-right: auto;
-		float: none;
-		position: relative;
 	}
 
 	.pastdivide hr {
