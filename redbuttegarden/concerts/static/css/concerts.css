@@ -16,28 +16,19 @@
     max-width: 280px;
     text-align: center;
     max-height: 215px;
-    background-color: #BCAC93;
     color: #fff;
-    /* height: 215px; */
     height: 75px;
     margin: 10px auto 10px auto;
     font-size: 16px;
     opacity: 1;
-    text-wrap:normal;
 }
 
 .concert-test {
     height: 40px;
 }
 
-@media (max-width: 768px){
-    .concertinfo {
-        font-size: .85em;
-    }
-}
-
 .concertwrapper {
-    max-width: 420px;
+    max-width: 330px;
 }
 
 @media (max-width: 768px) {
@@ -46,14 +37,6 @@
         margin-left: auto;
         margin-right: auto;
         float: none;
-    }
-
-    .pastdivide hr {
-        display: none;
-    }
-
-    .pastdivide {
-        font-weight: bold;
     }
 
 }
