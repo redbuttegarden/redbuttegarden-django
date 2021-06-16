@@ -10,3 +10,173 @@
 .con-but-wrap > .row-fluid {
     padding-top: 5px;
 }
+
+.concertinfo, .concert-test {
+    position: relative;
+    max-width: 280px;
+    text-align: center;
+    max-height: 215px;
+    background-color: #BCAC93;
+    color: #fff;
+    /* height: 215px; */
+    height: 75px;
+    margin: 10px auto 10px auto;
+    font-size: 16px;
+    opacity: 1;
+    text-wrap:normal;
+}
+
+.concert-test {
+    height: 40px;
+}
+
+@media (max-width: 768px){
+    .concertinfo {
+        font-size: .85em;
+    }
+}
+
+.concertwrapper {
+    max-width: 420px;
+}
+
+@media (max-width: 768px) {
+
+    .concertwrapper{
+        margin-left: auto;
+        margin-right: auto;
+        float: none;
+    }
+
+    .pastdivide hr {
+        display: none;
+    }
+
+    .pastdivide {
+        font-weight: bold;
+    }
+
+}
+
+.past:hover .pasttext{
+    display:block;
+}
+
+.bandpic {
+    text-align:center;
+    padding: 10px 0 0 0;
+    position: relative;
+    z-index: 1;
+    margin: auto;
+}
+
+.bandpic img {
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.pasttext, .soldout, .concerttext{
+    position: absolute;
+    margin:0 auto 0 auto;
+    width: 100%;
+}
+
+.invisible{
+    display: none;
+}
+
+.concerttext {
+    background-color: #F2EDE4;
+    position: relative;
+    height: 280px;
+}
+
+.concerttext:before {      /* create a full-height inline block pseudo-element */
+    content: ' ';
+    display: inline-block;
+    vertical-align: middle; /* vertical alignment of the inline element */
+    height: 100%;
+}
+
+.textwrapper {
+    text-align:  center;
+}
+
+.con-band-wrap {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    padding-top: 5px;
+}
+
+.con-but-wrap {
+    position: absolute;
+    bottom: 0;
+}
+
+.soldout {
+    margin: 0 auto 0 auto;
+    text-align:center;
+    z-index: 3;
+    width: 30%;
+    position: absolute;
+    left:70%;
+    top: 10px;
+}
+
+.soldout img{
+    width: 100%;
+    display: block;
+    margin: auto;
+}
+
+.pasttext{
+    z-index: 30;
+    top: 25%;
+    left: 10%;
+    color: rgba(255,255,255, 0.7);
+    text-align:  center;
+    height: auto;
+    text-wrap: normal;
+    position: absolute;
+    padding-left: 0;
+    -ms-transform: rotate(-45deg); /* IE 9 */
+    -webkit-transform: rotate(-45deg); /* Chrome, Safari, Opera */
+    transform: rotate(-45deg);
+    opacity: 1%;
+    overflow: hidden;
+    max-width: 80%;
+    font-size: 48px;
+    display: none;
+}
+
+.past{
+    opacity:.5;
+}
+
+.buytickets {
+    margin: 0 auto 0 auto;
+    text-align:center;
+    z-index: 50;
+    width: 15%;
+    position: absolute;
+    top: 80%;
+    left:55%;
+}
+
+.buytickets.img {
+    width: 100%;
+    display: block;
+    margin: auto;
+}
+
+#concertcontent {
+    max-width:1280px;
+    margin: 0 auto 0 auto;
+    padding: 0;
+}
+
+.container-fluid-no-padding{
+    padding: 0;
+}
