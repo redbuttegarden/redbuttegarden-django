@@ -76,7 +76,7 @@
                                 <div class="bandpic hover">
                                     {# Using blank alt attribute since band description will provide the relevant context #}
                                     <picture>
-                                        {% image concert.band_img fill-280x280 alt="" %}
+                                        {% image concert.band_img fill-300x300 alt="" %}
 
                                         <div class="soldout {% if not concert.canceled %}hide{% endif %}">
                                             <img src="{% static 'img/canceled.png' %}" alt="Concert canceled">
