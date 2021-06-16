@@ -1677,12 +1677,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 .con-band-wrap {
 	position: absolute;
 	top: 0;
-	text-align: center;
-	text-wrap: normal;
-	overflow: hidden;
 	width: 100%;
-	display: table;
-	margin: auto;
 }
 
 .con-but-wrap {
