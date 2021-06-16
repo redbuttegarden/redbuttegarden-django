@@ -1601,10 +1601,6 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 	}
 }
 
-.concertwrapper{
-	padding: 0 0 0 0;
-}
-
 @media (max-width: 768px) {
 
 	.concertwrapper{
@@ -1630,7 +1626,6 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 
 .bandpic {
 	text-align:center;
-	width: 90%;
 	padding: 10px 0 0 0;
 	position: relative;
 	z-index: 1;
@@ -1654,16 +1649,9 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 }
 
 .concerttext {
-	z-index: 3;
 	background-color: #F2EDE4;
-	text-wrap: normal;
 	position: relative;
-	overflow: hidden;
-	width: 95%;
-	display: table;
-	margin: auto;
-	height: 280px; /* This value might need to be changed each season */
-	padding-bottom: 15px; /* Adds space between rows of artists on concerts page */
+	height: 280px;
 }
 
 .donor-height {
