@@ -153,7 +153,7 @@ class TestConcert(TestCase):
         self.concert_page.save_revision().publish()
 
         response = self.client.get('/concert-test-page', follow=True)
-        self.assertContains(response, '<div class="infowrapper past">')
+        self.assertContains(response, '<div class="past">')
         # Emulate the behavior of ConcertPage.get_context to test live_in_the_past util
         concert_stream_block = self.concert_page.body[0]
         concert_block_value = concert_stream_block.value
