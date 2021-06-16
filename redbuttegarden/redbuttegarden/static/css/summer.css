@@ -1601,10 +1601,17 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 	}
 }
 
+.concertwrapper{
+	padding: 0 0 0 0;
+}
+
 @media (max-width: 768px) {
 
 	.concertwrapper{
 		max-width: 420px;
+		margin-left: auto;
+		margin-right: auto;
+		float: none;
 	}
 
 	.pastdivide hr {

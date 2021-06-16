@@ -76,9 +76,7 @@
                                 <div class="bandpic hover">
                                     {# Using blank alt attribute since band description will provide the relevant context #}
                                     <picture>
-                                        {% image concert.band_img max-280x280 as desktop_photo %}
-                                        <source srcset="{{ desktop_photo.url }}" media="(min-width: 800px)">
-                                        {% image concert.band_img width-400 alt="" %}
+                                        {% image concert.band_img fill-280x280 alt="" %}
                                     </picture>
                                     <div class="soldout {% if not concert.canceled %}hide{% endif %}">
                                         <img src="{% static 'img/canceled.png' %}" alt="Concert canceled">
