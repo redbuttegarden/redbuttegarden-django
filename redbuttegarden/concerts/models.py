@@ -249,6 +249,11 @@ class ConcertPage(AbstractBase):
 
     def get_context(self, request, **kwargs):
         context = super().get_context(request, **kwargs)
+
+        context['concerts'] = self.sort_visible_concerts()
+        return context
+
+    def sort_visible_concerts(self):
         # Get a list of concert objects and determine the following:
         # Are they in the past and if they are virtual, is the on-demand offering also in the past?
         concerts = [concert.value for concert in self.body if not concert.value['hidden'] and len(concert.value['concert_dates']) > 0]
@@ -259,10 +264,7 @@ class ConcertPage(AbstractBase):
             concert.on_demand_expired = on_demand_expired(concert)
 
         # Sort concerts by soonest date
-        concerts = sorted(concerts, key=lambda x: x.soonest_date)
-        context['concerts'] = concerts
-        return context
-
+        return sorted(concerts, key=lambda x: x.soonest_date)
 
 class LineupBlock(blocks.StructBlock):
     year = blocks.IntegerBlock(min_value=1980, required=True)
