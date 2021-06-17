@@ -1,6 +1,6 @@
 import logging
 
-from datetime import datetime
+import datetime
 
 from django.core.files import File
 from ics import Calendar, Event
@@ -20,13 +20,14 @@ def concert_page_changed(concert_page):
         # Add spaces before HTML is stripped so text isn't mashed
         band_info = strip_tags(band_info_html.replace('><', '> <'))
         e.name = strip_tags(band_info)
-        event_time = datetime(year=concert.soonest_date.year,
+        event_start = datetime.datetime(year=concert.soonest_date.year,
                               month=concert.soonest_date.month,
                               day=concert.soonest_date.day,
                               hour=concert['show_time'].hour,
                               minute=concert['show_time'].minute,
                               tzinfo=concert.soonest_date.tzinfo)
-        e.begin = event_time
+        e.begin = event_start
+        e.end = event_start + datetime.timedelta(hours=3)
         c.events.add(e)
 
     with open('concert_calendar.ics', 'w') as cal_file:
