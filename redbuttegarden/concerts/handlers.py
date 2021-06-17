@@ -30,7 +30,7 @@ def concert_page_changed(concert_page):
         e.end = event_start + datetime.timedelta(hours=3)
         c.events.add(e)
 
-    with open('concert_calendar.ics', 'w') as cal_file:
+    with open(f'concert_calendar_{concert_page.slug}.ics', 'w') as cal_file:
         cal_file.writelines(c)
 
 
