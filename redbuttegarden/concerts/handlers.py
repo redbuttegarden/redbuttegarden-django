@@ -1,8 +1,8 @@
+import datetime
 import logging
 
-import datetime
-
-from django.core.files import File
+from django.conf import settings
+from django.core.files.storage import default_storage
 from ics import Calendar, Event
 
 from .utils import strip_tags
@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def concert_page_changed(concert_page):
+    logger.info('Generating new iCal file with concerts from %s...', concert_page.title)
     c = Calendar()
     concerts = concert_page.sort_visible_concerts()
 
@@ -30,8 +31,14 @@ def concert_page_changed(concert_page):
         e.end = event_start + datetime.timedelta(hours=3)
         c.events.add(e)
 
-    with open(f'concert_calendar_{concert_page.slug}.ics', 'w') as cal_file:
-        cal_file.writelines(c)
+    with default_storage.open(f'concert_calendar_{concert_page.slug}.ics', mode='w') as cal_file:
+        if settings.DEFAULT_FILE_STORAGE == 'home.custom_storages.MediaStorage':
+            # S3 Storage seems to require bytes regardless of write mode
+            for line in c:
+                cal_file.write(line.encode('utf-8'))
+        else:
+            cal_file.writelines(c)
+
 
 
 def concert_published_handler(sender, **kwargs):

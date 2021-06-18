@@ -68,6 +68,10 @@
                 </div>
             </div>
 
+        <div class="row">
+            <a href="{% get_media_prefix %}concert_calendar_{{ page.slug }}.ics">Download Event Calendar</a>
+        </div>
+
             <div class="row-fluid">
                 {% for concert in concerts %}
                     <div {% if not concert.virtual and concert.live_in_the_past or concert.on_demand_expired %}class="past"{% endif %}>
