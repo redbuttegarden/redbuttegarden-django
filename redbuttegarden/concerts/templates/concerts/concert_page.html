@@ -68,9 +68,11 @@
                 </div>
             </div>
 
-        <div class="row">
-            <a href="{% get_media_prefix %}concert_calendar_{{ page.slug }}.ics">Download Event Calendar</a>
-        </div>
+            {% if concerts %}
+                <div class="row text-center">
+                    <a href="{% get_media_prefix %}concert_calendar_{{ page.slug }}.ics">Download iCal Event Calendar</a>
+                </div>
+            {% endif %}
 
             <div class="row-fluid">
                 {% for concert in concerts %}
