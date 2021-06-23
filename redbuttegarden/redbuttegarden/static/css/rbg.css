@@ -147,3 +147,8 @@ nav[role=pagination] {
     width: 385px;
     margin-top: 30px;
 }
+
+footer {
+    position: absolute;
+    width: 100%;
+}
