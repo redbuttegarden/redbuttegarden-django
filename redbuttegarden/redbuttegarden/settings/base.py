@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'cas',  # Sometimes necessary to comment this app out to dump database
     'corsheaders',
     'modelcluster',
+    'rest_framework',
     'storages',
     'taggit',
     'wagtailaccessibility',
