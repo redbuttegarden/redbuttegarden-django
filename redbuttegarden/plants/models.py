@@ -6,15 +6,15 @@ from django.utils.dates import MONTHS
 
 
 class Family(models.Model):
-    name = CharField(max_length=255)
+    name = CharField(max_length=255, unique=True)
 
 class Genus(models.Model):
     family = ForeignKey(Family, on_delete=models.CASCADE)
-    name = CharField(max_length=255)
+    name = CharField(max_length=255, unique=True)
 
 class Species(models.Model):
     genus = ForeignKey(Genus, on_delete=models.CASCADE)
-    name = CharField(max_length=255)
+    name = CharField(max_length=255, unique=True)
     cultivar = CharField(max_length=255)
     vernacular_name = CharField(max_length=255)
     habit = CharField(max_length=255)
