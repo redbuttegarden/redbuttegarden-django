@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'events',
     'home',
     'journal',
+    'plants',
     'search',
     'shop',
 
