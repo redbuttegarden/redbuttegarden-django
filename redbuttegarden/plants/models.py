@@ -34,4 +34,4 @@ class Collection(models.Model):
     location = models.OneToOneField(Location, on_delete=models.CASCADE, primary_key=True)
     species = ForeignKey(Species, on_delete=models.CASCADE)
     plant_date = DateField()
-    planter = CharField(max_length=255)  # Name of person who planted the collection
+    planter = CharField(max_length=255, blank=True, null=True)  # Name of person who planted the collection
