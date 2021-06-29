@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions, viewsets
 
-from .models import Family, Genus, Species, Collection
-from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer
+from .models import Family, Genus, Species, Collection, Location
+from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, LocationSerializer
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
@@ -28,6 +28,14 @@ class SpeciesList(generics.ListCreateAPIView):
 class SpeciesDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class LocationViewSet(viewsets.ModelViewSet):
+    """
+    List, create, retrieve, update or delete locations.
+    """
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class CollectionList(generics.ListCreateAPIView):

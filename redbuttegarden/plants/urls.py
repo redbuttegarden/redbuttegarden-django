@@ -5,6 +5,7 @@ from plants import views
 router = DefaultRouter()
 router.register(r'families', views.FamilyViewSet)
 router.register(r'genera', views.GenusViewSet)
+router.register(r'locations', views.LocationViewSet)
 
 app_name = 'plants'
 urlpatterns = [
