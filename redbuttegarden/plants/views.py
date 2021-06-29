@@ -16,7 +16,7 @@ class SpeciesDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SpeciesSerializer
 
 @api_view(['GET', 'POST'])
-def collection_list(request):
+def collection_list(request, format=None):
     """
     List 100 most recently created collections, or create new collections.
     """
@@ -34,7 +34,7 @@ def collection_list(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def collection_detail(request, pk):
+def collection_detail(request, pk, format=None):
     """
     Retrieve, update or delete a living plant collection.
     """
