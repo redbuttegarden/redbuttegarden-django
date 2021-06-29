@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, permissions
 
 from .models import Family, Species, Collection
 from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer
@@ -7,10 +7,12 @@ from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializ
 class FamilyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Family.objects.all()
     serializer_class = FamilySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class SpeciesDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class CollectionList(generics.ListCreateAPIView):
     """
@@ -18,6 +20,7 @@ class CollectionList(generics.ListCreateAPIView):
     """
     queryset = Collection.objects.all().order_by('-id')[:100]
     serializer_class = CollectionSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 class CollectionDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -26,3 +29,4 @@ class CollectionDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Collection.objects.all()
     serializer_class = CollectionSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
