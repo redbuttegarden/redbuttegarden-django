@@ -20,6 +20,11 @@ class GenusViewSet(viewsets.ModelViewSet):
     serializer_class = GenusSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+class SpeciesList(generics.ListCreateAPIView):
+    queryset = Species.objects.all()
+    serializer_class = SpeciesSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
 class SpeciesDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer

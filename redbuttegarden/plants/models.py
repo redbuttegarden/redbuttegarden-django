@@ -32,6 +32,9 @@ class Species(models.Model):
     bloom_time = ArrayField(base_field=CharField(choices=MONTHS.items(), max_length=255))
     plant_size = CharField(max_length=255)
 
+    class Meta:
+        ordering = ['-name']
+
 class Location(models.Model):
     latitude = DecimalField(max_digits=9, decimal_places=6)
     longitude = DecimalField(max_digits=9, decimal_places=6)

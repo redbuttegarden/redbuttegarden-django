@@ -18,6 +18,7 @@ class GenusSerializer(serializers.ModelSerializer):
 
 class SpeciesSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
+    genus = serializers.PrimaryKeyRelatedField(queryset=Genus.objects.all())
     name = serializers.CharField(max_length=255)
     cultivar = serializers.CharField(max_length=255)
     vernacular_name = serializers.CharField(max_length=255)
@@ -32,6 +33,7 @@ class SpeciesSerializer(serializers.Serializer):
         return Species.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        instance.genus = validated_data.get('genus', instance.genus)
         instance.name = validated_data.get('name', instance.name)
         instance.cultivar = validated_data.get('cultivar', instance.cultivar)
         instance.vernacular_name = validated_data.get('vernacular_name', instance.vernacular_name)
