@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from plants import views
 
+app_name = 'plants'
 urlpatterns = format_suffix_patterns([
     path('collections/',
          views.CollectionList.as_view(),
