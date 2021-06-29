@@ -1,6 +1,4 @@
-from rest_framework import generics, status
-from rest_framework.decorators import api_view
-from rest_framework.parsers import JSONParser
+from rest_framework import generics, status, mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -16,22 +14,20 @@ class SpeciesDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
 
-class CollectionList(APIView):
+class CollectionList(mixins.ListModelMixin,
+                     mixins.CreateModelMixin,
+                     generics.GenericAPIView):
     """
     List 100 most recently created collections, or create new collections.
     """
-    def get(self, request, format=None):
-        collections = Collection.objects.all().order_by('-id')[:100]
-        serializer = CollectionSerializer(collections, many=True)
-        return Response(serializer.data)
+    queryset = Collection.objects.all().order_by('-id')[:100]
+    serializer_class = CollectionSerializer
 
-    def post(self, request, format=None):
-        data = JSONParser().parse(request)
-        serializer = CollectionSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 class CollectionDetail(APIView):
     """
