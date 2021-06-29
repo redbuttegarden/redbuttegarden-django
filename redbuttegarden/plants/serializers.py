@@ -14,7 +14,7 @@ class GenusSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Genus
-        fields = ['family', 'name']
+        fields = ['url', 'id', 'family', 'name']
 
 class SpeciesSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
@@ -57,4 +57,4 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Collection
-        fields = ['species', 'location', 'plant_date', 'planter']
+        fields = ['url', 'id', 'species', 'location', 'plant_date', 'planter']

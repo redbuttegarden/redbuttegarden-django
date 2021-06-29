@@ -107,7 +107,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
 
 # Django REST Framework
-REST_FRAMEWORK = {
+REST_FRAMEWORK += {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAdminUser',
     ]
