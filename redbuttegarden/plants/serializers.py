@@ -47,7 +47,7 @@ class SpeciesSerializer(serializers.Serializer):
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
-        models = Location
+        model = Location
         fields = ['latitude', 'longitude']
 
 
