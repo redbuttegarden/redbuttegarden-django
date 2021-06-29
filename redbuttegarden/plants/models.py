@@ -31,7 +31,7 @@ class Location(models.Model):
     longitude = DecimalField(max_digits=9, decimal_places=6)
 
 class Collection(models.Model):
-    location = models.OneToOneField(Location, on_delete=models.CASCADE, primary_key=True)
+    location = models.OneToOneField(Location, on_delete=models.CASCADE)
     species = ForeignKey(Species, on_delete=models.CASCADE)
     plant_date = DateField()
     planter = CharField(max_length=255, blank=True, null=True)  # Name of person who planted the collection
