@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions, viewsets
 
-from .models import Family, Species, Collection
-from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer
+from .models import Family, Genus, Species, Collection
+from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
@@ -10,6 +10,14 @@ class FamilyViewSet(viewsets.ModelViewSet):
     """
     queryset = Family.objects.all()
     serializer_class = FamilySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class GenusViewSet(viewsets.ModelViewSet):
+    """
+    List, create, retrieve, update or delete genera.
+    """
+    queryset = Genus.objects.all()
+    serializer_class = GenusSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class SpeciesDetail(generics.RetrieveUpdateDestroyAPIView):

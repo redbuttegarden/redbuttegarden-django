@@ -7,14 +7,14 @@ from .custom_fields import StringArrayField
 class FamilySerializer(serializers.ModelSerializer):
     class Meta:
         model = Family
-        fields = ['name']
+        fields = ['id', 'name']
 
-class GenusSerializer(serializers.HyperlinkedModelSerializer):
-    family = serializers.HyperlinkedRelatedField(read_only=True, view_name='family-detail')
+class GenusSerializer(serializers.ModelSerializer):
+    family = serializers.PrimaryKeyRelatedField(queryset=Family.objects.all())
 
     class Meta:
         model = Genus
-        fields = ['url', 'id', 'family', 'name']
+        fields = ['id', 'family', 'name']
 
 class SpeciesSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
