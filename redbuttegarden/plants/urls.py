@@ -1,19 +1,20 @@
-from django.urls import path
-from rest_framework.urlpatterns import format_suffix_patterns
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from plants import views
 
+router = DefaultRouter()
+router.register(r'families', views.FamilyViewSet)
+
 app_name = 'plants'
-urlpatterns = format_suffix_patterns([
+urlpatterns = [
     path('collections/',
          views.CollectionList.as_view(),
          name='collection-list'),
     path('collections/<int:pk>/',
          views.CollectionDetail.as_view(),
          name='collection-detail'),
-    path('family/<int:pk>/',
-         views.FamilyDetail.as_view(),
-         name='family-detail'),
     path('species/<int:pk>/',
          views.SpeciesDetail.as_view(),
-         name='species-detail')
-])
+         name='species-detail'),
+    path('', include(router.urls)),
+]

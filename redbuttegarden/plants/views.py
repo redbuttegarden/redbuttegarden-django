@@ -1,10 +1,13 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, viewsets
 
 from .models import Family, Species, Collection
 from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer
 
 
-class FamilyDetail(generics.RetrieveUpdateDestroyAPIView):
+class FamilyViewSet(viewsets.ModelViewSet):
+    """
+    List, create, retrieve, update or delete families.
+    """
     queryset = Family.objects.all()
     serializer_class = FamilySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
