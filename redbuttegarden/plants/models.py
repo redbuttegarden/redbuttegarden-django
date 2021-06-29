@@ -8,9 +8,15 @@ from django.utils.dates import MONTHS
 class Family(models.Model):
     name = CharField(max_length=255, unique=True)
 
+    class Meta:
+        ordering = ['-name']
+
 class Genus(models.Model):
     family = ForeignKey(Family, on_delete=models.CASCADE)
     name = CharField(max_length=255, unique=True)
+
+    class Meta:
+        ordering = ['-name']
 
 class Species(models.Model):
     genus = ForeignKey(Genus, on_delete=models.CASCADE)
