@@ -21,7 +21,7 @@ class Genus(models.Model):
 class Species(models.Model):
     genus = ForeignKey(Genus, on_delete=models.CASCADE)
     name = CharField(max_length=255)
-    cultivar = CharField(max_length=255)
+    cultivar = CharField(max_length=255, blank=True, null=True)
     vernacular_name = CharField(max_length=255)
     habit = CharField(max_length=255)
     hardiness = ArrayField(base_field=PositiveSmallIntegerField(validators=[MinValueValidator(1),
