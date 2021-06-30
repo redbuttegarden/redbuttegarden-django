@@ -40,9 +40,6 @@ class Location(models.Model):
     latitude = DecimalField(max_digits=9, decimal_places=6)
     longitude = DecimalField(max_digits=9, decimal_places=6)
 
-    class Meta:
-        unique_together = ['latitude', 'longitude']
-
 class Collection(models.Model):
     location = models.OneToOneField(Location, on_delete=models.CASCADE)
     species = ForeignKey(Species, on_delete=models.CASCADE)
