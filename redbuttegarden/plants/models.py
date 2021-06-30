@@ -29,7 +29,7 @@ class Species(models.Model):
                            size=13)
     water_regime = CharField(max_length=255)
     exposure = CharField(max_length=255)
-    bloom_time = ArrayField(base_field=CharField(choices=MONTHS.items(), max_length=255))
+    bloom_time = ArrayField(base_field=CharField(choices=MONTHS.items(), max_length=255), blank=True, null=True)
     plant_size = CharField(max_length=255)
 
     class Meta:
