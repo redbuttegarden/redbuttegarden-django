@@ -1,62 +1,85 @@
+from django.contrib.postgres.validators import ArrayMaxLengthValidator
 from rest_framework import serializers
 
 from plants.models import Collection, Family, Genus, Location, Species
-from .custom_fields import StringArrayField
 
-
+"""
+Empty validator lists are defined for fields with unique constraints
+so that Collection objects can be created when nested objects already
+exist.
+"""
 class FamilySerializer(serializers.ModelSerializer):
     class Meta:
         model = Family
         fields = ['id', 'name']
+        extra_kwargs = {
+            'name': {
+                'validators': []
+            }
+        }
 
 class GenusSerializer(serializers.ModelSerializer):
-    family = serializers.PrimaryKeyRelatedField(queryset=Family.objects.all())
+    family = FamilySerializer()
 
     class Meta:
         model = Genus
         fields = ['id', 'family', 'name']
+        extra_kwargs = {
+            'name': {
+                'validators': []
+            }
+        }
 
-class SpeciesSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    genus = serializers.PrimaryKeyRelatedField(queryset=Genus.objects.all())
-    name = serializers.CharField(max_length=255)
-    cultivar = serializers.CharField(max_length=255)
-    vernacular_name = serializers.CharField(max_length=255)
-    habit = serializers.CharField(max_length=255)
-    hardiness = StringArrayField()
-    water_regime = serializers.CharField(max_length=255)
-    exposure = serializers.CharField(max_length=255)
-    bloom_time = StringArrayField()
-    plant_size = serializers.CharField(max_length=255)
+class SpeciesSerializer(serializers.ModelSerializer):
+    genus = GenusSerializer()
+    hardiness = serializers.ListField(allow_empty=True, allow_null=True,
+                                      child=serializers.IntegerField(label='Hardiness',
+                                                                     max_value=13,
+                                                                     min_value=1),
+                                      validators=[ArrayMaxLengthValidator()])
 
-    def create(self, validated_data):
-        return Species.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.genus = validated_data.get('genus', instance.genus)
-        instance.name = validated_data.get('name', instance.name)
-        instance.cultivar = validated_data.get('cultivar', instance.cultivar)
-        instance.vernacular_name = validated_data.get('vernacular_name', instance.vernacular_name)
-        instance.habit = validated_data.get('habit', instance.habit)
-        instance.hardiness = validated_data.get('hardiness', instance.hardiness)
-        instance.water_regime = validated_data.get('water_regime', instance.water_regime)
-        instance.exposure = validated_data.get('exposure', instance.exposure)
-        instance.bloom_time = validated_data.get('bloom_time', instance.bloom_time)
-        instance.plant_size = validated_data.get('plant_size', instance.plant_size)
-
-        instance.save()
-        return instance
+    class Meta:
+        model = Species
+        fields = ['id', 'genus', 'name', 'cultivar', 'vernacular_name', 'habit', 'hardiness', 'water_regime']
+        extra_kwargs = {
+            'name': {
+                'validators': []
+            }
+        }
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ['latitude', 'longitude']
+        fields = ['id', 'latitude', 'longitude']
 
 
-class CollectionSerializer(serializers.HyperlinkedModelSerializer):
-    species = serializers.HyperlinkedRelatedField(read_only=True, view_name='species-detail')
-    location = serializers.StringRelatedField(read_only=True)
+class CollectionSerializer(serializers.ModelSerializer):
+    species = SpeciesSerializer()
+    location = LocationSerializer()
+    plant_date = serializers.DateField(input_formats=['%d-%m-%Y'], required=False, allow_null=True)
 
     class Meta:
         model = Collection
-        fields = ['url', 'id', 'species', 'location', 'plant_date', 'planter']
+        fields = ['id', 'species', 'location', 'plant_date', 'planter', 'created_on', 'last_modified']
+
+
+    def create(self, validated_data):
+        species_data = validated_data.pop('species')
+        genus_data = species_data.pop('genus')
+        family_data = genus_data.pop('family')
+        location_data = validated_data.pop('location')
+
+        family, _ = Family.objects.get_or_create(**family_data)
+        genus, _ = Genus.objects.get_or_create(family=family, **genus_data)
+        # TODO - Catch errors when species data are changed
+        # Get or create logic doesn't seem to avoid unique constraint between genus/species name
+        try:
+            species = Species.objects.get(genus=genus, name=species_data['name'])
+        except Species.DoesNotExist:
+            species = Species(genus=genus, **species_data)
+            species.save()
+
+        location, _ = Location.objects.get_or_create(**location_data)
+        collection, _ = Collection.objects.get_or_create(location=location, species=species, **validated_data)
+
+        return collection
