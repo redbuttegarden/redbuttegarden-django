@@ -26,7 +26,7 @@ class Species(models.Model):
     habit = CharField(max_length=255)
     hardiness = ArrayField(base_field=PositiveSmallIntegerField(validators=[MinValueValidator(1),
                                                                             MaxValueValidator(13)]),
-                           size=13)
+                           size=13, blank=True, null=True)
     water_regime = CharField(max_length=255)
     exposure = CharField(max_length=255)
     bloom_time = ArrayField(base_field=CharField(choices=MONTHS.items(), max_length=255), blank=True, null=True)
