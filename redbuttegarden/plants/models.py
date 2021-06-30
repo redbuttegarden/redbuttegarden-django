@@ -20,7 +20,7 @@ class Genus(models.Model):
 
 class Species(models.Model):
     genus = ForeignKey(Genus, on_delete=models.CASCADE)
-    name = CharField(max_length=255, unique=True)
+    name = CharField(max_length=255)
     cultivar = CharField(max_length=255)
     vernacular_name = CharField(max_length=255)
     habit = CharField(max_length=255)
@@ -34,6 +34,7 @@ class Species(models.Model):
 
     class Meta:
         ordering = ['-name']
+        unique_together = ['genus', 'name']
 
 class Location(models.Model):
     latitude = DecimalField(max_digits=9, decimal_places=6)
