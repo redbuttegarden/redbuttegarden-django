@@ -1,4 +1,3 @@
-from django.contrib.postgres.validators import ArrayMaxLengthValidator
 from rest_framework import serializers
 
 from plants.models import Collection, Family, Genus, Location, Species
@@ -35,8 +34,7 @@ class SpeciesSerializer(serializers.ModelSerializer):
     hardiness = serializers.ListField(allow_empty=True, allow_null=True,
                                       child=serializers.IntegerField(label='Hardiness',
                                                                      max_value=13,
-                                                                     min_value=1),
-                                      validators=[ArrayMaxLengthValidator()])
+                                                                     min_value=1))
 
     class Meta:
         model = Species
