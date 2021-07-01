@@ -21,5 +21,8 @@ urlpatterns = [
     path('species/<int:pk>/',
          views.SpeciesDetail.as_view(),
          name='species-detail'),
+    path('plant-map/',
+         views.plant_map_view,
+         name='plant-map'),
     path('', include(router.urls)),
 ]

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
+    <link href="{% static 'css/plant_map.css' %}" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
+{% endblock %}
+
+{% block abnormal_content %}
+    <div class="container-fluid">
+        <div id="map"></div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw';
+        var map = new mapboxgl.Map({
+            container: 'map', // container ID
+            style: 'mapbox://styles/mapbox/satellite-v9', // style URL
+            center: [-111.823807, 40.766367], // starting position [lng, lat]
+            zoom: 16 // starting zoom
+        });
+    </script>
+{% endblock %}
