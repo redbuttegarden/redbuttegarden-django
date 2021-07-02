@@ -54,7 +54,7 @@
                     if (!feature.properties.cluster){
                         let prop = feature.properties;
                         let collection = document.createElement('a');
-                        collection.href = prop.wikipedia;
+                        collection.href = "/plants/collection/" + prop.id + "/";
                         collection.target = '_blank';
                         collection.textContent = prop.family_name +
                             ' ' +
