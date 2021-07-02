@@ -3,10 +3,15 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import DecimalField, CharField, ForeignKey, PositiveSmallIntegerField, DateField, DateTimeField
 from django.utils.dates import MONTHS
+from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.images.edit_handlers import ImageChooserPanel
 
 
 class Family(models.Model):
     name = CharField(max_length=255, unique=True)
+
+    def __repr__(self):
+        return ' '.join([self.name])
 
     class Meta:
         ordering = ['-name']
@@ -14,6 +19,9 @@ class Family(models.Model):
 class Genus(models.Model):
     family = ForeignKey(Family, on_delete=models.CASCADE)
     name = CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return ' '.join([self.name, f'({self.family.name})'])
 
     class Meta:
         ordering = ['-name']
@@ -39,9 +47,27 @@ class Species(models.Model):
     bloom_time = ArrayField(base_field=CharField(choices=MONTHS.items(), max_length=255), blank=True, null=True)
     plant_size = CharField(max_length=255)
 
+    panels = [
+        ImageChooserPanel('image'),
+        FieldPanel('genus'),
+        FieldPanel('name'),
+        FieldPanel('cultivar'),
+        FieldPanel('vernacular_name'),
+        FieldPanel('habit'),
+        FieldPanel('hardiness'),
+        FieldPanel('water_regime'),
+        FieldPanel('exposure'),
+        FieldPanel('bloom_time'),
+        FieldPanel('plant_size'),
+    ]
+
+    def __repr__(self):
+        return ' '.join([self.genus.name, self.name])
+
     class Meta:
         ordering = ['-name']
         unique_together = ['genus', 'name']
+        verbose_name_plural = 'species'
 
 class Location(models.Model):
     latitude = DecimalField(max_digits=9, decimal_places=6)

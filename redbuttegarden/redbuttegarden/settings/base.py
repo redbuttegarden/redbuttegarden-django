@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'shop',
 
     'wagtail.contrib.forms',
-    "wagtail.contrib.frontend_cache",
+    'wagtail.contrib.frontend_cache',
+    'wagtail.contrib.modeladmin',
     'wagtail.contrib.postgres_search',
     'wagtail.contrib.redirects',
     'wagtail.contrib.routable_page',
