@@ -61,7 +61,7 @@ class Species(models.Model):
         FieldPanel('plant_size'),
     ]
 
-    def __repr__(self):
+    def __str__(self):
         return ' '.join([self.genus.name, self.name])
 
     class Meta:
