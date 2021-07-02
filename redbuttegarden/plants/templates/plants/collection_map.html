@@ -9,30 +9,101 @@
 
 {% block abnormal_content %}
     <div class="container-fluid">
-        <div id="collection-list" class="container">
-            <div class="row">
-                <a id="families">Families <span id="family-count"></span></a>
-            </div>
-            <div class="row">
-                <a id="genera">Genera <span id="genus-count"></span></a>
-            </div>
-            <div class="row">
-                <a id="species">Species <span id="species-count"></span></a>
-            </div>
-        </div>
         <div id="map"></div>
+        <div class="map-overlay">
+            <fieldset>
+                <label for="feature-filter">Collection filter</label>
+                <input id="feature-filter" type="text" placeholder="Filter results by name">
+            </fieldset>
+            <div id="feature-listing" class="listing"></div>
+        </div>
     </div>
 {% endblock %}
 
 {% block extra_js %}
     <script>
         mapboxgl.accessToken = 'pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw';
-        var map = new mapboxgl.Map({
+        let map = new mapboxgl.Map({
             container: 'map', // container ID
             style: 'mapbox://styles/mapbox/satellite-v9', // style URL
             center: [-111.823807, 40.766367], // starting position [lng, lat]
             zoom: 16 // starting zoom
         });
+
+        // Holds visible collection features for filtering
+        let collections = [];
+
+        // Create a popup, but don't add it to the map yet.
+        let popup = new mapboxgl.Popup({
+            closeButton: false
+        });
+
+        let filterEl = document.getElementById('feature-filter');
+        let listingEl = document.getElementById('feature-listing');
+
+        function renderListings(features) {
+            let empty = document.createElement('p');
+            // Clear any existing listings
+            listingEl.innerHTML = '';
+            if (features.length) {
+                features.forEach(function (feature) {
+                    console.log(feature);
+                    if (!feature.properties.cluster){
+                        let prop = feature.properties;
+                        let collection = document.createElement('a');
+                        collection.href = prop.wikipedia;
+                        collection.target = '_blank';
+                        collection.textContent = prop.family_name +
+                            ' ' +
+                            prop.genus_name +
+                            ' ' +
+                            prop.species_name;
+                        collection.addEventListener('mouseover', function () {
+                            // Highlight corresponding feature on the map
+                            popup
+                                .setLngLat(feature.geometry.coordinates)
+                                .setText(
+                                    feature.properties.genus_name +
+                                    ' ' +
+                                    feature.properties.species_name
+                                )
+                                .addTo(map);
+                        });
+                        listingEl.appendChild(collection);
+                    }
+                });
+
+                // Show the filter input
+                filterEl.parentNode.style.display = 'block';
+            } else if (features.length === 0 && filterEl.value !== '') {
+                empty.textContent = 'No results found';
+                listingEl.appendChild(empty);
+            } else {
+                empty.textContent = 'Drag the map to populate results';
+                listingEl.appendChild(empty);
+
+                // Hide the filter input
+                filterEl.parentNode.style.display = 'none';
+
+                // remove features filter
+                map.setFilter('unclustered-point', ['has', 'id']);
+            }
+        }
+
+        function getUniqueFeatures(array, comparatorProperty) {
+            let existingFeatureKeys = {};
+            // Because features come from tiled vector data, feature geometries may be split
+            // or duplicated across tile boundaries and, as a result, features may appear
+            // multiple times in query results.
+            return array.filter(function (el) {
+                if (existingFeatureKeys[el.properties[comparatorProperty]]) {
+                    return false;
+                } else {
+                    existingFeatureKeys[el.properties[comparatorProperty]] = true;
+                    return true;
+                }
+            });
+        }
 
         map.on('load', function () {
             // Add a new source from our GeoJSON data and
@@ -100,6 +171,23 @@
                     'circle-radius': 4,
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#fff'
+                }
+            });
+
+            map.on('moveend', function () {
+                let features = map.queryRenderedFeatures({ layers: ['clusters', 'unclustered-point'] });
+
+                if (features) {
+                    let uniqueFeatures = getUniqueFeatures(features, 'id');
+                    // Populate features for the listing overlay.
+                    renderListings(uniqueFeatures);
+
+                    // Clear the input container
+                    filterEl.value = '';
+
+                    // Store the current features in sn `airports` variable to
+                    // later use for filtering on `keyup`.
+                    collections = uniqueFeatures;
                 }
             });
 
@@ -177,23 +265,11 @@
             map.on('mouseleave', 'clusters', function () {
                 map.getCanvas().style.cursor = '';
             });
+
+            // Call this function on initialization
+            // passing an empty array to render an empty state
+            renderListings([]);
         });
-
-        function getVisibleCollections() {
-            let collections = [];
-            map.queryRenderedFeatures({'layers': ['clusters', 'unclustered-point']}).forEach(function(elem) {
-                if (elem.layer.id === 'clusters') {
-                    map.getSource('collections').getClusterLeaves(elem.properties.cluster_id, 10000, 0, (error, features) => {
-                        if (error) return;
-                        collections.push(features);
-                    })
-                } else {
-                    collections.push(elem)
-                }
-            });
-
-            return collections;
-        }
 
     </script>
 {% endblock %}

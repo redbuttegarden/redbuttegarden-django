@@ -16,6 +16,7 @@ class Command(BaseCommand):
                 feature = Feature(geometry=Point((collection.location.longitude,
                                                   collection.location.latitude)),
                                   properties={
+                                      'id': collection.id,
                                       'family_name': collection.species.genus.family.name,
                                       'genus_name': collection.species.genus.name,
                                       'species_name': collection.species.name,
