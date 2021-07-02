@@ -93,6 +93,10 @@
             }
         }
 
+        function normalize(string) {
+            return string.trim().toLowerCase();
+        }
+
         function getUniqueFeatures(array, comparatorProperty) {
             let existingFeatureKeys = {};
             // Because features come from tiled vector data, feature geometries may be split
@@ -106,6 +110,10 @@
                     return true;
                 }
             });
+        }
+
+        function resetMapFilter(map) {
+            map.setFilter('unclustered-point', ['has', 'id']);
         }
 
         map.on('load', function () {
@@ -177,6 +185,11 @@
                 }
             });
 
+            map.on('movestart', function () {
+                // reset features filter as the map starts moving
+                resetMapFilter(map);
+            });
+
             map.on('moveend', function () {
                 let features = map.queryRenderedFeatures({ layers: ['clusters', 'unclustered-point'] });
 
@@ -185,10 +198,7 @@
                     // Populate features for the listing overlay.
                     renderListings(uniqueFeatures);
 
-                    // Clear the input container
-                    filterEl.value = '';
-
-                    // Store the current features in sn `airports` variable to
+                    // Store the current features in `collections` variable to
                     // later use for filtering on `keyup`.
                     collections = uniqueFeatures;
                 }
@@ -268,6 +278,41 @@
             map.on('mouseleave', 'clusters', function () {
                 map.getCanvas().style.cursor = '';
             });
+
+            function filterByElementValue() {
+                let value = normalize(filterEl.value);
+
+                if (!value) {
+                    resetMapFilter(map);
+                    return
+                }
+
+                // Filter visible features that don't match the input value.
+                let filtered = collections.filter(function (feature) {
+                    let cluster = feature.properties.cluster;
+                    let family = normalize(feature.properties.family_name || '');
+                    let genus = normalize(feature.properties.genus_name || '');
+                    return !cluster && family.indexOf(value) > -1 || genus.indexOf(value) > -1;
+                });
+
+                // Populate the sidebar with filtered results
+                renderListings(filtered);
+
+                // Set the filter to populate features into the layer.
+                if (filtered.length) {
+                    map.setFilter('unclustered-point', [
+                        'match',
+                        ['get', 'id'],
+                        filtered.map(function (feature) {
+                            return feature.properties.id;
+                        }),
+                        true,
+                        false
+                    ]);
+                }
+            }
+
+            filterEl.addEventListener('keyup', filterByElementValue);
 
             // Call this function on initialization
             // passing an empty array to render an empty state
