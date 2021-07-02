@@ -72,11 +72,6 @@ nav ul.nav li.dropdown > a:hover
 	background-color: #FF7744;
 }
 
-#navhide1 > a:focus, #navhide2 > a:focus, #navhide3 > a:focus,
-#navhide1 > a:hover, #navhide2 > a:hover, #navhide3 > a:hover {
-	background-color: #FF7744;
-}
-
 /* Underlines the last three items in the navbar */
 .navbar-inverse li:nth-last-child(3) .dropdown-toggle, .navbar-inverse li:nth-last-child(2) .dropdown-toggle, .navbar-inverse li:nth-last-child(1) .dropdown-toggle { /* Give/Join/Volunteer nav buttons */
 	/* text-decoration: underline; */
@@ -86,22 +81,6 @@ nav ul.nav li.dropdown > a:hover
 /* Makes headers of the dropdown menus white and bold */
 .navbar-inverse .nav li .dropdown-toggle, .navbar-inverse .nav li .dropdown-toggle:hover  {
 	color: #FFF !important; /* Overwrites Bootstrap's !important */
-}
-
-#navhide1, #navhide2, #navhide3 {
-	padding-right: 1px;
-}
-
-/* Changes color of last 3 dropdown menu items to yellow */
-#navhide1 > a, #navhide2 > a, #navhide3 > a {
-	background-color: #2f7055;
-}
-
-@media (max-width: 1280px) {
-
-	#navhide1 > a, #navhide2 > a, #navhide3 > a {
-		padding-bottom: 5px;
-	}
 }
 
 .dropdown-menu li {
