@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions, viewsets
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .models import Family, Genus, Species, Collection, Location
 from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, LocationSerializer
@@ -59,3 +59,11 @@ class CollectionDetail(generics.RetrieveUpdateDestroyAPIView):
 
 def plant_map_view(request):
     return render(request, 'plants/collection_map.html')
+
+def collection_detail(request, collection_id):
+    collection = get_object_or_404(Collection, pk=collection_id)
+    return render(request, 'plants/collection_detail.html', {'collection': collection})
+
+def species_detail(request, species_id):
+    species = get_object_or_404(Species, pk=species_id)
+    return render(request, 'plants/species_detail.html', {'species': species})

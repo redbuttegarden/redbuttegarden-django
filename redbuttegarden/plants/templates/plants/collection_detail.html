@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>{{ collection.location.latitude }}, {{ collection.location.longitude }}</div>
+    <div>{{ collection.species.genus.family.name }} {{ collection.species.genus.name }} {{ collection.species.name }}</div>
+    <div>{{ collection.plant_date }}</div>
+    <div>{{ collection.planter }}</div>
+    <div>{{ collection.created_on }}</div>
+    <div>{{ collection.last_modified }}</div>
+{% endblock %}
