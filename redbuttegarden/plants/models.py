@@ -73,6 +73,9 @@ class Location(models.Model):
     latitude = DecimalField(max_digits=9, decimal_places=6)
     longitude = DecimalField(max_digits=9, decimal_places=6)
 
+    def __str__(self):
+        return ' '.join([str(self.latitude), str(self.longitude)])
+
 class Collection(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     species = ForeignKey(Species, on_delete=models.CASCADE)
