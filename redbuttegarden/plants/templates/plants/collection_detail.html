@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <h1>Collection Detail</h1>
+
     <div>{{ collection.location.latitude }}, {{ collection.location.longitude }}</div>
     <div>{{ collection.species.genus.family.name }} <a href="{% url 'plants:species-detail' collection.species_id %}">{{ collection.species.genus.name }} {{ collection.species.name }}</a></div>
     <div>{{ collection.plant_date }}</div>

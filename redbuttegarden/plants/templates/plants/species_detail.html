@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <h1>Species Detail</h1>
+
     <div>{{ species.genus.family.name }} {{ species.genus.name }} {{ species.name }}</div>
     <div>{{ species.cultivar }}</div>
     <div>{{ species.vernacular_name }}</div>
