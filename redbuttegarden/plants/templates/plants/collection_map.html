@@ -9,6 +9,17 @@
 
 {% block abnormal_content %}
     <div class="container-fluid">
+        <div id="collection-list" class="container">
+            <div class="row">
+                <a id="families">Families <span id="family-count"></span></a>
+            </div>
+            <div class="row">
+                <a id="genera">Genera <span id="genus-count"></span></a>
+            </div>
+            <div class="row">
+                <a id="species">Species <span id="species-count"></span></a>
+            </div>
+        </div>
         <div id="map"></div>
     </div>
 {% endblock %}
@@ -31,8 +42,8 @@
                 type: 'geojson',
                 data: 'https://zappa-rbg-dev-static-east.s3.amazonaws.com/media/collections.geojson',
                 cluster: true,
-                clusterMaxZoom: 14, // Max zoom to cluster points on
-                clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+                clusterMaxZoom: 17, // Max zoom to cluster points on
+                clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
             });
 
             map.addLayer({
@@ -167,5 +178,22 @@
                 map.getCanvas().style.cursor = '';
             });
         });
+
+        function getVisibleCollections() {
+            let collections = [];
+            map.queryRenderedFeatures({'layers': ['clusters', 'unclustered-point']}).forEach(function(elem) {
+                if (elem.layer.id === 'clusters') {
+                    map.getSource('collections').getClusterLeaves(elem.properties.cluster_id, 10000, 0, (error, features) => {
+                        if (error) return;
+                        collections.push(features);
+                    })
+                } else {
+                    collections.push(elem)
+                }
+            });
+
+            return collections;
+        }
+
     </script>
 {% endblock %}

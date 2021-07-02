@@ -58,6 +58,4 @@ class CollectionDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 def plant_map_view(request):
-    collections = Collection.objects.all()
-    context = {'collections': collections}
-    return render(request, 'plants/collection_map.html', context)
+    return render(request, 'plants/collection_map.html')

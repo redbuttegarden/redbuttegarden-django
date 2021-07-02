@@ -3,3 +3,8 @@
     width: 70%;
     float: right;
 }
+
+#collection-list {
+    float: left;
+    width: 80px;
+}
