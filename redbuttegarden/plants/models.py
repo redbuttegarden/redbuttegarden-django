@@ -19,6 +19,13 @@ class Genus(models.Model):
         ordering = ['-name']
 
 class Species(models.Model):
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        default=None
+    )
     genus = ForeignKey(Genus, on_delete=models.CASCADE)
     name = CharField(max_length=255, blank=True, null=True)
     cultivar = CharField(max_length=255, blank=True, null=True)
