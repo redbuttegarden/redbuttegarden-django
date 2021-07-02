@@ -42,14 +42,15 @@
         let listingEl = document.getElementById('feature-listing');
 
         function renderListings(features) {
-            // list.sort((a, b) => (a.color > b.color) ? 1 : (a.color === b.color) ? ((a.size > b.size) ? 1 : -1) : -1 )
-            features.sort((a, b) => (a.properties.family_name > b.properties.family_name) ? 1 : (a.properties.family_name === b.properties.family_name) ? ((a.properties.genus_name > b.properties.genus_name) ? 1 : -1) : -1);
+            features.sort((a, b) =>
+                (a.properties.family_name > b.properties.family_name) ? 1 :
+                    (a.properties.family_name === b.properties.family_name) ? ((a.properties.genus_name > b.properties.genus_name) ? 1 :
+                        (a.properties.genus_name === b.properties.genus_name) ? ((a.properties.species_name > b.properties.species_name) ? 1 : -1) : -1) : -1);
             let empty = document.createElement('p');
             // Clear any existing listings
             listingEl.innerHTML = '';
             if (features.length) {
                 features.forEach(function (feature) {
-                    console.log(feature);
                     if (!feature.properties.cluster){
                         let prop = feature.properties;
                         let collection = document.createElement('a');
