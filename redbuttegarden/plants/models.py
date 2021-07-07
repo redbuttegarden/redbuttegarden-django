@@ -66,7 +66,7 @@ class Species(models.Model):
 
     class Meta:
         ordering = ['-name']
-        unique_together = ['genus', 'name']
+        unique_together = ['genus', 'name', 'cultivar']
         verbose_name_plural = 'species'
 
 class Location(models.Model):
