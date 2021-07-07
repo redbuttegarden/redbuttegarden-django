@@ -37,7 +37,7 @@
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">PLANTS &amp; GARDENS <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a title="Link to map displaying plant location in the garden" href="https://herbaria.plants.ox.ac.uk/bol/rbbg/">INTERACTIVE<br/>PLANT MAP</a></li>
+                        <li><a title="Link to map displaying plant location in the garden" href="{% url 'plants:plant-map' %}">INTERACTIVE<br/>PLANT MAP</a></li>
                         <li><a title="Link to page with info about our themed gardens" href="{% slugurl 'themed-gardens' %}">THEMED GARDENS</a></li>
                         <li><a title="Link to slideshows and descriptions of our various plant collections" href="{% slugurl 'plant-collections' %}">PLANT COLLECTIONS</a></li>
                         <li><a title="Tips and tricks for doing your own gardening" href="{% slugurl 'gardening-information' %}">GARDENING INFORMATION</a></li>
