@@ -18,7 +18,7 @@ class FamilySerializer(serializers.ModelSerializer):
         }
 
 class GenusSerializer(serializers.ModelSerializer):
-    family = FamilySerializer()
+    family = FamilySerializer(required=False)
 
     class Meta:
         model = Genus
@@ -31,10 +31,12 @@ class GenusSerializer(serializers.ModelSerializer):
 
 class SpeciesSerializer(serializers.ModelSerializer):
     genus = GenusSerializer()
+    habit = serializers.CharField(max_length=255, required=False)
     hardiness = serializers.ListField(allow_empty=True, allow_null=True,
                                       child=serializers.IntegerField(label='Hardiness',
                                                                      max_value=13,
-                                                                     min_value=1))
+                                                                     min_value=1),
+                                      required=False)
 
     class Meta:
         model = Species
@@ -49,7 +51,6 @@ class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = ['id', 'latitude', 'longitude']
-
 
 class CollectionSerializer(serializers.ModelSerializer):
     species = SpeciesSerializer()
