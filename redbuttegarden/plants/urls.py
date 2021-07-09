@@ -10,7 +10,7 @@ router.register(r'locations', views.LocationViewSet)
 app_name = 'plants'
 urlpatterns = [
     path('api/token/',
-         views.get_token,
+         views.CustomAuthToken.as_view(),
          name='api-token'),
     path('api/collections/',
          views.CollectionList.as_view(),

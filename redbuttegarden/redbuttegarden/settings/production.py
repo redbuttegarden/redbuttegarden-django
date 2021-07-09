@@ -106,13 +106,6 @@ CSP_IMG_SRC = ("'self'",
 CORS_ORIGIN_ALLOW_ALL = True
 CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
 
-# Django REST Framework
-REST_FRAMEWORK += {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser',
-    ]
-}
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
