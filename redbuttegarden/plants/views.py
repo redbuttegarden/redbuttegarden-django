@@ -54,6 +54,9 @@ class CollectionDetail(TestAPIGroupMembership, generics.RetrieveUpdateDestroyAPI
     queryset = Collection.objects.all()
     serializer_class = CollectionSerializer
 
+def get_token(request):
+    return render(request, 'plants/token.html')
+
 def plant_map_view(request):
     return render(request, 'plants/collection_map.html')
 
