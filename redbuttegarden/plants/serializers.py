@@ -58,7 +58,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Collection
-        fields = ['id', 'species', 'location', 'plant_date', 'planter', 'created_on', 'last_modified']
+        fields = ['id', 'species', 'location', 'plant_date', 'created_on', 'last_modified']
 
 
     def create(self, validated_data):
