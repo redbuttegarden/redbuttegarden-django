@@ -80,7 +80,6 @@ class Collection(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     species = ForeignKey(Species, on_delete=models.CASCADE)
     plant_date = DateField(blank=True, null=True)
-    planter = CharField(max_length=255, blank=True, null=True)  # Name of person who planted the collection
     created_on = DateTimeField(auto_now_add=True)
     last_modified = DateTimeField(auto_now=True)
 
