@@ -1,15 +1,39 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/species_detail.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-    <h1>Species Detail</h1>
+    <div class="container-fluid">
+    <div class="header">
+        <h1>{{ species.vernacular_name }}</h1>
+        <h4 class="scientific-name">{{ species.genus.name }} {{ species.name }}</h4>
+        <h4 class="family">{{ species.genus.family.name }}</h4>
+    </div>
 
-    <div>{{ species.genus.family.name }} {{ species.genus.name }} {{ species.name }}</div>
-    <div>{{ species.cultivar }}</div>
-    <div>{{ species.vernacular_name }}</div>
-    <div>{{ species.habit }}</div>
-    <div>{{ species.hardiness }}</div>
-    <div>{{ species.water_regime }}</div>
-    <div>{{ species.exposure }}</div>
-    <div>{{ species.bloom_time }}</div>
-    <div>{{ species.plant_size }}</div>
+    <div class="main-image">
+
+    </div>
+
+    <div class="species-info">
+        <p><span class="bold">Habit:</span> {{ species.habit }}</p>
+        {% if species.water_regime %}
+            <p><span class="bold">Water Needs:</span> {{ species.water_regime }}</p>
+        {% endif %}
+        {% if species.exposure %}
+            <p><span class="bold">Exposure:</span> {{ species.exposure }}</p>
+        {% endif %}
+        {% if species.hardiness %}
+            <p><span class="bold">Hardiness:</span> {{ species.hardiness|join:", " }}</p>
+        {% endif %}
+        {% if species.plant_size %}
+            <p><span class="bold">Size:</span> {{ species.plant_size }}</p>
+        {% endif %}
+        {% if species.bloom_time %}
+            <p><span class="bold">Bloom Time:</span> {{ species.bloom_time }}</p>
+        {% endif %}
+    </div>
+    </div>
 {% endblock %}

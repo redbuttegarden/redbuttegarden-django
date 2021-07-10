@@ -144,4 +144,6 @@ def collection_detail(request, collection_id):
 
 def species_detail(request, species_id):
     species = get_object_or_404(Species, pk=species_id)
-    return render(request, 'plants/species_detail.html', {'species': species})
+    species_images = SpeciesImage.objects.filter(species=species)
+    return render(request, 'plants/species_detail.html', {'species': species,
+                                                          'images': species_images})
