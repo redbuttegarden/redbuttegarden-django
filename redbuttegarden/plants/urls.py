@@ -25,7 +25,7 @@ urlpatterns = [
          views.SpeciesViewSet.as_view({'get': 'detail'}),
          name='api-species-detail'),
     path('api/species/<int:pk>/set-image/',
-         views.SpeciesViewSet.as_view({'post': 'set_image'}),
+         views.set_image,
          name='api-set-species-image'),
     path('collection/<int:collection_id>/',
          views.collection_detail,

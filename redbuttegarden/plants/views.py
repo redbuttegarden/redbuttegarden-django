@@ -1,5 +1,6 @@
 import logging
 
+from django.http import JsonResponse
 from rest_framework import generics, viewsets, status
 from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
@@ -7,10 +8,11 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from wagtail.images.models import Image
 
 from .models import Family, Genus, Species, Collection, Location
 from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, \
-    LocationSerializer, SpeciesImageSerializer
+    LocationSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -50,8 +52,7 @@ class SpeciesViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(genus__name=genus,
                                        name=species,
                                        cultivar=cultivar,
-                                       vernacular_name=vernacular_name,
-                                       image_id__isnull=True)
+                                       vernacular_name=vernacular_name)
 
             if not queryset:
                 logger.info(f'Species matching query does not exist.\nGenus name: {genus}\n'
@@ -63,13 +64,6 @@ class SpeciesViewSet(viewsets.ModelViewSet):
                 return queryset
 
         return queryset
-
-    @action(detail=True, methods=['post'])
-    def set_image(self, request, pk=None):
-        self.serializer_class = SpeciesImageSerializer
-        super().update(request)
-
-        return Response({'status': 'image set'})
 
 
 class LocationViewSet(viewsets.ModelViewSet):
@@ -110,6 +104,21 @@ class CustomAuthToken(ObtainAuthToken):
                 'csrf_token': get_token(request),
             })
         return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+def set_image(request, pk):
+    species = Species.objects.get(pk=pk)
+    uploaded_image = request.FILES.get('image')
+    image, created = Image.objects.get_or_create(
+        title='_'.join([species.genus.name,
+                        species.name,
+                        species.cultivar]),
+        defaults={'file': uploaded_image}
+    )
+    species.images.add(image)
+    species.save()
+
+    return JsonResponse({'status': 'success'})
 
 
 def plant_map_view(request):

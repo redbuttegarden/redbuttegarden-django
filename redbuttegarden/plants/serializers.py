@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from wagtail.images.models import Image
 
 from plants.models import Collection, Family, Genus, Location, Species
 
@@ -51,27 +50,6 @@ class SpeciesSerializer(serializers.ModelSerializer):
                 'validators': []
             }
         }
-
-
-class SpeciesImageSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField()
-
-    class Meta:
-        model = Species
-        fields = ['image']
-
-    def update(self, instance, validated_data):
-        uploaded_image = validated_data.get('image')
-        image = Image.objects.create(
-            file=uploaded_image,
-            title='_'.join([instance.genus.name,
-                            instance.name,
-                            instance.cultivar])
-        )
-        instance.image = image
-        instance.save()
-
-        return instance
 
 
 class LocationSerializer(serializers.ModelSerializer):
