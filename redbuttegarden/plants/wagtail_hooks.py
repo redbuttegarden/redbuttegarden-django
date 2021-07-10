@@ -9,7 +9,7 @@ class SpeciesAdmin(ModelAdmin):
     menu_icon = 'pilcrow'  # change as required
     list_display = ('genus', 'name')
     list_filter = ('genus',)
-    search_fields = ('genus', 'name')
+    search_fields = ('genus__family__name', 'genus__name', 'name', 'cultivar', 'vernacular_name')
     ordering = ('-genus', 'name')
 
 
