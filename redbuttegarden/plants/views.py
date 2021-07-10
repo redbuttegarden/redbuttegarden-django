@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework import generics, viewsets, status
 from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
@@ -10,6 +12,8 @@ from .models import Family, Genus, Species, Collection, Location
 from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, \
     LocationSerializer, SpeciesImageSerializer
 
+logger = logging.getLogger(__name__)
+
 
 class FamilyViewSet(viewsets.ModelViewSet):
     """
@@ -18,6 +22,7 @@ class FamilyViewSet(viewsets.ModelViewSet):
     queryset = Family.objects.all()
     serializer_class = FamilySerializer
 
+
 class GenusViewSet(viewsets.ModelViewSet):
     """
     List, create, retrieve, update or delete genera.
@@ -25,9 +30,39 @@ class GenusViewSet(viewsets.ModelViewSet):
     queryset = Genus.objects.all()
     serializer_class = GenusSerializer
 
+
 class SpeciesViewSet(viewsets.ModelViewSet):
-    queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
+
+    def get_queryset(self):
+        """
+        Overriding queryset to make it possible to query for species that need to
+        have their image set.
+        """
+        queryset = Species.objects.all()
+        genus = self.request.query_params.get('genus')
+        species = self.request.query_params.get('species')
+        cultivar = self.request.query_params.get('cultivar')
+        vernacular_name = self.request.query_params.get('vernacular_name')
+
+        # Attempt to filter down to a single species object if query parameters were given
+        if genus is not None:
+            queryset = queryset.filter(genus__name=genus,
+                                       name=species,
+                                       cultivar=cultivar,
+                                       vernacular_name=vernacular_name,
+                                       image_id__isnull=True)
+
+            if not queryset:
+                logger.info(f'Species matching query does not exist.\nGenus name: {genus}\n'
+                            f'Species name: {species}\nCultivar: {cultivar}\nVernacular name: {vernacular_name}')
+                return queryset
+            elif queryset.count() > 1:
+                logger.info(f'Multiple objects match this query.\nGenus name: {genus}\n'
+                            f'Species name: {species}\nCultivar: {cultivar}\nVernacular name: {vernacular_name}')
+                return queryset
+
+        return queryset
 
     @action(detail=True, methods=['post'])
     def set_image(self, request, pk=None):
@@ -36,12 +71,14 @@ class SpeciesViewSet(viewsets.ModelViewSet):
 
         return Response({'status': 'image set'})
 
+
 class LocationViewSet(viewsets.ModelViewSet):
     """
     List, create, retrieve, update or delete locations.
     """
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
+
 
 class CollectionList(generics.ListCreateAPIView):
     """
@@ -50,12 +87,14 @@ class CollectionList(generics.ListCreateAPIView):
     queryset = Collection.objects.all().order_by('-id')[:100]
     serializer_class = CollectionSerializer
 
+
 class CollectionDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update or delete a living plant collection.
     """
     queryset = Collection.objects.all()
     serializer_class = CollectionSerializer
+
 
 class CustomAuthToken(ObtainAuthToken):
 
@@ -72,12 +111,15 @@ class CustomAuthToken(ObtainAuthToken):
             })
         return Response(status=status.HTTP_403_FORBIDDEN)
 
+
 def plant_map_view(request):
     return render(request, 'plants/collection_map.html')
+
 
 def collection_detail(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id)
     return render(request, 'plants/collection_detail.html', {'collection': collection})
+
 
 def species_detail(request, species_id):
     species = get_object_or_404(Species, pk=species_id)
