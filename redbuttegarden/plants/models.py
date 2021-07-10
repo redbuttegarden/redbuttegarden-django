@@ -3,7 +3,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import DecimalField, CharField, ForeignKey, PositiveSmallIntegerField, DateField, DateTimeField
 from django.utils.dates import MONTHS
-from wagtail.admin.edit_handlers import FieldPanel
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel
+from wagtail.core.models import Orderable
 from wagtail.images.edit_handlers import ImageChooserPanel
 
 
@@ -26,8 +29,7 @@ class Genus(models.Model):
     class Meta:
         ordering = ['-name']
 
-class Species(models.Model):
-    images = models.ManyToManyField('wagtailimages.Image')
+class Species(ClusterableModel):
     genus = ForeignKey(Genus, on_delete=models.CASCADE)
     name = CharField(max_length=255, blank=True, null=True)
     cultivar = CharField(max_length=255, blank=True, null=True)
@@ -37,12 +39,12 @@ class Species(models.Model):
                                                                             MaxValueValidator(13)]),
                            size=13, blank=True, null=True)
     water_regime = CharField(max_length=255, blank=True, null=True)
-    exposure = CharField(max_length=255)
+    exposure = CharField(max_length=255, blank=True, null=True)
     bloom_time = ArrayField(base_field=CharField(choices=MONTHS.items(), max_length=255), blank=True, null=True)
-    plant_size = CharField(max_length=255)
+    plant_size = CharField(max_length=255, blank=True, null=True)
 
     panels = [
-        ImageChooserPanel('image'),
+        InlinePanel('species_images', label='Species Images'),
         FieldPanel('genus'),
         FieldPanel('name'),
         FieldPanel('cultivar'),
@@ -62,6 +64,18 @@ class Species(models.Model):
         ordering = ['-name']
         unique_together = ['genus', 'name', 'cultivar']
         verbose_name_plural = 'species'
+
+class SpeciesImage(Orderable):
+    species = ParentalKey(Species, on_delete=models.CASCADE, related_name='species_images')
+    image = models.ForeignKey(
+        'wagtailimages.Image', on_delete=models.CASCADE, related_name='+'
+    )
+    caption = models.CharField(blank=True, max_length=250)
+
+    panels = [
+        ImageChooserPanel('image'),
+        FieldPanel('caption'),
+    ]
 
 class Location(models.Model):
     latitude = DecimalField(max_digits=9, decimal_places=6)
