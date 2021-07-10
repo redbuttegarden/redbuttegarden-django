@@ -6,7 +6,6 @@ from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from wagtail.images.models import Image
 
@@ -107,23 +106,31 @@ class CustomAuthToken(ObtainAuthToken):
 
 
 def set_image(request, pk):
-    species = Species.objects.get(pk=pk)
-    uploaded_image = request.FILES.get('image')
-    image, img_created = Image.objects.get_or_create(
-        title='_'.join([species.genus.name,
-                        species.name,
-                        species.cultivar]),
-        defaults={'file': uploaded_image}
-    )
-    species_image, species_img_created = SpeciesImage.objects.get_or_create(
-        species=species,
-        image=image,
-        caption=''
-    )
+    # Check if user has a valid API Token
+    try:
+        token = request.META['Authorization'].split(' ')[1]
+    except KeyError:
+        return JsonResponse({'status': 'failure'})
+    if Token.objects.get(key=token).exists():
+        species = Species.objects.get(pk=pk)
+        uploaded_image = request.FILES.get('image')
+        image, img_created = Image.objects.get_or_create(
+            title='_'.join([species.genus.name,
+                            species.name,
+                            species.cultivar]),
+            defaults={'file': uploaded_image}
+        )
+        species_image, species_img_created = SpeciesImage.objects.get_or_create(
+            species=species,
+            image=image,
+            caption=''
+        )
 
-    return JsonResponse({'status': 'success',
-                         'image_created': img_created,
-                         'species_image_created': species_img_created})
+        return JsonResponse({'status': 'success',
+                             'image_created': img_created,
+                             'species_image_created': species_img_created})
+
+    return JsonResponse({'status': 'failure'})
 
 
 def plant_map_view(request):
