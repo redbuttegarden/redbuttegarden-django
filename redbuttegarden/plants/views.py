@@ -3,10 +3,12 @@ from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import Family, Genus, Species, Collection, Location
-from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, LocationSerializer
+from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, \
+    LocationSerializer, SpeciesImageSerializer
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
@@ -23,13 +25,16 @@ class GenusViewSet(viewsets.ModelViewSet):
     queryset = Genus.objects.all()
     serializer_class = GenusSerializer
 
-class SpeciesList(generics.ListCreateAPIView):
+class SpeciesViewSet(viewsets.ModelViewSet):
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
 
-class SpeciesDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Species.objects.all()
-    serializer_class = SpeciesSerializer
+    @action(detail=True, methods=['post'])
+    def set_image(self, request, pk=None):
+        self.serializer_class = SpeciesImageSerializer
+        super().update(request)
+
+        return Response({'status': 'image set'})
 
 class LocationViewSet(viewsets.ModelViewSet):
     """

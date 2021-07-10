@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from wagtail.images.models import Image
 
 from plants.models import Collection, Family, Genus, Location, Species
 
@@ -7,6 +8,8 @@ Empty validator lists are defined for fields with unique constraints
 so that Collection objects can be created when nested objects already
 exist.
 """
+
+
 class FamilySerializer(serializers.ModelSerializer):
     class Meta:
         model = Family
@@ -16,6 +19,7 @@ class FamilySerializer(serializers.ModelSerializer):
                 'validators': []
             }
         }
+
 
 class GenusSerializer(serializers.ModelSerializer):
     family = FamilySerializer()
@@ -29,12 +33,15 @@ class GenusSerializer(serializers.ModelSerializer):
             }
         }
 
+
 class SpeciesSerializer(serializers.ModelSerializer):
     genus = GenusSerializer()
+    habit = serializers.CharField(max_length=255, required=False)
     hardiness = serializers.ListField(allow_empty=True, allow_null=True,
                                       child=serializers.IntegerField(label='Hardiness',
                                                                      max_value=13,
-                                                                     min_value=1))
+                                                                     min_value=1),
+                                      required=False)
 
     class Meta:
         model = Species
@@ -44,6 +51,28 @@ class SpeciesSerializer(serializers.ModelSerializer):
                 'validators': []
             }
         }
+
+
+class SpeciesImageSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField()
+
+    class Meta:
+        model = Species
+        fields = ['image']
+
+    def update(self, instance, validated_data):
+        uploaded_image = validated_data.get('image')
+        image = Image.objects.create(
+            file=uploaded_image,
+            title='_'.join([instance.genus.name,
+                            instance.name,
+                            instance.cultivar])
+        )
+        instance.image = image
+        instance.save()
+
+        return instance
+
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,7 +88,6 @@ class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collection
         fields = ['id', 'species', 'location', 'plant_date', 'created_on', 'last_modified']
-
 
     def create(self, validated_data):
         species_data = validated_data.pop('species')
