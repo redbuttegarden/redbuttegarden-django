@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static wagtailimages_tags %}
 
 {% block extra_css %}
     <link href="{% static 'css/species_detail.css' %}" rel="stylesheet">
@@ -7,33 +7,46 @@
 
 {% block content %}
     <div class="container-fluid">
-    <div class="header">
-        <h1>{{ species.vernacular_name }}</h1>
-        <h4 class="scientific-name">{{ species.genus.name }} {{ species.name }}</h4>
-        <h4 class="family">{{ species.genus.family.name }}</h4>
-    </div>
 
-    <div class="main-image">
+        <div class="row">
+            <div class="main-image">
+                {% image images.first.image original %}
+            </div>
 
-    </div>
+            <div class="species-info">
+                <div class="header">
+                    <h1>{{ species.vernacular_name }}</h1>
+                    <h4 class="scientific-name">{{ species.genus.name }} {{ species.name }}</h4>
+                    <h4 class="family">{{ species.genus.family.name }}</h4>
+                </div>
 
-    <div class="species-info">
-        <p><span class="bold">Habit:</span> {{ species.habit }}</p>
-        {% if species.water_regime %}
-            <p><span class="bold">Water Needs:</span> {{ species.water_regime }}</p>
-        {% endif %}
-        {% if species.exposure %}
-            <p><span class="bold">Exposure:</span> {{ species.exposure }}</p>
-        {% endif %}
-        {% if species.hardiness %}
-            <p><span class="bold">Hardiness:</span> {{ species.hardiness|join:", " }}</p>
-        {% endif %}
-        {% if species.plant_size %}
-            <p><span class="bold">Size:</span> {{ species.plant_size }}</p>
-        {% endif %}
-        {% if species.bloom_time %}
-            <p><span class="bold">Bloom Time:</span> {{ species.bloom_time }}</p>
-        {% endif %}
-    </div>
+                <div class="details">
+                    <p><span class="bold">Habit:</span> {{ species.habit }}</p>
+                    {% if species.water_regime %}
+                        <p><span class="bold">Water Needs:</span> {{ species.water_regime }}</p>
+                    {% endif %}
+                    {% if species.exposure %}
+                        <p><span class="bold">Exposure:</span> {{ species.exposure }}</p>
+                    {% endif %}
+                    {% if species.hardiness %}
+                        <p><span class="bold">Hardiness:</span> {{ species.hardiness|join:", " }}</p>
+                    {% endif %}
+                    {% if species.plant_size %}
+                        <p><span class="bold">Size:</span> {{ species.plant_size }}</p>
+                    {% endif %}
+                    {% if species.bloom_time %}
+                        <p><span class="bold">Bloom Time:</span> {{ species.bloom_time }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="additional-photos">
+                <p id="add-photo-label">Additional photos:</p>
+                {% for species_image in images|slice:"1:" %}
+                    {% image species_image.image height-100 %}
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}

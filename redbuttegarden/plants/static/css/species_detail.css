@@ -7,3 +7,15 @@
 .family {
     font-weight: lighter;
 }
+
+.main-image {
+    float: right;
+}
+
+.species-info {
+    float: left;
+}
+
+#add-photo-label {
+    font-size: smaller;
+}
