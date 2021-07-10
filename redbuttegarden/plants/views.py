@@ -10,7 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from wagtail.images.models import Image
 
-from .models import Family, Genus, Species, Collection, Location
+from .models import Family, Genus, Species, Collection, Location, SpeciesImage
 from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, \
     LocationSerializer
 
@@ -109,16 +109,21 @@ class CustomAuthToken(ObtainAuthToken):
 def set_image(request, pk):
     species = Species.objects.get(pk=pk)
     uploaded_image = request.FILES.get('image')
-    image, created = Image.objects.get_or_create(
+    image, img_created = Image.objects.get_or_create(
         title='_'.join([species.genus.name,
                         species.name,
                         species.cultivar]),
         defaults={'file': uploaded_image}
     )
-    species.images.add(image)
-    species.save()
+    species_image, species_img_created = SpeciesImage.objects.get_or_create(
+        species=species,
+        image=image,
+        caption=''
+    )
 
-    return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'success',
+                         'image_created': img_created,
+                         'species_image_created': species_img_created})
 
 
 def plant_map_view(request):
