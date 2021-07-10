@@ -1,0 +1,12 @@
+.common-name {
+    font-weight: lighter;
+}
+
+.scientific-name {
+    text-decoration: none;
+    font-style: italic;
+}
+
+.location {
+    font-size: smaller;
+}

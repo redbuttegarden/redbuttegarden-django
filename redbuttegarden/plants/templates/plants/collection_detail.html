@@ -1,12 +1,21 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/collection_detail.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
     <h1>Collection Detail</h1>
-
-    <div>{{ collection.location.latitude }}, {{ collection.location.longitude }}</div>
-    <div>{{ collection.species.genus.family.name }} <a href="{% url 'plants:species-detail' collection.species_id %}">{{ collection.species.genus.name }} {{ collection.species.name }}</a></div>
-    <div>{{ collection.plant_date }}</div>
-    <div>{{ collection.planter }}</div>
-    <div>{{ collection.created_on }}</div>
-    <div>{{ collection.last_modified }}</div>
+    <div class="names">
+        {% if collection.species.vernacular_name %}
+            <h4 class="common-name">{{ collection.species.vernacular_name }}</h4>
+        {% endif %}
+        <h4 class="scientific-name"><a href="{% url 'plants:species-detail' collection.species_id %}">{{ collection.species.genus.name }} {{ collection.species.name }}</a></h4>
+    </div>
+    <div class="collection-info">
+        <p class="location">{{ collection.location.latitude }}, {{ collection.location.longitude }}</p>
+        <p><span class="bold">Family:</span> {{ collection.species.genus.family.name }} </p>
+        <p><span class="bold">Date Planted:</span> {{ collection.plant_date }}</p>
+    </div>
 {% endblock %}
