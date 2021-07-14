@@ -17,7 +17,7 @@ class Family(models.Model):
         return ' '.join([self.name])
 
     class Meta:
-        ordering = ['-name']
+        ordering = ['name']
 
 class Genus(models.Model):
     family = ForeignKey(Family, on_delete=models.CASCADE)
@@ -27,7 +27,7 @@ class Genus(models.Model):
         return ' '.join([self.name, f'({self.family.name})'])
 
     class Meta:
-        ordering = ['-name']
+        ordering = ['name']
 
 class Species(ClusterableModel):
     genus = ForeignKey(Genus, on_delete=models.CASCADE)
@@ -61,7 +61,7 @@ class Species(ClusterableModel):
         return ' '.join([self.genus.name, self.name])
 
     class Meta:
-        ordering = ['-name']
+        ordering = ['name']
         unique_together = ['genus', 'name', 'cultivar']
         verbose_name_plural = 'species'
 
