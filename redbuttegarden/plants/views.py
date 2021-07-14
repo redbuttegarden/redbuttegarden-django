@@ -1,7 +1,7 @@
 import logging
 
-from django.core.paginator import Paginator, InvalidPage
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse
+from django.utils.dates import MONTHS
 from rest_framework import generics, viewsets, status
 from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
@@ -150,29 +150,19 @@ def species_detail(request, species_id):
                                                           'images': species_images})
 
 def collection_search(request):
-    qs = Collection.objects.all()
-    paginator = Paginator(qs, 10)
-    if request.method == 'GET':
-        if request.is_ajax():
-            if request.GET.get('family'):
-                qs = qs.filter(species__genus__family__name__icontains=request.GET.get('family'))
-                paginator = Paginator(qs, 10)
-                try:
-                    page_objects = paginator.page(1).object_list
-                except InvalidPage:
-                    return HttpResponseBadRequest(mimetype="json")
-                serializer = CollectionSerializer(page_objects, many=True)
-                return JsonResponse(serializer.data, safe=False)
-            if request.GET.get('page_number'):
-                # Paginate based on the page number in the GET request
-                page_number = request.GET.get('page_number')
-                try:
-                    page_objects = paginator.page(page_number).object_list
-                except InvalidPage:
-                    return HttpResponseBadRequest(mimetype="json")
-                # Serialize the paginated objects
-                serializer = CollectionSerializer(page_objects, many=True)
-                return JsonResponse(serializer.data, safe=False)
-    collections = paginator.page(1).object_list
-    context = {'collections': collections}
+    families = [family['name'] for family in Family.objects.values('name').distinct()]
+    habits = [species['habit'] for species in Species.objects.order_by('habit').values('habit').distinct('habit')]
+    exposures = [species['exposure'] for species in
+                Species.objects.order_by('exposure').values('exposure').distinct('exposure')
+                 if species['exposure'] is not '' and species['exposure'] is not None]
+    water_needs = [species['water_regime'] for species in
+                   Species.objects.order_by('water_regime').values('water_regime').distinct('water_regime')]
+    context = {
+        'families': families,
+        'habits': habits,
+        'exposures': exposures,
+        'water_needs': water_needs,
+        'bloom_months': list(MONTHS.values()),
+
+    }
     return render(request, 'plants/collection_search.html', context)

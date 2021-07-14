@@ -5,9 +5,55 @@
     <div class="search">
         <form>
             <div class="form-group">
+                <label for="scientificName">Scientific Name</label>
+                <input type="text" class="form-control" id="scientificName" placeholder="Scientific name">
+            </div>
+            <div class="form-group">
+                <label for="commonName">Common Name</label>
+                <input type="text" class="form-control" id="commonName" placeholder="Common name">
+            </div>
+            <div class="form-group">
                 <label for="familyName">Family Name</label>
-                <input type="text" class="form-control" id="familyName" aria-describedby="familyHelp" placeholder="Family name">
-                <small id="familyHelp" class="form-text text-muted">Search living collections by family name</small>
+                <select class="form-control" id="familyName">
+                    <option></option>
+                    {% for family in families %}
+                        <option>{{ family }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="habit">Habit</label>
+                <select class="form-control" id="habit">
+                    <option></option>
+                    {% for habit in habits %}
+                        <option>{{ habit }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="exposure">Exposure</label>
+                <select class="form-control" id="exposure">
+                    {% for exposure in exposures %}
+                        <option>{{ exposure }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="water">Water Needs</label>
+                <select class="form-control" id="water">
+                    {% for water in water_needs %}
+                        <option>{{ water }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="bloom">Bloom Time</label>
+                <select class="form-control" id="bloom">
+                    <option></option>
+                    {% for bloom in bloom_months %}
+                        <option>{{ bloom }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="form-group form-check">
                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
@@ -16,146 +62,4 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
-
-    <div class="results">
-        <table id="collectionTable" class="table">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Family</th>
-                <th scope="col">Genus</th>
-                <th scope="col">Species</th>
-            </tr>
-            </thead>
-            <tbody id="collectionTableBody">
-                {% for collection in collections %}
-                    <tr>
-                        <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ collection.species.genus.family.name }}</td>
-                        <td>{{ collection.species.genus.name }}</td>
-                        <td>{{ collection.species.name }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-{% endblock %}
-
-{% block extra_js %}
-    <script>
-        $(document).ready(function(){
-            $(window).bind('scroll', loadOnScroll);
-        });
-
-        // Scroll globals
-        let pageNum = 1; // The latest page loaded
-        let hasNextPage = true; // Indicates whether to expect another page after this one
-        const collectionTable = document.getElementById("collectionTable");
-        const familySearch = document.getElementById("familyName");
-
-        familySearch.addEventListener("keyup", (ev => {
-            const searchValue = ev.target.value;
-            let collectionTableBody = document.getElementById("collectionTableBody");
-            console.log(searchValue);
-            $(window).unbind();
-
-            if (searchValue.trim().length > 0) {
-                $.ajax({
-                    url: '/plants/search',
-                    data: {family: searchValue},
-                    dataType: 'json',
-                    success: function(data) {
-                        let newBody = document.createElement('tbody');
-                        console.log(data);
-                        // Update global next page variable
-                        pageNum = 1
-                        hasNextPage = true;
-                        let rowCount = (pageNum - 1) * 10;
-                        // Loop through all items
-                        data.forEach(function (collection, index) {
-                            let collectionRow = collectionTable.insertRow(-1);
-                            let rowNum = document.createElement("th");
-                            collectionRow.appendChild(rowNum);
-                            let collectionFamily = collectionRow.insertCell(1);
-                            let collectionGenus = collectionRow.insertCell(2);
-                            let collectionSpecies = collectionRow.insertCell(3);
-
-                            rowNum.textContent = index + rowCount + 1;
-                            collectionFamily.textContent = collection.species.genus.family.name;
-                            collectionGenus.textContent = collection.species.genus.name;
-                            collectionSpecies.textContent = collection.species.name;
-
-                            newBody.appendChild(collectionRow);
-                        });
-
-                        collectionTableBody.parentNode.replaceChild(newBody, collectionTableBody);
-                        newBody.id = "collectionTableBody";
-                    },
-                    error: function(data) {
-                        // When I get a 400 back, fail safely
-                        console.log("Error:" + data)
-                        hasNextPage = false
-                    },
-                    complete: function(data, textStatus){
-                        // Turn the scroll monitor back on
-                        $(window).bind('scroll', loadOnScroll);
-                    }
-                });
-            }
-        }));
-
-        // loadOnScroll handler
-        const loadOnScroll = function() {
-            // If the current scroll position is past out cutoff point...
-            if ($(window).scrollTop() > $(document).height() - ($(window).height()*2)) {
-                // temporarily unhook the scroll event watcher so we don't call a bunch of times in a row
-                $(window).unbind();
-                // execute the load function below that will visit the JSON feed and stuff data into the HTML
-                loadItems();
-            }
-        };
-
-        const loadItems = function() {
-            // If the next page doesn't exist, just quit now
-            if (hasNextPage === false) {
-                return false
-            }
-            // Update the page number
-            pageNum = pageNum + 1;
-            // Configure the url we're about to hit
-            $.ajax({
-                url: '/plants/search',
-                data: {page_number: pageNum},
-                dataType: 'json',
-                success: function(data) {
-                    console.log(data);
-                    // Update global next page variable
-                    hasNextPage = true;
-                    let rowCount = (pageNum - 1) * 10;
-                    // Loop through all items
-                    data.forEach(function (collection, index) {
-                        let collectionRow = collectionTable.insertRow(-1);
-                        let rowNum = document.createElement("th");
-                        collectionRow.appendChild(rowNum);
-                        let collectionFamily = collectionRow.insertCell(1);
-                        let collectionGenus = collectionRow.insertCell(2);
-                        let collectionSpecies = collectionRow.insertCell(3);
-
-                        rowNum.textContent = index + rowCount + 1;
-                        collectionFamily.textContent = collection.species.genus.family.name;
-                        collectionGenus.textContent = collection.species.genus.name;
-                        collectionSpecies.textContent = collection.species.name;
-                    });
-                },
-                error: function(data) {
-                    // When I get a 400 back, fail safely
-                    hasNextPage = false
-                },
-                complete: function(data, textStatus){
-                    // Turn the scroll monitor back on
-                    $(window).bind('scroll', loadOnScroll);
-                }
-            });
-        };
-    </script>
 {% endblock %}
