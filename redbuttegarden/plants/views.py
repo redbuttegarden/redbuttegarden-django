@@ -154,6 +154,15 @@ def collection_search(request):
     paginator = Paginator(qs, 10)
     if request.method == 'GET':
         if request.is_ajax():
+            if request.GET.get('family'):
+                qs = qs.filter(species__genus__family__name__icontains=request.GET.get('family'))
+                paginator = Paginator(qs, 10)
+                try:
+                    page_objects = paginator.page(1).object_list
+                except InvalidPage:
+                    return HttpResponseBadRequest(mimetype="json")
+                serializer = CollectionSerializer(page_objects, many=True)
+                return JsonResponse(serializer.data, safe=False)
             if request.GET.get('page_number'):
                 # Paginate based on the page number in the GET request
                 page_number = request.GET.get('page_number')

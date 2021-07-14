@@ -5,13 +5,9 @@
     <div class="search">
         <form>
             <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                <label for="familyName">Family Name</label>
+                <input type="text" class="form-control" id="familyName" aria-describedby="familyHelp" placeholder="Family name">
+                <small id="familyHelp" class="form-text text-muted">Search living collections by family name</small>
             </div>
             <div class="form-group form-check">
                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
@@ -31,7 +27,7 @@
                 <th scope="col">Species</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="collectionTableBody">
                 {% for collection in collections %}
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
@@ -55,6 +51,58 @@
         let pageNum = 1; // The latest page loaded
         let hasNextPage = true; // Indicates whether to expect another page after this one
         const collectionTable = document.getElementById("collectionTable");
+        const familySearch = document.getElementById("familyName");
+
+        familySearch.addEventListener("keyup", (ev => {
+            const searchValue = ev.target.value;
+            let collectionTableBody = document.getElementById("collectionTableBody");
+            console.log(searchValue);
+            $(window).unbind();
+
+            if (searchValue.trim().length > 0) {
+                $.ajax({
+                    url: '/plants/search',
+                    data: {family: searchValue},
+                    dataType: 'json',
+                    success: function(data) {
+                        let newBody = document.createElement('tbody');
+                        console.log(data);
+                        // Update global next page variable
+                        pageNum = 1
+                        hasNextPage = true;
+                        let rowCount = (pageNum - 1) * 10;
+                        // Loop through all items
+                        data.forEach(function (collection, index) {
+                            let collectionRow = collectionTable.insertRow(-1);
+                            let rowNum = document.createElement("th");
+                            collectionRow.appendChild(rowNum);
+                            let collectionFamily = collectionRow.insertCell(1);
+                            let collectionGenus = collectionRow.insertCell(2);
+                            let collectionSpecies = collectionRow.insertCell(3);
+
+                            rowNum.textContent = index + rowCount + 1;
+                            collectionFamily.textContent = collection.species.genus.family.name;
+                            collectionGenus.textContent = collection.species.genus.name;
+                            collectionSpecies.textContent = collection.species.name;
+
+                            newBody.appendChild(collectionRow);
+                        });
+
+                        collectionTableBody.parentNode.replaceChild(newBody, collectionTableBody);
+                        newBody.id = "collectionTableBody";
+                    },
+                    error: function(data) {
+                        // When I get a 400 back, fail safely
+                        console.log("Error:" + data)
+                        hasNextPage = false
+                    },
+                    complete: function(data, textStatus){
+                        // Turn the scroll monitor back on
+                        $(window).bind('scroll', loadOnScroll);
+                    }
+                });
+            }
+        }));
 
         // loadOnScroll handler
         const loadOnScroll = function() {
