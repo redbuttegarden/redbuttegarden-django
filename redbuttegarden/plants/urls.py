@@ -36,5 +36,8 @@ urlpatterns = [
     path('plant-map/',
          views.plant_map_view,
          name='plant-map'),
+    path('search/',
+         views.collection_search,
+         name='collection-search'),
     path('', include(router.urls)),
 ]

@@ -1,6 +1,7 @@
 import logging
 
-from django.http import JsonResponse
+from django.core.paginator import Paginator, InvalidPage
+from django.http import JsonResponse, HttpResponseBadRequest
 from rest_framework import generics, viewsets, status
 from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
@@ -147,3 +148,22 @@ def species_detail(request, species_id):
     species_images = SpeciesImage.objects.filter(species=species)
     return render(request, 'plants/species_detail.html', {'species': species,
                                                           'images': species_images})
+
+def collection_search(request):
+    qs = Collection.objects.all()
+    paginator = Paginator(qs, 10)
+    if request.method == 'GET':
+        if request.is_ajax():
+            if request.GET.get('page_number'):
+                # Paginate based on the page number in the GET request
+                page_number = request.GET.get('page_number')
+                try:
+                    page_objects = paginator.page(page_number).object_list
+                except InvalidPage:
+                    return HttpResponseBadRequest(mimetype="json")
+                # Serialize the paginated objects
+                serializer = CollectionSerializer(page_objects, many=True)
+                return JsonResponse(serializer.data, safe=False)
+    collections = paginator.page(1).object_list
+    context = {'collections': collections}
+    return render(request, 'plants/collection_search.html', context)
