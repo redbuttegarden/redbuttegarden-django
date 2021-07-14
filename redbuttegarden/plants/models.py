@@ -12,6 +12,7 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 
 class Family(models.Model):
     name = CharField(max_length=255, unique=True)
+    vernacular_name = CharField(max_length=255, blank=True, null=True)
 
     def __repr__(self):
         return ' '.join([self.name])
