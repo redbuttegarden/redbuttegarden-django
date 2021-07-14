@@ -22,12 +22,26 @@
     </div>
 
     <div class="results">
-        <ul>
-            {% for collection in collections %}
-                <li>{{ collection.species.name }}</li>
-            {% endfor %}
-            <div id="newItems"></div>
-        </ul>
+        <table id="collectionTable" class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Family</th>
+                <th scope="col">Genus</th>
+                <th scope="col">Species</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for collection in collections %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ collection.species.genus.family.name }}</td>
+                        <td>{{ collection.species.genus.name }}</td>
+                        <td>{{ collection.species.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
 
@@ -38,11 +52,12 @@
         });
 
         // Scroll globals
-        var pageNum = 1; // The latest page loaded
-        var hasNextPage = true; // Indicates whether to expect another page after this one
+        let pageNum = 1; // The latest page loaded
+        let hasNextPage = true; // Indicates whether to expect another page after this one
+        const collectionTable = document.getElementById("collectionTable");
 
         // loadOnScroll handler
-        var loadOnScroll = function() {
+        const loadOnScroll = function() {
             // If the current scroll position is past out cutoff point...
             if ($(window).scrollTop() > $(document).height() - ($(window).height()*2)) {
                 // temporarily unhook the scroll event watcher so we don't call a bunch of times in a row
@@ -52,7 +67,7 @@
             }
         };
 
-        var loadItems = function() {
+        const loadItems = function() {
             // If the next page doesn't exist, just quit now
             if (hasNextPage === false) {
                 return false
@@ -67,14 +82,21 @@
                 success: function(data) {
                     console.log(data);
                     // Update global next page variable
-                    hasNextPage = true;//.hasNext;
+                    hasNextPage = true;
+                    let rowCount = (pageNum - 1) * 10;
                     // Loop through all items
                     data.forEach(function (collection, index) {
-                        let collectionItem = document.createElement("li");
-                        collectionItem.textContent = collection.species.name;
-                        // collectionItem.textContent = collection.species;
-                        $("#newItems").before(collectionItem);
-                        // Do something with your json object response
+                        let collectionRow = collectionTable.insertRow(-1);
+                        let rowNum = document.createElement("th");
+                        collectionRow.appendChild(rowNum);
+                        let collectionFamily = collectionRow.insertCell(1);
+                        let collectionGenus = collectionRow.insertCell(2);
+                        let collectionSpecies = collectionRow.insertCell(3);
+
+                        rowNum.textContent = index + rowCount + 1;
+                        collectionFamily.textContent = collection.species.genus.family.name;
+                        collectionGenus.textContent = collection.species.genus.name;
+                        collectionSpecies.textContent = collection.species.name;
                     });
                 },
                 error: function(data) {
