@@ -42,6 +42,7 @@ class Species(ClusterableModel):
     exposure = CharField(max_length=255, blank=True, null=True)
     bloom_time = ArrayField(base_field=CharField(choices=MONTHS.items(), max_length=255), blank=True, null=True)
     plant_size = CharField(max_length=255, blank=True, null=True)
+    flower_color = CharField(max_length=255, blank=True, null=True)
 
     panels = [
         InlinePanel('species_images', label='Species Images'),
