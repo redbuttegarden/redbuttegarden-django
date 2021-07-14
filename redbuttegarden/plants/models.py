@@ -86,8 +86,14 @@ class Location(models.Model):
     def __str__(self):
         return ' '.join([str(self.latitude), str(self.longitude)])
 
+class GardenArea(models.Model):
+    area = CharField(max_length=255, blank=True, null=True)
+    name = CharField(max_length=255, blank=True, null=True)
+    code = CharField(max_length=10, blank=True, null=True)
+
 class Collection(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    garden = models.ForeignKey(GardenArea, on_delete=models.SET_NULL, null=True)
     species = ForeignKey(Species, on_delete=models.CASCADE)
     plant_date = DateField(blank=True, null=True)
     created_on = DateTimeField(auto_now_add=True)
