@@ -10,7 +10,7 @@ exist.
 class FamilySerializer(serializers.ModelSerializer):
     class Meta:
         model = Family
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'vernacular_name']
         extra_kwargs = {
             'name': {
                 'validators': []
