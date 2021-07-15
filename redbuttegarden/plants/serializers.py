@@ -91,6 +91,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 
         location, _ = Location.objects.get_or_create(**location_data)
         garden, _ = GardenArea.objects.get_or_create(**garden_data)
-        collection, _ = Collection.objects.get_or_create(location=location, species=species, **validated_data)
+        collection, _ = Collection.objects.get_or_create(location=location, garden=garden, species=species,
+                                                         **validated_data)
 
         return collection
