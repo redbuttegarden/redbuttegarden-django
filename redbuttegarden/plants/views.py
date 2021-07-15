@@ -1,27 +1,21 @@
 import logging
-import os
 
 from django.http import JsonResponse
 from django.utils.dates import MONTHS
 from django.middleware.csrf import get_token
-from django.core.files.images import ImageFile
 from rest_framework import generics, permissions, viewsets, status
 
-from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from PIL import Image as PILImage
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from wagtail.images.models import Image
 
-from .models import SpeciesImage
-
-logger = logging.getLogger(__name__)
-from .models import Family, Genus, Species, Collection, Location
+from .models import Family, Genus, Species, Collection, Location, SpeciesImage
 from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, \
     LocationSerializer
+
+logger = logging.getLogger(__name__)
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
@@ -116,52 +110,7 @@ def set_image(request, pk):
     return JsonResponse({'status': 'failure'})
 
 
-
-@api_view(['PUT'])
-def set_species_image(request):
-    """
-    Endpoint to allow dummy wagtail images to be associated with existing Species
-    objects. The dummy images can later be replaced with real images by manually
-    uploading to S3, thus circumventing the cost of uploading directly thru the
-    AWS Gateway.
-    """
-    genus_name = request.data.get('species', {}).get('genus', {}).get('name')
-    species_name = request.data.get('species', {}).get('name')
-    cultivar = request.data.get('species', {}).get('cultivar')
-    vernacular_name = request.data.get('species', {}).get('vernacular_name')
-
-    try:
-        genus = Genus.objects.get(name=genus_name)
-    except Genus.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    try:
-        species = Species.objects.get(genus=genus,
-                                      name=species_name,
-                                      cultivar=cultivar,
-                                      vernacular_name=vernacular_name)
-    except Species.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'PUT':
-        img_title = '_'.join([genus_name,
-                              species_name,
-                              cultivar,
-                              vernacular_name])
-        file_name = img_title.replace(' ', '-') + '.jpeg'
-
-        # Create empty dummy file that can later be replaced with a real image
-        img_path = os.path.join(settings.MEDIA_ROOT, 'plant_images', file_name)
-        pil_img = PILImage.new(mode='RGB', size=(1, 1))
-        pil_img.save(img_path)
-        img_file = ImageFile(open(img_path, 'rb'), name=file_name)
-        wag_img = Image.objects.create(title=img_title, file=img_file, width=1, height=1)
-        species.image = wag_img
-        species.save()
-        return Response(status=status.HTTP_200_OK)
-
-
-def get_token(request):
+def csrf_view(request):
     return render(request, 'plants/token.html')
 
 def plant_map_view(request):
