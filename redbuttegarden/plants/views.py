@@ -3,7 +3,7 @@ import logging
 from django.http import JsonResponse
 from django.utils.dates import MONTHS
 from django.middleware.csrf import get_token
-from rest_framework import generics, permissions, viewsets, status
+from rest_framework import generics, viewsets, status
 
 from django.shortcuts import render, get_object_or_404
 from rest_framework.authtoken.models import Token
@@ -40,7 +40,6 @@ class SpeciesList(generics.ListCreateAPIView):
 class SpeciesDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class LocationViewSet(viewsets.ModelViewSet):
     """
