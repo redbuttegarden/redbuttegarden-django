@@ -41,7 +41,7 @@ class SpeciesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Species
         fields = ['id', 'genus', 'name', 'cultivar', 'vernacular_name', 'habit', 'hardiness', 'water_regime',
-                  'exposure', 'plant_size', 'flower_color', 'utah_native', 'plant_select',
+                  'exposure', 'bloom_time', 'plant_size', 'flower_color', 'utah_native', 'plant_select',
                   'deer_resist', 'rabbit_resist', 'bee_friend']
         extra_kwargs = {
             'name': {
@@ -69,8 +69,8 @@ class CollectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Collection
-        fields = ['id', 'species', 'location', 'garden', 'plant_date', 'commemoration_category', 'commemoration_person',
-                  'created_on', 'last_modified']
+        fields = ['id', 'species', 'location', 'garden', 'plant_date', 'plant_id', 'commemoration_category',
+                  'commemoration_person', 'created_on', 'last_modified']
 
     def create(self, validated_data):
         species_data = validated_data.pop('species')
