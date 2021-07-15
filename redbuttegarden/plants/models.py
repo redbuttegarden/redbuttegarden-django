@@ -95,7 +95,7 @@ class Location(models.Model):
 class GardenArea(models.Model):
     area = CharField(max_length=255, blank=True, null=True)
     name = CharField(max_length=255, blank=True, null=True)
-    code = CharField(max_length=10, blank=True, null=True)
+    code = CharField(max_length=15, blank=True, null=True)
 
 class Collection(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
