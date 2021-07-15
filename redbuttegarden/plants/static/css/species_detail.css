@@ -19,3 +19,7 @@
 #add-photo-label {
     font-size: smaller;
 }
+
+.details > p {
+    margin: 0;
+}

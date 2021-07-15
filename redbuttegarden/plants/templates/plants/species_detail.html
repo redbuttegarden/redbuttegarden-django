@@ -17,7 +17,11 @@
                 <div class="header">
                     <h1>{{ species.vernacular_name }}</h1>
                     <h4 class="scientific-name">{{ species.genus.name }} {{ species.name }}</h4>
-                    <h4 class="family">{{ species.genus.family.name }}</h4>
+                    <h4 class="family">{{ species.genus.family.name }}
+                        {% if species.genus.family.vernacular_name %}
+                            <span>({{ species.genus.family.vernacular_name }} Family)</span>
+                        {% endif %}
+                    </h4>
                 </div>
 
                 <div class="details">
@@ -35,18 +39,20 @@
                         <p><span class="bold">Size:</span> {{ species.plant_size }}</p>
                     {% endif %}
                     {% if species.bloom_time %}
-                        <p><span class="bold">Bloom Time:</span> {{ species.bloom_time }}</p>
+                        <p><span class="bold">Bloom Times:</span> {{ species.bloom_time|join:", " }}</p>
                     {% endif %}
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="additional-photos">
-                <p id="add-photo-label">Additional photos:</p>
-                {% for species_image in images|slice:"1:" %}
-                    {% image species_image.image height-100 %}
-                {% endfor %}
+        {% if images.count > 1 %}
+            <div class="row">
+                <div class="additional-photos">
+                    <p id="add-photo-label">Additional photos:</p>
+                    {% for species_image in images|slice:"1:" %}
+                        {% image species_image.image height-100 %}
+                    {% endfor %}
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 {% endblock %}
