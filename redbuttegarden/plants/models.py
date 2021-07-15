@@ -1,7 +1,8 @@
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models import DecimalField, CharField, ForeignKey, PositiveSmallIntegerField, DateField, DateTimeField
+from django.db.models import DecimalField, CharField, ForeignKey, PositiveSmallIntegerField, DateField, DateTimeField, \
+    BooleanField
 from django.utils.dates import MONTHS
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
@@ -44,6 +45,11 @@ class Species(ClusterableModel):
     bloom_time = ArrayField(base_field=CharField(choices=MONTHS.items(), max_length=255), blank=True, null=True)
     plant_size = CharField(max_length=255, blank=True, null=True)
     flower_color = CharField(max_length=255, blank=True, null=True)
+    utah_native = BooleanField(default=False)
+    plant_select = BooleanField(default=False)
+    deer_resist = BooleanField(default=False)
+    rabbit_resist = BooleanField(default=False)
+    bee_friend = BooleanField(default=False)
 
     panels = [
         InlinePanel('species_images', label='Species Images'),
@@ -96,6 +102,9 @@ class Collection(models.Model):
     garden = models.ForeignKey(GardenArea, on_delete=models.SET_NULL, null=True)
     species = ForeignKey(Species, on_delete=models.CASCADE)
     plant_date = DateField(blank=True, null=True)
+    plant_id = CharField(max_length=255, null=True, blank=True)
+    commemoration_category = CharField(max_length=255, null=True, blank=True)
+    commemoration_person = CharField(max_length=255, null=True, blank=True)
     created_on = DateTimeField(auto_now_add=True)
     last_modified = DateTimeField(auto_now=True)
 

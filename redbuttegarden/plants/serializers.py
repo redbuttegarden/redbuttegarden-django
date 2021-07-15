@@ -1,13 +1,12 @@
 from rest_framework import serializers
 
-from plants.models import Collection, Family, Genus, Location, Species
+from plants.models import Collection, Family, Genus, Location, Species, GardenArea
 
 """
 Empty validator lists are defined for fields with unique constraints
 so that Collection objects can be created when nested objects already
 exist.
 """
-
 
 class FamilySerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,9 +43,14 @@ class SpeciesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Species
-        fields = ['id', 'genus', 'name', 'cultivar', 'vernacular_name', 'habit', 'hardiness', 'water_regime']
+        fields = ['id', 'genus', 'name', 'cultivar', 'vernacular_name', 'habit', 'hardiness', 'water_regime',
+                  'exposure', 'plant_size', 'flower_color', 'utah_native', 'plant_select',
+                  'deer_resist', 'rabbit_resist', 'bee_friend']
         extra_kwargs = {
             'name': {
+                'validators': []
+            },
+            'bloom_time': {
                 'validators': []
             }
         }
@@ -58,20 +62,29 @@ class LocationSerializer(serializers.ModelSerializer):
         fields = ['id', 'latitude', 'longitude']
 
 
+class GardenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GardenArea
+        fields = ['id', 'area', 'name', 'code']
+
+
 class CollectionSerializer(serializers.ModelSerializer):
     species = SpeciesSerializer()
     location = LocationSerializer()
+    garden = GardenSerializer()
     plant_date = serializers.DateField(input_formats=['%d-%m-%Y'], required=False, allow_null=True)
 
     class Meta:
         model = Collection
-        fields = ['id', 'species', 'location', 'plant_date', 'created_on', 'last_modified']
+        fields = ['id', 'species', 'location', 'garden', 'plant_date', 'commemoration_category', 'commemoration_person',
+                  'created_on', 'last_modified']
 
     def create(self, validated_data):
         species_data = validated_data.pop('species')
         genus_data = species_data.pop('genus')
         family_data = genus_data.pop('family')
         location_data = validated_data.pop('location')
+        garden_data = validated_data.pop('garden')
 
         family, _ = Family.objects.get_or_create(**family_data)
         genus, _ = Genus.objects.get_or_create(family=family, **genus_data)
@@ -80,10 +93,12 @@ class CollectionSerializer(serializers.ModelSerializer):
         try:
             species = Species.objects.get(genus=genus, name=species_data['name'])
         except Species.DoesNotExist:
+
             species = Species(genus=genus, **species_data)
             species.save()
 
         location, _ = Location.objects.get_or_create(**location_data)
+        garden, _ = GardenArea.objects.get_or_create(**garden_data)
         collection, _ = Collection.objects.get_or_create(location=location, species=species, **validated_data)
 
         return collection
