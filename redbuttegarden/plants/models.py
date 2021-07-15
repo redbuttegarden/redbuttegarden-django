@@ -32,6 +32,8 @@ class Genus(models.Model):
         ordering = ['name']
 
 class Species(ClusterableModel):
+    bloom_time_choices = [(v, v) for _, v in MONTHS.items()]
+
     genus = ForeignKey(Genus, on_delete=models.CASCADE)
     name = CharField(max_length=255, blank=True, null=True)
     cultivar = CharField(max_length=255, blank=True, null=True)
@@ -42,7 +44,7 @@ class Species(ClusterableModel):
                            size=13, blank=True, null=True)
     water_regime = CharField(max_length=255, blank=True, null=True)
     exposure = CharField(max_length=255, blank=True, null=True)
-    bloom_time = ArrayField(base_field=CharField(choices=MONTHS.items(), max_length=255), blank=True, null=True)
+    bloom_time = ArrayField(base_field=CharField(choices=bloom_time_choices, max_length=255), blank=True, null=True)
     plant_size = CharField(max_length=255, blank=True, null=True)
     flower_color = CharField(max_length=255, blank=True, null=True)
     utah_native = BooleanField(default=False)
