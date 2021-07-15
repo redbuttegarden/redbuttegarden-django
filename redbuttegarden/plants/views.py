@@ -1,20 +1,27 @@
 import logging
+import os
 
 from django.http import JsonResponse
 from django.utils.dates import MONTHS
-from rest_framework import generics, viewsets, status
 from django.middleware.csrf import get_token
+from django.core.files.images import ImageFile
+from rest_framework import generics, permissions, viewsets, status
+
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from PIL import Image as PILImage
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from wagtail.images.models import Image
 
-from .models import Family, Genus, Species, Collection, Location, SpeciesImage
-from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, \
-    LocationSerializer
+from .models import SpeciesImage
 
 logger = logging.getLogger(__name__)
+from .models import Family, Genus, Species, Collection, Location
+from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, \
+    LocationSerializer
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
@@ -32,39 +39,14 @@ class GenusViewSet(viewsets.ModelViewSet):
     queryset = Genus.objects.all()
     serializer_class = GenusSerializer
 
-
-class SpeciesViewSet(viewsets.ModelViewSet):
+class SpeciesList(generics.ListCreateAPIView):
+    queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
 
-    def get_queryset(self):
-        """
-        Overriding queryset to make it possible to query for species that need to
-        have their image set.
-        """
-        queryset = Species.objects.all()
-        genus = self.request.query_params.get('genus')
-        species = self.request.query_params.get('species')
-        cultivar = self.request.query_params.get('cultivar')
-        vernacular_name = self.request.query_params.get('vernacular_name')
-
-        # Attempt to filter down to a single species object if query parameters were given
-        if genus is not None:
-            queryset = queryset.filter(genus__name=genus,
-                                       name=species,
-                                       cultivar=cultivar,
-                                       vernacular_name=vernacular_name)
-
-            if not queryset:
-                logger.info(f'Species matching query does not exist.\nGenus name: {genus}\n'
-                            f'Species name: {species}\nCultivar: {cultivar}\nVernacular name: {vernacular_name}')
-                return queryset
-            elif queryset.count() > 1:
-                logger.info(f'Multiple objects match this query.\nGenus name: {genus}\n'
-                            f'Species name: {species}\nCultivar: {cultivar}\nVernacular name: {vernacular_name}')
-                return queryset
-
-        return queryset
-
+class SpeciesDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Species.objects.all()
+    serializer_class = SpeciesSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class LocationViewSet(viewsets.ModelViewSet):
     """
@@ -134,14 +116,60 @@ def set_image(request, pk):
     return JsonResponse({'status': 'failure'})
 
 
+
+@api_view(['PUT'])
+def set_species_image(request):
+    """
+    Endpoint to allow dummy wagtail images to be associated with existing Species
+    objects. The dummy images can later be replaced with real images by manually
+    uploading to S3, thus circumventing the cost of uploading directly thru the
+    AWS Gateway.
+    """
+    genus_name = request.data.get('species', {}).get('genus', {}).get('name')
+    species_name = request.data.get('species', {}).get('name')
+    cultivar = request.data.get('species', {}).get('cultivar')
+    vernacular_name = request.data.get('species', {}).get('vernacular_name')
+
+    try:
+        genus = Genus.objects.get(name=genus_name)
+    except Genus.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        species = Species.objects.get(genus=genus,
+                                      name=species_name,
+                                      cultivar=cultivar,
+                                      vernacular_name=vernacular_name)
+    except Species.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        img_title = '_'.join([genus_name,
+                              species_name,
+                              cultivar,
+                              vernacular_name])
+        file_name = img_title.replace(' ', '-') + '.jpeg'
+
+        # Create empty dummy file that can later be replaced with a real image
+        img_path = os.path.join(settings.MEDIA_ROOT, 'plant_images', file_name)
+        pil_img = PILImage.new(mode='RGB', size=(1, 1))
+        pil_img.save(img_path)
+        img_file = ImageFile(open(img_path, 'rb'), name=file_name)
+        wag_img = Image.objects.create(title=img_title, file=img_file, width=1, height=1)
+        species.image = wag_img
+        species.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+def get_token(request):
+    return render(request, 'plants/token.html')
+
 def plant_map_view(request):
     return render(request, 'plants/collection_map.html')
-
 
 def collection_detail(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id)
     return render(request, 'plants/collection_detail.html', {'collection': collection})
-
 
 def species_detail(request, species_id):
     species = get_object_or_404(Species, pk=species_id)

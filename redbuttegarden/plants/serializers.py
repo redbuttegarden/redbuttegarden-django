@@ -7,7 +7,6 @@ Empty validator lists are defined for fields with unique constraints
 so that Collection objects can be created when nested objects already
 exist.
 """
-
 class FamilySerializer(serializers.ModelSerializer):
     class Meta:
         model = Family
@@ -18,9 +17,8 @@ class FamilySerializer(serializers.ModelSerializer):
             }
         }
 
-
 class GenusSerializer(serializers.ModelSerializer):
-    family = FamilySerializer()
+    family = FamilySerializer(required=False)
 
     class Meta:
         model = Genus
@@ -30,7 +28,6 @@ class GenusSerializer(serializers.ModelSerializer):
                 'validators': []
             }
         }
-
 
 class SpeciesSerializer(serializers.ModelSerializer):
     genus = GenusSerializer()
@@ -49,12 +46,8 @@ class SpeciesSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'name': {
                 'validators': []
-            },
-            'bloom_time': {
-                'validators': []
             }
         }
-
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -93,7 +86,6 @@ class CollectionSerializer(serializers.ModelSerializer):
         try:
             species = Species.objects.get(genus=genus, name=species_data['name'])
         except Species.DoesNotExist:
-
             species = Species(genus=genus, **species_data)
             species.save()
 
