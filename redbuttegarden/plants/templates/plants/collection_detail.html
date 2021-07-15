@@ -21,6 +21,8 @@
         <p><span class="bold">Family: </span>{{ collection.species.genus.family.name }}</p>
         <p><span class="bold">Garden: </span>{{ collection.garden.name }}</p>
         <p><span class="bold">Bed #: </span>{{ collection.garden.code }}</p>
-        <p><span class="bold">Date Planted: </span>{{ collection.plant_date }}</p>
+        {% if collection.plant_date %}
+            <p><span class="bold">Date Planted: </span>{{ collection.plant_date }}</p>
+        {% endif %}
     </div>
 {% endblock %}
