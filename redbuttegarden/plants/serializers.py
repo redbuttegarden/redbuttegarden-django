@@ -84,7 +84,7 @@ class CollectionSerializer(serializers.ModelSerializer):
         # TODO - Catch errors when species data are changed
         # Get or create logic doesn't seem to avoid unique constraint between genus/species name
         try:
-            species = Species.objects.get(genus=genus, name=species_data['name'])
+            species = Species.objects.get(genus=genus, name=species_data['name'], cultivar=species_data['cultivar'])
         except Species.DoesNotExist:
             species = Species(genus=genus, **species_data)
             species.save()
