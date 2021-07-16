@@ -37,6 +37,26 @@ class SpeciesList(generics.ListCreateAPIView):
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
 
+    def get_queryset(self):
+        queryset = Species.objects.all()
+
+        name = self.request.query_params.get('name')
+        cultivar = self.request.query_params.get('cultivar')
+        vernacular_name = self.request.query_params.get('vernacular_name')
+        genus = self.request.query_params.get('genus')
+
+        if name:
+            queryset = queryset.filter(name=name)
+        if cultivar:
+            queryset = queryset.filter(cultivar=cultivar)
+        if vernacular_name:
+            queryset = queryset.filter(vernacular_name=vernacular_name)
+        if genus:
+            queryset = queryset.filter(genus__name=genus)
+
+        return queryset
+
+
 class SpeciesDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
@@ -84,10 +104,10 @@ class CustomAuthToken(ObtainAuthToken):
 def set_image(request, pk):
     # Check if user has a valid API Token
     try:
-        token = request.META['Authorization'].split(' ')[1]
+        token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
     except KeyError:
         return JsonResponse({'status': 'failure'})
-    if Token.objects.get(key=token).exists():
+    if Token.objects.filter(key=token).exists():
         species = Species.objects.get(pk=pk)
         uploaded_image = request.FILES.get('image')
         image, img_created = Image.objects.get_or_create(
