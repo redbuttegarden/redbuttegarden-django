@@ -1,10 +1,15 @@
+from io import BytesIO
+
 import pytest
 
 from django.contrib.auth import get_user_model
+from django.core.files.images import ImageFile
+from PIL import Image
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from plants.models import Collection
+from plants.models import Collection, Species, Genus, Family
+
 
 @pytest.mark.django_db
 class TestAPI:
@@ -107,6 +112,19 @@ def collections_same_species_different_cultivars():
 
     return payloads
 
+@pytest.fixture
+def family():
+    return Family.objects.create(name='Family')
+
+@pytest.fixture
+def genus(family):
+    return Genus.objects.create(family=family, name='genus')
+
+@pytest.fixture
+def species(genus):
+    return Species.objects.create(genus=genus,
+                                  name='species')
+
 @pytest.mark.django_db
 def test_collection_creation_api_two_cultivars(collections_same_species_different_cultivars):
     api_client = TestAPI()
@@ -118,3 +136,28 @@ def test_collection_creation_api_two_cultivars(collections_same_species_differen
     api_client.auth_user.post('/plants/api/collections/', collection_two_payload, format='json')
 
     assert Collection.objects.all().count() == 2
+
+@pytest.mark.django_db
+def test_species_image_setting(species):
+    api_client = TestAPI()
+
+    img_one_file_obj = BytesIO()
+    img_two_file_obj = BytesIO()
+    image_one = Image.new('RGB', size=(1, 1), color=(256, 0, 0))
+    image_two = Image.new('RGB', size=(1, 1), color=(256, 0, 0))
+    image_one.save(img_one_file_obj, 'jpeg')
+    image_two.save(img_two_file_obj, 'jpeg')
+    img_one_file_obj.seek(0)
+    img_two_file_obj.seek(0)
+    img_one = ImageFile(img_one_file_obj, name='1.jpg')
+    img_two = ImageFile(img_two_file_obj, name='2.jpg')
+
+    resp = api_client.auth_user.post(f'/plants/api/species/{species.pk}/set-image/', {'image': img_one})
+    assert resp.status_code == 200
+
+    assert species.species_images.all().count() == 1
+
+    resp = api_client.auth_user.post(f'/plants/api/species/{species.pk}/set-image/', {'image': img_two})
+    assert resp.status_code == 200
+
+    assert species.species_images.all().count() == 2

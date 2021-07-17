@@ -110,11 +110,13 @@ def set_image(request, pk):
     if Token.objects.filter(key=token).exists():
         species = Species.objects.get(pk=pk)
         uploaded_image = request.FILES.get('image')
+        img_title = '_'.join([species.genus.name,
+                              species.name if species.name else '',
+                              species.cultivar if species.cultivar else '',
+                              uploaded_image.name])
         image, img_created = Image.objects.get_or_create(
-            title='_'.join([species.genus.name,
-                            species.name,
-                            species.cultivar]),
-            defaults={'file': uploaded_image}
+            file=uploaded_image,
+            defaults={'title': img_title}
         )
         species_image, species_img_created = SpeciesImage.objects.get_or_create(
             species=species,
