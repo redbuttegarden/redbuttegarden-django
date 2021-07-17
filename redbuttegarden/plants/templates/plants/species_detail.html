@@ -29,6 +29,9 @@
 
             <div class="species-info">
                 <div class="details">
+                    {% if species.cultivar %}
+                        <p><span class="bold">Cultivar:</span> {{ species.cultivar }}</p>
+                    {% endif %}
                     <p><span class="bold">Habit:</span> {{ species.habit }}</p>
                     {% if species.water_regime %}
                         <p><span class="bold">Water Needs:</span> {{ species.water_regime }}</p>
@@ -42,9 +45,40 @@
                     {% if species.plant_size %}
                         <p><span class="bold">Size:</span> {{ species.plant_size }}</p>
                     {% endif %}
+                    {% if species.flower_color %}
+                        <p><span class="bold">Flower Color:</span> {{ species.flower_color }}</p>
+                    {% endif %}
                     {% if species.bloom_time %}
                         <p><span class="bold">Bloom Times:</span> {{ species.bloom_time|join:", " }}</p>
                     {% endif %}
+
+                    <div class="row icons">
+                        {% if species.utah_native %}
+                            <img src="{% static 'img/utah_native.png' %}"
+                                 alt="Icon indicating this species is native to Utah"
+                                 width="50px" height="50px">
+                        {% endif %}
+                        {% if species.deer_resist %}
+                            <img src="{% static 'img/deer_resistant.png' %}"
+                                 alt="Icon indicating this species is resistant to deer"
+                                 width="50px" height="50px">
+                        {% endif %}
+                        {% if species.rabbit_resist %}
+                            <img src="{% static 'img/rabbit_resistant.png' %}"
+                                 alt="Icon indicating this species is resistant to rabbits"
+                                 width="50px" height="50px">
+                        {% endif %}
+                        {% if species.bee_friend %}
+                            <img src="{% static 'img/attracts_bees.png' %}"
+                                 alt="Icon indicating this species is pollinator friendly"
+                                 width="50px" height="50px">
+                        {% endif %}
+                        {% if species.plant_select %}
+                            <img src="{% static 'img/plant_select.png' %}"
+                                 alt="Icon indicating this species is a Plant Select® cultivar"
+                                 width="50px" height="50px">
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -58,7 +92,7 @@
                                 {% image species_image.image height-100 as thumb %}
                                 <img src="{{ thumb.url }}" width="{{ thumb.width }}"
                                      height="{{ thumb.height }}" alt="{{ thumb.alt }}"
-                                     onclick="openModal();currentSlide({{ forloop.counter }})"
+                                     onclick="openModal();currentSlide({{ forloop.counter|add:1 }})"
                                      class="hover-shadow cursor">
                             </div>
                         {% endfor %}
@@ -70,7 +104,7 @@
                 <span class="close cursor" onclick="closeModal()">&times;</span>
                 <div class="modal-content">
                     {% for species_image in images %}
-                        <div class="mySlides">
+                        <div class="mySlides text-center">
                             <div class="numbertext">{{ forloop.counter }} / {{ images|length }}</div>
                             {% image species_image.image original %}
                         </div>

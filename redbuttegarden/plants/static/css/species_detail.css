@@ -24,6 +24,14 @@
     margin: 0;
 }
 
+.icons {
+    margin-left: 10px;
+}
+
+.icons > img {
+    margin: 10px;
+}
+
 /* W3 Schools Code: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_lightbox */
 .thumb-row > .thumb-col {
     padding: 0 8px;
@@ -57,7 +65,7 @@
 /* Modal Content */
 .modal-content {
     position: relative;
-    background-color: #fefefe;
+    background-color: rgba(254, 254, 254, 0.66);
     margin: auto;
     padding: 0;
     width: fit-content;
