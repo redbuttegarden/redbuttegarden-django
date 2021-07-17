@@ -9,21 +9,25 @@
     <div class="container-fluid">
 
         <div class="row">
+            <div class="header">
+                <h1>{{ species.vernacular_name }}</h1>
+                <h4 class="scientific-name">{{ species.genus.name }} {{ species.name }}</h4>
+                <h4 class="family">{{ species.genus.family.name }}
+                    {% if species.genus.family.vernacular_name %}
+                        <span>({{ species.genus.family.vernacular_name }} Family)</span>
+                    {% endif %}
+                </h4>
+            </div>
+
             <div class="main-image">
-                {% image images.first.image original %}
+                {% image images.first.image max-500x500 as main_img %}
+                <img src="{{ main_img.url }}" width="{{ main_img.width }}"
+                     height="{{ main_img.height }}" alt="{{ main_img.alt }}"
+                     onclick="openModal();currentSlide(1)"
+                     class="hover-shadow cursor">
             </div>
 
             <div class="species-info">
-                <div class="header">
-                    <h1>{{ species.vernacular_name }}</h1>
-                    <h4 class="scientific-name">{{ species.genus.name }} {{ species.name }}</h4>
-                    <h4 class="family">{{ species.genus.family.name }}
-                        {% if species.genus.family.vernacular_name %}
-                            <span>({{ species.genus.family.vernacular_name }} Family)</span>
-                        {% endif %}
-                    </h4>
-                </div>
-
                 <div class="details">
                     <p><span class="bold">Habit:</span> {{ species.habit }}</p>
                     {% if species.water_regime %}
@@ -48,11 +52,91 @@
             <div class="row">
                 <div class="additional-photos">
                     <p id="add-photo-label">Additional photos:</p>
-                    {% for species_image in images|slice:"1:" %}
-                        {% image species_image.image height-100 %}
+                    <div class="thumb-row">
+                        {% for species_image in images|slice:"1:" %}
+                            <div class="thumb-col">
+                                {% image species_image.image height-100 as thumb %}
+                                <img src="{{ thumb.url }}" width="{{ thumb.width }}"
+                                     height="{{ thumb.height }}" alt="{{ thumb.alt }}"
+                                     onclick="openModal();currentSlide({{ forloop.counter }})"
+                                     class="hover-shadow cursor">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="myModal" class="modal">
+                <span class="close cursor" onclick="closeModal()">&times;</span>
+                <div class="modal-content">
+                    {% for species_image in images %}
+                        <div class="mySlides">
+                            <div class="numbertext">{{ forloop.counter }} / {{ images|length }}</div>
+                            {% image species_image.image original %}
+                        </div>
+                    {% endfor %}
+
+                    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1)">&#10095;</a>
+
+                    <div class="caption-container">
+                        <p id="caption">{{ species.genus.name }} {{ species.name }}</p>
+                    </div>
+
+                    {% for species_image in images %}
+                        <div class="thumb-col">
+                            {% image species_image.image height-100 as modal_thumb %}
+                            <img src="{{ modal_thumb.url }}" width="{{ modal_thumb.width }}"
+                                 height="{{ modal_thumb.height }}" alt="{{ modal_thumb.alt }}"
+                                 onclick="currentSlide({{ forloop.counter }})"
+                                 class="demo cursor" title="{{ modal_thumb.title }}">
+                        </div>
                     {% endfor %}
                 </div>
             </div>
         {% endif %}
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+    function openModal() {
+        document.getElementById("myModal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+    }
+
+    let slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+        let i;
+        const slides = document.getElementsByClassName("mySlides");
+        const dots = document.getElementsByClassName("demo");
+        const captionText = document.getElementById("caption");
+
+        if (n > slides.length) {slideIndex = 1}
+
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
+        captionText.innerHTML = dots[slideIndex - 1].alt;
+    }
+    </script>
 {% endblock %}
