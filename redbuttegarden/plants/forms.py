@@ -8,7 +8,7 @@ from plants.models import Family, Species, Collection
 
 
 class CollectionSearchForm(forms.Form):
-    family_choices = [(family['name'], family['name']) for family in Family.objects.values('name').distinct()]
+    family_choices = [(family['id'], family['name']) for family in Family.objects.values('id', 'name').distinct()]
     habit_choices = [(species['habit'], species['habit']) for species in
               Species.objects.order_by('habit').values('habit').distinct('habit')]
     exposure_choices = [(species['exposure'], species['exposure']) for species in

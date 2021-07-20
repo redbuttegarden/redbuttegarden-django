@@ -1,9 +1,7 @@
 import logging
-from collections import OrderedDict
-
 from django.http import JsonResponse
-from django.utils.dates import MONTHS
 from django.middleware.csrf import get_token
+from django.templatetags.static import static
 from geojson import Feature, Point, FeatureCollection, dumps
 from rest_framework import generics, viewsets, status
 
@@ -19,6 +17,10 @@ from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializ
     LocationSerializer
 
 logger = logging.getLogger(__name__)
+
+MAP_ICONS = {
+    'Annual': static('img/annual_icon.png')
+}
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
@@ -138,36 +140,50 @@ def csrf_view(request):
     return render(request, 'plants/token.html')
 
 def plant_map_view(request):
-    collections = Collection.objects.all()
-    family = request.session.get('family', None)
-    if family:
-        collections = [collection for collection in collections.filter(species__genus__family__name_icontains=family)]
+    if request.is_ajax() and request.method == 'GET':
+        collections = Collection.objects.all()
+        family = request.session.get('family', None)
+        if family:
+            collections = [collection for collection in collections.filter(species__genus__family_id=family)]
 
-    features = []
-    for collection in collections:
-        feature = Feature(geometry=Point((collection.location.longitude,
-                                          collection.location.latitude)),
-                          properties={
-                              'id': collection.id,
-                              'family_name': collection.species.genus.family.name,
-                              'genus_name': collection.species.genus.name,
-                              'species_name': collection.species.name,
-                              'cultivar': collection.species.cultivar,
-                              'vernacular_name': collection.species.vernacular_name,
-                              'habit': collection.species.habit,
-                              'hardiness': collection.species.hardiness,
-                              'water_regime': collection.species.water_regime,
-                              'exposure': collection.species.exposure,
-                              'boom_time': collection.species.bloom_time,
-                              'plant_size': collection.species.plant_size,
-                              'planted_on': collection.plant_date.strftime('%m/%d/%Y')
-                              if collection.plant_date else None,
-                          })
-        features.append(feature)
+        features = []
+        for collection in collections:
+            try:
+                icon = MAP_ICONS[collection.species.habit]
+            except KeyError:
+                logger.error(f'Habit {collection.species.habit} not mapped to an icon file')
+                icon = None
 
-    feature_collection = FeatureCollection(features)
-    collection_geojson = dumps(feature_collection)
-    return render(request, 'plants/collection_map.html', {'geojson': collection_geojson})
+            if collection.plant_date:
+                plant_date = collection.plant_date.strftime('%m/%d/%Y')
+            else:
+                plant_date = None
+
+            feature = Feature(geometry=Point((collection.location.longitude,
+                                              collection.location.latitude)),
+                              properties={
+                                  'id': collection.id,
+                                  'family_name': collection.species.genus.family.name,
+                                  'genus_name': collection.species.genus.name,
+                                  'species_name': collection.species.name,
+                                  'cultivar': collection.species.cultivar,
+                                  'vernacular_name': collection.species.vernacular_name,
+                                  'habit': collection.species.habit,
+                                  'hardiness': collection.species.hardiness,
+                                  'water_regime': collection.species.water_regime,
+                                  'exposure': collection.species.exposure,
+                                  'boom_time': collection.species.bloom_time,
+                                  'plant_size': collection.species.plant_size,
+                                  'planted_on': plant_date,
+                                  'icon': icon
+                                  if collection.plant_date else None,
+                              })
+            features.append(feature)
+
+        feature_collection = FeatureCollection(features)
+        collection_geojson = dumps(feature_collection)
+        return JsonResponse(collection_geojson, safe=False)
+    return render(request, 'plants/collection_map.html')
 
 def collection_detail(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id)
