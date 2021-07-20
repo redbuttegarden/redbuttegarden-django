@@ -2,85 +2,12 @@
 
 
 {% block content %}
+    <h1>Search our Living Collections</h1>
     <div class="search">
-        <form>
-            <div class="form-group">
-                <label for="scientificName">Scientific Name</label>
-                <input type="text" class="form-control" id="scientificName" placeholder="Scientific name">
-            </div>
-            <div class="form-group">
-                <label for="commonName">Common Name</label>
-                <input type="text" class="form-control" id="commonName" placeholder="Common name">
-            </div>
-            <div class="form-group">
-                <label for="familyName">Family Name</label>
-                <select class="form-control" id="familyName">
-                    <option></option>
-                    {% for family in families %}
-                        <option>{{ family }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="habit">Habit</label>
-                <select class="form-control" id="habit">
-                    <option></option>
-                    {% for habit in habits %}
-                        <option>{{ habit }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="exposure">Exposure</label>
-                <select class="form-control" id="exposure">
-                    <option></option>
-                    {% for exposure in exposures %}
-                        <option>{{ exposure }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="water">Water Needs</label>
-                <select class="form-control" id="water">
-                    {% for water in water_needs %}
-                        <option>{{ water }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="bloom">Bloom Month</label>
-                <select class="form-control" id="bloom">
-                    <option></option>
-                    {% for bloom in bloom_months %}
-                        <option>{{ bloom }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="color">Flower Color</label>
-                <select class="form-control" id="color">
-                    <option></option>
-                    {% for color in flower_colors %}
-                        <option>{{ color }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="memorial">Memorial Tree Name</label>
-                <select class="form-control" id="memorial">
-                    <option></option>
-                    {% for person in commemoration_people %}
-                        <option>{{ person }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="utahNative">
-                <label class="form-check-label" for="utahNative">Utah Native</label>
-
-                <input type="checkbox" class="form-check-input" id="availMem">
-                <label class="form-check-label" for="availMem">Available Memorial Trees</label>
-            </div>
+        <form action="{% url 'plants:collection-search' %}" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <br>
             <button type="submit" class="btn btn-primary">Search</button>
             <button type="reset" class="btn btn-light">Reset Form</button>
         </form>

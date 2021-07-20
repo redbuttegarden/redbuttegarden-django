@@ -4,14 +4,16 @@ from collections import OrderedDict
 from django.http import JsonResponse
 from django.utils.dates import MONTHS
 from django.middleware.csrf import get_token
+from geojson import Feature, Point, FeatureCollection, dumps
 from rest_framework import generics, viewsets, status
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from wagtail.images.models import Image
 
+from .forms import CollectionSearchForm
 from .models import Family, Genus, Species, Collection, Location, SpeciesImage
 from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, \
     LocationSerializer
@@ -136,7 +138,36 @@ def csrf_view(request):
     return render(request, 'plants/token.html')
 
 def plant_map_view(request):
-    return render(request, 'plants/collection_map.html')
+    collections = Collection.objects.all()
+    family = request.session.get('family', None)
+    if family:
+        collections = [collection for collection in collections.filter(species__genus__family__name_icontains=family)]
+
+    features = []
+    for collection in collections:
+        feature = Feature(geometry=Point((collection.location.longitude,
+                                          collection.location.latitude)),
+                          properties={
+                              'id': collection.id,
+                              'family_name': collection.species.genus.family.name,
+                              'genus_name': collection.species.genus.name,
+                              'species_name': collection.species.name,
+                              'cultivar': collection.species.cultivar,
+                              'vernacular_name': collection.species.vernacular_name,
+                              'habit': collection.species.habit,
+                              'hardiness': collection.species.hardiness,
+                              'water_regime': collection.species.water_regime,
+                              'exposure': collection.species.exposure,
+                              'boom_time': collection.species.bloom_time,
+                              'plant_size': collection.species.plant_size,
+                              'planted_on': collection.plant_date.strftime('%m/%d/%Y')
+                              if collection.plant_date else None,
+                          })
+        features.append(feature)
+
+    feature_collection = FeatureCollection(features)
+    collection_geojson = dumps(feature_collection)
+    return render(request, 'plants/collection_map.html', {'geojson': collection_geojson})
 
 def collection_detail(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id)
@@ -149,30 +180,15 @@ def species_detail(request, species_id):
                                                           'images': species_images})
 
 def collection_search(request):
-    families = [family['name'] for family in Family.objects.values('name').distinct()]
-    habits = [species['habit'] for species in Species.objects.order_by('habit').values('habit').distinct('habit')]
-    exposures = [species['exposure'] for species in
-                Species.objects.order_by('exposure').values('exposure').distinct('exposure')
-                 if species['exposure'] is not '' and species['exposure'] is not None]
-    water_needs = [species['water_regime'] for species in
-                   Species.objects.order_by('water_regime').values('water_regime').distinct('water_regime')]
-    # Flower color list of lists
-    flower_colors = [species['flower_color'].split(',') for species in
-                     Species.objects.order_by('flower_color').values('flower_color').distinct('flower_color')
-                     if species['flower_color'] is not '' and species['flower_color'] is not None]
-    flower_colors = [color for colors in flower_colors for color in colors]  # Flattens list of lists
-    flower_colors = sorted(list(OrderedDict.fromkeys(flower_colors)))  # Removes duplicates
-    commemoration_people = [collection['commemoration_person'] for collection in
-                            Collection.objects.order_by('commemoration_person').values('commemoration_person').distinct('commemoration_person')
-                            if collection['commemoration_person'] is not ''
-                            and collection['commemoration_person'] is not None]
-    context = {
-        'families': families,
-        'habits': habits,
-        'exposures': exposures,
-        'water_needs': water_needs,
-        'bloom_months': list(MONTHS.values()),
-        'flower_colors': flower_colors,
-        'commemoration_people': commemoration_people
-    }
-    return render(request, 'plants/collection_search.html', context)
+    if request.method == 'POST':
+        form = CollectionSearchForm(request.POST)
+        if form.is_valid():
+            request.session['family'] = form.cleaned_data['family_name']
+            return redirect('plants:plant-map')
+    else:
+        form = CollectionSearchForm()
+
+        context = {
+            'form': form
+        }
+        return render(request, 'plants/collection_search.html', context)

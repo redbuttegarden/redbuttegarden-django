@@ -30,7 +30,6 @@ class Command(BaseCommand):
                                       'plant_size': collection.species.plant_size,
                                       'planted_on': collection.plant_date.strftime('%m/%d/%Y')
                                         if collection.plant_date else None,
-                                      'planted_by': collection.planter
                                   })
                 features.append(feature)
 
