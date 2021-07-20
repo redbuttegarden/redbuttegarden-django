@@ -1,24 +1,51 @@
 window.onload = setHours;
 
-let d = new Date();
+let d = new Date(2021, 07, 4, 15);
 let offset = d.getTimezoneOffset()/60;
 let offsetDifference = offset - 6;
 
 let month = d.getMonth() + 1;
 let day = d.getDate();
-
-
 let hours = d.getHours() + offsetDifference;
-
 let minutes = d.getMinutes();
-
+let minutesBeforeOpeningOrClosing = 60 - minutes;
 
 let busHours;
 let status;
 
-const manualOverrideTrue = (document.getElementById('hours_override').textContent === 'True')
+// Concert List 2021 for easier hour mapping
+let concerts = []
+// #region CONCERT 'PUSH' OPERATIONS (HIDDEN)
+concerts.push(new Date(2021, 07, 30));
+concerts.push(new Date(2021, 08, 01));
+concerts.push(new Date(2021, 08, 04));
+concerts.push(new Date(2021, 08, 06));
+concerts.push(new Date(2021, 08, 08));
+concerts.push(new Date(2021, 08, 13));
+concerts.push(new Date(2021, 08, 10));
+concerts.push(new Date(2021, 08, 15));
+concerts.push(new Date(2021, 08, 16));
+concerts.push(new Date(2021, 08, 17));
+concerts.push(new Date(2021, 08, 19));
+concerts.push(new Date(2021, 08, 22));
+concerts.push(new Date(2021, 08, 23));
+concerts.push(new Date(2021, 08, 25));
+concerts.push(new Date(2021, 08, 26));
+concerts.push(new Date(2021, 09, 12));
+concerts.push(new Date(2021, 08, 29));
+concerts.push(new Date(2021, 09, 16));
+concerts.push(new Date(2021, 09, 02));
+concerts.push(new Date(2021, 09, 23));
+concerts.push(new Date(2021, 09, 05));
+concerts.push(new Date(2021, 09, 30));
+concerts.push(new Date(2021, 09, 14));
+concerts.push(new Date(2021, 09, 22));
+concerts.push(new Date(2021, 09, 29));
+//#endregion
 
-// TODO - Create functions that automatically determine these dates
+
+//#region Constant Garden status variables and messages 
+const manualOverrideTrue = (document.getElementById('hours_override').textContent === 'True')
 
 const daylightEndDay = 1;  // Day that Daylight Savings Time Ends in November of the current year
 const daylightStartDay = 8;  // Day that Daylight Savings Time Begins in March of the next year
@@ -32,6 +59,7 @@ const holidayPartyClosingMinute = parseInt(document.getElementById('hours_holida
 const galaMonth = 0;  // Month of Gala
 const galaDay = 0;  // Day of month of Gala
 
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 /* 		For MISC Messages that Appear in Status Divs								  */
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -42,8 +70,8 @@ const gardenWillCloseMessageStart = "<div style=\x22font-weight:bold;color:#FF00
 const gardenMessageEnd = " Minutes</div>";
 const halfOffAdmission = "Enjoy half-price admission December, January, and February";
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+//#endregion
 
-let minutesBeforeOpeningOrClosing = 60 - minutes;
 
 function setHours() {
 	if (manualOverrideTrue) {
@@ -61,26 +89,55 @@ function setHours() {
 	}
 }
 
+
+// Sets concert day status; Returns true if it's a concert day
+function isConcertDay(concerts, busHours) {
+	didSetHours = false; 
+
+	// Loops through each concert to check if it's a concert day; Runs in O(N) time. 
+	concerts.forEach(concert => {
+		if (concert.getMonth() == month && concert.getDate() == day) {
+			busHours = "Today (Concert Day): 9AM-5PM*";
+			document.getElementById("gardenHours").innerHTML = busHours;
+
+			if (hours >= 9 && hours < 16) {
+				status = gardenOpenMessage;
+				document.getElementById("gardenStatus").innerHTML = status;
+			}
+			
+			if (hours == 16) {
+				status = gardenWillCloseMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
+				document.getElementById("gardenStatus").innerHTML = status;
+			}
+
+			else if (hours >= 17) {
+				status = gardenClosedMessage;
+				document.getElementById("gardenStatus").innerHTML = status;
+			}
+
+			didSetHours = true; 
+		} 
+	})
+
+	return didSetHours; 
+}
+
+
 function gardenYearlyHours() {
-
 	// Code to account for Daylight Savings Time
-
-	if ( (month === 11 && day >= daylightEndDay) || (month === 12) || (month === 1) || (month === 2) || (month === 3 && day < daylightStartDay) ) {
-
+	if ((month === 11 && day >= daylightEndDay) || (month === 12) || (month === 1) || (month === 2) || (month === 3 && day < daylightStartDay)) {
 		hours = hours - 1;
 	}
 
 	// Between 8AM and 9AM: shows how many minutes before the garden opens
-
-	if (hours === 8 ) {
-
+	if (hours === 8) {
 		status = gardenWillOpenMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
 		document.getElementById("gardenStatus").innerHTML = status;
 
 		return;
 	}
 
-	// Takes admission prices, converts them to integers, and divides them by two for half admission in December, January, and February
+//#region Takes admission prices, converts them to integers, and divides them by two for half admission in December, January, and February
 
 	if ( (month === 12) || (month === 1) || (month === 2) ){
 
@@ -112,6 +169,7 @@ function gardenYearlyHours() {
 		document.getElementById("staff-half").innerHTML = "&nbsp;&nbsp;$"+staffHalf;
 
 	}
+//#endregion
 
 	// TODO - Pass Concert objects to view so hours.js knows about early closing times
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -121,6 +179,7 @@ function gardenYearlyHours() {
 	// Hours for individual concert days (which will change every year),
 	// the Gala, and other miscellaneous days that we will close at 5PM
 
+//#region Gala Month
 	if (month === galaMonth && day === galaDay)		// Gala (if applicable)
 
 	{
@@ -152,8 +211,9 @@ function gardenYearlyHours() {
 			return;
 		}
 	}
+//#endregion
 
-	// Jan 1 - Mar 31 General Hours
+//#region Jan 1 - Mar 31 General Hours
 
 	if (month === 1 || month === 2 || month === 3) {
 
@@ -190,8 +250,9 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
+//#endregion
 
-// April 1-30 General Hours
+//#region April 1-30 General Hours
 
 	else if (month === 4) {
 
@@ -223,15 +284,19 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
+//#endregion
 
-// May 1 - Aug 31 General Hours
+//#region May 1 - Aug 31 General Hours
 
 	else if (month === 5 || month === 6 || month === 7 || month === 8) {
-
 		busHours = "May 1-Aug 31: 9AM-9PM*";
 		otherNotes = "*Garden Hours on Concert Days: 9AM-5PM";
 		document.getElementById("gardenHours").innerHTML = busHours;
 		document.getElementById("otherNotes").innerHTML = otherNotes;
+		
+		// Checks if it's a concert day, else continues as normal
+		if (isConcertDay(concerts, "Today (Concert Day): 9am-5pm"))
+			return;  
 
 		if (hours >= 9 && hours < 20) {
 			status = gardenOpenMessage;
@@ -239,7 +304,7 @@ function gardenYearlyHours() {
 			return;
 		}
 
-		if (hours === 20) {
+		else if (hours === 20) {
 			status = gardenWillCloseMessageStart+minutesBeforeOpeningOrClosing+gardenMessageEnd;
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
@@ -249,22 +314,25 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
+//#endregion
 
-// Sep 1 - 30 General Hours
+//#region  Sep 1 - 30 General Hours
 
 	else if (month === 9) {
-
 		busHours = "Sep 1-30: 9AM-7:30PM*";
 		otherNotes = "*Garden Hours on Concert Days: 9AM-5PM";
 
 		document.getElementById("gardenHours").innerHTML = busHours;
 		document.getElementById("otherNotes").innerHTML = otherNotes;
 
+		// Checks if it's a concert day, else continues as normal
+		if (isConcertDay(concerts, "Today (Concert Day): 9am-5pm"))
+			return;
+
 		if ((hours >= 9 && hours < 18) || (hours === 18 && minutes < 30)) {
 			status = gardenOpenMessage;
 			document.getElementById("gardenStatus").innerHTML = status;
 			return;
-
 		}
 
 		if ((hours === 18 && minutes >= 30) || (hours === 19 && minutes < 30)) {
@@ -286,8 +354,9 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
+//#endregion
 
-// Oct 1 - Dec 23 General hours
+//#region Oct 1 - Dec 23 General hours
 
 	else if ( month === 10 || month === 11 || month === 12) {
 
@@ -412,4 +481,5 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
+//#endregion
 }
