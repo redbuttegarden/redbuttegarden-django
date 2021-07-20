@@ -1,4 +1,5 @@
 import logging
+from collections import OrderedDict
 
 from django.http import JsonResponse
 from django.utils.dates import MONTHS
@@ -155,12 +156,23 @@ def collection_search(request):
                  if species['exposure'] is not '' and species['exposure'] is not None]
     water_needs = [species['water_regime'] for species in
                    Species.objects.order_by('water_regime').values('water_regime').distinct('water_regime')]
+    # Flower color list of lists
+    flower_colors = [species['flower_color'].split(',') for species in
+                     Species.objects.order_by('flower_color').values('flower_color').distinct('flower_color')
+                     if species['flower_color'] is not '' and species['flower_color'] is not None]
+    flower_colors = [color for colors in flower_colors for color in colors]  # Flattens list of lists
+    flower_colors = sorted(list(OrderedDict.fromkeys(flower_colors)))  # Removes duplicates
+    commemoration_people = [collection['commemoration_person'] for collection in
+                            Collection.objects.order_by('commemoration_person').values('commemoration_person').distinct('commemoration_person')
+                            if collection['commemoration_person'] is not ''
+                            and collection['commemoration_person'] is not None]
     context = {
         'families': families,
         'habits': habits,
         'exposures': exposures,
         'water_needs': water_needs,
         'bloom_months': list(MONTHS.values()),
-
+        'flower_colors': flower_colors,
+        'commemoration_people': commemoration_people
     }
     return render(request, 'plants/collection_search.html', context)

@@ -33,6 +33,7 @@
             <div class="form-group">
                 <label for="exposure">Exposure</label>
                 <select class="form-control" id="exposure">
+                    <option></option>
                     {% for exposure in exposures %}
                         <option>{{ exposure }}</option>
                     {% endfor %}
@@ -47,7 +48,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="bloom">Bloom Time</label>
+                <label for="bloom">Bloom Month</label>
                 <select class="form-control" id="bloom">
                     <option></option>
                     {% for bloom in bloom_months %}
@@ -55,11 +56,33 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+            <div class="form-group">
+                <label for="color">Flower Color</label>
+                <select class="form-control" id="color">
+                    <option></option>
+                    {% for color in flower_colors %}
+                        <option>{{ color }}</option>
+                    {% endfor %}
+                </select>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="form-group">
+                <label for="memorial">Memorial Tree Name</label>
+                <select class="form-control" id="memorial">
+                    <option></option>
+                    {% for person in commemoration_people %}
+                        <option>{{ person }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="utahNative">
+                <label class="form-check-label" for="utahNative">Utah Native</label>
+
+                <input type="checkbox" class="form-check-input" id="availMem">
+                <label class="form-check-label" for="availMem">Available Memorial Trees</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="reset" class="btn btn-light">Reset Form</button>
         </form>
     </div>
 {% endblock %}
