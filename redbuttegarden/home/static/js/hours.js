@@ -1,6 +1,6 @@
 window.onload = setHours;
 
-let d = new Date(2021, 07, 4, 15);
+let d = new Date();
 let offset = d.getTimezoneOffset()/60;
 let offsetDifference = offset - 6;
 
@@ -97,7 +97,6 @@ function isConcertDay(concerts, busHours) {
 	// Loops through each concert to check if it's a concert day; Runs in O(N) time. 
 	concerts.forEach(concert => {
 		if (concert.getMonth() == month && concert.getDate() == day) {
-			busHours = "Today (Concert Day): 9AM-5PM*";
 			document.getElementById("gardenHours").innerHTML = busHours;
 
 			if (hours >= 9 && hours < 16) {
