@@ -135,7 +135,7 @@
             });
 
             $.ajax({
-                url: '{% url 'plants:plant-map' %}',
+                url: '{{ request.get_full_path }}',
                 success: function (data) {
                     const filteredCollections = JSON.parse(data);
 
