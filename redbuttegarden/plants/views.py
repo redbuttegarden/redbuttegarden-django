@@ -1,7 +1,11 @@
 import logging
+from urllib.parse import urlencode
+
+from django.contrib.postgres.search import SearchVector
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.templatetags.static import static
+from django.urls import reverse
 from geojson import Feature, Point, FeatureCollection, dumps
 from rest_framework import generics, viewsets, status
 
@@ -142,9 +146,45 @@ def csrf_view(request):
 def plant_map_view(request):
     if request.is_ajax() and request.method == 'GET':
         collections = Collection.objects.all()
-        family = request.session.get('family', None)
+
+        scientific_name = request.GET.get('scientific_name', None)
+        common_name = request.GET.get('common_name', None)
+        family = request.GET.get('family_name', None)
+        habit = request.GET.get('habits', None)
+        exposure = request.GET.get('exposures', None)
+        water_need = request.GET.get('water_needs', None)
+        bloom_month = request.GET.get('bloom_months', None)
+        flower_color = request.GET.get('flower_colors', None)
+        memorial_person = request.GET.get('memorial_person', None)
+        utah_native = request.GET.get('utah_native', None)
+        available_memorial = request.GET.get('available_memorial', None)
+
+        if scientific_name:
+            collections = collections.annotate(search=SearchVector('species__genus__name',
+                                                                          'species__name')
+                                                      .filter(search=scientific_name))
+        if common_name:
+            collections = collections.annotate(search=SearchVector('species__cultivar',
+                                                                   'species__vernacular_name'))
         if family:
-            collections = [collection for collection in collections.filter(species__genus__family_id=family)]
+            collections = collections.filter(species__genus__family_id=family)
+        if habit:
+            collections = collections.filter(species__habit=habit)
+        if exposure:
+            collections = collections.filter(species__exposure=exposure)
+        if water_need:
+            collections = collections.filter(species__water_regime=water_need)
+        if bloom_month:
+            collections = collections.filter(species__bloom_time__contains=[bloom_month])
+        if flower_color:
+            collections = collections.filter(species__flower_color__search=flower_color)
+        if memorial_person:
+            collections = collections.filter(memorial_person=memorial_person)
+        if utah_native:
+            collections = collections.filter(species__utah_native=utah_native)
+        if available_memorial:
+            collections = collections.filter(commemoration_category='Available')
+
 
         features = []
         for collection in collections:
@@ -199,8 +239,12 @@ def collection_search(request):
     if request.method == 'POST':
         form = CollectionSearchForm(request.POST)
         if form.is_valid():
-            request.session['family'] = form.cleaned_data['family_name']
-            return redirect('plants:plant-map')
+            url = reverse('plants:plant-map')
+            # Not false filter added to exclude boolean fields unless marked True
+            params = {k: v for k, v in form.cleaned_data.items() if v is not ''
+                      and v is not False}
+            url += '?' + urlencode(params)
+            return redirect(url)
     else:
         form = CollectionSearchForm()
 
