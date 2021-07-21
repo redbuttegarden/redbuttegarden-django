@@ -243,7 +243,8 @@ def collection_search(request):
             # Not false filter added to exclude boolean fields unless marked True
             params = {k: v for k, v in form.cleaned_data.items() if v is not ''
                       and v is not False}
-            url += '?' + urlencode(params)
+            if params:
+                url += '?' + urlencode(params)
             return redirect(url)
     else:
         form = CollectionSearchForm()

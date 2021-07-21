@@ -5,10 +5,17 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
     <link href="{% static 'css/plant_map.css' %}" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
+
+    <script src="https://kit.fontawesome.com/332beda55d.js" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block abnormal_content %}
     <div class="container-fluid">
+        <div id="map-load-overlay">
+            <div id="load-icon" class="fa-3x">
+                <i class="fas fa-sync-alt fa-spin"></i>
+            </div>
+        </div>
         <div id="map"></div>
         <div class="map-overlay">
             <fieldset>
@@ -134,75 +141,147 @@
                 map.addImage('Annual', image);
             });
 
-            $.ajax({
-                url: '{{ request.get_full_path }}',
-                success: function (data) {
-                    const filteredCollections = JSON.parse(data);
+            // If URL includes parameters send ajax request for filtered collections
+            // Otherwise, load geojson file of all collections
+            if (window.location.href.includes('?')) {
+                $.ajax({
+                    url: '{{ request.get_full_path }}',
+                    success: function (data) {
+                        const filteredCollections = JSON.parse(data);
 
-                    map.addSource('collections', {
-                        type: 'geojson',
-                        data: filteredCollections,
-                        cluster: true,
-                        clusterMaxZoom: 17, // Max zoom to cluster points on
-                        clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
-                    });
+                        map.addSource('collections', {
+                            type: 'geojson',
+                            data: filteredCollections,
+                            cluster: true,
+                            clusterMaxZoom: 17, // Max zoom to cluster points on
+                            clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
+                        });
 
-                    map.addLayer({
-                        id: 'clusters',
-                        type: 'circle',
-                        source: 'collections',
-                        filter: ['has', 'point_count'],
-                        paint: {
-                            // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-                            // with three steps to implement three types of circles:
-                            //   * Blue, 20px circles when point count is less than 100
-                            //   * Yellow, 30px circles when point count is between 100 and 750
-                            //   * Pink, 40px circles when point count is greater than or equal to 750
-                            'circle-color': [
-                                'step',
-                                ['get', 'point_count'],
-                                '#51bbd6',
-                                100,
-                                '#f1f075',
-                                750,
-                                '#f28cb1'
-                            ],
-                            'circle-radius': [
-                                'step',
-                                ['get', 'point_count'],
-                                20,
-                                100,
-                                30,
-                                750,
-                                40
-                            ]
-                        }
-                    });
+                        map.addLayer({
+                            id: 'clusters',
+                            type: 'circle',
+                            source: 'collections',
+                            filter: ['has', 'point_count'],
+                            paint: {
+                                // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+                                // with three steps to implement three types of circles:
+                                //   * Blue, 20px circles when point count is less than 100
+                                //   * Yellow, 30px circles when point count is between 100 and 750
+                                //   * Pink, 40px circles when point count is greater than or equal to 750
+                                'circle-color': [
+                                    'step',
+                                    ['get', 'point_count'],
+                                    '#51bbd6',
+                                    100,
+                                    '#f1f075',
+                                    750,
+                                    '#f28cb1'
+                                ],
+                                'circle-radius': [
+                                    'step',
+                                    ['get', 'point_count'],
+                                    20,
+                                    100,
+                                    30,
+                                    750,
+                                    40
+                                ]
+                            }
+                        });
 
-                    map.addLayer({
-                        id: 'cluster-count',
-                        type: 'symbol',
-                        source: 'collections',
-                        filter: ['has', 'point_count'],
-                        layout: {
-                            'text-field': '{point_count_abbreviated}',
-                            'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                            'text-size': 12
-                        }
-                    });
+                        map.addLayer({
+                            id: 'cluster-count',
+                            type: 'symbol',
+                            source: 'collections',
+                            filter: ['has', 'point_count'],
+                            layout: {
+                                'text-field': '{point_count_abbreviated}',
+                                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                                'text-size': 12
+                            }
+                        });
 
-                    map.addLayer({
-                        id: 'unclustered-point',
-                        type: 'symbol',
-                        source: 'collections',
-                        filter: ['!', ['has', 'point_count']],
-                        layout: {
-                            'icon-image': ['get', 'habit'],
-                            'icon-size': 2
-                        }
-                    });
-                }
-            })
+                        map.addLayer({
+                            id: 'unclustered-point',
+                            type: 'symbol',
+                            source: 'collections',
+                            filter: ['!', ['has', 'point_count']],
+                            layout: {
+                                'icon-image': ['get', 'habit'],
+                                'icon-size': 2
+                            }
+                        });
+
+                        document.getElementById("map-load-overlay").style.display = "none";
+                    }
+                });
+
+            } else {
+                map.addSource('collections', {
+                    type: 'geojson',
+                    data: 'https://zappa-rbg-dev-static-east.s3.amazonaws.com/media/collections.geojson',
+                    cluster: true,
+                    clusterMaxZoom: 17, // Max zoom to cluster points on
+                    clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
+                });
+
+                map.addLayer({
+                    id: 'clusters',
+                    type: 'circle',
+                    source: 'collections',
+                    filter: ['has', 'point_count'],
+                    paint: {
+                        // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+                        // with three steps to implement three types of circles:
+                        //   * Blue, 20px circles when point count is less than 100
+                        //   * Yellow, 30px circles when point count is between 100 and 750
+                        //   * Pink, 40px circles when point count is greater than or equal to 750
+                        'circle-color': [
+                            'step',
+                            ['get', 'point_count'],
+                            '#51bbd6',
+                            100,
+                            '#f1f075',
+                            750,
+                            '#f28cb1'
+                        ],
+                        'circle-radius': [
+                            'step',
+                            ['get', 'point_count'],
+                            20,
+                            100,
+                            30,
+                            750,
+                            40
+                        ]
+                    }
+                });
+
+                map.addLayer({
+                    id: 'cluster-count',
+                    type: 'symbol',
+                    source: 'collections',
+                    filter: ['has', 'point_count'],
+                    layout: {
+                        'text-field': '{point_count_abbreviated}',
+                        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                        'text-size': 12
+                    }
+                });
+
+                map.addLayer({
+                    id: 'unclustered-point',
+                    type: 'symbol',
+                    source: 'collections',
+                    filter: ['!', ['has', 'point_count']],
+                    layout: {
+                        'icon-image': ['get', 'habit'],
+                        'icon-size': 2
+                    }
+                });
+
+                document.getElementById("map-load-overlay").style.display = "none";
+            }
 
             map.on('movestart', function () {
                 // reset features filter as the map starts moving
