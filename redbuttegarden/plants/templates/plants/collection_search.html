@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Living Collection Search{% endblock %}
+
+{% block extra_css %}
+    <link href="{% static 'css/plant_search.css' %}" rel="stylesheet">
+{% endblock %}
 
 
 {% block content %}
