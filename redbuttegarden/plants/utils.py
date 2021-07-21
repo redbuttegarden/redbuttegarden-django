@@ -10,15 +10,14 @@ MAP_ICONS = {
     'Bulb': static('img/bulb_icon.png'),
     'Deciduous Shrub': static('img/deciduous_shrub_icon.png'),
     'Deciduous Tree': static('img/deciduous_tree_icon.png'),
-    'Deciduous Vine': static('img/deciduous_vine_icon.png'),
+    'Deciduous Vine': static('img/vine_icon.png'),
     'Evergreen Groundcover': static('img/evergreen_groundcover_icon.png'),
     'Evergreen Shrub': static('img/evergreen_shrub_icon.png'),
     'Evergreen Tree': static('img/evergreen_tree_icon.png'),
-    'Evergreen Vine': static('img/evergreen_vine_icon.png'),
+    'Evergreen Vine': static('img/vine_icon.png'),
     'Grass': static('img/grass_icon.png'),
     'Perennial': static('img/perennial_icon.png'),
     'Succulent': static('img/succulent_icon.png'),
-    'Tree': static('img/tree_icon.png')
 }
 
 def get_feature_collection(collections):

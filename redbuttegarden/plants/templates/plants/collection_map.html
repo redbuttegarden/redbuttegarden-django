@@ -32,24 +32,22 @@
             <div><span><img src="{% static 'img/bulb_icon.png' %}" alt="Icon for bulb plants"></span>Bulb</div>
             <div><span><img src="{% static 'img/deciduous_shrub_icon.png' %}" alt="Icon for deciduous shrubs"></span>Deciduous Shrub</div>
             <div><span><img src="{% static 'img/deciduous_tree_icon.png' %}" alt="Icon for deciduous trees"></span>Deciduous Tree</div>
-            <div><span><img src="{% static 'img/deciduous_vine_icon.png' %}" alt="Icon for deciduous vines"></span>Deciduous Vine</div>
+            <div><span><img src="{% static 'img/vine_icon.png' %}" alt="Icon for viney plants"></span>Vine</div>
             <div><span><img src="{% static 'img/evergreen_groundcover_icon.png' %}" alt="Icon for evergreen groundcover plants"></span>Evergreen Groundcover</div>
             <div><span><img src="{% static 'img/evergreen_shrub_icon.png' %}" alt="Icon for evergreen shrubs"></span>Evergreen Shrub</div>
             <div><span><img src="{% static 'img/evergreen_tree_icon.png' %}" alt="Icon for evergreen trees"></span>Evergreen Tree</div>
-            <div><span><img src="{% static 'img/evergreen_vine_icon.png' %}" alt="Icon for evergreen vines"></span>Evergreen Vine</div>
             <div><span><img src="{% static 'img/grass_icon.png' %}" alt="Icon for grasses"></span>Grass</div>
             <div><span><img src="{% static 'img/perennial_icon.png' %}" alt="Icon for perennial plants"></span>Perennial</div>
             <div><span><img src="{% static 'img/succulent_icon.png' %}" alt="Icon for succulent plants"></span>Succulent</div>
-            <div><span><img src="{% static 'img/tree_icon.png' %}" alt="Icon for trees"></span>Tree</div>
         </div>
         <div class="row">
             <div class="credits">
                 <h5>Icon Credit/Attribution</h5>
                 <div>Annual and evergreen groundcover icons made by <a href="https://www.flaticon.com/authors/darius-dan" title="Darius Dan">Darius Dan</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-                <div>Bulb, perennial, tree, succulent and deciduous tree icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                <div>Bulb, perennial, succulent and deciduous tree icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
                 <div>Deciduous and evergreen shrub icons made by <a href="https://www.flaticon.com/authors/bqlqn" title="bqlqn">bqlqn</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
                 <div>Evergreen tree icon made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-                <div>Deciduous vine and evergreen vine icons made by <a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp">Eucalyp</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                <div>Vine icon made by <a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp">Eucalyp</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
                 <div>Grass icon made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
             </div>
         </div>
@@ -182,11 +180,6 @@
 
                 map.addImage('Deciduous Tree', image);
             });
-            map.loadImage('/static/img/deciduous_vine_icon.png', function (error, image) {
-                if (error) throw error;
-
-                map.addImage('Deciduous Vine', image);
-            });
             map.loadImage('/static/img/evergreen_groundcover_icon.png', function (error, image) {
                 if (error) throw error;
 
@@ -202,9 +195,10 @@
 
                 map.addImage('Evergreen Tree', image);
             });
-            map.loadImage('/static/img/evergreen_vine_icon.png', function (error, image) {
+            map.loadImage('/static/img/vine_icon.png', function (error, image) {
                 if (error) throw error;
 
+                map.addImage('Deciduous Vine', image);
                 map.addImage('Evergreen Vine', image);
             });
             map.loadImage('/static/img/grass_icon.png', function (error, image) {
@@ -221,11 +215,6 @@
                 if (error) throw error;
 
                 map.addImage('Succulent', image);
-            });
-            map.loadImage('/static/img/tree_icon.png', function (error, image) {
-                if (error) throw error;
-
-                map.addImage('Tree', image);
             });
 
             // If URL includes parameters send ajax request for filtered collections
