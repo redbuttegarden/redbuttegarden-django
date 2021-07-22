@@ -29,6 +29,8 @@ urlpatterns += [
     path('accounts/', include('custom_user.urls', namespace='custom-user')),
     path('concerts/', include('concerts.urls', namespace='concerts')),
 
+    path('django-admin/', admin.site.urls),
+
     path('admin/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
 
