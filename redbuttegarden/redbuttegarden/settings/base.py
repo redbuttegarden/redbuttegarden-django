@@ -197,7 +197,7 @@ MIDDLEWARE_CLASSES = (
     'cas.middleware.CASMiddleware',
 )
 CAS_SERVER_URL = "https://go.utah.edu/cas/"
-WAGTAIL_FRONTEND_LOGIN_URL = CAS_SERVER_URL
+WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'cas.backends.CASBackend',
