@@ -197,7 +197,7 @@ MIDDLEWARE_CLASSES = (
     'cas.middleware.CASMiddleware',
 )
 CAS_SERVER_URL = "https://go.utah.edu/cas/"
-WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL = CAS_SERVER_URL
+WAGTAIL_FRONTEND_LOGIN_URL = CAS_SERVER_URL
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'cas.backends.CASBackend',
@@ -221,3 +221,7 @@ EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 DEFAULT_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
 WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
 #WAGTAILADMIN_NOTIFICATION_USE_HTML = True
+
+# This was setup to allow authentication for viewing VR Tours
+LOGIN_URL = '/accounts/login'
+LOGIN_REDIRECT_URL = '/'
