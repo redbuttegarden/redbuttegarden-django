@@ -2,7 +2,7 @@ from .dev import *
 
 DEBUG = True
 
-ALLOWED_HOSTS += ['train.localhost', 'localhost']
+ALLOWED_HOSTS += ['train.localhost', 'localhost', 'testserver']
 
 BASE_URL = 'http://localhost:8000'
 
