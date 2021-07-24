@@ -158,7 +158,7 @@ def plant_map_view(request):
         if scientific_name:
             collections = collections.annotate(search=SearchVector('species__genus__name',
                                                                           'species__name')
-                                                      .filter(search=scientific_name))
+                                               ).filter(search=scientific_name)
         if common_name:
             collections = collections.annotate(search=SearchVector('species__cultivar',
                                                                    'species__vernacular_name'))
