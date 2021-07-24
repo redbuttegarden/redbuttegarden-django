@@ -226,3 +226,7 @@ WAGTAILADMIN_NOTIFICATION_USE_HTML = True
 PASSWORD_REQUIRED_TEMPLATE = 'custom_user/password_required.html'
 LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/'
+
+# Prep for upgrade to Django 3.2
+# https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

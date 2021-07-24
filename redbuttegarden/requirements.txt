@@ -1,7 +1,7 @@
 anyascii==0.1.7
 argcomplete==1.11.1
 arrow==0.14.7
-asgiref==3.2.5
+asgiref==3.4.1
 attrs==20.3.0
 beautifulsoup4==4.8.0
 boto3==1.17.28
@@ -10,7 +10,7 @@ certifi==2019.11.28
 cfn-flip==1.2.2
 chardet==3.0.4
 click==7.1.1
-Django==3.0.14
+Django==3.2.5
 django-cas-client==1.5.3
 django-cors-headers==3.5.0
 django-csp==3.7
