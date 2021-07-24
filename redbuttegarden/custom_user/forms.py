@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Permission
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from wagtail.users.forms import UserEditForm, UserCreationForm
 

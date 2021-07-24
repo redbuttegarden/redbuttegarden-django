@@ -1,7 +1,7 @@
 import logging
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, gettext_lazy
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin.edit_handlers import MultiFieldPanel, TabbedInterface, ObjectList
 from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -55,11 +55,11 @@ class AbstractBase(Page):
     def get_edit_handler(cls):
         edit_handler = TabbedInterface([
             ObjectList(cls.content_panels,
-                       heading=gettext_lazy('Content')),
+                       heading=_('Content')),
             ObjectList(cls.promote_panels,
-                       heading=gettext_lazy('Promote')),
+                       heading=_('Promote')),
             ObjectList(cls.settings_panels,
-                       heading=gettext_lazy('Settings'),
+                       heading=_('Settings'),
                        classname='settings'),
         ])
         return edit_handler.bind_to(model=cls)
