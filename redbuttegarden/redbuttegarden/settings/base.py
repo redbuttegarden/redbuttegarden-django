@@ -220,7 +220,7 @@ EMAIL_HOST_USER = os.environ.get('GMAIL_ACCOUNT')
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 DEFAULT_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
 WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
-#WAGTAILADMIN_NOTIFICATION_USE_HTML = True
+WAGTAILADMIN_NOTIFICATION_USE_HTML = True
 
 # This was setup to allow authentication for viewing VR Tours
 PASSWORD_REQUIRED_TEMPLATE = 'custom_user/password_required.html'
