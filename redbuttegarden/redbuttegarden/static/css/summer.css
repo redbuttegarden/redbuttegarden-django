@@ -1,12 +1,19 @@
-@import url(//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,300,400,700);
-
 html * {
-    font-family: 'Open Sans';
+    font-family: 'Open Sans', Impact, serif;
 }
 
 html {
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
+}
+
+.wf-loading {
+    font-size: 15px;
+    line-height: 1.7;
+    font-family: Impact;
+    font-weight: 300;
+    letter-spacing: 1.55px;
+    word-spacing: 0.15px;
 }
 
 img {
