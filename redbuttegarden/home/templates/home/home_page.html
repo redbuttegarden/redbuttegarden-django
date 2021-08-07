@@ -1,9 +1,14 @@
 {% extends "base.html" %}
-{% load static wagtailcore_tags %}
+{% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
-{% block extra_css %}{% endblock extra_css %}
+{% block extra_css %}
+    {% with page.event_slides.all|first as first_slide %}
+        {% image first_slide.image original as tmp_photo %}
+        <link rel="preload" href="{{ tmp_photo.url }}" as="image">
+    {% endwith %}
+{% endblock extra_css %}
 
 {% block extra_includes %}
     <div id="slider-wrapper">
@@ -79,7 +84,7 @@
                         <span class="page-down-icon">
                             <picture>
                                 <source srcset="{% static 'img/down-arrow.webp' %}" type="image/webp">
-                                <img alt="downward-arrow" src="{% static 'img/down-arrow.png' %}" />
+                                <img alt="downward-arrow" src="{% static 'img/down-arrow.png' %}" width="75em" height="25em"/>
                             </picture>
                         </span>
                     </div>
@@ -139,7 +144,7 @@
                         <a href="{% slugurl 'whats-blooming-now' %}">
                             <picture>
                                 <source srcset="{% static 'img/blog1.webp' %}" type="image/webp">
-                                <img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'img/blog1.jpg' %}">
+                                <img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'img/blog1.jpg' %}" width="588em" height="332em">
                             </picture>
                         </a>
                     </div>
@@ -148,7 +153,7 @@
                         <a href="/social-media">
                             <picture>
                                 <source srcset="{% static 'img/socialMedia-small.webp' %}" type="image/webp">
-                                <img alt="hand holding smartphone" class="hover" src="{% static 'img/socialMedia-small.png' %}">
+                                <img alt="hand holding smartphone" class="hover" src="{% static 'img/socialMedia-small.png' %}" width="588em" height="332em">
                             </picture>
                         </a>
                     </div>
@@ -170,7 +175,7 @@
                         <a href="{% slugurl 'calendar' %}">
                             <picture>
                                 <source srcset="{% static 'img/whats-happening.webp' %}" type="image/webp">
-                                <img alt="text says whats happening over picture of red butte garden amphitheater" class="hover" src="{% static 'img/whats-happening.jpg' %}">
+                                <img alt="text says whats happening over picture of red butte garden amphitheater" class="hover" src="{% static 'img/whats-happening.jpg' %}" width="1280em" height="325em">
                             </picture>
                         </a>
                     </div>
