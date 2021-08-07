@@ -560,71 +560,6 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     float: left;
 }
 
-/*
-
-.rbghours {
-    display: block;
-    margin: 40px auto 0 auto;
-    width: 138px;
-    height: 84px;
-    background: url('/images/core/sprites.png') -0px -320px ;
-}
-
-.rbghours:hover {
-    opacity: .9;
-}
-
-.rbgadmission{
-    display:block;
-    margin: 40px auto 0 auto;
-    width:138px;
-    height:84px;
-    background: url('/images/core/sprites.png') -140px -325px ;
-}
-
-.rbgadmission:hover {
-    opacity: .9;
-}
-
-.rbgdirections {
-    display: block;
-    margin: 40px auto 0 auto;
-    width:138px;
-    height: 84px;
-    background: url('/images/core/sprites.png') -310px -169px ;
-}
-
-.rbgdirections:hover {
-    opacity: .9;
-}
-
-.rbgweather {
-    display: block;
-    margin: 40px auto 0 auto;
-    width:138px;
-    height: 84px;
-    background: url('/images/core/sprites.png') -172px -169px ;
-}
-
-.rbgweather:hover {
-    opacity: .9;
-}
-
-#rbgadmission, #rbgadmission2, #rbgdirections, #rbgweather, #rbghours {
-    min-width: 233px;
-    min-height: 200px;
-}
-
-#rbgdirectionshidden, #rbgweatherhidden, #rbghidden {
-    display: none;
-}
-
-#rbgweatherhidden {
-    height: 100%
-}
-
-*/
-
 .infoempty1, .infoempty2 {
     min-width: 233px;
 }
@@ -787,24 +722,33 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     line-height: 19px;
     color: white;
     font-size: 12px;
-    background: url(../img/b21.png) no-repeat;
     overflow: hidden;
     cursor: pointer;
 }
 
-.jssorb21 div {
+.no-webp .jssorb21 div, .no-webp .jssorb21 div:hover, .no-webp .jssorb21 .av {
+    background: url(../img/bullets.png) no-repeat;
+}
+
+.webp .jssorb21 div, .webp .jssorb21 div:hover, .webp .jssorb21 .av {
+    background: url(../img/bullets.webp) no-repeat;
+}
+
+.webp .jssorb21 div, .no-webp .jssorb21 div {
     background-position: -5px -5px;
 }
 
-.jssorb21 div:hover, .jssorb21 .av:hover {
+.webp .jssorb21 div:hover, .webp .jssorb21 .av:hover,
+.no-webp .jssorb21 div:hover, .no-webp .jssorb21 .av:hover {
     background-position: -35px -5px;
 }
 
-.jssorb21 .av {
+.webp .jssorb21 .av, .no-webp .jssorb21 .av {
     background-position: -65px -5px;
 }
 
-.jssorb21 .dn, .jssorb21 .dn:hover {
+.webp .jssorb21 .dn, .webp .jssorb21 .dn:hover,
+.no-webp .jssorb21 .dn, .no-webp .jssorb21 .dn:hover{
     background-position: -95px -5px;
 }
 
@@ -831,31 +775,38 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     width: 55px;
     height: 55px;
     cursor: pointer;
-    background: url(../img/a21.png) center center no-repeat;
     overflow: hidden;
 }
 
-.jssora21l {
+.no-webp .jssora21l, .no-webp .jssora21r {
+    background: url(../img/lr-arrows.png) center center no-repeat;
+}
+
+.webp .jssora21l, .webp .jssora21r {
+    background: url(../img/lr-arrows.webp) center center no-repeat;
+}
+
+.webp .jssora21l, .no-webp .jssora21l {
     background-position: -3px -33px;
 }
 
-.jssora21r {
+.webp .jssora21r, .no-webp .jssora21r {
     background-position: -63px -33px;
 }
 
-.jssora21l:hover {
+.webp .jssora21l:hover, .no-webp .jssora21l:hover {
     background-position: -123px -33px;
 }
 
-.jssora21r:hover {
+.webp .jssora21r:hover, .no-webp .jssora21r:hover {
     background-position: -183px -33px;
 }
 
-.jssora21l.jssora21ldn {
+.webp .jssora21l.jssora21ldn, .no-webp .jssora21l.jssora21ldn {
     background-position: -243px -33px;
 }
 
-.jssora21r.jssora21rdn {
+.webp .jssora21r.jssora21rdn, .no-webp .jssora21r.jssora21rdn {
     background-position: -303px -33px;
 }
 
@@ -985,101 +936,211 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 .yelp {
     width:39px;
     height:39px;
+}
+
+.no-webp .yelp {
     background: url('../img/sprites.png') -200px -90px;
 }
 
-.yelp:hover {
+.webp .yelp {
+    background: url('../img/sprites.webp') -200px -90px;
+}
+
+.no-webp .yelp:hover {
     background: url('../img/sprites.png') -160px -90px;
+}
+
+.webp .yelp:hover {
+    background: url('../img/sprites.webp') -160px -90px;
 }
 
 .tripadvisor {
     width:39px;
     height: 39px;
+}
+
+.no-webp .tripadvisor {
     background: url('../img/sprites.png') -360px -90px;
 }
 
-.tripadvisor:hover {
+.webp .tripadvisor {
+    background: url('../img/sprites.webp') -360px -90px;
+}
+
+.no-webp .tripadvisor:hover {
     background: url('../img/sprites.png') -320px -90px;
+}
+
+.webp .tripadvisor:hover {
+    background: url('../img/sprites.webp') -320px -90px;
 }
 
 .googleplus {
     width:39px;
     height: 39px;
+}
+
+.no-webp .googleplus {
     background: url('../img/sprites.png') -160px -130px;
 }
 
-.googleplus:hover {
+.webp .googleplus {
+    background: url('../img/sprites.webp') -160px -130px;
+}
+
+.no-webp .googleplus:hover {
     background: url('../img/sprites.png') -200px -130px;
+}
+
+.webp .googleplus:hover {
+    background: url('../img/sprites.webp') -200px -130px;
 }
 
 .facebook {
     width:39px;
     height: 39px;
+}
+
+.no-webp .facebook {
     background: url('../img/sprites.png') -40px -90px;
 }
 
-.facebook:hover {
+.webp .facebook {
+    background: url('../img/sprites.webp') -40px -90px;
+}
+
+.no-webp .facebook:hover {
     background: url('../img/sprites.png') -0px -90px;
+}
+
+.webp .facebook:hover {
+    background: url('../img/sprites.webp') -0px -90px;
 }
 
 .instagram {
     width:39px;
     height: 39px;
+}
+
+.no-webp .instagram {
     background: url('../img/sprites.png') -240px -130px;
 }
 
-.instagram:hover {
+.webp .instagram {
+    background: url('../img/sprites.webp') -240px -130px;
+}
+
+.no-webp .instagram:hover {
     background: url('../img/sprites.png') -280px -130px;
+}
+
+.webp .instagram:hover {
+    background: url('../img/sprites.webp') -280px -130px;
 }
 
 .twitter {
     width:39px;
     height: 39px;
+}
+
+.no-webp .twitter {
     background: url('../img/sprites.png') -280px -90px;
 }
 
-.twitter:hover {
+.webp .twitter {
+    background: url('../img/sprites.webp') -280px -90px;
+}
+
+.no-webp .twitter:hover {
     background: url('../img/sprites.png') -240px -90px;
+}
+
+.webp .twitter:hover {
+    background: url('../img/sprites.webp') -240px -90px;
 }
 
 .youtube {
     width:39px;
     height: 39px;
+}
+
+.no-webp .youtube {
     background: url('../img/sprites.png') -120px -90px;
 }
 
-.youtube:hover {
+.webp .youtube {
+    background: url('../img/sprites.webp') -120px -90px;
+}
+
+.no-webp .youtube:hover {
     background: url('../img/sprites.png') -80px -90px;
+}
+
+.webp .youtube:hover {
+    background: url('../img/sprites.webp') -80px -90px;
 }
 
 .snapchat {
     width:39px;
     height: 39px;
+}
+
+.no-webp .snapchat {
     background: url('../img/sprites.png') -320px -130px;
 }
 
-.snapchat:hover {
+.webp .snapchat {
+    background: url('../img/sprites.webp') -320px -130px;
+}
+
+.no-webp .snapchat:hover {
     background: url('../img/sprites.png') -360px -130px;
+}
+
+.no-webp .snapchat:hover {
+    background: url('../img/sprites.webp') -360px -130px;
 }
 
 .reddit {
     width:39px;
     height: 39px;
+}
+
+.no-webp .reddit {
     background: url('../img/sprites.png') -0px -130px;
 }
 
-.reddit:hover {
+.webp .reddit {
+    background: url('../img/sprites.webp') -0px -130px;
+}
+
+.no-webp .reddit:hover {
     background: url('../img/sprites.png') -40px -130px;
+}
+
+.webp .reddit:hover {
+    background: url('../img/sprites.webp') -40px -130px;
 }
 
 .pinterest {
     width:39px;
     height: 39px;
+}
+
+.no-webp .pinterest {
     background: url('../img/sprites.png') -80px -130px;
 }
 
-.pinterest:hover {
+.webp .pinterest {
+    background: url('../img/sprites.webp') -80px -130px;
+}
+
+.no-webp .pinterest:hover {
     background: url('../img/sprites.png') -120px -130px;
+}
+
+.webp .pinterest:hover {
+    background: url('../img/sprites.webp') -120px -130px;
 }
 
 /* End Footer Sprite CSS */
@@ -1387,33 +1448,6 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     border: 1px solid black;
 }
 
-/* Begin CSS for membership page sprites */
-
-/* Generated by http://css.spritegen.com CSS Sprite Generator */
-
-.memsprite01, .memsprite02, .memsprite03, .memsprite04, .memsprite05,
-.memsprite06, .memsprite07, .memsprite08, .memsprite09, .memsprite10
-{
-    background: url('../img/memsprite.png') no-repeat;
-}
-
-.memsprite01 { background-position: -0px -0px; width: 175px; height: 225px; }
-.memsprite02 { background-position: -175px -0px; width: 175px; height: 225px; }
-.memsprite03 { background-position: -350px -0px; width: 175px; height: 225px; }
-.memsprite04 { background-position: -0px -225px; width: 175px; height: 225px; }
-.memsprite05 { background-position: -175px -225px; width: 175px; height: 225px; }
-.memsprite06 { background-position: -350px -225px; width: 175px; height: 225px; }
-.memsprite07 { background-position: -0px -450px; width: 175px; height: 225px; }
-.memsprite08 { background-position: -175px -450px; width: 175px; height: 225px; }
-.memsprite09 { background-position: -350px -450px; width: 175px; height: 225px; }
-.memsprite10 { background-position: -0px -675px; width: 175px; height: 225px; }
-
-/* End CSS for membership page sprites */
-
-/**********************************************************/
-/**************  End CSS for membership page **************/
-/**********************************************************/
-
 /* Begin Wrapper for Google Maps */
 
 #googlemapswrapper {
@@ -1422,7 +1456,6 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-
 }
 
 /* End Wrapper for Google Maps */
@@ -2359,39 +2392,69 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 /* Test Sprite for Presentation */
 /********************************/
 
-.rbgadmission, .rbghours, .rbgdirections, .rbgweather
-{ max-width: 100%; background-size: 100%; background-image: url('../img/sprite-test.png'); }
+.rbgadmission, .rbghours, .rbgdirections, .rbgweather {
+    max-width: 100%;
+    background-size: 100%;
+}
 
 .rbghours {
     display:block;
     margin: 20px auto 0 auto;
-    width:196px;
+    width:135px;
     height:84px;
-    background: url('../img/sprite-test.png') 0px -84px ;
+}
+
+.no-webp .rbghours {
+    background: url('../img/sprites.png') 0 -323px ;
+}
+
+.webp .rbghours {
+    background: url('../img/sprites.webp') 0 -323px ;
 }
 
 .rbgadmission {
     display:block;
     margin: 20px auto 0 auto;
-    width:196px;
+    width:135px;
     height:84px;
-    background: url('../img/sprite-test.png') 0px 0px ;
+}
+
+.no-webp .rbgadmission {
+    background: url('../img/sprites.png') -150px -328px ;
+}
+
+.webp .rbgadmission {
+    background: url('../img/sprites.webp') -150px -328px ;
 }
 
 .rbgdirections {
     display:block;
     margin: 20px auto 0 auto;
-    width:196px;
+    width:135px;
     height:84px;
-    background: url('../img/sprite-test.png') 0px -168px ;
+}
+
+.no-webp .rbgdirections {
+    background: url('../img/sprites.png') -315px -170px ;
+}
+
+.webp .rbgdirections {
+    background: url('../img/sprites.webp') -315px -170px ;
 }
 
 .rbgweather {
     display:block;
     margin: 20px auto 0 auto;
-    width:196px;
+    width:135px;
     height:84px;
-    background: url('../img/sprite-test.png') 0px -254px ;
+}
+
+.no-webp .rbgweather {
+    background: url('../img/sprites.png') -180px -170px ;
+}
+
+.webp .rbgweather {
+    background: url('../img/sprites.webp') -180px -170px ;
 }
 
 /* Hides image on mobile devices */

@@ -47,13 +47,14 @@
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="{% static 'css/summer.css' %}">
+    <script src="{% static 'js/modernizr-webp.min.js' %}"></script>
 
     {% include "includes/searchbar-toggle.html" %}
 
     {# Global stylesheets #}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/rbg.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/accessibility.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/rbg.css' %}">
+    <link rel="stylesheet" href="{% static 'css/summer.css' %}">
 
     {% block extra_css %}
         {# Override this in templates to add extra stylesheets #}
