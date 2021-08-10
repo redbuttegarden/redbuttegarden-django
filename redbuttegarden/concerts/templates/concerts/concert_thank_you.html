@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+    <!-- Etix Code -->
+    <script src="https://www.etix.com/ticket/bundles/websiteConversion.bundle.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Thank you!</h1>
+            <p>Hello, <span id="firstName"></span></p>
+            <p>Thank you for your order. Your total is <span id="total"></span>&nbsp;<span id="currency"></span></p>
+
+
+            <!-- (optional) display etix order confirmation -->
+            <div class="etix-order-confirmation"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <!-- get order data -->
+    <script>
+        const order = getEtixOrder();
+        const firstName = document.getElementById("firstName");
+        const total = document.getElementById("total");
+        const currency = document.getElementById("currency");
+
+        firstName.textContent = order.firstName;
+        total.textContent = order.total;
+        currency.textContent = order.currency;
+    </script>
+
+    <!-- KSL Conversion Tracking -->
+    <script async src='https://tag.simpli.fi/sifitag/334e2690-d5ee-0139-47a1-06abc14c0bc6'></script>
+{% endblock %}
