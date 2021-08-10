@@ -1,22 +1,20 @@
 {% extends 'base.html' %}
 
+{% block title %}Red Butte Garden | Thank You!{% endblock %}
+
 {% block extra_css %}
     <!-- Etix Code -->
     <script src="https://www.etix.com/ticket/bundles/websiteConversion.bundle.js"></script>
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-sm-12">
-            <h1>Thank you!</h1>
-            <p>Hello, <span id="firstName"></span></p>
-            <p>Thank you for your order. Your total is <span id="total"></span>&nbsp;<span id="currency"></span></p>
+    <h1>Thank you!</h1>
+    <p>Hello, <span id="firstName"></span></p>
+    <p>Thank you for your order. Your total is <span id="total"></span>&nbsp;<span id="currency"></span></p>
 
 
-            <!-- (optional) display etix order confirmation -->
-            <div class="etix-order-confirmation"></div>
-        </div>
-    </div>
+    <!-- (optional) display etix order confirmation -->
+    <div class="etix-order-confirmation"></div>
 {% endblock %}
 
 {% block extra_js %}
