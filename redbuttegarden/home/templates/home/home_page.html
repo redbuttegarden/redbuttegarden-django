@@ -3,13 +3,6 @@
 
 {% block body_class %}template-homepage{% endblock %}
 
-{% block extra_css %}
-    {% with page.event_slides.all|first as first_slide %}
-        {% image first_slide.image original as tmp_photo %}
-        <link rel="preload" href="{{ tmp_photo.url }}" as="image">
-    {% endwith %}
-{% endblock extra_css %}
-
 {% block extra_includes %}
     <div id="slider-wrapper">
         <div id="inner-slider-wrapper1">
