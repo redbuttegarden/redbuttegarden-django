@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sitemaps',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
@@ -197,7 +198,7 @@ MIDDLEWARE_CLASSES = (
     'cas.middleware.CASMiddleware',
 )
 CAS_SERVER_URL = "https://go.utah.edu/cas/"
-WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL = CAS_SERVER_URL
+WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'cas.backends.CASBackend',
@@ -220,4 +221,13 @@ EMAIL_HOST_USER = os.environ.get('GMAIL_ACCOUNT')
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 DEFAULT_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
 WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
-#WAGTAILADMIN_NOTIFICATION_USE_HTML = True
+WAGTAILADMIN_NOTIFICATION_USE_HTML = True
+
+# This was setup to allow authentication for viewing VR Tours
+PASSWORD_REQUIRED_TEMPLATE = 'custom_user/password_required.html'
+LOGIN_URL = '/accounts/login'
+LOGIN_REDIRECT_URL = '/'
+
+# Prep for upgrade to Django 3.2
+# https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
