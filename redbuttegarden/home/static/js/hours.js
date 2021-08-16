@@ -4,8 +4,8 @@ let d = new Date();
 let offset = d.getTimezoneOffset()/60;
 let offsetDifference = offset - 6;
 
-let month = 9;
-let day = 20;
+let month = d.getMonth() + 1;
+let day = d.getDate();
 let hours = d.getHours() + offsetDifference;
 let minutes = d.getMinutes();
 let minutesBeforeOpeningOrClosing = 60 - minutes;
