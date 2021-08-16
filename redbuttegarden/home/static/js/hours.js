@@ -15,6 +15,7 @@ let status;
 
 // Concert List 2021 for easier hour mapping
 let concerts = []
+
 // #region CONCERT 'PUSH' OPERATIONS (HIDDEN)
 concerts.push(new Date(2021, 07, 30));
 concerts.push(new Date(2021, 08, 01));
@@ -91,7 +92,9 @@ function setHours() {
 }
 
 
-// Sets concert day status; Returns true if it's a concert day
+/**
+ *  Sets concert day status; Returns true if it's a concert day
+ **/ 
 function isConcertDay(concerts, busHours) {
 	didSetHours = false; 
 
