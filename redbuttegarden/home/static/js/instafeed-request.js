@@ -1,4 +1,4 @@
-const access_token = "EAAHc3xMKegsBAKQpByhzFxasOoJcmmm4Xl8zQCWBZBZAN7xrCpYcz7UvEPSwJ3yDWNeGnHlQvT0fAVRH4EaJUBt7UZBXt9bXCskzpazeyGUKcXc6XOFQqh4UnsH3alJhzEeUQn5tkPrj21WYDWzr5DKGCxDjVLPWqZCsZAKtBHSuCsSLuNEPv9SbTWroXagl6mpzjYg7xW3MRQKcP49FZB"
+const access_token = "EAAHc3xMKegsBAMpD6SFLbJLFAGaDFZCzHc8OkFQGYebaOqJTTYBAjUUgpoODhj98cKXJEfTKAPEtNZAZAhzl6wGrbd6nWXeLiFMB65DjDBG7Bb9MI9TBfWZB0x0FljHhzNEMIiD7ULM8sKLEWmPQy5Wo8ydE8P97Xwx383YqsG2czWMHgwZBo"
 const ig_user = "17841401164963561"
 
 fetch(`https://graph.facebook.com/v11.0/${ig_user}/media?access_token=${access_token}`)
