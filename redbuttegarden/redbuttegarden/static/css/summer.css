@@ -1141,7 +1141,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 /* Added to make Bootstrap row divs with pictures the same height  */
 
 .row, .row-fluid {
-	overflow: hidden !important;
+	overflow: hidden;
 }
 
 /*** End Bootstrap Change ***/

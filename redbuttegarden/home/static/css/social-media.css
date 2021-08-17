@@ -16,11 +16,11 @@ html {
 html, body {
     max-width: 100%;
     overflow-x: hidden;
+    overflow-y: visible;
 }
 
 img {
-    image-rendering: auto; /* Makes images render smoother in Chrome (and Safari) - if you don't have this they can appear blurry */
-    /* image-rendering: -webkit-optimize-contrast; Chrome (and Safari) */
+    image-rendering: auto;
 }
 
 h4 {
@@ -95,6 +95,7 @@ h4 {
     border: none;
     background-color: white;
 }
+
 
 @-webkit-keyframes fadeEffect {
     from {
@@ -350,6 +351,10 @@ h4 {
 
 /* 500px for iPhones/Androids. */
 @media all and (max-width: 500px) {
+
+    .row, .row-fluid {
+        overflow: scroll !important;
+    }
 
     .tab-wrapper {
         margin: 0 auto;
