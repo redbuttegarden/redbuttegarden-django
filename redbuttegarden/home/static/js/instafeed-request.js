@@ -1,4 +1,4 @@
-const access_token = "EAAHc3xMKegsBAMpD6SFLbJLFAGaDFZCzHc8OkFQGYebaOqJTTYBAjUUgpoODhj98cKXJEfTKAPEtNZAZAhzl6wGrbd6nWXeLiFMB65DjDBG7Bb9MI9TBfWZB0x0FljHhzNEMIiD7ULM8sKLEWmPQy5Wo8ydE8P97Xwx383YqsG2czWMHgwZBo"
+const access_token = "EAAHc3xMKegsBANOwlBHJO3lacWalJNltNusalIZBmkORDv59KitRkSKi20RqefZAPhff893AXFY7fTGokWZCciZAZCHVPljZCZC2QarjBFzom1SalMzK8nVAVJQdQHcjzqIwvTRql7YbkMsxT89dGwmdIcPpLa9qKjAoc792kW1npzOoT3kP0ZCp"
 const ig_user = "17841401164963561"
 
 fetch(`https://graph.facebook.com/v11.0/${ig_user}/media?access_token=${access_token}`)
@@ -32,12 +32,12 @@ fetch(`https://graph.facebook.com/v11.0/${ig_user}/media?access_token=${access_t
 
                     let mediaImg = document.createElement('img')
                     mediaImg.id = "media-img"
-                    
-                    if (media_url != "") mediaImg.src = media_url 
+
+                    if (media_url != "") mediaImg.src = media_url
                     else mediaParent.style = "display: none;"
 
-                    mediaImg.style = (window.matchMedia("(max-width: 420px) and (max-height: 830px)").matches 
-                        ? "width: 150px; height: 150px;" 
+                    mediaImg.style = (window.matchMedia("(max-width: 420px) and (max-height: 830px)").matches
+                        ? "width: 150px; height: 150px;"
                         : "width: 350px; height: 350px;")
 
                     let mediaCaption = document.createElement('p')
