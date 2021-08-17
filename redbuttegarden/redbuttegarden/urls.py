@@ -5,6 +5,7 @@ from django.urls import include, path
 from django.contrib import admin
 
 from wagtail.admin import urls as wagtailadmin_urls
+from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
@@ -25,7 +26,9 @@ if not os.environ.get('DJANGO_SETTINGS_MODULE') in ['redbuttegarden.settings.loc
     ]
 
 urlpatterns += [
+    path('sitemap.xml', sitemap),
     path('', include('home.urls', namespace='home')),
+    path('accounts/', include('custom_user.urls', namespace='custom-user')),
     path('concerts/', include('concerts.urls', namespace='concerts')),
 
     path('django-admin/', admin.site.urls),
@@ -34,16 +37,20 @@ urlpatterns += [
     path('documents/', include(wagtaildocs_urls)),
 
     path('search/', search_views.search, name='search'),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 
 if settings.DEBUG:
+    import debug_toolbar
     from django.conf.urls.static import static
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
     # Serve static and media files from development server
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]
 
 urlpatterns = urlpatterns + [
     # For anything not caught by a more specific rule above, hand over to
