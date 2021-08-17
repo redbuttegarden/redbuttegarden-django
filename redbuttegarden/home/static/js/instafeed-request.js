@@ -1,4 +1,4 @@
-const access_token = "EAAHc3xMKegsBANOwlBHJO3lacWalJNltNusalIZBmkORDv59KitRkSKi20RqefZAPhff893AXFY7fTGokWZCciZAZCHVPljZCZC2QarjBFzom1SalMzK8nVAVJQdQHcjzqIwvTRql7YbkMsxT89dGwmdIcPpLa9qKjAoc792kW1npzOoT3kP0ZCp"
+const access_token = window.document.getElementById("fb_token").innerText;
 const ig_user = "17841401164963561"
 
 fetch(`https://graph.facebook.com/v11.0/${ig_user}/media?access_token=${access_token}`)
