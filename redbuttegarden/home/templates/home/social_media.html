@@ -89,29 +89,10 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
 
-<script>
-    // Get the element with id="defaultOpen" and click on it
-    document.getElementById("defaultOpen").click();
-</script>
-<script>
-    // Executes only for mobile devices
-    if (window.matchMedia('(max-width: 500px)').matches) {
-        fb_page = document.getElementsByClassName("fb-page")
-        fb_page[0].setAttribute("data-width", "200")
-
-        // Loop through all 5 button texts and remove names since it's mobile
-        for (let i = 0; i < 5; i++)
-            document.getElementsByClassName("button-text")[i].style.display = "none"
-
-        console.log(document.getElementsByClassName("lightwidget-widget")[0].style.width = "125%")
-    }
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="{% static 'js/instafeed-request.js' %}"></script>
 {% block extra_js %}
+    <script src="{% static 'js/instafeed-request.js' %}"></script>
     <script src="{% static 'js/tabs.js' %}"></script>
     <script>
         // Get the element with id="defaultOpen" and click on it
