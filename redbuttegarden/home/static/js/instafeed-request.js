@@ -1,4 +1,4 @@
-const access_token = "EAAHc3xMKegsBAGK7vcWQT6NntJZCmiZAZCZBqUNlN4yomeOhy6sxLu0SRft13fR5Lcps4AeXZCEU2A5YuZCC3tc4BgKbUqkjG0AEfZACpiT9HQjUtyH8ImZBkFO9IgUUjYPaKECkcxOIXNXvBy8xM4bQOAMTv30NGo6JZBK3ERNPtjooat63z2UTJSvmSkRLTihyEYO7Ya3YJvszmkOixX118xubCazKMVDMZD"
+const access_token = "EAAHc3xMKegsBAJ9b1DTNT5JhRsBvgZAfXdG7mRZAtF0nyYv8ZCCRY4dxZAAt4XHceqvN5K0Q1MkX8YDIgEmjt6X3KhjOpIZBqgmDlEwZClFIqHxnZCoM5WwdOeULOZCdmfct5ala3nBjwOtSza8ETEgKwdOvLRgZCswKJn2KUsg2dorXQolnaiZBRbgYTdM2ZC245FBK9ZAJxE2jLZC9s83RfXYXCiGDt99C3nrIZD"
 const ig_user = "17841401164963561"
 
 fetch(`https://graph.facebook.com/v11.0/${ig_user}/media?access_token=${access_token}`)
@@ -23,6 +23,7 @@ fetch(`https://graph.facebook.com/v11.0/${ig_user}/media?access_token=${access_t
                     let container = document.getElementById("images-container")
                     let mediaParent = document.createElement('div')
                     mediaParent.id = "media-parent"
+                    mediaParent.style = "margin-bottom: 3rem;"
 
                     let mediaLink = document.createElement('a')
                     mediaLink.href = permalink
@@ -35,13 +36,14 @@ fetch(`https://graph.facebook.com/v11.0/${ig_user}/media?access_token=${access_t
                     if (media_url != "") mediaImg.src = media_url 
                     else mediaParent.style = "display: none;"
 
-                    mediaImg.style = (window.matchMedia("(max-width: 420px) and (max-height: 740px)").matches 
+                    mediaImg.style = (window.matchMedia("(max-width: 420px) and (max-height: 830px)").matches 
                         ? "width: 150px; height: 150px;" 
                         : "width: 350px; height: 350px;")
 
                     let mediaCaption = document.createElement('p')
+                    mediaCaption.id = "media-caption"
                     mediaCaption.innerHTML = caption
-                    mediaCaption.style = "color: black;"
+                    mediaCaption.style = "color: black; margin-top: 1rem;"
 
                     container.appendChild(mediaParent)
                     mediaParent.appendChild(mediaLink)

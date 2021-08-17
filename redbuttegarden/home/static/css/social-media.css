@@ -238,7 +238,7 @@ h4 {
 /*
     iPad Media Query (Portrait Mode)
 */
-@media all and (width: 768px) and (height: 1024px) {
+@media all and (min-width: 740px) and (max-width: 770px) and (min-height: 1010px) and (max-height: 1030px) {
     .button-text {
         display: none;
     }
@@ -272,6 +272,14 @@ h4 {
         max-height: 400px;
         margin-left: 150px;
         padding: unset;
+    }
+
+    #images-container {
+        display: flow-root;
+    }
+
+    #media-caption {
+        margin-left: 8rem;
     }
 }
 
