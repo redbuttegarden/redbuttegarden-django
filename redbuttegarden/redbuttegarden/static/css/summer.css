@@ -273,6 +273,32 @@ no-repeat 5px 3px;
     float: left;
 }
 
+#search-parent {
+    width: 100%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+#form-input {
+    border-radius: 100px;
+    padding: 10px 50px 10px 50px;
+}
+
+#form-submit {
+    border-radius: 100px;
+    margin-left: 2rem; 
+    background-color: #007600;
+    color: white;
+    border: none;
+    padding: 10px 50px 10px 50px;
+    font-size: large;
+}
+
+#form-input:focus {
+    outline: none;
+}
+
 /* Hide the search icon in nav header until mobile media query collapse */
 nav > div.container-fluid > div.navbar-header > #mobile-search {
     display: none;
@@ -2464,6 +2490,9 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
         display: none;
     }
 
+    #form-submit {
+        display: none;
+    }
 }
 
 /* Garden After Dark Panel Colors */
