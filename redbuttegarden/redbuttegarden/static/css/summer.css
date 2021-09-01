@@ -283,6 +283,8 @@ no-repeat 5px 3px;
 #form-input {
     border-radius: 100px;
     padding: 10px 50px 10px 50px;
+    border-style: solid;
+    border-color: #007600;
 }
 
 #form-submit {
