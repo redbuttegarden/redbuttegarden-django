@@ -33,13 +33,13 @@
                             <div class="col-sm-9 col-xs-6">
                                 <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
                                 {% if result.search_description %}
-                                    <p>{{ result.search_description }}</p>
+                                    <p class="italic">{{ result.search_description }}</p>
                                 {% endif %}
 
                                 {% if result.body %}
                                     {% for block in result.body|slice:3 %}
                                         {% if block.block_type == 'paragraph' %}
-                                            <p>{{ block.value.paragraph|truncatechars:200 }}</p>
+                                            <p>{{ block.value.paragraph|striptags|safe|truncatechars:200 }}</p>
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}
