@@ -280,6 +280,11 @@ no-repeat 5px 3px;
     align-items: center;
 }
 
+#search {
+    display: grid;
+    justify-content: center;
+}
+
 #form-input {
     border-radius: 100px;
     padding: 10px 50px 10px 50px;
