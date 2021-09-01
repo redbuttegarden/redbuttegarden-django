@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static wagtailcore_tags %}
+{% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block body_class %}template-searchresults{% endblock %}
 
@@ -8,7 +8,7 @@
 {% block content %}
     <div id="search-parent">
         <h1>Search Our Website</h1>
-    
+
         <form action="{% url 'search' %}" method="get">
             <label>
                 <input id="form-input" type="text" name="query"{% if search_query %} value="{{ search_query }}"{% endif %}>
@@ -16,27 +16,48 @@
             <input id="form-submit" type="submit" value="Search" class="button">
         </form>
     </div>
-    
+
     <div id="search">
         {% if search_results %}
-            <ul>
+            <div class="container-fluid">
                 {% for result in search_results %}
-                    <li>
-                        <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
-                        {% if result.search_description %}
-                            {{ result.search_description }}
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
+                    <div class="row-fluid">
+                        {% with result=result.specific %}
+                            <div class="col-sm-3 col-xs-6">
+                                {% if result.thumbnail %}
+                                    <a href="{% pageurl result %}">
+                                        {% image result.thumbnail fill-175x175 alt="" %}
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <div class="col-sm-9 col-xs-6">
+                                <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
+                                {% if result.search_description %}
+                                    <p>{{ result.search_description }}</p>
+                                {% endif %}
 
-            {% if search_results.has_previous %}
-                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a>
-            {% endif %}
-            
-            {% if search_results.has_next %}
-                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
-            {% endif %}
+                                {% if result.body %}
+                                    {% for block in result.body|slice:3 %}
+                                        {% if block.block_type == 'paragraph' %}
+                                            <p>{{ block.value.paragraph|truncatechars:200 }}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% endwith %}
+                    </div>
+                {% endfor %}
+
+                <div class="row-fluid text-center">
+                    {% if search_results.has_previous %}
+                        <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a>
+                    {% endif %}
+
+                    {% if search_results.has_next %}
+                        <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
+                    {% endif %}
+                </div>
+            </div>
         {% elif search_query %}
             No results found
         {% endif %}
