@@ -1,13 +1,9 @@
 {% extends "base.html" %}
-{% load static wagtailcore_tags %}
+{% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
-{% block extra_css %}{% endblock extra_css %}
-
 {% block extra_includes %}
-    {% include 'home/includes/facebook-plugin.html' %}
-
     <div id="slider-wrapper">
         <div id="inner-slider-wrapper1">
             <div id="inner-slider-wrapper2">
@@ -35,9 +31,12 @@
 
                 <!-- Begin Page Down Code -->
                 <div id="page-down2" class="col-xs-12">
-                    <span class="page-down-icon"><img alt="downward-arrow" src="{% static 'img/down-arrow.png' %}" /></span>
-                    <!-- Code for Sprite Option -->
-                    <!-- <span class="page-down-icon" style="background-color:red;"><span class="jssora21l"></span></span> -->
+                    <span class="page-down-icon">
+                        <picture>
+                            <source srcset="{% static 'img/down-arrow.webp' %}" type="image/webp">
+                            <img alt="downward-arrow" src="{% static 'img/down-arrow.png' %}" />
+                        </picture>
+                    </span>
                 </div>
                 <!-- End Page Down Code -->
             </div>
@@ -75,9 +74,12 @@
 
                     <!-- Begin Page Down Code for Slides on Mobile -->
                     <div id="page-down" class="col-xs-12">
-                        <span class="page-down-icon"><img alt="downward-arrow" src="{% static 'img/down-arrow.png' %}" /></span>
-                        <!-- Code for Sprite Option -->
-                        <!-- <span class="page-down-icon" style="background-color:red;"><span class="jssora21l"></span></span> -->
+                        <span class="page-down-icon">
+                            <picture>
+                                <source srcset="{% static 'img/down-arrow.webp' %}" type="image/webp">
+                                <img alt="downward-arrow" src="{% static 'img/down-arrow.png' %}" width="75em" height="25em"/>
+                            </picture>
+                        </span>
                     </div>
                     <!-- End Page Down Code for Slides on Mobile -->
                 </div>
@@ -131,9 +133,23 @@
                 </div>
 
                 <div class="row-fluid">
-                    <div class="col-sm-6"><a href="{% slugurl 'whats-blooming-now' %}"><img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'img/blog1.jpg' %}"></a></div>
+                    <div class="col-sm-6">
+                        <a href="{% slugurl 'whats-blooming-now' %}">
+                            <picture>
+                                <source srcset="{% static 'img/blog1.webp' %}" type="image/webp">
+                                <img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'img/blog1.jpg' %}" width="588em" height="332em">
+                            </picture>
+                        </a>
+                    </div>
                     {# Social media page is the only non watail page. It's served from a view in the home app #}
-                    <div class="col-sm-6"><a href="/social-media"><img alt="hand holding smartphone" class="hover" src="{% static 'img/socialMedia-small.png' %}"></a></div>
+                    <div class="col-sm-6">
+                        <a href="/social-media">
+                            <picture>
+                                <source srcset="{% static 'img/socialMedia-small.webp' %}" type="image/webp">
+                                <img alt="hand holding smartphone" class="hover" src="{% static 'img/socialMedia-small.png' %}" width="588em" height="332em">
+                            </picture>
+                        </a>
+                    </div>
                 </div>
 
                 <br />
@@ -148,7 +164,14 @@
                 <br />
 
                 <div class="row-fluid">
-                    <div class="col-sm-12"><a href="{% slugurl 'calendar' %}"><img alt="text says whats happening over picture of red butte garden amphitheater" class="hover" src="{% static 'img/whats-happening.jpg' %}"></a></div>
+                    <div class="col-sm-12">
+                        <a href="{% slugurl 'calendar' %}">
+                            <picture>
+                                <source srcset="{% static 'img/whats-happening.webp' %}" type="image/webp">
+                                <img alt="text says whats happening over picture of red butte garden amphitheater" class="hover" src="{% static 'img/whats-happening.jpg' %}" width="1280em" height="325em">
+                            </picture>
+                        </a>
+                    </div>
                 </div>
 
                 <br />

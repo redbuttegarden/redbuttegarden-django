@@ -4,10 +4,18 @@
 <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a id="logo" class="pull-left" href="/"><img src="{% static 'img/rbg-logo-new.png' %}" class="hover responsive" alt="Red Butte Garden" title="RBG Logo" /></a>
+            <a id="logo" class="pull-left" href="/">
+                <picture>
+                    <source srcset="{% static 'img/rbg-logo-new.webp' %}" type="image/webp">
+                    <img src="{% static 'img/rbg-logo-new.png' %}" class="hover responsive" alt="Red Butte Garden" title="RBG Logo" width="285em" height="50em"/>
+                </picture>
+            </a>
             <div id="mobile-search" class="searchicon searchicon-header responsive">
                 <a href="/search">
-                    <img alt="magnifying glass" src="{% static 'img/search.png' %}" />
+                    <picture>
+                        <source srcset="{% static 'img/search.webp' %}" type="image/webp">
+                        <img alt="magnifying glass" src="{% static 'img/search.png' %}" />
+                    </picture>
                 </a>
             </div>
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -107,7 +115,14 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown search" id="navhide4">
-                    <span class="dropdown-toggle searchicon searchicon-mobile-menu hide-mobile"><a href="/search"><img alt="magnifying glass" src="{% static 'img/search.png' %}"></a></span>
+                    <span class="dropdown-toggle searchicon searchicon-mobile-menu hide-mobile">
+                        <a href="/search">
+                            <picture>
+                                <source srcset="{% static 'img/search.webp' %}" type="image/webp">
+                                <img alt="magnifying glass" src="{% static 'img/search.png' %}">
+                            </picture>
+                        </a>
+                    </span>
                 </li>
 
                 <li class="dropdown navbutton" id="navhide1">

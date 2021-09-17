@@ -16,11 +16,11 @@ html {
 html, body {
     max-width: 100%;
     overflow-x: hidden;
+    overflow-y: visible;
 }
 
 img {
-    image-rendering: auto; /* Makes images render smoother in Chrome (and Safari) - if you don't have this they can appear blurry */
-    /* image-rendering: -webkit-optimize-contrast; Chrome (and Safari) */
+    image-rendering: auto;
 }
 
 h4 {
@@ -230,13 +230,86 @@ h4 {
     height: 100%; */
 }
 
-
 /*************************************************************/
 /**************** MEDIA QUERIES *****************************/
 /*************************************************************/
 
+/*
+    iPad Media Query (Portrait Mode)
+*/
+@media all and (min-width: 740px) and (max-width: 770px) and (min-height: 1010px) and (max-height: 1030px) {
+    .button-text {
+        display: none;
+    }
+
+    .tab {
+        width: 25% !important;
+    }
+
+    .tc-wrapper {
+        width: 50% !important;
+    }
+
+    #Instagram {
+        position: unset !important;
+        margin-left: -400px;
+        min-width: 800px;
+    }
+
+    #Youtube iframe {
+        transform: scale(1) !important;
+        margin-top: 2rem;
+    }
+
+    #Twitter {
+        min-width: 800px;
+        max-height: 350px;
+    }
+
+    #Pinterest {
+        min-width: 500px;
+        max-height: 400px;
+        margin-left: 150px;
+        padding: unset;
+    }
+
+    #images-container {
+        display: flow-root;
+    }
+
+    #media-caption {
+        margin-left: 8rem;
+    }
+}
+
+/*
+    iPad Media Query (Landscape Mode)
+*/
+@media all and (width: 1024px) and (height: 768px) {
+    .tab {
+        margin-left: 4rem;
+    }
+}
+
+/*
+    iPad Pro Media Query (Portrait Mode)
+*/
+@media all and (width: 1024px) and (height: 1366px) {
+    .tab, .tab-wrapper {
+        margin-left: 3.5rem;
+    }
+
+    .tabcontent {
+        margin-left: 6rem;
+    }
+
+    #Pinterest, #Youtube, #Instagram {
+        margin-left: 2rem;
+    }
+}
+
 /* 800px for tablets and phones. */
-@media all and (max-width:800px) {
+@media all and (max-width: 800px) {
 
     .tc-wrapper {
         margin-top: 0px;
@@ -284,7 +357,11 @@ h4 {
 }
 
 /* 500px for iPhones/Androids. */
-@media all and (max-width:500px) {
+@media all and (max-width: 500px) {
+
+    .row, .row-fluid {
+        overflow: scroll !important;
+    }
 
     .tab-wrapper {
         margin: 0 auto;
