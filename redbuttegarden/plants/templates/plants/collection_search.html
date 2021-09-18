@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Living Collection Search{% endblock %}
+
+{% block extra_css %}
+    <link href="{% static 'css/plant_search.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+    <h1>Search our Living Collections</h1>
+    <div class="search">
+        <form action="{% url 'plants:collection-search' %}" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <br>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="reset" class="btn btn-light">Reset Form</button>
+        </form>
+    </div>
+{% endblock %}

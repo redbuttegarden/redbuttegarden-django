@@ -1,17 +1,24 @@
 import logging
+from urllib.parse import urlencode
 
+from django.contrib.postgres.search import SearchVector
 from django.http import JsonResponse
-from rest_framework import generics, viewsets, status
 from django.middleware.csrf import get_token
-from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
+from geojson import dumps
+from rest_framework import generics, viewsets, status
+
+from django.shortcuts import render, get_object_or_404, redirect
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from wagtail.images.models import Image
 
+from .forms import CollectionSearchForm
 from .models import Family, Genus, Species, Collection, Location, SpeciesImage
 from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, \
     LocationSerializer
+from .utils import get_feature_collection
 
 logger = logging.getLogger(__name__)
 
@@ -31,39 +38,33 @@ class GenusViewSet(viewsets.ModelViewSet):
     queryset = Genus.objects.all()
     serializer_class = GenusSerializer
 
-
-class SpeciesViewSet(viewsets.ModelViewSet):
+class SpeciesList(generics.ListCreateAPIView):
+    queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
 
     def get_queryset(self):
-        """
-        Overriding queryset to make it possible to query for species that need to
-        have their image set.
-        """
         queryset = Species.objects.all()
-        genus = self.request.query_params.get('genus')
-        species = self.request.query_params.get('species')
+
+        name = self.request.query_params.get('name')
         cultivar = self.request.query_params.get('cultivar')
         vernacular_name = self.request.query_params.get('vernacular_name')
+        genus = self.request.query_params.get('genus')
 
-        # Attempt to filter down to a single species object if query parameters were given
-        if genus is not None:
-            queryset = queryset.filter(genus__name=genus,
-                                       name=species,
-                                       cultivar=cultivar,
-                                       vernacular_name=vernacular_name)
-
-            if not queryset:
-                logger.info(f'Species matching query does not exist.\nGenus name: {genus}\n'
-                            f'Species name: {species}\nCultivar: {cultivar}\nVernacular name: {vernacular_name}')
-                return queryset
-            elif queryset.count() > 1:
-                logger.info(f'Multiple objects match this query.\nGenus name: {genus}\n'
-                            f'Species name: {species}\nCultivar: {cultivar}\nVernacular name: {vernacular_name}')
-                return queryset
+        if name:
+            queryset = queryset.filter(name=name)
+        if cultivar:
+            queryset = queryset.filter(cultivar=cultivar)
+        if vernacular_name:
+            queryset = queryset.filter(vernacular_name=vernacular_name)
+        if genus:
+            queryset = queryset.filter(genus__name=genus)
 
         return queryset
 
+
+class SpeciesDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Species.objects.all()
+    serializer_class = SpeciesSerializer
 
 class LocationViewSet(viewsets.ModelViewSet):
     """
@@ -108,17 +109,19 @@ class CustomAuthToken(ObtainAuthToken):
 def set_image(request, pk):
     # Check if user has a valid API Token
     try:
-        token = request.META['Authorization'].split(' ')[1]
+        token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
     except KeyError:
         return JsonResponse({'status': 'failure'})
-    if Token.objects.get(key=token).exists():
+    if Token.objects.filter(key=token).exists():
         species = Species.objects.get(pk=pk)
         uploaded_image = request.FILES.get('image')
+        img_title = '_'.join([species.genus.name,
+                              species.name if species.name else '',
+                              species.cultivar if species.cultivar else '',
+                              uploaded_image.name])
         image, img_created = Image.objects.get_or_create(
-            title='_'.join([species.genus.name,
-                            species.name,
-                            species.cultivar]),
-            defaults={'file': uploaded_image}
+            file=uploaded_image,
+            defaults={'title': img_title}
         )
         species_image, species_img_created = SpeciesImage.objects.get_or_create(
             species=species,
@@ -133,17 +136,82 @@ def set_image(request, pk):
     return JsonResponse({'status': 'failure'})
 
 
-def plant_map_view(request):
-    return render(request, 'plants/collection_map.html')
+def csrf_view(request):
+    return render(request, 'plants/token.html')
 
+def plant_map_view(request):
+    if request.is_ajax() and request.method == 'GET':
+        collections = Collection.objects.all()
+
+        scientific_name = request.GET.get('scientific_name', None)
+        common_name = request.GET.get('common_name', None)
+        family = request.GET.get('family_name', None)
+        habit = request.GET.get('habits', None)
+        exposure = request.GET.get('exposures', None)
+        water_need = request.GET.get('water_needs', None)
+        bloom_month = request.GET.get('bloom_months', None)
+        flower_color = request.GET.get('flower_colors', None)
+        memorial_person = request.GET.get('memorial_person', None)
+        utah_native = request.GET.get('utah_native', None)
+        available_memorial = request.GET.get('available_memorial', None)
+
+        if scientific_name:
+            collections = collections.annotate(search=SearchVector('species__genus__name',
+                                                                          'species__name')
+                                               ).filter(search=scientific_name)
+        if common_name:
+            collections = collections.annotate(search=SearchVector('species__cultivar',
+                                                                   'species__vernacular_name'))
+        if family:
+            collections = collections.filter(species__genus__family_id=family)
+        if habit:
+            collections = collections.filter(species__habit=habit)
+        if exposure:
+            collections = collections.filter(species__exposure=exposure)
+        if water_need:
+            collections = collections.filter(species__water_regime=water_need)
+        if bloom_month:
+            collections = collections.filter(species__bloom_time__contains=[bloom_month])
+        if flower_color:
+            collections = collections.filter(species__flower_color__search=flower_color)
+        if memorial_person:
+            collections = collections.filter(memorial_person=memorial_person)
+        if utah_native:
+            collections = collections.filter(species__utah_native=utah_native)
+        if available_memorial:
+            collections = collections.filter(commemoration_category='Available')
+
+
+        feature_collection = get_feature_collection(collections)
+        collection_geojson = dumps(feature_collection)
+        return JsonResponse(collection_geojson, safe=False)
+    return render(request, 'plants/collection_map.html')
 
 def collection_detail(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id)
     return render(request, 'plants/collection_detail.html', {'collection': collection})
-
 
 def species_detail(request, species_id):
     species = get_object_or_404(Species, pk=species_id)
     species_images = SpeciesImage.objects.filter(species=species)
     return render(request, 'plants/species_detail.html', {'species': species,
                                                           'images': species_images})
+
+def collection_search(request):
+    if request.method == 'POST':
+        form = CollectionSearchForm(request.POST)
+        if form.is_valid():
+            url = reverse('plants:plant-map')
+            # Not false filter added to exclude boolean fields unless marked True
+            params = {k: v for k, v in form.cleaned_data.items() if v is not ''
+                      and v is not False}
+            if params:
+                url += '?' + urlencode(params)
+            return redirect(url)
+    else:
+        form = CollectionSearchForm()
+
+        context = {
+            'form': form
+        }
+        return render(request, 'plants/collection_search.html', context)

@@ -1,14 +1,23 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Living Collections Plant Map{% endblock %}
+
 {% block extra_css %}
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
     <link href="{% static 'css/plant_map.css' %}" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
+
+    <script src="https://kit.fontawesome.com/332beda55d.js" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block abnormal_content %}
     <div class="container-fluid">
+        <div id="map-load-overlay">
+            <div id="load-icon" class="fa-3x">
+                <i class="fas fa-sync-alt fa-spin"></i>
+            </div>
+        </div>
         <div id="map"></div>
         <div class="map-overlay">
             <fieldset>
@@ -16,6 +25,31 @@
                 <input id="feature-filter" type="text" placeholder="Filter results by name">
             </fieldset>
             <div id="feature-listing" class="listing"></div>
+        </div>
+        <div id="legend">
+            <h5>Legend</h5>
+            <div><span><img src="{% static 'img/annual_icon.png' %}" alt="Icon for annual plants"></span>Annual</div>
+            <div><span><img src="{% static 'img/bulb_icon.png' %}" alt="Icon for bulb plants"></span>Bulb</div>
+            <div><span><img src="{% static 'img/deciduous_shrub_icon.png' %}" alt="Icon for deciduous shrubs"></span>Deciduous Shrub</div>
+            <div><span><img src="{% static 'img/deciduous_tree_icon.png' %}" alt="Icon for deciduous trees"></span>Deciduous Tree</div>
+            <div><span><img src="{% static 'img/vine_icon.png' %}" alt="Icon for viney plants"></span>Vine</div>
+            <div><span><img src="{% static 'img/evergreen_groundcover_icon.png' %}" alt="Icon for evergreen groundcover plants"></span>Evergreen Groundcover</div>
+            <div><span><img src="{% static 'img/evergreen_shrub_icon.png' %}" alt="Icon for evergreen shrubs"></span>Evergreen Shrub</div>
+            <div><span><img src="{% static 'img/evergreen_tree_icon.png' %}" alt="Icon for evergreen trees"></span>Evergreen Tree</div>
+            <div><span><img src="{% static 'img/grass_icon.png' %}" alt="Icon for grasses"></span>Grass</div>
+            <div><span><img src="{% static 'img/perennial_icon.png' %}" alt="Icon for perennial plants"></span>Perennial</div>
+            <div><span><img src="{% static 'img/succulent_icon.png' %}" alt="Icon for succulent plants"></span>Succulent</div>
+        </div>
+        <div class="row">
+            <div class="credits">
+                <h5>Icon Credit/Attribution</h5>
+                <div>Annual and evergreen groundcover icons made by <a href="https://www.flaticon.com/authors/darius-dan" title="Darius Dan">Darius Dan</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                <div>Bulb, perennial, succulent and deciduous tree icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                <div>Deciduous and evergreen shrub icons made by <a href="https://www.flaticon.com/authors/bqlqn" title="bqlqn">bqlqn</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                <div>Evergreen tree icon made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                <div>Vine icon made by <a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp">Eucalyp</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                <div>Grass icon made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -29,6 +63,10 @@
             center: [-111.823807, 40.766367], // starting position [lng, lat]
             zoom: 16 // starting zoom
         });
+
+        // Collections passed by django view
+        const rawGeoJSON = '{{ geojson|escapejs }}';
+
 
         // Holds visible collection features for filtering
         let collections = [];
@@ -120,70 +158,214 @@
             // Add a new source from our GeoJSON data and
             // set the 'cluster' option to true. GL-JS will
             // add the point_count property to your source data.
-            map.addSource('collections', {
-                type: 'geojson',
-                data: 'https://zappa-rbg-dev-static-east.s3.amazonaws.com/media/collections.geojson',
-                cluster: true,
-                clusterMaxZoom: 17, // Max zoom to cluster points on
-                clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
+
+            // Load all the icon images
+            map.loadImage('/static/img/annual_icon.png', function (error, image) {
+                if (error) throw error;
+
+                map.addImage('Annual', image);
+            });
+            map.loadImage('/static/img/bulb_icon.png', function (error, image) {
+                if (error) throw error;
+
+                map.addImage('Bulb', image);
+            });
+            map.loadImage('/static/img/deciduous_shrub_icon.png', function (error, image) {
+                if (error) throw error;
+
+                map.addImage('Deciduous Shrub', image);
+            });
+            map.loadImage('/static/img/deciduous_tree_icon.png', function (error, image) {
+                if (error) throw error;
+
+                map.addImage('Deciduous Tree', image);
+            });
+            map.loadImage('/static/img/evergreen_groundcover_icon.png', function (error, image) {
+                if (error) throw error;
+
+                map.addImage('Evergreen Groundcover', image);
+            });
+            map.loadImage('/static/img/evergreen_shrub_icon.png', function (error, image) {
+                if (error) throw error;
+
+                map.addImage('Evergreen Shrub', image);
+            });
+            map.loadImage('/static/img/evergreen_tree_icon.png', function (error, image) {
+                if (error) throw error;
+
+                map.addImage('Evergreen Tree', image);
+            });
+            map.loadImage('/static/img/vine_icon.png', function (error, image) {
+                if (error) throw error;
+
+                map.addImage('Deciduous Vine', image);
+                map.addImage('Evergreen Vine', image);
+            });
+            map.loadImage('/static/img/grass_icon.png', function (error, image) {
+                if (error) throw error;
+
+                map.addImage('Grass', image);
+            });
+            map.loadImage('/static/img/perennial_icon.png', function (error, image) {
+                if (error) throw error;
+
+                map.addImage('Perennial', image);
+            });
+            map.loadImage('/static/img/succulent_icon.png', function (error, image) {
+                if (error) throw error;
+
+                map.addImage('Succulent', image);
             });
 
-            map.addLayer({
-                id: 'clusters',
-                type: 'circle',
-                source: 'collections',
-                filter: ['has', 'point_count'],
-                paint: {
-                // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-                // with three steps to implement three types of circles:
-                //   * Blue, 20px circles when point count is less than 100
-                //   * Yellow, 30px circles when point count is between 100 and 750
-                //   * Pink, 40px circles when point count is greater than or equal to 750
-                    'circle-color': [
-                        'step',
-                        ['get', 'point_count'],
-                        '#51bbd6',
-                        100,
-                        '#f1f075',
-                        750,
-                        '#f28cb1'
-                    ],
-                    'circle-radius': [
-                        'step',
-                        ['get', 'point_count'],
-                        20,
-                        100,
-                        30,
-                        750,
-                        40
-                    ]
-                }
-            });
+            // If URL includes parameters send ajax request for filtered collections
+            // Otherwise, load geojson file of all collections
+            if (window.location.href.includes('?')) {
+                $.ajax({
+                    url: '{{ request.get_full_path }}',
+                    success: function (data) {
+                        const filteredCollections = JSON.parse(data);
 
-            map.addLayer({
-                id: 'cluster-count',
-                type: 'symbol',
-                source: 'collections',
-                filter: ['has', 'point_count'],
-                layout: {
-                    'text-field': '{point_count_abbreviated}',
-                    'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                    'text-size': 12
-                }
-            });
+                        map.addSource('collections', {
+                            type: 'geojson',
+                            data: filteredCollections,
+                            cluster: true,
+                            clusterMaxZoom: 17, // Max zoom to cluster points on
+                            clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
+                        });
 
-            map.addLayer({
-                id: 'unclustered-point',
-                type: 'circle',
-                source: 'collections',
-                filter: ['!', ['has', 'point_count']],
-                paint: {
-                    'circle-color': '#11b4da',
-                    'circle-radius': 4,
-                    'circle-stroke-width': 1,
-                    'circle-stroke-color': '#fff'
-                }
-            });
+                        map.addLayer({
+                            id: 'clusters',
+                            type: 'circle',
+                            source: 'collections',
+                            filter: ['has', 'point_count'],
+                            paint: {
+                                // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+                                // with three steps to implement three types of circles:
+                                //   * Blue, 20px circles when point count is less than 100
+                                //   * Yellow, 30px circles when point count is between 100 and 750
+                                //   * Pink, 40px circles when point count is greater than or equal to 750
+                                'circle-color': [
+                                    'step',
+                                    ['get', 'point_count'],
+                                    '#51bbd6',
+                                    100,
+                                    '#f1f075',
+                                    750,
+                                    '#f28cb1'
+                                ],
+                                'circle-radius': [
+                                    'step',
+                                    ['get', 'point_count'],
+                                    20,
+                                    100,
+                                    30,
+                                    750,
+                                    40
+                                ]
+                            }
+                        });
+
+                        map.addLayer({
+                            id: 'cluster-count',
+                            type: 'symbol',
+                            source: 'collections',
+                            filter: ['has', 'point_count'],
+                            layout: {
+                                'text-field': '{point_count_abbreviated}',
+                                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                                'text-size': 12
+                            }
+                        });
+
+                        map.addLayer({
+                            id: 'unclustered-point',
+                            type: 'symbol',
+                            source: 'collections',
+                            filter: ['!', ['has', 'point_count']],
+                            layout: {
+                                'icon-image': ['get', 'habit'],
+                                'icon-size': 2
+                            }
+                        });
+
+                        document.getElementById("map-load-overlay").style.display = "none";
+
+                        // Call this function on initialization
+                        // passing an empty array to render an empty state
+                        renderListings([]);
+                    }
+                });
+
+            } else {
+                map.addSource('collections', {
+                    type: 'geojson',
+                    data: 'https://zappa-rbg-dev-static-east.s3.amazonaws.com/media/collections.geojson',
+                    cluster: true,
+                    clusterMaxZoom: 17, // Max zoom to cluster points on
+                    clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
+                });
+
+                map.addLayer({
+                    id: 'clusters',
+                    type: 'circle',
+                    source: 'collections',
+                    filter: ['has', 'point_count'],
+                    paint: {
+                        // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+                        // with three steps to implement three types of circles:
+                        //   * Blue, 20px circles when point count is less than 100
+                        //   * Yellow, 30px circles when point count is between 100 and 750
+                        //   * Pink, 40px circles when point count is greater than or equal to 750
+                        'circle-color': [
+                            'step',
+                            ['get', 'point_count'],
+                            '#51bbd6',
+                            100,
+                            '#f1f075',
+                            750,
+                            '#f28cb1'
+                        ],
+                        'circle-radius': [
+                            'step',
+                            ['get', 'point_count'],
+                            20,
+                            100,
+                            30,
+                            750,
+                            40
+                        ]
+                    }
+                });
+
+                map.addLayer({
+                    id: 'cluster-count',
+                    type: 'symbol',
+                    source: 'collections',
+                    filter: ['has', 'point_count'],
+                    layout: {
+                        'text-field': '{point_count_abbreviated}',
+                        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                        'text-size': 12
+                    }
+                });
+
+                map.addLayer({
+                    id: 'unclustered-point',
+                    type: 'symbol',
+                    source: 'collections',
+                    filter: ['!', ['has', 'point_count']],
+                    layout: {
+                        'icon-image': ['get', 'habit'],
+                        'icon-size': 2
+                    }
+                });
+
+                document.getElementById("map-load-overlay").style.display = "none";
+
+                // Call this function on initialization
+                // passing an empty array to render an empty state
+                renderListings([]);
+            }
 
             map.on('movestart', function () {
                 // reset features filter as the map starts moving
@@ -241,7 +423,6 @@
                 const bloom_time = e.features[0].properties.bloom_time;
                 const plant_size = e.features[0].properties.plant_size;
                 const planted_on = e.features[0].properties.planted_on;
-                const planted_by = e.features[0].properties.planted_by;
 
                 console.log(e.features[0].properties);
 
@@ -266,8 +447,7 @@
                         'Exposure: ' + exposure + '<br>' +
                         'Bloom Times: ' + bloom_time + '<br>' +
                         'Plant Size: ' + plant_size + '<br>' +
-                        'Planted On: ' + planted_on + '<br>' +
-                        'Planted By: ' + planted_by
+                        'Planted On: ' + planted_on + '<br>'
                     )
                     .addTo(map);
             });
@@ -314,9 +494,6 @@
 
             filterEl.addEventListener('keyup', filterByElementValue);
 
-            // Call this function on initialization
-            // passing an empty array to render an empty state
-            renderListings([]);
         });
 
     </script>

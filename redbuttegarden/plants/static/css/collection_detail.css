@@ -10,3 +10,11 @@
 .location {
     font-size: smaller;
 }
+
+.collection-info > p {
+    margin: 0;
+}
+
+p.location {
+    margin-bottom: 10px;
+}
