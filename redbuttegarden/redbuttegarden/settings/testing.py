@@ -1,5 +1,8 @@
 from .local import *
 
+INSTALLED_APPS.remove('debug_toolbar')
+MIDDLEWARE.remove('debug_toolbar.middleware.DebugToolbarMiddleware')
+
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
