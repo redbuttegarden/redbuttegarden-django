@@ -2,47 +2,8 @@ from .base import *
 import os
 
 # Overridden so we don't use cas
-INSTALLED_APPS = [
-    'axe',
-    'concerts',
-    'custom_user',
-    'events',
-    'home',
-    'journal',
-    'search',
-    'shop',
-
-    'wagtail.contrib.forms',
-    "wagtail.contrib.frontend_cache",
-    #'wagtail.contrib.postgres_search',  # Disabled for testing
-    'wagtail.contrib.redirects',
-    'wagtail.contrib.routable_page',
-    'wagtail.contrib.settings',
-    "wagtail.contrib.table_block",
-    'wagtail.embeds',
-    'wagtail.sites',
-    'wagtail.users',
-    'wagtail.snippets',
-    'wagtail.documents',
-    'wagtail.images',
-    'wagtail.search',
-    'wagtail.admin',
-    'wagtail.core',
-
-    #'cas',  # Disabled for testing
-    'corsheaders',
-    'modelcluster',
-    'storages',
-    'taggit',
-    'wagtailaccessibility',
-
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-]
+INSTALLED_APPS.remove('cas')
+INSTALLED_APPS.insert(0, 'wagtail.contrib.search_promotions')  # https://github.com/wagtail/wagtail/issues/1824
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
@@ -65,8 +26,12 @@ AUTHENTICATION_BACKENDS = (
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('PG_DB'),
+        'USER': os.environ.get('PG_USER'),
+        'PASSWORD': os.environ.get('PG_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': 5432,
     }
 }
 
