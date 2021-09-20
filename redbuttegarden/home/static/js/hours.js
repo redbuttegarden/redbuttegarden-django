@@ -369,7 +369,6 @@ function gardenYearlyHours() {
 //#endregion
 
 //#region Oct 1 - Dec 23 General hours
-
 	else if ( month === 10 || month === 11 || month === 12) {
 
 		busHours = "Oct 1-Dec 23: 9AM-5PM";
