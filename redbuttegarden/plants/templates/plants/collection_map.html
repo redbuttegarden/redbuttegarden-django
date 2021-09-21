@@ -121,11 +121,10 @@
                         let collection = document.createElement('a');
                         collection.href = "/plants/collection/" + prop.id + "/";
                         collection.target = '_blank';
-                        collection.textContent = prop.family_name +
-                            ' ' +
-                            prop.genus_name +
-                            ' ' +
-                            prop.species_name;
+                        collection.innerHTML =
+                            '<div class="feature-listing">' + prop.family_name + ' ' +
+                                '<span class="scientific-name">' + prop.genus_name + ' ' + prop.species_name + ' ' + '</span>' +
+                            '</div>';
                         collection.addEventListener('mouseover', function () {
                             // Highlight corresponding feature on the map
                             popup
@@ -463,18 +462,42 @@
                 new mapboxgl.Popup()
                     .setLngLat(coordinates)
                     .setHTML(
-                        'Family Name: ' + family_name + '<br>' +
-                        'Genus Name: ' + genus_name + '<br>' +
-                        'Species Name: ' + species_name + '<br>' +
-                        'Cultivar Name: ' + cultivar + '<br>' +
-                        'Vernacular Name: ' + vernacular_name + '<br>' +
-                        'Habit: ' + habit + '<br>' +
-                        'Hardiness: ' + hardiness + '<br>' +
-                        'Water Regime: ' + water_regime + '<br>' +
-                        'Exposure: ' + exposure + '<br>' +
-                        'Bloom Times: ' + bloom_time + '<br>' +
-                        'Plant Size: ' + plant_size + '<br>' +
-                        'Planted On: ' + planted_on + '<br>'
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Family Name: </span>' + family_name +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Genus Name: </span><span class="scientific-name">' + genus_name + '</span>' +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Species Name: </span><span class="scientific-name">' + species_name + '</span>' +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Cultivar Name: </span>' + cultivar +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Vernacular Name: </span>' + vernacular_name +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Habit: </span>' + habit +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Hardiness: </span>' + hardiness +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Water Regime: </span>' + water_regime +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Exposure: </span>' + exposure +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Bloom Times: </span>' + bloom_time +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Plant Size: </span>' + plant_size +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Planted On: </span>' + planted_on +
+                        '</div>'
                     )
                     .addTo(map);
             });

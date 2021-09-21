@@ -84,11 +84,16 @@
 .credits {
     margin: 15px;
 }
-
 #menu {
     position: absolute;
     z-index: 2;
     background: #efefef;
     padding: 10px;
     font-family: 'Open Sans', sans-serif;
+}
+.pop-up-label {
+    font-weight: bold;
+}
+.scientific-name {
+    font-style: italic;
 }
