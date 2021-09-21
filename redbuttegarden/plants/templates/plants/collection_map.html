@@ -18,7 +18,18 @@
                 <i class="fas fa-sync-alt fa-spin"></i>
             </div>
         </div>
-        <div id="map"></div>
+        <div id="map">
+            <div id="menu">
+                <input id="satellite-v9" type="radio" name="rtoggle" value="satellite" checked="checked">
+                <label for="satellite-v9">satellite</label>
+                <input id="light-v10" type="radio" name="rtoggle" value="light">
+                <label for="light-v10">light</label>
+                <input id="dark-v10" type="radio" name="rtoggle" value="dark">
+                <label for="dark-v10">dark</label>
+                <input id="streets-v11" type="radio" name="rtoggle" value="streets">
+                <label for="streets-v11">streets</label>
+            </div>
+        </div>
         <div class="map-overlay">
             <fieldset>
                 <label for="feature-filter">Collection filter</label>
@@ -40,6 +51,7 @@
             <div><span><img src="{% static 'img/perennial_icon.png' %}" alt="Icon for perennial plants"></span>Perennial</div>
             <div><span><img src="{% static 'img/succulent_icon.png' %}" alt="Icon for succulent plants"></span>Succulent</div>
         </div>
+
         <div class="row">
             <div class="credits">
                 <h5>Icon Credit/Attribution</h5>
@@ -59,13 +71,28 @@
         mapboxgl.accessToken = 'pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw';
         let map = new mapboxgl.Map({
             container: 'map', // container ID
-            style: 'mapbox://styles/mapbox/satellite-v9', // style URL
+            style: 'mapbox://styles/auslaner/ckrdvnurq2ix018o34dv8sxft', // style URL
             center: [-111.823807, 40.766367], // starting position [lng, lat]
             zoom: 16 // starting zoom
         });
 
         // Collections passed by django view
         const rawGeoJSON = '{{ geojson|escapejs }}';
+
+        // Code for changing styles based off https://docs.mapbox.com/mapbox-gl-js/example/setstyle/
+        const layerList = document.getElementById('menu');
+        const inputs = layerList.getElementsByTagName('input');
+
+        for (const input of inputs) {
+            input.onclick = (layer) => {
+                const layerId = layer.target.id;
+                map.setStyle('mapbox://styles/mapbox/' + layerId);
+
+                map.once('styledata', () => {
+                    initialMapSetup(map);
+                })
+            };
+        }
 
 
         // Holds visible collection features for filtering
@@ -154,7 +181,7 @@
             map.setFilter('unclustered-point', ['has', 'id']);
         }
 
-        map.on('load', function () {
+        function initialMapSetup(map){
             // Add a new source from our GeoJSON data and
             // set the 'cluster' option to true. GL-JS will
             // add the point_count property to your source data.
@@ -493,8 +520,10 @@
             }
 
             filterEl.addEventListener('keyup', filterByElementValue);
+        }
 
+        map.on('load', function () {
+            initialMapSetup(map);
         });
-
     </script>
 {% endblock %}
