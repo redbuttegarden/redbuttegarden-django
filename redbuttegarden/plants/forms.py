@@ -32,6 +32,7 @@ class CollectionSearchForm(forms.Form):
     family_choices.insert(0, (None, ''))
     habit_choices.insert(0, (None, ''))
     exposure_choices.insert(0, (None, ''))
+    water_need_choices.insert(0, (None, ''))
     bloom_month_choices.insert(0, (None, ''))
     flower_color_choices.insert(0, (None, ''))
     commemoration_people_choices.insert(0, (None, ''))
