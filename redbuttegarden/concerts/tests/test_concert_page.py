@@ -372,7 +372,7 @@ class TestConcert(TestCase):
 
         response = self.client.get('/concert-test-page', follow=True)
         # Looks for alt tags of buy button used in the template
-        self.assertContains(response, 'alt="Not yet on sale"')
+        self.assertContains(response, 'alt="Ticket purchase disabled"')
         self.assertContains(response, '<div class="disable-buy">')
         self.assertNotContains(response, 'alt="Buy ticket button"')
         self.assertNotContains(response, '<img class="responsive con-button hover"')
