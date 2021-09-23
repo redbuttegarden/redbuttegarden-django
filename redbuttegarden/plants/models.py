@@ -81,10 +81,12 @@ class SpeciesImage(Orderable):
         'wagtailimages.Image', on_delete=models.CASCADE, related_name='+'
     )
     caption = models.CharField(blank=True, max_length=250)
+    copyright = models.CharField(blank=True, max_length=300)
 
     panels = [
         ImageChooserPanel('image'),
         FieldPanel('caption'),
+        FieldPanel('copyright'),
     ]
 
 class Location(models.Model):
