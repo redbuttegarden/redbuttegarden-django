@@ -15,14 +15,15 @@ let status;
 
 // Concert List 2021 for easier hour mapping
 let concerts = []
+
 // #region CONCERT 'PUSH' OPERATIONS (HIDDEN)
 concerts.push(new Date(2021, 07, 30));
 concerts.push(new Date(2021, 08, 01));
 concerts.push(new Date(2021, 08, 04));
 concerts.push(new Date(2021, 08, 06));
 concerts.push(new Date(2021, 08, 08));
-concerts.push(new Date(2021, 08, 13));
 concerts.push(new Date(2021, 08, 10));
+concerts.push(new Date(2021, 08, 13));
 concerts.push(new Date(2021, 08, 15));
 concerts.push(new Date(2021, 08, 16));
 concerts.push(new Date(2021, 08, 17));
@@ -31,16 +32,17 @@ concerts.push(new Date(2021, 08, 22));
 concerts.push(new Date(2021, 08, 23));
 concerts.push(new Date(2021, 08, 25));
 concerts.push(new Date(2021, 08, 26));
-concerts.push(new Date(2021, 09, 12));
 concerts.push(new Date(2021, 08, 29));
-concerts.push(new Date(2021, 09, 16));
 concerts.push(new Date(2021, 09, 02));
-concerts.push(new Date(2021, 09, 23));
 concerts.push(new Date(2021, 09, 05));
-concerts.push(new Date(2021, 09, 30));
+concerts.push(new Date(2021, 09, 12));
 concerts.push(new Date(2021, 09, 14));
+concerts.push(new Date(2021, 09, 16));
+concerts.push(new Date(2021, 09, 20));
 concerts.push(new Date(2021, 09, 22));
+concerts.push(new Date(2021, 09, 23));
 concerts.push(new Date(2021, 09, 29));
+concerts.push(new Date(2021, 09, 30));
 //#endregion
 
 
@@ -90,7 +92,9 @@ function setHours() {
 }
 
 
-// Sets concert day status; Returns true if it's a concert day
+/**
+ *  Sets concert day status; Returns true if it's a concert day
+ **/ 
 function isConcertDay(concerts, busHours) {
 	didSetHours = false; 
 
@@ -319,10 +323,19 @@ function gardenYearlyHours() {
 
 	else if (month === 9) {
 		busHours = "Sep 1-30: 9AM-7:30PM*";
-		otherNotes = "*Garden Hours on Concert Days: 9AM-5PM";
+
+		// Specific check for Teton Gravity Event on Sept. 20th; Will be removed on Sept. 21st
+		if (day === 20)
+			otherNotes = "*Garden Hours on Event Days: 9AM-5PM";
+		else
+			otherNotes = "*Garden Hours on Concert Days: 9AM-5PM";
 
 		document.getElementById("gardenHours").innerHTML = busHours;
 		document.getElementById("otherNotes").innerHTML = otherNotes;
+
+		// Specific check for Teton Gravity Event on Sept. 20th; Will be removed on Sept. 21st
+		if (day === 20 && isConcertDay(concerts, "Today (Garden Event): 9am-5pm"))
+			return; 
 
 		// Checks if it's a concert day, else continues as normal
 		if (isConcertDay(concerts, "Today (Concert Day): 9am-5pm"))
@@ -356,7 +369,6 @@ function gardenYearlyHours() {
 //#endregion
 
 //#region Oct 1 - Dec 23 General hours
-
 	else if ( month === 10 || month === 11 || month === 12) {
 
 		busHours = "Oct 1-Dec 23: 9AM-5PM";

@@ -84,15 +84,21 @@
                                     <picture>
                                         {% image concert.band_img fill-300x300 alt="" %}
 
-                                        <div class="soldout {% if not concert.canceled %}hide{% endif %}">
-                                            <img src="{% static 'img/cancelled.png' %}" alt="Concert canceled">
-                                        </div>
-                                        <div class="soldout {% if not concert.postponed %}hide{% endif %}">
-                                            <img src="{% static 'img/postponed.png' %}" alt="Concert postponed">
-                                        </div>
-                                        <div class="soldout {% if not concert.sold_out %}hide{% endif %}">
-                                            <img src="{% static 'img/SoldOut.png' %}" alt="Sold out concert">
-                                        </div>
+                                        {% if concert.canceled %}
+                                            <div class="soldout">
+                                                <img src="{% static 'img/cancelled.png' %}" alt="Concert canceled">
+                                            </div>
+
+                                        {% elif concert.postponed %}
+                                            <div class="soldout">
+                                                <img src="{% static 'img/postponed.png' %}" alt="Concert postponed">
+                                            </div>
+
+                                        {% elif concert.sold_out %}
+                                            <div class="soldout">
+                                                <img src="{% static 'img/SoldOut.png' %}" alt="Concert sold out">
+                                            </div>
+                                        {% endif %}
                                     </picture>
                                 </div>
                             </a>
@@ -147,7 +153,7 @@
                                             {% else %}
                                                 <div class="disable-buy">
                                                     <img class="responsive" src="{% static 'img/buy-tickets.png' %}"
-                                                         alt="Not yet on sale">
+                                                         alt="Ticket purchase disabled">
                                                 </div>
                                             {% endif %}
                                         </div>
