@@ -11,6 +11,7 @@ from rest_framework import generics, viewsets, status
 from django.shortcuts import render, get_object_or_404, redirect
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from wagtail.images.models import Image
 
@@ -106,6 +107,7 @@ class CustomAuthToken(ObtainAuthToken):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
 
+@api_view(['POST'])
 def set_image(request, pk):
     # Check if user has a valid API Token
     try:
@@ -113,6 +115,10 @@ def set_image(request, pk):
     except KeyError:
         return JsonResponse({'status': 'failure'})
     if Token.objects.filter(key=token).exists():
+        if 'copyright_info' in request.data:
+            copyright_text = request.data['copyright_info']
+        else:
+            copyright_text = ''
         species = Species.objects.get(pk=pk)
         uploaded_image = request.FILES.get('image')
         img_title = '_'.join([species.genus.name,
@@ -126,7 +132,8 @@ def set_image(request, pk):
         species_image, species_img_created = SpeciesImage.objects.get_or_create(
             species=species,
             image=image,
-            caption=''
+            caption='',
+            copyright=copyright_text
         )
 
         return JsonResponse({'status': 'success',

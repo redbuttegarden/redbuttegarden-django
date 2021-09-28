@@ -8,7 +8,8 @@ from PIL import Image
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from plants.models import Collection, Species, Genus, Family
+from plants.models import Collection
+from .utils import family, genus, species
 
 
 @pytest.mark.django_db
@@ -112,18 +113,7 @@ def collections_same_species_different_cultivars():
 
     return payloads
 
-@pytest.fixture
-def family():
-    return Family.objects.create(name='Family')
 
-@pytest.fixture
-def genus(family):
-    return Genus.objects.create(family=family, name='genus')
-
-@pytest.fixture
-def species(genus):
-    return Species.objects.create(genus=genus,
-                                  name='species')
 
 @pytest.mark.django_db
 def test_collection_creation_api_two_cultivars(collections_same_species_different_cultivars):

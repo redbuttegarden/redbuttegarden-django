@@ -1,6 +1,7 @@
 from .local import *
 
 INSTALLED_APPS.remove('debug_toolbar')
+INSTALLED_APPS.insert(0, 'wagtail.contrib.search_promotions')  # https://github.com/wagtail/wagtail/issues/1824#issuecomment-616220698
 MIDDLEWARE.remove('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
