@@ -4,11 +4,12 @@ from django import forms
 from django.forms import CheckboxInput
 from django.utils.dates import MONTHS
 
-from plants.models import Family, Species, Collection
+from plants.models import Family, Species, Collection, GardenArea
 
 
 class CollectionSearchForm(forms.Form):
-    family_choices = [(family['id'], family['name']) for family in Family.objects.values('id', 'name').distinct()]
+    family_choices = [(family['id'], family['name']) for family in Family.objects.values('id', 'name')]
+    garden_area_choices = [(garden['id'], garden['name']) for garden in GardenArea.objects.values('id', 'name').distinct('name')]
     habit_choices = [(species['habit'], species['habit']) for species in
               Species.objects.order_by('habit').values('habit').distinct('habit')]
     exposure_choices = [(species['exposure'], species['exposure']) for species in
@@ -30,6 +31,7 @@ class CollectionSearchForm(forms.Form):
 
     # Insert empty choice to lists that don't already have an empty option
     family_choices.insert(0, (None, ''))
+    garden_area_choices.insert(0, (None, ''))
     habit_choices.insert(0, (None, ''))
     exposure_choices.insert(0, (None, ''))
     water_need_choices.insert(0, (None, ''))
@@ -40,6 +42,7 @@ class CollectionSearchForm(forms.Form):
     scientific_name = forms.CharField(max_length=100, required=False)
     common_name = forms.CharField(max_length=150, required=False)
     family_name = forms.ChoiceField(choices=family_choices, required=False)
+    garden_area = forms.ChoiceField(choices=garden_area_choices, required=False)
     habits = forms.ChoiceField(choices=habit_choices, required=False)
     exposures = forms.ChoiceField(choices=exposure_choices, required=False)
     water_needs = forms.ChoiceField(choices=water_need_choices, required=False)
@@ -57,6 +60,7 @@ class CollectionSearchForm(forms.Form):
     field_order = ['scientific_name',
                    'common_name',
                    'family_name',
+                   'garden_area',
                    'habits',
                    'exposures',
                    'water_needs',
@@ -68,7 +72,7 @@ class CollectionSearchForm(forms.Form):
                    'deer_resistant',
                    'rabbit_resistant',
                    'bee_friendly',
-                   'high_elevation'
+                   'high_elevation',
                    'available_memorial']
 
     def __init__(self, *args, **kwargs):
