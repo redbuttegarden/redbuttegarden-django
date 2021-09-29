@@ -114,16 +114,19 @@
                     <a class="next" onclick="plusSlides(1)">&#10095;</a>
 
                     <div class="caption-container">
-                        <p id="caption">{{ species.genus.name }} {{ species.name }}</p>
+                        <p id="caption"><span class="italic">{{ species.genus.name }} {{ species.name }}</span> {{ species.cultivar }}</p>
+                        <p id="copyright-display">{# injected by javascript #}</p>
                     </div>
 
                     {% for species_image in images %}
                         <div class="thumb-col">
                             {% image species_image.image height-100 as modal_thumb %}
                             <img src="{{ modal_thumb.url }}" width="{{ modal_thumb.width }}"
-                                 height="{{ modal_thumb.height }}" alt="{{ modal_thumb.alt }}"
+                                 height="{{ modal_thumb.height }}"
+                                 alt="{{ modal_thumb.copyright }}"
                                  onclick="currentSlide({{ forloop.counter }})"
                                  class="demo cursor" title="{{ modal_thumb.title }}">
+                            <div class="copyright-text hidden">{{ species_image.copyright }}</div>
                         </div>
                     {% endfor %}
                 </div>
