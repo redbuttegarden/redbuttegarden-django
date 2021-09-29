@@ -1,8 +1,6 @@
-#id_utah_native {
+input[type=checkbox] {
     margin: 5px;
-}
-#id_available_memorial {
-    margin: 5px;
+    vertical-align: middle;
 }
 label {
     margin-top: 10px;

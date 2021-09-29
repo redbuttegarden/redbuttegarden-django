@@ -160,6 +160,10 @@ def plant_map_view(request):
         flower_color = request.GET.get('flower_colors', None)
         memorial_person = request.GET.get('memorial_person', None)
         utah_native = request.GET.get('utah_native', None)
+        plant_select = request.GET.get('plant_select', None)
+        deer_resistant = request.GET.get('deer_resistant', None)
+        rabbit_resistant = request.GET.get('rabbit_resistant', None)
+        bee_friendly = request.GET.get('bee_friendly', None)
         available_memorial = request.GET.get('available_memorial', None)
 
         if scientific_name:
@@ -185,6 +189,14 @@ def plant_map_view(request):
             collections = collections.filter(memorial_person=memorial_person)
         if utah_native:
             collections = collections.filter(species__utah_native=utah_native)
+        if plant_select:
+            collections = collections.filter(species__plant_select=plant_select)
+        if deer_resistant:
+            collections = collections.filter(species__deer_resist=deer_resistant)
+        if rabbit_resistant:
+            collections = collections.filter(species__rabbit_resist=rabbit_resistant)
+        if bee_friendly:
+            collections = collections.filter(species__bee_friend=bee_friendly)
         if available_memorial:
             collections = collections.filter(commemoration_category='Available')
 

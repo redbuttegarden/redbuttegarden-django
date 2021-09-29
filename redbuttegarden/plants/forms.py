@@ -47,6 +47,10 @@ class CollectionSearchForm(forms.Form):
     flower_colors = forms.ChoiceField(choices=flower_color_choices, required=False)
     memorial_person = forms.ChoiceField(choices=commemoration_people_choices, required=False)
     utah_native = forms.BooleanField(required=False)
+    plant_select = forms.BooleanField(required=False)
+    deer_resistant = forms.BooleanField(required=False)
+    rabbit_resistant = forms.BooleanField(required=False)
+    bee_friendly = forms.BooleanField(required=False)
     available_memorial = forms.BooleanField(required=False)
 
     field_order = ['scientific_name',
@@ -59,6 +63,10 @@ class CollectionSearchForm(forms.Form):
                    'flower_colors',
                    'memorial_person',
                    'utah_native',
+                   'plant_select',
+                   'deer_resistant',
+                   'rabbit_resistant',
+                   'bee_friendly',
                    'available_memorial']
 
     def __init__(self, *args, **kwargs):
