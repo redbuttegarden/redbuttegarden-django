@@ -7,7 +7,7 @@ class SpeciesAdmin(ModelAdmin):
     model = Species
     menu_label = 'Species'  # ditch this to use verbose_name_plural from model
     menu_icon = 'pilcrow'  # change as required
-    list_display = ('genus', 'name')
+    list_display = ('genus', 'name', 'cultivar')
     list_filter = ('genus',)
     search_fields = ('genus__family__name', 'genus__name', 'name', 'cultivar', 'vernacular_name')
     ordering = ('-genus', 'name')

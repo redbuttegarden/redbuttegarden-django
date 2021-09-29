@@ -68,7 +68,7 @@ class Species(ClusterableModel):
     ]
 
     def __str__(self):
-        return ' '.join([self.genus.name, self.name])
+        return ' '.join([self.genus.name, self.name, self.cultivar])
 
     class Meta:
         ordering = ['name']
