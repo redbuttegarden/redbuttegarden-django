@@ -67,6 +67,7 @@
 {% endblock %}
 
 {% block extra_js %}
+    {# TODO - Refresh mapbox token and store in environment variable #}
     <script>
         mapboxgl.accessToken = 'pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw';
         let map = new mapboxgl.Map({
