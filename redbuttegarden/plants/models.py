@@ -76,6 +76,9 @@ class Species(ClusterableModel):
     ]
 
     def __str__(self):
+        if self.cultivar:
+            return ' '.join([self.genus.name, self.name, "'" + self.cultivar + "'"])
+
         return ' '.join([self.genus.name, self.name, self.cultivar])
 
     class Meta:
