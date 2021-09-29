@@ -294,7 +294,7 @@ no-repeat 5px 3px;
 
 #form-submit {
     border-radius: 100px;
-    margin-left: 2rem; 
+    margin-left: 2rem;
     background-color: #007600;
     color: white;
     border: none;
@@ -659,6 +659,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 
 #rbgdefaultbody {
     max-width:1280px;
+    min-height: 600px;
     clear: both;
     position: relative;
     float: none;
