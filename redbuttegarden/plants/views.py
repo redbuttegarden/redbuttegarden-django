@@ -164,6 +164,7 @@ def plant_map_view(request):
         deer_resistant = request.GET.get('deer_resistant', None)
         rabbit_resistant = request.GET.get('rabbit_resistant', None)
         bee_friendly = request.GET.get('bee_friendly', None)
+        high_elevation = request.GET.get('high_elevation', None)
         available_memorial = request.GET.get('available_memorial', None)
 
         if scientific_name:
@@ -197,6 +198,8 @@ def plant_map_view(request):
             collections = collections.filter(species__rabbit_resist=rabbit_resistant)
         if bee_friendly:
             collections = collections.filter(species__bee_friend=bee_friendly)
+        if high_elevation:
+            collections = collections.filter(species__high_elevation=high_elevation)
         if available_memorial:
             collections = collections.filter(commemoration_category='Available')
 

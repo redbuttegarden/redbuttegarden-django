@@ -51,6 +51,7 @@ class CollectionSearchForm(forms.Form):
     deer_resistant = forms.BooleanField(required=False)
     rabbit_resistant = forms.BooleanField(required=False)
     bee_friendly = forms.BooleanField(required=False)
+    high_elevation = forms.BooleanField(required=False)
     available_memorial = forms.BooleanField(required=False)
 
     field_order = ['scientific_name',
@@ -67,6 +68,7 @@ class CollectionSearchForm(forms.Form):
                    'deer_resistant',
                    'rabbit_resistant',
                    'bee_friendly',
+                   'high_elevation'
                    'available_memorial']
 
     def __init__(self, *args, **kwargs):
