@@ -18,3 +18,12 @@
 p.location {
     margin-bottom: 10px;
 }
+
+#map {
+    width: 100%;
+    min-height: 500px;
+}
+
+.collection-info-container {
+    min-height: 500px;
+}

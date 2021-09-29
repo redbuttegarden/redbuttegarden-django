@@ -3,26 +3,57 @@
 
 {% block extra_css %}
     <link href="{% static 'css/collection_detail.css' %}" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.js"></script>
 {% endblock %}
 
 {% block content %}
-    <h1>Collection Detail</h1>
-    <div class="names">
-        {% if collection.species.vernacular_name %}
-            <h4 class="common-name">{{ collection.species.vernacular_name }}</h4>
-        {% endif %}
-        <h4 class="scientific-name"><a href="{% url 'plants:species-detail' collection.species_id %}">{{ collection.species.genus.name }} {{ collection.species.name }}</a></h4>
+    <div id="collection-info-container" class="container-fluid">
+        <div class="col-md-6">
+            <h1>Collection Detail</h1>
+            <div class="names">
+                {% if collection.species.vernacular_name %}
+                    <h4 class="common-name">{{ collection.species.vernacular_name }}</h4>
+                {% endif %}
+                <h4 class="scientific-name"><a href="{% url 'plants:species-detail' collection.species_id %}">{{ collection.species.genus.name }} {{ collection.species.name }}</a></h4>
+            </div>
+            <div class="collection-info">
+                <p id="coords" class="location">{{ collection.location.latitude }}, {{ collection.location.longitude }}</p>
+                {% if collection.plant_id %}
+                    <p><span class="bold">Plant ID: </span>{{ collection.plant_id }}</p>
+                {% endif %}
+                <p><span class="bold">Family: </span>{{ collection.species.genus.family.name }}</p>
+                <p><span class="bold">Garden: </span>{{ collection.garden.name }}</p>
+                <p><span class="bold">Bed #: </span>{{ collection.garden.code }}</p>
+                {% if collection.plant_date %}
+                    <p><span class="bold">Date Planted: </span>{{ collection.plant_date }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div id="map"></div>
+        </div>
     </div>
-    <div class="collection-info">
-        <p class="location">{{ collection.location.latitude }}, {{ collection.location.longitude }}</p>
-        {% if collection.plant_id %}
-            <p><span class="bold">Plant ID: </span>{{ collection.plant_id }}</p>
-        {% endif %}
-        <p><span class="bold">Family: </span>{{ collection.species.genus.family.name }}</p>
-        <p><span class="bold">Garden: </span>{{ collection.garden.name }}</p>
-        <p><span class="bold">Bed #: </span>{{ collection.garden.code }}</p>
-        {% if collection.plant_date %}
-            <p><span class="bold">Date Planted: </span>{{ collection.plant_date }}</p>
-        {% endif %}
-    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    {# TODO - Refresh mapbox token and store in environment variable #}
+<script>
+    let coords = document.getElementById("coords");
+    let coordText = coords.innerHTML;
+    let coordinates = coordText.split(", ");
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw';
+    const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        style: 'mapbox://styles/auslaner/ckok8ssno01wy18qubvcflh7x', // style URL
+        center: [coordinates[1], coordinates[0]], // starting position [lng, lat]
+        zoom: 17 // starting zoom
+    });
+
+    const collectionMarker = new mapboxgl.Marker()
+        .setLngLat([coordinates[1], coordinates[0]])
+        .addTo(map);
+</script>
 {% endblock %}
