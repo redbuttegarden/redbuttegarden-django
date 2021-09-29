@@ -22,7 +22,7 @@ class CollectionSearchForm(forms.Form):
     flower_colors_split = [species['flower_color'].split(',') for species in
                      Species.objects.order_by('flower_color').values('flower_color').distinct('flower_color')
                      if species['flower_color'] is not '' and species['flower_color'] is not None]
-    flower_colors_split = [(color, color) for colors in flower_colors_split for color in colors]  # Flattens list of lists
+    flower_colors_split = [(color.strip(), color.strip()) for colors in flower_colors_split for color in colors]  # Flattens list of lists
     flower_color_choices = sorted(list(OrderedDict.fromkeys(flower_colors_split)))  # Removes duplicates
     commemoration_people_choices = [(collection['commemoration_person'], collection['commemoration_person']) for collection in
                             Collection.objects.order_by('commemoration_person').values('commemoration_person').distinct('commemoration_person')
