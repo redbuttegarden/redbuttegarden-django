@@ -33,6 +33,13 @@
         <div class="col-md-6">
             <div id="map"></div>
         </div>
+
+        <div class="row small text-center">
+            <br>
+            
+            Spotted an issue?
+            <a href="{% url 'plants:collection-feedback' collection.id %}"> Leave a comment with our feedback form.</a>
+        </div>
     </div>
 
 {% endblock %}

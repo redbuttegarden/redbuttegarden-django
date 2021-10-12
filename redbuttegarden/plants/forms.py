@@ -82,3 +82,32 @@ class CollectionSearchForm(forms.Form):
                 pass
             else:
                 visible.field.widget.attrs['class'] = 'form-control'
+
+
+class FeedbackReportForm(forms.Form):
+    """
+    Form used to report problems with a particular Species or Collection.
+    """
+    species_or_collection_object = forms.ModelChoiceField(queryset=Collection.objects.none(), disabled=True,
+                                                          empty_label=None)
+    subject = forms.CharField(max_length=100)
+    message = forms.CharField(widget=forms.Textarea)
+    sender = forms.EmailField()
+    cc_myself = forms.BooleanField(required=False)
+
+    def __init__(self, species_id, collection_id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if species_id:
+            self.fields['species_or_collection_object'].queryset = Species.objects.filter(id=species_id)
+            self.fields['species_or_collection_object'].initial = species_id
+        elif collection_id:
+            self.fields['species_or_collection_object'].queryset = Collection.objects.filter(id=collection_id)
+            self.fields['species_or_collection_object'].initial = collection_id
+        else:
+            raise forms.ValidationError('Missing ID to Species or Collection')
+
+        for visible in self.visible_fields():
+            if isinstance(visible.field.widget, CheckboxInput):
+                pass
+            else:
+                visible.field.widget.attrs['class'] = 'form-control'

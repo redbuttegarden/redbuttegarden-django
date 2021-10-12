@@ -87,6 +87,7 @@
                 </div>
             </div>
         </div>
+
         {% if images.count > 1 %}
             <div class="row">
                 <div class="additional-photos">
@@ -141,6 +142,11 @@
                 </div>
             </div>
         {% endif %}
+
+        <div class="row small text-center">
+            Spotted an issue?
+            <a href="{% url 'plants:species-feedback' species.id %}"> Leave a comment with our feedback form.</a>
+        </div>
     </div>
 {% endblock %}
 

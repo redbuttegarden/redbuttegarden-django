@@ -1,8 +1,10 @@
 import logging
 from urllib.parse import urlencode
 
+from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchVector
-from django.http import JsonResponse
+from django.core.mail import send_mail
+from django.http import JsonResponse, Http404, HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.urls import reverse
 from geojson import dumps
@@ -15,11 +17,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from wagtail.images.models import Image
 
-from .forms import CollectionSearchForm
+from .forms import CollectionSearchForm, FeedbackReportForm
 from .models import Family, Genus, Species, Collection, Location, SpeciesImage
 from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, \
     LocationSerializer
-from .utils import get_feature_collection
+from .utils import get_feature_collection, style_message
 
 logger = logging.getLogger(__name__)
 
@@ -213,16 +215,66 @@ def plant_map_view(request):
     return render(request, 'plants/collection_map.html')
 
 def collection_detail(request, collection_id):
+    """
+    View for displaying detailed info about a single Collection object.
+    """
     collection = get_object_or_404(Collection, pk=collection_id)
     return render(request, 'plants/collection_detail.html', {'collection': collection})
 
 def species_detail(request, species_id):
+    """
+    View for displaying detailed info about a single Species object.
+    """
     species = get_object_or_404(Species, pk=species_id)
     species_images = SpeciesImage.objects.filter(species=species)
     return render(request, 'plants/species_detail.html', {'species': species,
                                                           'images': species_images})
 
+def species_or_collection_feedback(request, species_id=None, collection_id=None):
+    """
+    Form view for reporting a problem with a Species or Collection object.
+    """
+    species = None
+    collection = None
+    if species_id:
+        species = get_object_or_404(Species, pk=species_id)
+    elif collection_id:
+        collection = get_object_or_404(Collection, pk=collection_id)
+    else:
+        raise ValueError('Missing ID to Species or Collection')
+
+    if request.method == 'POST':
+        form = FeedbackReportForm(species_id, collection_id, request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            original_message = form.cleaned_data['message']
+            sender = form.cleaned_data['sender']
+            cc_myself = form.cleaned_data['cc_myself']
+
+            recipients = [user.email for user in get_user_model().objects.filter(
+                groups__name='Plant Collection Curators')]
+            if cc_myself:
+                recipients.append(sender)
+
+            subject = 'RBG Website Plants Feedback: ' + subject
+            message = style_message(request, species, collection, original_message)
+            send_mail(subject, message, sender, recipients)
+            return HttpResponseRedirect(reverse('plants:feedback-thanks'))
+    else:
+        form = FeedbackReportForm(species_id, collection_id)
+
+    context = {
+        'form': form,
+        'species_id': species_id,
+        'collection_id': collection_id
+    }
+    return render(request, 'plants/plant_feedback.html', context)
+
+
 def collection_search(request):
+    """
+    View for filtering Collection objects to be displayed on the plant map.
+    """
     if request.method == 'POST':
         form = CollectionSearchForm(request.POST)
         if form.is_valid():
@@ -240,3 +292,7 @@ def collection_search(request):
             'form': form
         }
         return render(request, 'plants/collection_search.html', context)
+
+
+def feedback_thanks(request):
+    return render(request, 'plants/feedback_thanks.html')

@@ -1,6 +1,7 @@
 import logging
 
 from django.templatetags.static import static
+from django.urls import reverse
 from geojson import FeatureCollection, Feature, Point
 
 logger = logging.getLogger(__name__)
@@ -56,3 +57,14 @@ def get_feature_collection(collections):
         features.append(feature)
 
     return FeatureCollection(features)
+
+def style_message(request, species, collection, original_message):
+    if species:
+        url = request.build_absolute_uri(reverse('plants:species-detail', args=[species.id]))
+    elif collection:
+        url = request.build_absolute_uri(reverse('plants:collection-detail', args=[collection.id]))
+    else:
+        logger.error('No species or collection provided')
+        raise ValueError('No species or collection provided')
+
+    return f"The following feedback has been provided for this page:\n{url}\n\n{original_message}"
