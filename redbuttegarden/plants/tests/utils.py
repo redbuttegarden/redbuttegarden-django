@@ -23,7 +23,7 @@ def get_genus(family):
 
 @pytest.fixture
 def species(genus):
-    return Species.objects.create(genus=genus, name='species')
+    return Species.objects.create(genus=genus, name='species', vernacular_name='vernacular_name')
 
 def get_species(genus):
-    return Species.objects.create(genus=genus, name='species')
+    return Species.objects.create(genus=genus, name='species', vernacular_name='vernacular_name')
