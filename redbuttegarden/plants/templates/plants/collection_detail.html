@@ -15,7 +15,7 @@
                 {% if collection.species.vernacular_name %}
                     <h4 class="common-name">{{ collection.species.vernacular_name }}</h4>
                 {% endif %}
-                <h4 class="scientific-name"><a href="{% url 'plants:species-detail' collection.species_id %}">{{ collection.species.genus.name }} {{ collection.species.name }}</a></h4>
+                <h4 class="scientific-name"><a href="{% url 'plants:species-detail' collection.species_id %}">{{ full_name }}</a></h4>
             </div>
             <div class="collection-info">
                 <p id="coords" class="location">{{ collection.location.latitude }}, {{ collection.location.longitude }}</p>
@@ -36,7 +36,7 @@
 
         <div class="row small text-center">
             <br>
-            
+
             Spotted an issue?
             <a href="{% url 'plants:collection-feedback' collection.id %}"> Leave a comment with our feedback form.</a>
         </div>
