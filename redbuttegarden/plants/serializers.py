@@ -54,11 +54,20 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = ['id', 'latitude', 'longitude']
 
+    def get_unique_together_validators(self):
+        """Overriding method to disable unique together checks"""
+        return []
+
 
 class GardenSerializer(serializers.ModelSerializer):
     class Meta:
         model = GardenArea
         fields = ['id', 'area', 'name', 'code']
+        extra_kwargs = {
+            'code': {
+                'validators': []
+            }
+        }
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -84,7 +93,8 @@ class CollectionSerializer(serializers.ModelSerializer):
         # TODO - Catch errors when species data are changed
         # Get or create logic doesn't seem to avoid unique constraint between genus/species name
         try:
-            species = Species.objects.get(genus=genus, name=species_data['name'], cultivar=species_data['cultivar'])
+            species = Species.objects.get(genus=genus, name=species_data['name'], cultivar=species_data['cultivar'],
+                                          vernacular_name=species_data['vernacular_name'])
         except Species.DoesNotExist:
             species = Species(genus=genus, **species_data)
             species.save()
