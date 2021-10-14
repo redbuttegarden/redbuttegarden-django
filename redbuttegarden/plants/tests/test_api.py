@@ -41,6 +41,11 @@ def collections_same_species_different_cultivars():
                     "name": "Genus"
                 },
                 "name": "species",
+                "subspecies": "",
+                "variety": "",
+                "subvariety": "",
+                "forma": "",
+                "subforma": "",
                 "cultivar": "cultivar-one",
                 "vernacular_name": "Cultivar One Name",
                 "habit": "Habit",
@@ -54,7 +59,8 @@ def collections_same_species_different_cultivars():
                 "plant_select": False,
                 "deer_resist": False,
                 "rabbit_resist": False,
-                "bee_friend": False
+                "bee_friend": False,
+                "high_elevation": False,
             },
             "garden": {
                 "area": "Garden Area",
@@ -80,6 +86,11 @@ def collections_same_species_different_cultivars():
                     "name": "Genus"
                 },
                 "name": "species",
+                "subspecies": "",
+                "variety": "",
+                "subvariety": "",
+                "forma": "",
+                "subforma": "",
                 "cultivar": "cultivar-two",
                 "vernacular_name": "Cultivar Two Name",
                 "habit": "Habit",
@@ -93,7 +104,8 @@ def collections_same_species_different_cultivars():
                 "plant_select": False,
                 "deer_resist": False,
                 "rabbit_resist": False,
-                "bee_friend": False
+                "bee_friend": False,
+                "high_elevation": False,
             },
             "garden": {
                 "area": "Garden Area",
@@ -122,7 +134,8 @@ def test_collection_creation_api_two_cultivars(collections_same_species_differen
     collection_one_payload = collections_same_species_different_cultivars[0]
     collection_two_payload = collections_same_species_different_cultivars[1]
 
-    api_client.auth_user.post('/plants/api/collections/', collection_one_payload, format='json')
+    resp = api_client.auth_user.post('/plants/api/collections/', collection_one_payload, format='json')
+    print(resp.content)
     api_client.auth_user.post('/plants/api/collections/', collection_two_payload, format='json')
 
     assert Collection.objects.all().count() == 2

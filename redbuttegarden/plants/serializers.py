@@ -40,9 +40,10 @@ class SpeciesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Species
-        fields = ['id', 'genus', 'name', 'cultivar', 'vernacular_name', 'habit', 'hardiness', 'water_regime',
-                  'exposure', 'bloom_time', 'plant_size', 'flower_color', 'utah_native', 'plant_select',
-                  'deer_resist', 'rabbit_resist', 'bee_friend']
+        fields = ['id', 'genus', 'name', 'subspecies', 'variety', 'subvariety', 'forma', 'subforma', 'cultivar',
+                  'vernacular_name', 'habit', 'hardiness', 'water_regime', 'exposure', 'bloom_time', 'plant_size',
+                  'flower_color', 'utah_native', 'plant_select', 'deer_resist', 'rabbit_resist', 'bee_friend',
+                  'high_elevation']
         extra_kwargs = {
             'name': {
                 'validators': []
@@ -91,13 +92,29 @@ class CollectionSerializer(serializers.ModelSerializer):
         family, _ = Family.objects.get_or_create(**family_data)
         genus, _ = Genus.objects.get_or_create(family=family, **genus_data)
         # TODO - Catch errors when species data are changed
-        # Get or create logic doesn't seem to avoid unique constraint between genus/species name
-        try:
-            species = Species.objects.get(genus=genus, name=species_data['name'], cultivar=species_data['cultivar'],
-                                          vernacular_name=species_data['vernacular_name'])
-        except Species.DoesNotExist:
-            species = Species(genus=genus, **species_data)
-            species.save()
+        species, _ = Species.objects.get_or_create(genus=genus,
+                                                   name=species_data['name'],
+                                                   subspecies=species_data['subspecies'],
+                                                   variety=species_data['variety'],
+                                                   subvariety=species_data['subvariety'],
+                                                   forma=species_data['forma'],
+                                                   subforma=species_data['subforma'],
+                                                   cultivar=species_data['cultivar'],
+                                                   defaults={
+                                                       'vernacular_name': species_data['vernacular_name'],
+                                                       'habit': species_data['habit'],
+                                                       'hardiness': species_data['hardiness'],
+                                                       'water_regime': species_data['water_regime'],
+                                                       'exposure': species_data['exposure'],
+                                                       'bloom_time': species_data['bloom_time'],
+                                                       'plant_size': species_data['plant_size'],
+                                                       'flower_color': species_data['flower_color'],
+                                                       'utah_native': species_data['utah_native'],
+                                                       'plant_select': species_data['plant_select'],
+                                                       'deer_resist': species_data['deer_resist'],
+                                                       'bee_friend': species_data['bee_friend'],
+                                                       'high_elevation': species_data['high_elevation']
+                                                   })
 
         location, _ = Location.objects.get_or_create(**location_data)
         garden, _ = GardenArea.objects.get_or_create(**garden_data)
