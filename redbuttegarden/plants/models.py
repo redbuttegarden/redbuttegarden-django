@@ -37,6 +37,11 @@ class Species(ClusterableModel):
 
     genus = models.ForeignKey(Genus, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=True, null=True)
+    subspecies = models.CharField(max_length=255, blank=True, null=True)
+    variety = models.CharField(max_length=255, blank=True, null=True)
+    subvariety = models.CharField(max_length=255, blank=True, null=True)
+    forma = models.CharField(max_length=255, blank=True, null=True)
+    subforma = models.CharField(max_length=255, blank=True, null=True)
     cultivar = models.CharField(max_length=255, blank=True, null=True)
     vernacular_name = models.CharField(max_length=255)
     habit = models.CharField(max_length=255)
@@ -60,6 +65,11 @@ class Species(ClusterableModel):
         InlinePanel('species_images', label='Species Images'),
         FieldPanel('genus'),
         FieldPanel('name'),
+        FieldPanel('subspecies'),
+        FieldPanel('variety'),
+        FieldPanel('subvariety'),
+        FieldPanel('forma'),
+        FieldPanel('subforma'),
         FieldPanel('cultivar'),
         FieldPanel('vernacular_name'),
         FieldPanel('habit'),
@@ -91,7 +101,7 @@ class Species(ClusterableModel):
 
     class Meta:
         ordering = ['name']
-        unique_together = ['genus', 'name', 'cultivar']
+        unique_together = ['genus', 'name', 'subspecies', 'variety', 'subvariety', 'forma', 'subforma', 'cultivar']
         verbose_name_plural = 'species'
         constraints = [
             models.CheckConstraint(check=models.Q(vernacular_name__length__gt=0), name='vernacular_name_not_empty')
