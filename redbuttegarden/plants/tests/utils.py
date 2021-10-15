@@ -16,14 +16,16 @@ def get_family():
 
 @pytest.fixture
 def genus(family):
-    return Genus.objects.create(family=family, name='genus')
+    return Genus.objects.create(family=family, name='Genus')
 
 def get_genus(family):
-    return Genus.objects.create(family=family, name='genus')
+    return Genus.objects.create(family=family, name='Genus')
 
 @pytest.fixture
 def species(genus):
-    return Species.objects.create(genus=genus, name='species', vernacular_name='vernacular_name')
+    return Species.objects.create(genus=genus, name='species', full_name='Genus species',
+                                  vernacular_name='vernacular_name')
 
 def get_species(genus):
-    return Species.objects.create(genus=genus, name='species', vernacular_name='vernacular_name')
+    return Species.objects.create(genus=genus, name='species', full_name='Genus species',
+                                  vernacular_name='vernacular_name')

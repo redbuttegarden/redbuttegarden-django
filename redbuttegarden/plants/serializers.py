@@ -40,10 +40,10 @@ class SpeciesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Species
-        fields = ['id', 'genus', 'name', 'subspecies', 'variety', 'subvariety', 'forma', 'subforma', 'cultivar',
-                  'vernacular_name', 'habit', 'hardiness', 'water_regime', 'exposure', 'bloom_time', 'plant_size',
-                  'flower_color', 'utah_native', 'plant_select', 'deer_resist', 'rabbit_resist', 'bee_friend',
-                  'high_elevation']
+        fields = ['id', 'genus', 'name', 'full_name', 'subspecies', 'variety', 'subvariety', 'forma', 'subforma',
+                  'cultivar', 'vernacular_name', 'habit', 'hardiness', 'water_regime', 'exposure', 'bloom_time',
+                  'plant_size', 'flower_color', 'utah_native', 'plant_select', 'deer_resist', 'rabbit_resist',
+                  'bee_friend', 'high_elevation']
         extra_kwargs = {
             'name': {
                 'validators': []
@@ -101,6 +101,7 @@ class CollectionSerializer(serializers.ModelSerializer):
                                                    subforma=species_data['subforma'],
                                                    cultivar=species_data['cultivar'],
                                                    defaults={
+                                                       'full_name': species_data['full_name'],
                                                        'vernacular_name': species_data['vernacular_name'],
                                                        'habit': species_data['habit'],
                                                        'hardiness': species_data['hardiness'],

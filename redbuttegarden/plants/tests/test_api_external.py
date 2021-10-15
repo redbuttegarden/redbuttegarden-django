@@ -93,6 +93,7 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
                     'name': 'Opuntia'
                 },
                 'name': 'polyacantha',
+                'full_name': 'Opuntia polyacantha',
                 'subspecies': '',
                 'variety': '',
                 'subvariety': '',
@@ -138,6 +139,7 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
                      'name': 'Opuntia'
                  },
                      'name': 'polyacantha',
+                     'full_name': 'Opuntia polyacantha var. trichophora',
                      'subspecies': '',
                      'variety': 'trichophora',
                      'subvariety': '',

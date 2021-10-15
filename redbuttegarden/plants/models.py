@@ -33,10 +33,13 @@ class Genus(models.Model):
         ordering = ['name']
 
 class Species(ClusterableModel):
-    bloom_time_choices = [(v, v) for _, v in MONTHS.items()]
+    bloom_time_choices = [(' '.join([i, str(v)]), ' '.join([i, str(v)])) for _, v in MONTHS.items()
+                          for i in ['Early', 'Mid', 'Late']] + \
+                         [(v, v) for _, v in MONTHS.items()]
 
     genus = models.ForeignKey(Genus, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=True, null=True)
+    full_name = models.CharField(max_length=255)
     subspecies = models.CharField(max_length=255, blank=True, null=True)
     variety = models.CharField(max_length=255, blank=True, null=True)
     subvariety = models.CharField(max_length=255, blank=True, null=True)
@@ -65,6 +68,7 @@ class Species(ClusterableModel):
         InlinePanel('species_images', label='Species Images'),
         FieldPanel('genus'),
         FieldPanel('name'),
+        FieldPanel('full_name'),
         FieldPanel('subspecies'),
         FieldPanel('variety'),
         FieldPanel('subvariety'),
@@ -88,23 +92,15 @@ class Species(ClusterableModel):
     ]
 
     def __str__(self):
-        if self.cultivar and self.name:
-            return ' '.join([self.genus.name, self.name, "'" + self.cultivar + "'"])
-
-        if self.cultivar and not self.name:
-            return ' '.join([self.genus.name, "'" + self.cultivar + "'"])
-
-        if self.name and not self.cultivar:
-            return ' '.join([self.genus.name, self.name])
-
-        return ' '.join([self.genus.name, self.vernacular_name])
+        return self.full_name
 
     class Meta:
-        ordering = ['name']
+        ordering = ['full_name']
         unique_together = ['genus', 'name', 'subspecies', 'variety', 'subvariety', 'forma', 'subforma', 'cultivar']
         verbose_name_plural = 'species'
         constraints = [
-            models.CheckConstraint(check=models.Q(vernacular_name__length__gt=0), name='vernacular_name_not_empty')
+            models.CheckConstraint(check=models.Q(vernacular_name__length__gt=0), name='vernacular_name_not_empty'),
+            models.CheckConstraint(check=models.Q(full_name__length__gt=0), name='full_name_not_empty')
         ]
 
 class SpeciesImage(Orderable):

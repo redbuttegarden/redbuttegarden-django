@@ -41,6 +41,7 @@ def collections_same_species_different_cultivars():
                     "name": "Genus"
                 },
                 "name": "species",
+                "full_name": "Genus species",
                 "subspecies": "",
                 "variety": "",
                 "subvariety": "",
@@ -86,6 +87,7 @@ def collections_same_species_different_cultivars():
                     "name": "Genus"
                 },
                 "name": "species",
+                "full_name": "Genus species",
                 "subspecies": "",
                 "variety": "",
                 "subvariety": "",
