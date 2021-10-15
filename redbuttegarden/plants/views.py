@@ -219,8 +219,7 @@ def collection_detail(request, collection_id):
     View for displaying detailed info about a single Collection object.
     """
     collection = get_object_or_404(Collection, pk=collection_id)
-    return render(request, 'plants/collection_detail.html', {'collection': collection,
-                                                             'full_name': str(collection.species)})
+    return render(request, 'plants/collection_detail.html', {'collection': collection})
 
 def species_detail(request, species_id):
     """
