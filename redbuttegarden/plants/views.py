@@ -48,19 +48,32 @@ class SpeciesList(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Species.objects.all()
 
-        name = self.request.query_params.get('name')
-        cultivar = self.request.query_params.get('cultivar')
-        vernacular_name = self.request.query_params.get('vernacular_name')
         genus = self.request.query_params.get('genus')
+        name = self.request.query_params.get('name')
+        subspecies = self.request.query_params.get('subspecies')
+        variety = self.request.query_params.get('variety')
+        subvariety = self.request.query_params.get('subvariety')
+        forma = self.request.query_params.get('forma')
+        subforma = self.request.query_params.get('subforma')
+        cultivar = self.request.query_params.get('cultivar')
 
-        if name:
-            queryset = queryset.filter(name=name)
-        if cultivar:
-            queryset = queryset.filter(cultivar=cultivar)
-        if vernacular_name:
-            queryset = queryset.filter(vernacular_name=vernacular_name)
         if genus:
             queryset = queryset.filter(genus__name=genus)
+        if name:
+            queryset = queryset.filter(name=name)
+        if subspecies:
+            queryset = queryset.filter(subspecies=subspecies)
+        if variety:
+            queryset = queryset.filter(variety=variety)
+        if subvariety:
+            queryset = queryset.filter(subvariety=subvariety)
+        if forma:
+            queryset = queryset.filter(forma=forma)
+        if subforma:
+            queryset = queryset.filter(subforma=subforma)
+        if cultivar:
+            queryset = queryset.filter(cultivar=cultivar)
+
 
         return queryset
 
