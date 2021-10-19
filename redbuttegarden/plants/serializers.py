@@ -92,7 +92,7 @@ class CollectionSerializer(serializers.ModelSerializer):
         family, _ = Family.objects.get_or_create(**family_data)
         genus, _ = Genus.objects.get_or_create(family=family, **genus_data)
         # TODO - Catch errors when species data are changed
-        species, _ = Species.objects.get_or_create(genus=genus,
+        species, _ = Species.objects.update_or_create(genus=genus,
                                                    name=species_data['name'],
                                                    subspecies=species_data['subspecies'],
                                                    variety=species_data['variety'],

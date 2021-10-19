@@ -140,11 +140,15 @@ def set_image(request, pk):
         uploaded_image = request.FILES.get('image')
         img_title = uploaded_image.name
 
-        image, img_created = Image.objects.get_or_create(
-            title=img_title,
-            defaults={'file': uploaded_image,
-                      'collection': WagtailCollection.objects.get(name='BRAHMS Data')}
-        )
+        try:
+            image, img_created = Image.objects.get_or_create(
+                title=img_title,
+                defaults={'file': uploaded_image,
+                          'collection': WagtailCollection.objects.get(name='BRAHMS Data')}
+            )
+        except WagtailCollection.DoesNotExist:
+            logger.error('"BRAHMS DATA" Collection is missing. Unable to save new images.')
+            return JsonResponse({'status': 'failure'})
 
         if img_created:
             image.tags.add('BRAHMS')

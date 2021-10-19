@@ -7,6 +7,7 @@ from PIL import Image
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import RequestsClient, APILiveServerTestCase
+from wagtail.core.models import Collection as WagtailCollection
 
 from plants.models import SpeciesImage, Collection
 from .utils import get_custom_user, get_family, get_genus, get_species
@@ -21,6 +22,10 @@ class TestSingleImageAPIFromExternalPerspective(APILiveServerTestCase):
         api_group = Group.objects.create(name="API")
 
         self.user.groups.add(api_group)
+
+        # Create wagtail collection used during image upload view
+        root_coll = WagtailCollection.get_first_root_node()
+        root_coll.add_child(name='BRAHMS Data')
 
         self.family = get_family()
         self.genus = get_genus(self.family)
@@ -192,3 +197,115 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
         self.assertTrue(status.is_success(second_response.status_code))
 
         self.assertEqual(Collection.objects.all().count(), 2)
+
+    def test_posting_same_collection_with_modified_flower_color(self):
+        url = self.live_server_url + reverse('plants:api-collection-list')
+        payloads = [
+            {'species':
+                {'genus': {
+                    'family': {
+                        'name': 'Cactaceae',
+                        'vernacular_name': 'Cactus'
+                    },
+                    'name': 'Opuntia'
+                },
+                    'name': 'polyacantha',
+                    'full_name': 'Opuntia polyacantha var. trichophora',
+                    'subspecies': '',
+                    'variety': 'trichophora',
+                    'subvariety': '',
+                    'forma': '',
+                    'subforma': '',
+                    'cultivar': '',
+                    'vernacular_name': 'Threadspine Pricklypear',
+                    'habit': 'Succulent',
+                    'hardiness': [7, 8, 9, 10, 11],
+                    'water_regime': 'Very Low',
+                    'exposure': 'Full Sun',
+                    'bloom_time': [],
+                    'plant_size': '15"h x 3\'w',
+                    'flower_color': 'Yellow',
+                    'utah_native': True,
+                    'plant_select': False,
+                    'deer_resist': True,
+                    'rabbit_resist': True,
+                    'bee_friend': True,
+                    'high_elevation': False
+                },
+                'garden': {
+                    'area': 'Adaptive Beauty',
+                    'name': 'Water Conservation Garden',
+                    'code': 'WCG-09'
+                },
+                'location': {
+                    'latitude': 40.767433,
+                    'longitude': -111.823954
+                },
+                'plant_date': '1-10-2016',
+                'plant_id': '2015-0308*3',
+                'commemoration_category': '',
+                'commemoration_person': ''
+            },
+
+            {'species':
+                {'genus': {
+                    'family': {
+                        'name': 'Cactaceae',
+                        'vernacular_name': 'Cactus'
+                    },
+                    'name': 'Opuntia'
+                },
+                    'name': 'polyacantha',
+                    'full_name': 'Opuntia polyacantha var. trichophora',
+                    'subspecies': '',
+                    'variety': 'trichophora',
+                    'subvariety': '',
+                    'forma': '',
+                    'subforma': '',
+                    'cultivar': '',
+                    'vernacular_name': 'Threadspine Pricklypear',
+                    'habit': 'Succulent',
+                    'hardiness': [7, 8, 9, 10, 11],
+                    'water_regime': 'Very Low',
+                    'exposure': 'Full Sun',
+                    'bloom_time': [],
+                    'plant_size': '15"h x 3\'w',
+                    'flower_color': 'White',
+                    'utah_native': True,
+                    'plant_select': False,
+                    'deer_resist': True,
+                    'rabbit_resist': True,
+                    'bee_friend': True,
+                    'high_elevation': False
+                },
+                'garden': {
+                    'area': 'Adaptive Beauty',
+                    'name': 'Water Conservation Garden',
+                    'code': 'WCG-09'
+                },
+                'location': {
+                    'latitude': 40.767433,
+                    'longitude': -111.823954
+                },
+                'plant_date': '1-10-2016',
+                'plant_id': '2015-0308*3',
+                'commemoration_category': '',
+                'commemoration_person': ''
+            },
+        ]
+
+        self.assertEqual(Collection.objects.all().count(), 0)
+
+        first_response = self.client.post(url, json=payloads[0])
+        self.assertTrue(status.is_success(first_response.status_code))
+
+        self.assertEqual(Collection.objects.all().count(), 1)
+
+        self.assertEquals(Collection.objects.first().species.flower_color, 'Yellow')
+
+        second_response = self.client.post(url, json=payloads[1])
+        self.assertTrue(status.is_success(second_response.status_code))
+
+        self.assertEqual(Collection.objects.all().count(), 1)
+
+        self.assertEquals(Collection.objects.first().species.flower_color, 'White')

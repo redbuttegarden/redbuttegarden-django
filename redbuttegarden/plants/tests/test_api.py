@@ -7,6 +7,7 @@ from django.core.files.images import ImageFile
 from PIL import Image
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
+from wagtail.core.models import Collection as WagtailCollection
 
 from plants.models import Collection
 from .utils import family, genus, species
@@ -16,6 +17,11 @@ from .utils import family, genus, species
 class TestAPI:
     def __init__(self):
         user = self.user()
+
+        # Create wagtail collection used during image upload view
+        root_coll = WagtailCollection.get_first_root_node()
+        root_coll.add_child(name='BRAHMS Data')
+
         self.auth_user = self.authenticated_client(user)
 
     def user(self):
