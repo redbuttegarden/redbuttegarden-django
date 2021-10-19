@@ -120,10 +120,10 @@
                     <a class="next" onclick="plusSlides(1)">&#10095;</a>
 
                     <div class="caption-container">
-                        <p id="caption">
+                        <p id="caption-display">
                             <span class="italic">
-                                {{ species.genus.name }} {{ species.name }}
-                            </span>{% if species.cultivar %} '{{ species.cultivar }}'{% endif %}
+                               {# injected by javascript #}
+                            </span>
                         </p>
                         <p id="copyright-display">{# injected by javascript #}</p>
                     </div>
@@ -136,6 +136,7 @@
                                  alt="{{ modal_thumb.copyright }}"
                                  onclick="currentSlide({{ forloop.counter }})"
                                  class="demo cursor" title="{{ modal_thumb.title }}">
+                            <div class="caption-text hidden">{{ species_image.caption }}</div>
                             <div class="copyright-text hidden">{{ species_image.copyright }}</div>
                         </div>
                     {% endfor %}

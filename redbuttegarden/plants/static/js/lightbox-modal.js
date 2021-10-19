@@ -21,6 +21,8 @@ function showSlides(n) {
     let i;
     const slides = document.getElementsByClassName("mySlides");
     const images = document.getElementsByClassName("demo");
+    const captionText = document.getElementsByClassName("caption-text");
+    const captionDisplay = document.getElementById("caption-display");
     const copyrightText = document.getElementsByClassName("copyright-text");
     const copyrightDisplay = document.getElementById("copyright-display");
 
@@ -35,6 +37,7 @@ function showSlides(n) {
 
     slides[slideIndex - 1].style.display = "block";
     images[slideIndex - 1].className += " active";
+    captionDisplay.innerHTML = captionText[slideIndex - 1].innerHTML;
     copyrightDisplay.innerHTML = copyrightText[slideIndex - 1].innerHTML;
 }
 

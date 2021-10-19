@@ -15,6 +15,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from wagtail.core.models import Collection as WagtailCollection
 from wagtail.images.models import Image
 
 from .forms import CollectionSearchForm, FeedbackReportForm
@@ -134,21 +135,25 @@ def set_image(request, pk):
             copyright_text = request.data['copyright_info']
         else:
             copyright_text = ''
+
         species = Species.objects.get(pk=pk)
         uploaded_image = request.FILES.get('image')
-        img_title = '_'.join([species.genus.name,
-                              species.name if species.name else '',
-                              species.cultivar if species.cultivar else '',
-                              uploaded_image.name])
+        img_title = uploaded_image.name
+
         image, img_created = Image.objects.get_or_create(
-            file=uploaded_image,
-            defaults={'title': img_title}
+            title=img_title,
+            defaults={'file': uploaded_image,
+                      'collection': WagtailCollection.objects.get(name='BRAHMS Data')}
         )
+
+        if img_created:
+            image.tags.add('BRAHMS')
+
         species_image, species_img_created = SpeciesImage.objects.get_or_create(
             species=species,
             image=image,
-            caption='',
-            copyright=copyright_text
+            copyright=copyright_text,
+            defaults={'caption': species.full_name}
         )
 
         return JsonResponse({'status': 'success',
