@@ -130,11 +130,7 @@
                             // Highlight corresponding feature on the map
                             popup
                                 .setLngLat(feature.geometry.coordinates)
-                                .setText(
-                                    feature.properties.genus_name +
-                                    ' ' +
-                                    feature.properties.species_name
-                                )
+                                .setText(feature.properties.species_full_name)
                                 .addTo(map);
                         });
                         listingEl.appendChild(collection);
@@ -441,7 +437,7 @@
                 const family_name = e.features[0].properties.family_name;
                 const genus_name = e.features[0].properties.genus_name;
                 const species_name = e.features[0].properties.species_name;
-                const cultivar = e.features[0].properties.cultivar;
+                const species_full_name = e.features[0].properties.species_full_name;
                 const vernacular_name = e.features[0].properties.vernacular_name;
                 const habit = e.features[0].properties.habit;
                 const hardiness = e.features[0].properties.hardiness;
@@ -449,6 +445,9 @@
                 const exposure = e.features[0].properties.exposure;
                 const bloom_time = e.features[0].properties.bloom_time;
                 const plant_size = e.features[0].properties.plant_size;
+                const garden_area = e.features[0].properties.garden_area;
+                const garden_name = e.features[0].properties.garden_name;
+                const garden_code = e.features[0].properties.garden_code;
                 const planted_on = e.features[0].properties.planted_on;
 
                 console.log(e.features[0].properties);
@@ -473,7 +472,7 @@
                             '<span class="pop-up-label">Species Name: </span><span class="scientific-name">' + species_name + '</span>' +
                         '</div>' +
                         '<div class="pop-up-row">' +
-                            '<span class="pop-up-label">Cultivar Name: </span>' + cultivar +
+                            '<span class="pop-up-label">Full Name: </span>' + species_full_name +
                         '</div>' +
                         '<div class="pop-up-row">' +
                             '<span class="pop-up-label">Vernacular Name: </span>' + vernacular_name +
@@ -495,6 +494,15 @@
                         '</div>' +
                         '<div class="pop-up-row">' +
                             '<span class="pop-up-label">Plant Size: </span>' + plant_size +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Garden Area: </span>' + garden_area +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Garden Name: </span>' + garden_name +
+                        '</div>' +
+                        '<div class="pop-up-row">' +
+                            '<span class="pop-up-label">Garden Code: </span>' + garden_code +
                         '</div>' +
                         '<div class="pop-up-row">' +
                             '<span class="pop-up-label">Planted On: </span>' + planted_on +
