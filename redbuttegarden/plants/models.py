@@ -128,16 +128,16 @@ class Location(models.Model):
         return ' '.join([str(self.latitude), str(self.longitude)])
 
 class GardenArea(models.Model):
-    area = models.CharField(max_length=255, blank=True, null=True)
-    name = models.CharField(max_length=255, blank=True, null=True)
-    code = models.CharField(max_length=20, blank=True, null=True, unique=True)
+    area = models.CharField(max_length=255, blank=True, null=True)  # Garden Area/Zone in BRAHMS
+    name = models.CharField(max_length=255, blank=True, null=True)  # Garden Location in BRAHMS
+    code = models.CharField(max_length=20, blank=True, null=True, unique=True)  # Garden Location Code in BRAHMS
 
 class Collection(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     garden = models.ForeignKey(GardenArea, on_delete=models.SET_NULL, null=True)
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
     plant_date = models.DateField(blank=True, null=True)
-    plant_id = models.CharField(max_length=255, null=True, blank=True)
+    plant_id = models.CharField(max_length=255, unique=True)
     commemoration_category = models.CharField(max_length=255, null=True, blank=True)
     commemoration_person = models.CharField(max_length=255, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
