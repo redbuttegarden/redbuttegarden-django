@@ -20,11 +20,21 @@
             </div>
 
             <div class="main-image">
-                {% image images.first.image max-500x500 as main_img %}
-                <img src="{{ main_img.url }}" width="{{ main_img.width }}"
-                     height="{{ main_img.height }}" alt="{{ main_img.alt }}"
-                     onclick="openModal();currentSlide(1)"
-                     class="hover-shadow cursor">
+                {% if images %}
+                    {% image images.first.image max-500x500 as main_img %}
+                    <img src="{{ main_img.url }}" width="{{ main_img.width }}"
+                         height="{{ main_img.height }}" alt="{{ main_img.alt }}"
+                         onclick="openModal();currentSlide(1)"
+                         class="hover-shadow cursor">
+                {% else %}
+                    <picture>
+                        <source srcset="{% static 'img/Image_Coming_Soon.webp' %}" type="image/webp">
+                        <img src="{% static 'img/Image_Coming_Soon.jpg' %}" class="hover-shadow responsive"
+                             alt="Images coming soon" title="Placeholder Image" width="350em" height="350em"
+                             onclick="openModal();currentSlide(1)"
+                        />
+                    </picture>
+                {% endif %}
             </div>
 
             <div class="species-info">
