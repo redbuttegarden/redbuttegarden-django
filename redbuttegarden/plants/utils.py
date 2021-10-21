@@ -42,7 +42,7 @@ def get_feature_collection(collections):
                               'family_name': collection.species.genus.family.name,
                               'genus_name': collection.species.genus.name,
                               'species_name': collection.species.name,
-                              'cultivar': collection.species.cultivar,
+                              'species_full_name': collection.species.full_name,
                               'vernacular_name': collection.species.vernacular_name,
                               'habit': collection.species.habit,
                               'hardiness': collection.species.hardiness,
@@ -50,6 +50,9 @@ def get_feature_collection(collections):
                               'exposure': collection.species.exposure,
                               'boom_time': collection.species.bloom_time,
                               'plant_size': collection.species.plant_size,
+                              'garden_area': collection.garden.area,
+                              'garden_name': collection.garden.name,
+                              'garden_code': collection.garden.code,
                               'planted_on': plant_date,
                               'icon': icon
                               if collection.plant_date else None,
