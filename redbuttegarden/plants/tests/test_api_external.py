@@ -133,7 +133,7 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
                     'latitude': 40.7666,
                     'longitude': -111.823326
             },
-                'plant_date': '19-5-2009',
+                'plant_date': '2009-5-19',
                 'plant_id': '2010-0428*1',
                 'commemoration_category': '',
                 'commemoration_person': ''
@@ -179,7 +179,7 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
                     'latitude': 40.767433,
                     'longitude': -111.823954
                 },
-                'plant_date': '1-10-2016',
+                'plant_date': '2016-1-10',
                 'plant_id': '2015-0308*3',
                 'commemoration_category': '',
                 'commemoration_person': ''
@@ -241,7 +241,7 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
                     'latitude': 40.767433,
                     'longitude': -111.823954
                 },
-                'plant_date': '1-10-2016',
+                'plant_date': '2016-1-10',
                 'plant_id': '2015-0308*3',
                 'commemoration_category': '',
                 'commemoration_person': ''
@@ -287,7 +287,7 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
                     'latitude': 40.767433,
                     'longitude': -111.823954
                 },
-                'plant_date': '1-10-2016',
+                'plant_date': '2016-1-10',
                 'plant_id': '2015-0308*3',
                 'commemoration_category': '',
                 'commemoration_person': ''
@@ -304,6 +304,7 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
         self.assertEquals(Collection.objects.first().species.flower_color, 'Yellow')
 
         second_response = self.client.post(url, json=payloads[1])
+        print(second_response.content)
         self.assertTrue(status.is_success(second_response.status_code))
 
         self.assertEqual(Collection.objects.all().count(), 1)

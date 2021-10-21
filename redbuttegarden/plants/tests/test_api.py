@@ -78,7 +78,7 @@ def collections_same_species_different_cultivars():
                 "latitude": 40.766367,
                 "longitude": -111.823807,
             },
-            "plant_date": "1-1-1111",
+            "plant_date": "1111-1-1",
             "plant_id": "0001-0001*1",
             "commemoration_category": "Available",
             "commemoration_person": "Person Name"
@@ -124,7 +124,7 @@ def collections_same_species_different_cultivars():
                 "latitude": 40.766367,
                 "longitude": -111.823807,
             },
-            "plant_date": "1-1-1111",
+            "plant_date": "1111-1-1",
             "plant_id": "0001-0001*1",
             "commemoration_category": "Available",
             "commemoration_person": "Person Name"
@@ -137,16 +137,18 @@ def collections_same_species_different_cultivars():
 
 @pytest.mark.django_db
 def test_collection_creation_api_two_cultivars(collections_same_species_different_cultivars):
+    """
+    Attempt to post collection with same plant_id should not create another collection
+    """
     api_client = TestAPI()
 
     collection_one_payload = collections_same_species_different_cultivars[0]
     collection_two_payload = collections_same_species_different_cultivars[1]
 
-    resp = api_client.auth_user.post('/plants/api/collections/', collection_one_payload, format='json')
-    print(resp.content)
+    api_client.auth_user.post('/plants/api/collections/', collection_one_payload, format='json')
     api_client.auth_user.post('/plants/api/collections/', collection_two_payload, format='json')
 
-    assert Collection.objects.all().count() == 2
+    assert Collection.objects.all().count() == 1
 
 @pytest.mark.django_db
 def test_species_image_setting(species):
