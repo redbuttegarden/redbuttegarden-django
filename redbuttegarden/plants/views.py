@@ -177,7 +177,7 @@ def plant_map_view(request):
         scientific_name = request.GET.get('scientific_name', None)
         common_name = request.GET.get('common_name', None)
         family = request.GET.get('family_name', None)
-        garden_area = request.GET.get('garden_area', None)
+        garden_name = request.GET.get('garden_name', None)
         habit = request.GET.get('habits', None)
         exposure = request.GET.get('exposures', None)
         water_need = request.GET.get('water_needs', None)
@@ -201,8 +201,8 @@ def plant_map_view(request):
                                                                    'species__vernacular_name'))
         if family:
             collections = collections.filter(species__genus__family_id=family)
-        if garden_area:
-            collections = collections.filter(garden=garden_area)
+        if garden_name:
+            collections = collections.filter(garden__name=garden_name)
         if habit:
             collections = collections.filter(species__habit=habit)
         if exposure:
