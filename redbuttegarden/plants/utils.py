@@ -48,7 +48,7 @@ def get_feature_collection(collections):
                               'hardiness': collection.species.hardiness,
                               'water_regime': collection.species.water_regime,
                               'exposure': collection.species.exposure,
-                              'boom_time': collection.species.bloom_time,
+                              'bloom_time': collection.species.bloom_time,
                               'plant_size': collection.species.plant_size,
                               'garden_area': collection.garden.area,
                               'garden_name': collection.garden.name,
