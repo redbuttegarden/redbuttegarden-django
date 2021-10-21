@@ -75,12 +75,18 @@ class CollectionSerializer(serializers.ModelSerializer):
     species = SpeciesSerializer()
     location = LocationSerializer()
     garden = GardenSerializer()
-    plant_date = serializers.DateField(input_formats=['%d-%m-%Y'], required=False, allow_null=True)
+    plant_date = serializers.DateField(input_formats=['%Y-%m-%d'], required=False, allow_null=True)
 
     class Meta:
         model = Collection
         fields = ['id', 'species', 'location', 'garden', 'plant_date', 'plant_id', 'commemoration_category',
                   'commemoration_person', 'created_on', 'last_modified']
+
+        extra_kwargs = {
+            'plant_id': {
+                'validators': []
+            }
+        }
 
     def create(self, validated_data):
         species_data = validated_data.pop('species')
@@ -119,7 +125,14 @@ class CollectionSerializer(serializers.ModelSerializer):
 
         location, _ = Location.objects.get_or_create(**location_data)
         garden, _ = GardenArea.objects.get_or_create(**garden_data)
-        collection, _ = Collection.objects.get_or_create(location=location, garden=garden, species=species,
-                                                         **validated_data)
+        collection, _ = Collection.objects.update_or_create(plant_id=validated_data['plant_id'],
+                                                            defaults={
+                                                                'location': location,
+                                                                'garden': garden,
+                                                                'species': species,
+                                                                'plant_date': validated_data['plant_date'],
+                                                                'commemoration_category': validated_data['commemoration_category'],
+                                                                'commemoration_person': validated_data['commemoration_person']
+                                                            })
 
         return collection
