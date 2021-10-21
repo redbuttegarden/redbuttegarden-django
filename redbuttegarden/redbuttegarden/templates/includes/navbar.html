@@ -46,8 +46,9 @@
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">PLANTS &amp; GARDENS <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a title="Link to map displaying plant location in the garden" href="{% url 'plants:plant-map' %}">INTERACTIVE<br/>PLANT MAP</a></li>
+                        <li><a title="Filter our plant collections to be displayed on the plant map based on given search criteria" href="{% url 'plants:collection-search' %}">SEARCH OUR PLANT<br>COLLECTIONS</a></li>
                         <li><a title="Link to page with info about our themed gardens" href="{% slugurl 'themed-gardens' %}">THEMED GARDENS</a></li>
-                        <li><a title="Link to slideshows and descriptions of our various plant collections" href="{% slugurl 'plant-collections' %}">PLANT COLLECTIONS</a></li>
+                        <li><a title="Link to slideshows and descriptions of our various plant collections" href="{% slugurl 'plant-collections' %}">PLANT COLLECTIONS<br>INFORMATION</a></li>
                         <li><a title="Tips and tricks for doing your own gardening" href="{% slugurl 'gardening-information' %}">GARDENING INFORMATION</a></li>
                         <li><a title="Desciptions of what's going on in our Conservation Department" href="{% slugurl 'conservation-research' %}">PLANT CONSERVATION<br />RESEARCH</a></li>
                         <li><a title="A blog for keeping up with blooms at the garden" href="{% slugurl 'whats-blooming-now' %}">WHAT'S BLOOMING<br /> NOW BLOG</a></li>
