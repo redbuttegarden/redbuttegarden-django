@@ -136,3 +136,22 @@ class PlantSearchViewTestCase(TestCase):
         feature_two_id = json_response['features'][1]['properties']['id']
         self.assertEqual(Collection.objects.get(id=feature_one_id).species.flower_color, 'Purple, Red')
         self.assertEqual(Collection.objects.get(id=feature_two_id).species.flower_color, 'Purple, Blue')
+
+    def test_collection_search_by_scientific_name_and_vernacular_name(self):
+        get_collection(plant_id='1', family_name='Grossulariaceae', genus_name='Ribes', species_name='rubrum',
+                       cultivar='Red Lake', full_name="Ribes rubrum 'Red Lake'", vernacular_name='Red Lake Currant')
+        get_collection(plant_id='2', family_name='Grossulariaceae', genus_name='Ribes', species_name='rubrum',
+                       cultivar='Red Lake', full_name="Ribes rubrum 'Red Lake'", vernacular_name='Red Lake Currant')
+        get_collection(plant_id='3', family_name='Pinaceae', genus_name='Pinus', species_name='resinosa',
+                       cultivar='Don Smith', full_name="Pinus resinosa 'Don Smith'",
+                       vernacular_name='Don Smith Red Pine')
+
+        params = {'scientific_name': 'Ribes rubrum',
+                  'common_name': 'Red'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        self.assertEqual(len(json_response['features']), 2)
+        self.assertEqual(json_response['features'][0]['properties']['species_full_name'], "Ribes rubrum 'Red Lake'")
+        self.assertEqual(json_response['features'][1]['properties']['species_full_name'], "Ribes rubrum 'Red Lake'")
