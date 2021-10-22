@@ -210,7 +210,10 @@ def plant_map_view(request):
         if water_need:
             collections = collections.filter(species__water_regime=water_need)
         if bloom_month:
-            collections = collections.filter(species__bloom_time__contains=[bloom_month])
+            mods = ['Early', 'Mid', 'Late']
+            month = [' '.join([mod, bloom_month]) for mod in mods]
+            month.append(bloom_month)
+            collections = collections.filter(species__bloom_time__overlap=month)
         if flower_color:
             collections = collections.filter(species__flower_color__search=flower_color)
         if memorial_person:
