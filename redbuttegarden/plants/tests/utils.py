@@ -48,35 +48,42 @@ def get_collection(latitude=40, longitude=-111,  # Location
 
 
 def get_garden_area(area="Butterfly Walk", name="Children's Garden", code="CG-06"):
-    return GardenArea.objects.create(area=area, name=name, code=code)
+    garden_area, _ = GardenArea.objects.get_or_create(area=area, name=name, code=code)
+    return garden_area
 
 
 def get_location(latitude=40, longitude=-111):
-    return Location.objects.create(latitude=latitude, longitude=longitude)
+    location, _ = Location.objects.get_or_create(latitude=latitude, longitude=longitude)
+    return location
 
 
 @pytest.fixture
 def family():
-    return Family.objects.create(name='Family')
+    family, _ = Family.objects.get_or_create(name='Family')
+    return family
 
 
 def get_family(name='Family'):
-    return Family.objects.create(name=name)
+    family, _ = Family.objects.get_or_create(name=name)
+    return family
 
 
 @pytest.fixture
 def genus(family):
-    return Genus.objects.create(family=family, name='Genus')
+    genus, _ = Genus.objects.get_or_create(family=family, name='Genus')
+    return genus
 
 
 def get_genus(family, name='Genus'):
-    return Genus.objects.create(family=family, name=name)
+    genus, _ = Genus.objects.get_or_create(family=family, name=name)
+    return genus
 
 
 @pytest.fixture
 def species(genus):
-    return Species.objects.create(genus=genus, name='species', full_name='Genus species',
-                                  vernacular_name='vernacular_name')
+    species, _ = Species.objects.get_or_create(genus=genus, name='species', full_name='Genus species',
+                                               vernacular_name='vernacular_name')
+    return species
 
 
 def get_species(genus, name='species', full_name='Genus species', subspecies='subspecies',
@@ -91,12 +98,13 @@ def get_species(genus, name='species', full_name='Genus species', subspecies='su
     if bloom_time is None:
         bloom_time = ["Early January", "Mid February", "Late March"]
 
-    return Species.objects.create(genus=genus, name=name, full_name=full_name, subspecies=subspecies,
-                                  variety=variety, subvariety=subvariety, forma=forma,
-                                  subforma=subforma, cultivar=cultivar,
-                                  vernacular_name=vernacular_name, habit=habit, hardiness=hardiness,
-                                  water_regime=water_regime, exposure=exposure, bloom_time=bloom_time,
-                                  plant_size=plant_size, flower_color=flower_color,
-                                  utah_native=utah_native, plant_select=plant_select,
-                                  deer_resist=deer_resist, rabbit_resist=rabbit_resist,
-                                  bee_friend=bee_friend, high_elevation=high_elevation)
+    species, _ = Species.objects.get_or_create(genus=genus, name=name, full_name=full_name, subspecies=subspecies,
+                                               variety=variety, subvariety=subvariety, forma=forma,
+                                               subforma=subforma, cultivar=cultivar,
+                                               vernacular_name=vernacular_name, habit=habit, hardiness=hardiness,
+                                               water_regime=water_regime, exposure=exposure, bloom_time=bloom_time,
+                                               plant_size=plant_size, flower_color=flower_color,
+                                               utah_native=utah_native, plant_select=plant_select,
+                                               deer_resist=deer_resist, rabbit_resist=rabbit_resist,
+                                               bee_friend=bee_friend, high_elevation=high_elevation)
+    return species

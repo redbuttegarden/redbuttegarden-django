@@ -193,9 +193,7 @@ def plant_map_view(request):
         available_memorial = request.GET.get('available_memorial', None)
 
         if scientific_name:
-            collections = collections.annotate(search=SearchVector('species__genus__name',
-                                                                          'species__name')
-                                               ).filter(search=scientific_name)
+            collections = collections.filter(species__full_name__icontains=scientific_name)
         if common_name:
             collections = collections.annotate(search=SearchVector('species__cultivar',
                                                                    'species__vernacular_name'))
@@ -215,7 +213,7 @@ def plant_map_view(request):
             month.append(bloom_month)
             collections = collections.filter(species__bloom_time__overlap=month)
         if flower_color:
-            collections = collections.filter(species__flower_color__search=flower_color)
+            collections = collections.filter(species__flower_color__icontains=flower_color)
         if memorial_person:
             collections = collections.filter(memorial_person=memorial_person)
         if utah_native:

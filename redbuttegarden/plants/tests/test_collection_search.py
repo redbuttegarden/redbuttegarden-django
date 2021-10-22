@@ -4,10 +4,71 @@ import json
 from django.test import TestCase
 from django.urls import reverse
 
+from plants.models import Collection
 from plants.tests.utils import get_collection
 
 
 class PlantSearchViewTestCase(TestCase):
+    def test_collection_search_by_scientific_name(self):
+        """
+        Search by scientific name should filter collections by species full name.
+        """
+        get_collection(plant_id='1', family_name='1', genus_name='Geranium',
+                       full_name="Geranium 'Johnson's Blue'", cultivar="Johnson's Blue")
+        get_collection(plant_id='2', family_name='2',
+                       genus_name='Cercis', species_name='canadensis',
+                       full_name='Cercis canadensis')
+        get_collection(plant_id='3', family_name='3',
+                       genus_name='Cytisus', species_name='praecox',
+                       full_name="Cytisus × praecox 'Allgold'")
+        get_collection(plant_id='4', family_name='Rosaceae',
+                       genus_name='Crataegus', species_name='crus-galli', variety='inermis',
+                       full_name="Crataegus crus-galli var. inermis")
+        get_collection(plant_id='5', family_name='Rosaceae', genus_name='Crataegus',
+                       species_name='crus-galli', variety='inermis',
+                       full_name="Crataegus crus-galli var. inermis")
+        get_collection(plant_id='6', family_name='5', genus_name='Hydrangea',
+                       species_name='anomala', subspecies='petiolaris',
+                       full_name="Hydrangea anomala subsp. petiolaris")
+        get_collection(plant_id='7', family_name='Rosaceae', genus_name='Rosa',
+                       species_name='sericea', subspecies='omeiensis', forma='pteracantha',
+                       full_name='Rosa sericea subsp. omeiensis f. pteracantha')
+
+        params = {'scientific_name': 'Geranium'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        self.assertEqual(len(json_response['features']), 1)
+        self.assertEqual(json_response['features'][0]['properties']['species_full_name'], "Geranium 'Johnson's Blue'")
+
+        params = {'scientific_name': 'Allgold'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        self.assertEqual(len(json_response['features']), 1)
+        self.assertEqual(json_response['features'][0]['properties']['species_full_name'], "Cytisus × praecox 'Allgold'")
+
+        params = {'scientific_name': 'inermis'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        self.assertEqual(len(json_response['features']), 2)
+        self.assertEqual(json_response['features'][0]['properties']['species_full_name'],
+                         "Crataegus crus-galli var. inermis")
+
+        params = {'scientific_name': 'subsp. petiolaris'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        self.assertEqual(len(json_response['features']), 1)
+        self.assertEqual(json_response['features'][0]['properties']['species_full_name'],
+                         "Hydrangea anomala subsp. petiolaris")
+
+
     def test_collection_search_by_garden_area(self):
         get_collection(ga_name='Garden One')
         params = {'garden_name': 'Garden One'}
@@ -60,3 +121,18 @@ class PlantSearchViewTestCase(TestCase):
         self.assertEqual(len(json_response['features']), 2)
         self.assertEqual(json_response['features'][0]['properties']['bloom_time'], ['Late March', 'Early April', 'May'])
         self.assertEqual(json_response['features'][1]['properties']['bloom_time'], ['March', 'Mid April'])
+
+    def test_collection_search_by_flower_color(self):
+        get_collection(plant_id='1', family_name='1', genus_name='1', flower_color='Purple, Blue')
+        get_collection(plant_id='2', family_name='2', genus_name='2', flower_color='Purple, Red')
+
+        params = {'flower_colors': 'Purple'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        self.assertEqual(len(json_response['features']), 2)
+        feature_one_id = json_response['features'][0]['properties']['id']
+        feature_two_id = json_response['features'][1]['properties']['id']
+        self.assertEqual(Collection.objects.get(id=feature_one_id).species.flower_color, 'Purple, Red')
+        self.assertEqual(Collection.objects.get(id=feature_two_id).species.flower_color, 'Purple, Blue')
