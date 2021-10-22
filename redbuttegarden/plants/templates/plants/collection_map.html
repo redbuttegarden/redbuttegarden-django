@@ -67,6 +67,7 @@
 {% endblock %}
 
 {% block extra_js %}
+    <script src="{% static 'js/name_styling.js' %}"></script>
     {# TODO - Refresh mapbox token and store in environment variable #}
     <script>
         mapboxgl.accessToken = 'pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw';
@@ -124,13 +125,13 @@
                         collection.target = '_blank';
                         collection.innerHTML =
                             '<div class="feature-listing">' + prop.family_name + ' ' +
-                                '<span class="scientific-name">' + prop.genus_name + ' ' + prop.species_name + ' ' + '</span>' +
+                                style_full_name(prop.species_full_name) +
                             '</div>';
                         collection.addEventListener('mouseover', function () {
                             // Highlight corresponding feature on the map
                             popup
                                 .setLngLat(feature.geometry.coordinates)
-                                .setText(feature.properties.species_full_name)
+                                .setHTML(style_full_name(prop.species_full_name))
                                 .addTo(map);
                         });
                         listingEl.appendChild(collection);
@@ -472,7 +473,7 @@
                             '<span class="pop-up-label">Species Name: </span><span class="scientific-name">' + species_name + '</span>' +
                         '</div>' +
                         '<div class="pop-up-row">' +
-                            '<span class="pop-up-label">Full Name: </span>' + species_full_name +
+                            '<span class="pop-up-label">Full Name: </span>' + style_full_name(species_full_name) +
                         '</div>' +
                         '<div class="pop-up-row">' +
                             '<span class="pop-up-label">Vernacular Name: </span>' + vernacular_name +
