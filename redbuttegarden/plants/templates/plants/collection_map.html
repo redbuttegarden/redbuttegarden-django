@@ -68,9 +68,8 @@
 
 {% block extra_js %}
     <script src="{% static 'js/name_styling.js' %}"></script>
-    {# TODO - Refresh mapbox token and store in environment variable #}
     <script>
-        mapboxgl.accessToken = 'pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw';
+        mapboxgl.accessToken = "{{ mapbox_token }}";
         let map = new mapboxgl.Map({
             container: 'map', // container ID
             style: 'mapbox://styles/auslaner/ckrdvnurq2ix018o34dv8sxft', // style URL

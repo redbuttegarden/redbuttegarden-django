@@ -1,6 +1,8 @@
 import logging
+import os
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchVector
 from django.core.mail import send_mail
@@ -235,14 +237,17 @@ def plant_map_view(request):
         feature_collection = get_feature_collection(collections)
         collection_geojson = dumps(feature_collection)
         return JsonResponse(collection_geojson, safe=False)
-    return render(request, 'plants/collection_map.html')
+    mapbox_api_token = getattr(settings, 'MAPBOX_API_TOKEN', None)
+    return render(request, 'plants/collection_map.html', {'mapbox_token': mapbox_api_token})
 
 def collection_detail(request, collection_id):
     """
     View for displaying detailed info about a single Collection object.
     """
     collection = get_object_or_404(Collection, pk=collection_id)
-    return render(request, 'plants/collection_detail.html', {'collection': collection})
+    mapbox_api_token = getattr(settings, 'MAPBOX_API_TOKEN', None)
+    return render(request, 'plants/collection_detail.html', {'collection': collection,
+                                                             'mapbox_token': mapbox_api_token})
 
 def species_detail(request, species_id):
     """
