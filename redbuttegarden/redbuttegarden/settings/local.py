@@ -24,8 +24,6 @@ MEDIA_URL = '/media/'
 AWS_ACCESS_KEY_ID = 'FOO'
 AWS_SECRET_ACCESS_KEY = 'BAR'
 
-MAPBOX_API_TOKEN = 'pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw'
-
 # Disable cloudfront invalidations when running locally
 WAGTAILFRONTENDCACHE = {}
 
