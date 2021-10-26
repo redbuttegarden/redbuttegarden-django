@@ -247,3 +247,5 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
+
+MAPBOX_API_TOKEN = os.environ.get("MAPBOX_API_TOKEN")
