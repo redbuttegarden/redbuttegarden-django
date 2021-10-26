@@ -18,6 +18,7 @@ jobs:
       PG_USER: postgres
       PG_DB: test_db
       DB_HOST: 127.0.0.1
+      SECRET_KEY: testing
       # Allows successful import of debug toolbar
       DJANGO_SETTINGS_MODULE: redbuttegarden.settings.local
 
