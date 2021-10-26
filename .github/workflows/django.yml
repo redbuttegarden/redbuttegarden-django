@@ -18,7 +18,6 @@ jobs:
       PG_USER: postgres
       PG_DB: test_db
       DB_HOST: 127.0.0.1
-      DJANGO_SETTINGS_MODULE: redbuttegarden.settings.testing
 
     services:
       # Label used to access the service container
@@ -56,7 +55,11 @@ jobs:
         pip install -r requirements.txt
     - name: Run migrations
       run: python manage.py migrate
+      env:
+        # Allows successful import of debug toolbar
+        DJANGO_SETTINGS_MODULE: redbuttegarden.settings.local
     - name: Test
       run: pytest
       env:
         AUTOMATE_URL: "https://webhook.site/81f38a00-d6a3-4aa6-87f8-1d84dbe054d9"
+        DJANGO_SETTINGS_MODULE: redbuttegarden.settings.testing
