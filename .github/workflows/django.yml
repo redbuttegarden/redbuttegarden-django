@@ -4,7 +4,6 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -13,6 +12,26 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7]
+
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres:12.3
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: test_user
+          POSTGRES_DB: test_db
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
 
     defaults:
       run:
@@ -34,3 +53,8 @@ jobs:
       run: pytest
       env:
         AUTOMATE_URL: "https://webhook.site/81f38a00-d6a3-4aa6-87f8-1d84dbe054d9"
+        PG_PASSWORD: postgres
+        PG_USER: test_user
+        PG_DB: test_db
+        DB_HOST: localhost
+        DJANGO_SETTINGS_MODULE: redbuttegarden.settings.testing
