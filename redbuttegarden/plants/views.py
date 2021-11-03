@@ -217,7 +217,7 @@ def plant_map_view(request):
         if flower_color:
             collections = collections.filter(species__flower_color__icontains=flower_color)
         if memorial_person:
-            collections = collections.filter(memorial_person=memorial_person)
+            collections = collections.filter(commemoration_person=memorial_person)
         if utah_native:
             collections = collections.filter(species__utah_native=utah_native)
         if plant_select:

@@ -155,3 +155,13 @@ class PlantSearchViewTestCase(TestCase):
         self.assertEqual(len(json_response['features']), 2)
         self.assertEqual(json_response['features'][0]['properties']['species_full_name'], "Ribes rubrum 'Red Lake'")
         self.assertEqual(json_response['features'][1]['properties']['species_full_name'], "Ribes rubrum 'Red Lake'")
+
+    def test_collection_search_by_commemoration_person(self):
+        get_collection(commemoration_person='Test Name')
+
+        params = {'memorial_person': 'Test Name'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        self.assertEqual(len(json_response['features']), 1)
