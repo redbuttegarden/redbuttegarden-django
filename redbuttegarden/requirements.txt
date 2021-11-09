@@ -73,7 +73,7 @@ webencodings==0.5.1
 Werkzeug==0.16.1
 Willow==1.4
 wsgi-request-logger==0.4.6
-xlrd==1.2.0
+xlrd==2.0.1
 XlsxWriter==1.3.5
 xlwt==1.3.0
 zappa==0.54.0
