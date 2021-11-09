@@ -10,13 +10,13 @@ certifi==2019.11.28
 cfn-flip==1.2.2
 chardet==3.0.4
 click==7.1.1
-Django==3.2.5
+Django==3.2.9
 django-cas-client==1.5.3
 django-cors-headers==3.5.0
 django-csp==3.7
 django-environ==0.4.5
 django-filter==2.3.0
-django-modelcluster==5.1
+django-modelcluster==5.2
 django-storages==1.10
 django-taggit==1.5.1
 django-treebeard==4.3.1
@@ -67,7 +67,7 @@ tqdm==4.43.0
 troposphere==2.6.0
 Unidecode==1.1.1
 urllib3==1.25.7
-wagtail==2.13.4
+wagtail==2.15
 wagtail-accessibility==0.2.1
 webencodings==0.5.1
 Werkzeug==0.16.1
