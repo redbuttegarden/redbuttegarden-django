@@ -24,7 +24,7 @@ djangorestframework==3.12.4
 docutils==0.18
 draftjs-exporter==2.1.7
 durationpy==0.5
-et-xmlfile==1.0.1
+et-xmlfile==1.1.0
 future==0.18.2
 geojson==2.5.0
 hjson==3.0.1
@@ -43,7 +43,7 @@ Pillow==6.2.2
 pip-tools==4.5.1
 placebo==0.9.0
 pluggy==0.13.1
-psycopg2-binary==2.8.4
+psycopg2-binary==2.9.1
 py==1.10.0
 pyparsing==2.4.7
 pytest==6.2.5
