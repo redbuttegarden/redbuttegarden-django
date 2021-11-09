@@ -173,7 +173,7 @@ def csrf_view(request):
     return render(request, 'plants/token.html')
 
 def plant_map_view(request):
-    if request.is_ajax() and request.method == 'GET':
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'GET':
         collections = Collection.objects.all()
 
         scientific_name = request.GET.get('scientific_name', None)
