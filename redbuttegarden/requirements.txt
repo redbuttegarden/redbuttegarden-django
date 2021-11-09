@@ -38,7 +38,7 @@ jmespath==0.10.0
 kappa==0.6.0
 l18n==2020.6.1
 openpyxl==3.0.9
-packaging==20.8
+packaging==21.2
 Pillow==6.2.2
 pip-tools==4.5.1
 placebo==0.9.0
