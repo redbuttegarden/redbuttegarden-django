@@ -14,7 +14,7 @@ Django==3.2.9
 django-cas-client==1.5.3
 django-cors-headers==3.5.0
 django-csp==3.7
-django-environ==0.4.5
+django-environ==0.8.1
 django-filter==2.3.0
 django-modelcluster==5.2
 django-storages==1.10
