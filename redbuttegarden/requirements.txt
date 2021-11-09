@@ -21,7 +21,7 @@ django-storages==1.10
 django-taggit==1.5.1
 django-treebeard==4.5.1
 djangorestframework==3.12.4
-docutils==0.15.2
+docutils==0.18
 draftjs-exporter==2.1.7
 durationpy==0.5
 et-xmlfile==1.0.1
