@@ -1,5 +1,5 @@
-anyascii==0.1.7
-argcomplete==1.11.1
+anyascii==0.3.0
+argcomplete==1.12.3
 arrow==0.14.7
 asgiref==3.4.1
 attrs==20.3.0
