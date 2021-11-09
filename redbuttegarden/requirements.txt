@@ -34,7 +34,7 @@ idna==3.3
 importlib-metadata==4.8.2
 iniconfig==1.1.1
 jdcal==1.4.1
-jmespath==0.9.4
+jmespath==0.10.0
 kappa==0.6.0
 l18n==2020.6.1
 openpyxl==3.0.5
