@@ -2,7 +2,7 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/concerts.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'concerts/css/concerts.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -86,17 +86,17 @@
 
                                         {% if concert.canceled %}
                                             <div class="soldout">
-                                                <img src="{% static 'img/cancelled.png' %}" alt="Concert canceled">
+                                                <img src="{% static 'concerts/img/cancelled.png' %}" alt="Concert canceled">
                                             </div>
 
                                         {% elif concert.postponed %}
                                             <div class="soldout">
-                                                <img src="{% static 'img/postponed.png' %}" alt="Concert postponed">
+                                                <img src="{% static 'concerts/img/postponed.png' %}" alt="Concert postponed">
                                             </div>
 
                                         {% elif concert.sold_out %}
                                             <div class="soldout">
-                                                <img src="{% static 'img/SoldOut.png' %}" alt="Concert sold out">
+                                                <img src="{% static 'concerts/img/SoldOut.png' %}" alt="Concert sold out">
                                             </div>
                                         {% endif %}
                                     </picture>
@@ -147,12 +147,12 @@
                                         <div class="row-fluid">
                                             {% if concert.on_sale %}
                                                 <a href="{{ concert.ticket_url }}">
-                                                    <img class="responsive con-button hover" src="{% static 'img/buy-tickets.png' %}"
+                                                    <img class="responsive con-button hover" src="{% static 'concerts/img/buy-tickets.png' %}"
                                                          alt="Buy ticket button">
                                                 </a>
                                             {% else %}
                                                 <div class="disable-buy">
-                                                    <img class="responsive" src="{% static 'img/buy-tickets.png' %}"
+                                                    <img class="responsive" src="{% static 'concerts/img/buy-tickets.png' %}"
                                                          alt="Ticket purchase disabled">
                                                 </div>
                                             {% endif %}

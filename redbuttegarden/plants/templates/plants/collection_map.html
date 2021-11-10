@@ -5,7 +5,7 @@
 
 {% block extra_css %}
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
-    <link href="{% static 'css/plant_map.css' %}" rel="stylesheet">
+    <link href="{% static 'plants/css/plant_map.css' %}" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
 
     <script src="https://kit.fontawesome.com/332beda55d.js" crossorigin="anonymous"></script>
@@ -39,17 +39,17 @@
         </div>
         <div id="legend">
             <h5>Legend</h5>
-            <div><span><img src="{% static 'img/annual_icon.png' %}" alt="Icon for annual plants"></span>Annual</div>
-            <div><span><img src="{% static 'img/bulb_icon.png' %}" alt="Icon for bulb plants"></span>Bulb</div>
-            <div><span><img src="{% static 'img/deciduous_shrub_icon.png' %}" alt="Icon for deciduous shrubs"></span>Deciduous Shrub</div>
-            <div><span><img src="{% static 'img/deciduous_tree_icon.png' %}" alt="Icon for deciduous trees"></span>Deciduous Tree</div>
-            <div><span><img src="{% static 'img/vine_icon.png' %}" alt="Icon for viney plants"></span>Vine</div>
-            <div><span><img src="{% static 'img/evergreen_groundcover_icon.png' %}" alt="Icon for evergreen groundcover plants"></span>Evergreen Groundcover</div>
-            <div><span><img src="{% static 'img/evergreen_shrub_icon.png' %}" alt="Icon for evergreen shrubs"></span>Evergreen Shrub</div>
-            <div><span><img src="{% static 'img/evergreen_tree_icon.png' %}" alt="Icon for evergreen trees"></span>Evergreen Tree</div>
-            <div><span><img src="{% static 'img/grass_icon.png' %}" alt="Icon for grasses"></span>Grass</div>
-            <div><span><img src="{% static 'img/perennial_icon.png' %}" alt="Icon for perennial plants"></span>Perennial</div>
-            <div><span><img src="{% static 'img/succulent_icon.png' %}" alt="Icon for succulent plants"></span>Succulent</div>
+            <div><span><img src="{% static 'plants/img/annual_icon.png' %}" alt="Icon for annual plants"></span>Annual</div>
+            <div><span><img src="{% static 'plants/img/bulb_icon.png' %}" alt="Icon for bulb plants"></span>Bulb</div>
+            <div><span><img src="{% static 'plants/img/deciduous_shrub_icon.png' %}" alt="Icon for deciduous shrubs"></span>Deciduous Shrub</div>
+            <div><span><img src="{% static 'plants/img/deciduous_tree_icon.png' %}" alt="Icon for deciduous trees"></span>Deciduous Tree</div>
+            <div><span><img src="{% static 'plants/img/vine_icon.png' %}" alt="Icon for viney plants"></span>Vine</div>
+            <div><span><img src="{% static 'plants/img/evergreen_groundcover_icon.png' %}" alt="Icon for evergreen groundcover plants"></span>Evergreen Groundcover</div>
+            <div><span><img src="{% static 'plants/img/evergreen_shrub_icon.png' %}" alt="Icon for evergreen shrubs"></span>Evergreen Shrub</div>
+            <div><span><img src="{% static 'plants/img/evergreen_tree_icon.png' %}" alt="Icon for evergreen trees"></span>Evergreen Tree</div>
+            <div><span><img src="{% static 'plants/img/grass_icon.png' %}" alt="Icon for grasses"></span>Grass</div>
+            <div><span><img src="{% static 'plants/img/perennial_icon.png' %}" alt="Icon for perennial plants"></span>Perennial</div>
+            <div><span><img src="{% static 'plants/img/succulent_icon.png' %}" alt="Icon for succulent plants"></span>Succulent</div>
         </div>
 
         <div class="row">
@@ -67,7 +67,7 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/name_styling.js' %}"></script>
+    <script src="{% static 'plants/js/name_styling.js' %}"></script>
     <script>
         mapboxgl.accessToken = "{{ mapbox_token }}";
         let map = new mapboxgl.Map({

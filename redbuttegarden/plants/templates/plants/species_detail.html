@@ -2,7 +2,7 @@
 {% load static wagtailimages_tags %}
 
 {% block extra_css %}
-    <link href="{% static 'css/species_detail.css' %}" rel="stylesheet">
+    <link href="{% static 'plants/css/species_detail.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -28,8 +28,8 @@
                          class="hover-shadow cursor">
                 {% else %}
                     <picture>
-                        <source srcset="{% static 'img/Image_Coming_Soon.webp' %}" type="image/webp">
-                        <img src="{% static 'img/Image_Coming_Soon.jpg' %}" class="hover-shadow responsive"
+                        <source srcset="{% static 'redbuttegarden/img/Image_Coming_Soon.webp' %}" type="image/webp">
+                        <img src="{% static 'redbuttegarden/img/Image_Coming_Soon.jpg' %}" class="hover-shadow responsive"
                              alt="Images coming soon" title="Placeholder Image" width="350em" height="350em"
                              onclick="openModal();currentSlide(1)"
                         />
@@ -64,32 +64,32 @@
 
                     <div class="row icons">
                         {% if species.utah_native %}
-                            <img src="{% static 'img/utah_native.png' %}"
+                            <img src="{% static 'plants/img/utah_native.png' %}"
                                  alt="Icon indicating this species is native to Utah"
                                  width="50px" height="50px">
                         {% endif %}
                         {% if species.deer_resist %}
-                            <img src="{% static 'img/deer_resistant.png' %}"
+                            <img src="{% static 'plants/img/deer_resistant.png' %}"
                                  alt="Icon indicating this species is resistant to deer"
                                  width="50px" height="50px">
                         {% endif %}
                         {% if species.rabbit_resist %}
-                            <img src="{% static 'img/rabbit_resistant.png' %}"
+                            <img src="{% static 'plants/img/rabbit_resistant.png' %}"
                                  alt="Icon indicating this species is resistant to rabbits"
                                  width="50px" height="50px">
                         {% endif %}
                         {% if species.bee_friend %}
-                            <img src="{% static 'img/attracts_bees.png' %}"
+                            <img src="{% static 'plants/img/attracts_bees.png' %}"
                                  alt="Icon indicating this species is pollinator friendly"
                                  width="50px" height="50px">
                         {% endif %}
                         {% if species.plant_select %}
-                            <img src="{% static 'img/plant_select.png' %}"
+                            <img src="{% static 'plants/img/plant_select.png' %}"
                                  alt="Icon indicating this species is a Plant Select® cultivar"
                                  width="50px" height="50px">
                         {% endif %}
                         {% if species.high_elevation %}
-                            <img src="{% static 'img/high_elevation_icon.png' %}"
+                            <img src="{% static 'plants/img/high_elevation_icon.png' %}"
                                  alt="Icon indicating this species is adapted to high elevation"
                                  width="50px" height="50px">
                         {% endif %}
@@ -162,8 +162,8 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/lightbox-modal.js' %}"></script>
-    <script src="{% static 'js/name_styling.js' %}"></script>
+    <script src="{% static 'plants/js/lightbox-modal.js' %}"></script>
+    <script src="{% static 'plants/js/name_styling.js' %}"></script>
     <script type="text/javascript">
         document.getElementById("full-name").innerHTML = style_full_name("{{ species.full_name|safe }}");
     </script>
