@@ -18,6 +18,13 @@
                 <i class="fas fa-sync-alt fa-spin"></i>
             </div>
         </div>
+        <div class="map-overlay">
+            <fieldset>
+                <label for="feature-filter">Collection filter</label>
+                <input id="feature-filter" type="text" placeholder="Filter results by name">
+            </fieldset>
+            <div id="feature-listing" class="listing"></div>
+        </div>
         <div id="map">
             <div id="menu">
                 <input id="satellite-v9" type="radio" name="rtoggle" value="satellite" checked="checked">
@@ -29,13 +36,6 @@
                 <input id="streets-v11" type="radio" name="rtoggle" value="streets">
                 <label for="streets-v11">streets</label>
             </div>
-        </div>
-        <div class="map-overlay">
-            <fieldset>
-                <label for="feature-filter">Collection filter</label>
-                <input id="feature-filter" type="text" placeholder="Filter results by name">
-            </fieldset>
-            <div id="feature-listing" class="listing"></div>
         </div>
         <div id="legend">
             <h5>Legend</h5>
