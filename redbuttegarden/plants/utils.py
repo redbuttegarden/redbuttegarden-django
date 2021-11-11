@@ -39,6 +39,7 @@ def get_feature_collection(collections):
                                           collection.location.latitude)),
                           properties={
                               'id': collection.id,
+                              'species_id': collection.species.id,
                               'family_name': collection.species.genus.family.name,
                               'genus_name': collection.species.genus.name,
                               'species_name': collection.species.name,

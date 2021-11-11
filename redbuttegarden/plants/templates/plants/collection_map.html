@@ -23,6 +23,7 @@
                 <label for="feature-filter">Collection filter</label>
                 <input id="feature-filter" type="text" placeholder="Filter results by name">
             </fieldset>
+            <p class="small text-center">Click a collection to open it's detail page</p>
             <div id="feature-listing" class="listing"></div>
         </div>
         <div id="map">
@@ -438,6 +439,7 @@
                 const genus_name = e.features[0].properties.genus_name;
                 const species_name = e.features[0].properties.species_name;
                 const species_full_name = e.features[0].properties.species_full_name;
+                const species_id = e.features[0].properties.species_id;
                 const vernacular_name = e.features[0].properties.vernacular_name;
                 const habit = e.features[0].properties.habit;
                 const hardiness = e.features[0].properties.hardiness;
@@ -450,7 +452,7 @@
                 const garden_code = e.features[0].properties.garden_code;
                 const planted_on = e.features[0].properties.planted_on;
 
-                console.log(e.features[0].properties);
+                const formatted_species_full_name = formatSpeciesFullName(species_id, species_full_name);
 
                 // Ensure that if the map is zoomed out such that
                 // multiple copies of the feature are visible, the
@@ -472,7 +474,7 @@
                             '<span class="pop-up-label">Species Name: </span><span class="scientific-name">' + species_name + '</span>' +
                         '</div>' +
                         '<div class="pop-up-row">' +
-                            '<span class="pop-up-label">Full Name: </span>' + style_full_name(species_full_name) +
+                            formatted_species_full_name +
                         '</div>' +
                         '<div class="pop-up-row">' +
                             '<span class="pop-up-label">Vernacular Name: </span>' + vernacular_name +
@@ -517,6 +519,16 @@
             map.on('mouseleave', 'clusters', function () {
                 map.getCanvas().style.cursor = '';
             });
+
+            function formatSpeciesFullName(species_id, species_full_name) {
+                if (species_id) {
+                    return '<span class="pop-up-label">Full Name: </span><a href="/plants/species/' + species_id + '/"' +
+                        style_full_name(species_full_name) + '</a>'
+                } else {
+                    return '<span class="pop-up-label">Full Name: </span>' +
+                        style_full_name(species_full_name)
+                }
+            }
 
             function filterByElementValue() {
                 let value = normalize(filterEl.value);
