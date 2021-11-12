@@ -49,7 +49,7 @@ concerts.push(new Date(2021, 09, 30));
 //#region Constant Garden status variables and messages 
 const manualOverrideTrue = (document.getElementById('hours_override').textContent === 'True')
 
-const daylightEndDay = 1;  // Day that Daylight Savings Time Ends in November of the current year
+const daylightEndDay = 7;  // Day that Daylight Savings Time Ends in November of the current year
 const daylightStartDay = 8;  // Day that Daylight Savings Time Begins in March of the next year
 
 const thanksgivingDay = 26;  // Day of Month of Thanksgiving Holiday in November
