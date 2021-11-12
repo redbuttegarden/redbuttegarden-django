@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, AnonymousUser
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
-from wagtail.core.models import Site, Page
+from wagtail.core.models import Site, Page, PageViewRestriction
 
 from search.views import search
 
@@ -19,10 +19,14 @@ class SearchTestCase(TestCase):
         self.root_page = Page.objects.get(id=1)
         self.training_root_page = Page(owner=self.user, slug='Test', title='Test')
         self.root_page.add_sibling(instance=self.training_root_page)
+        PageViewRestriction.objects.create(
+            page=self.training_root_page, restriction_type='password', password='password123'
+        )
         self.training_root_page.save_revision().publish()
         self.training_site = Site(hostname='localhost', port='8000', site_name='Training',
                                   root_page=self.training_root_page)
         self.training_site.save()
+
 
         self.factory = RequestFactory()
 
