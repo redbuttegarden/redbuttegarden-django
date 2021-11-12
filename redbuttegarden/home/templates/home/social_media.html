@@ -3,7 +3,7 @@
 
 {% block title %}Social Media | Red Butte Garden{% endblock %}
 
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/social-media.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/social-media.css' %}">{% endblock %}
 
 
 {% block abnormal_content %}
@@ -18,23 +18,23 @@
                 <div class="tab">
                     <button class="tablinks fb-tl" id="defaultOpen" onclick="openTab(event, 'Facebook')">
                         <h6 class="button-text">Facebook</h6>
-                        <img id="Facebook-Logo" src="{% static 'img/logos/facebookLogo.png' %}" alt="Facebook Logo" />
+                        <img id="Facebook-Logo" src="{% static 'home/img/logos/facebookLogo.png' %}" alt="Facebook Logo" />
                     </button>
                     <button class="tablinks tw-tl" onclick="openTab(event, 'Twitter')" id="twitterBtn">
                         <h6 class="button-text">Twitter</h6>
-                        <img id="Twitter-Logo" src="{% static 'img/logos/TwitterLogo.png' %}" alt="Twitter Logo" />
+                        <img id="Twitter-Logo" src="{% static 'home/img/logos/TwitterLogo.png' %}" alt="Twitter Logo" />
                     </button>
                     <button class="tablinks pin-tl" onclick="openTab(event, 'Pinterest')">
                         <h6 class="button-text">Pinterest</h6>
-                        <img id="Pinterest-Logo" src="{% static 'img/logos/pinterestLogo.png' %}" alt="Pinterest Logo" />
+                        <img id="Pinterest-Logo" src="{% static 'home/img/logos/pinterestLogo.png' %}" alt="Pinterest Logo" />
                     </button>
                     <button class="tablinks yt-tl" onclick="openTab(event, 'Youtube')">
                         <h6 class="button-text">Youtube</h6>
-                        <img id="Youtube-Logo" src="{% static 'img/logos/youtubeLogo.png' %}" alt="youtube Logo" />
+                        <img id="Youtube-Logo" src="{% static 'home/img/logos/youtubeLogo.png' %}" alt="youtube Logo" />
                     </button>
                     <button class="tablinks ig-tl" onclick="openTab(event, 'Instagram')">
                         <h6 class="button-text">Instagram</h6>
-                        <img id="Instagram-Logo" src="{% static 'img/logos/instagramLogo.png' %}" alt="Instagram Logo" />
+                        <img id="Instagram-Logo" src="{% static 'home/img/logos/instagramLogo.png' %}" alt="Instagram Logo" />
                     </button>
                 </div>
 
@@ -94,8 +94,8 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/instafeed-request.js' %}"></script>
-    <script src="{% static 'js/tabs.js' %}"></script>
+    <script src="{% static 'home/js/instafeed-request.js' %}"></script>
+    <script src="{% static 'home/js/tabs.js' %}"></script>
     <script>
         // Get the element with id="defaultOpen" and click on it
         document.getElementById("defaultOpen").click();

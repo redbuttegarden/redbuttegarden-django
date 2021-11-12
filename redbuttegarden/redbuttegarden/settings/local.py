@@ -30,7 +30,7 @@ WAGTAILFRONTENDCACHE = {}
 # Django Toolbar settings
 # We just always show the toolbar to make it easier for our docker environment
 def show_toolbar(request):
-    if request.is_ajax():
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return False
     return True
 

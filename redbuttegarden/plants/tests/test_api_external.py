@@ -301,7 +301,7 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
 
         self.assertEqual(Collection.objects.all().count(), 1)
 
-        self.assertEquals(Collection.objects.first().species.flower_color, 'Yellow')
+        self.assertEqual(Collection.objects.first().species.flower_color, 'Yellow')
 
         second_response = self.client.post(url, json=payloads[1])
         print(second_response.content)
@@ -309,4 +309,4 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
 
         self.assertEqual(Collection.objects.all().count(), 1)
 
-        self.assertEquals(Collection.objects.first().species.flower_color, 'White')
+        self.assertEqual(Collection.objects.first().species.flower_color, 'White')

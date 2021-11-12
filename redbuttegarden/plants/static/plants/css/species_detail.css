@@ -9,10 +9,15 @@
 
 .main-image {
     float: right;
+    padding: 10px;
 }
 
 .species-info {
     float: left;
+}
+
+.additional-photos {
+    margin-top: 10px;
 }
 
 #add-photo-label {
@@ -67,7 +72,6 @@
     background-color: rgba(254, 254, 254, 0.66);
     margin: auto;
     padding: 0;
-    width: fit-content;
     max-width: 1200px;
 }
 
@@ -91,6 +95,11 @@
 
 .mySlides {
     display: none;
+}
+
+.mySlides img {
+    height: auto;
+    width: 100%;
 }
 
 .cursor {
@@ -149,7 +158,7 @@ img {
 }
 
 .demo {
-    opacity: 0.6;
+    opacity: 0.75;
 }
 
 .active,

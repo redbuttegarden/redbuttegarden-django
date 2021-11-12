@@ -69,6 +69,6 @@
 {# Enable automatic banner selection only for the What's Blooming Now Blog #}
 {% block extra_js %}
     {% if page.slug == 'whats-blooming-now' %}
-        <script type="text/javascript" src="{% static 'js/auto_journal_banner.js' %}"></script>
+        <script type="text/javascript" src="{% static 'journal/js/auto_journal_banner.js' %}"></script>
     {% endif %}
 {% endblock %}

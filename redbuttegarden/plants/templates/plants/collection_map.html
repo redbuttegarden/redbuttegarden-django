@@ -5,7 +5,7 @@
 
 {% block extra_css %}
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
-    <link href="{% static 'css/plant_map.css' %}" rel="stylesheet">
+    <link href="{% static 'plants/css/plant_map.css' %}" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
 
     <script src="https://kit.fontawesome.com/332beda55d.js" crossorigin="anonymous"></script>
@@ -17,6 +17,14 @@
             <div id="load-icon" class="fa-3x">
                 <i class="fas fa-sync-alt fa-spin"></i>
             </div>
+        </div>
+        <div class="map-overlay">
+            <fieldset>
+                <label for="feature-filter">Collection filter</label>
+                <input id="feature-filter" type="text" placeholder="Filter results by name">
+            </fieldset>
+            <p class="small text-center">Click a collection to open it's detail page</p>
+            <div id="feature-listing" class="listing"></div>
         </div>
         <div id="map">
             <div id="menu">
@@ -30,26 +38,19 @@
                 <label for="streets-v11">streets</label>
             </div>
         </div>
-        <div class="map-overlay">
-            <fieldset>
-                <label for="feature-filter">Collection filter</label>
-                <input id="feature-filter" type="text" placeholder="Filter results by name">
-            </fieldset>
-            <div id="feature-listing" class="listing"></div>
-        </div>
         <div id="legend">
             <h5>Legend</h5>
-            <div><span><img src="{% static 'img/annual_icon.png' %}" alt="Icon for annual plants"></span>Annual</div>
-            <div><span><img src="{% static 'img/bulb_icon.png' %}" alt="Icon for bulb plants"></span>Bulb</div>
-            <div><span><img src="{% static 'img/deciduous_shrub_icon.png' %}" alt="Icon for deciduous shrubs"></span>Deciduous Shrub</div>
-            <div><span><img src="{% static 'img/deciduous_tree_icon.png' %}" alt="Icon for deciduous trees"></span>Deciduous Tree</div>
-            <div><span><img src="{% static 'img/vine_icon.png' %}" alt="Icon for viney plants"></span>Vine</div>
-            <div><span><img src="{% static 'img/evergreen_groundcover_icon.png' %}" alt="Icon for evergreen groundcover plants"></span>Evergreen Groundcover</div>
-            <div><span><img src="{% static 'img/evergreen_shrub_icon.png' %}" alt="Icon for evergreen shrubs"></span>Evergreen Shrub</div>
-            <div><span><img src="{% static 'img/evergreen_tree_icon.png' %}" alt="Icon for evergreen trees"></span>Evergreen Tree</div>
-            <div><span><img src="{% static 'img/grass_icon.png' %}" alt="Icon for grasses"></span>Grass</div>
-            <div><span><img src="{% static 'img/perennial_icon.png' %}" alt="Icon for perennial plants"></span>Perennial</div>
-            <div><span><img src="{% static 'img/succulent_icon.png' %}" alt="Icon for succulent plants"></span>Succulent</div>
+            <div><span><img src="{% static 'plants/img/annual_icon.png' %}" alt="Icon for annual plants"></span>Annual</div>
+            <div><span><img src="{% static 'plants/img/bulb_icon.png' %}" alt="Icon for bulb plants"></span>Bulb</div>
+            <div><span><img src="{% static 'plants/img/deciduous_shrub_icon.png' %}" alt="Icon for deciduous shrubs"></span>Deciduous Shrub</div>
+            <div><span><img src="{% static 'plants/img/deciduous_tree_icon.png' %}" alt="Icon for deciduous trees"></span>Deciduous Tree</div>
+            <div><span><img src="{% static 'plants/img/vine_icon.png' %}" alt="Icon for viney plants"></span>Vine</div>
+            <div><span><img src="{% static 'plants/img/evergreen_groundcover_icon.png' %}" alt="Icon for evergreen groundcover plants"></span>Evergreen Groundcover</div>
+            <div><span><img src="{% static 'plants/img/evergreen_shrub_icon.png' %}" alt="Icon for evergreen shrubs"></span>Evergreen Shrub</div>
+            <div><span><img src="{% static 'plants/img/evergreen_tree_icon.png' %}" alt="Icon for evergreen trees"></span>Evergreen Tree</div>
+            <div><span><img src="{% static 'plants/img/grass_icon.png' %}" alt="Icon for grasses"></span>Grass</div>
+            <div><span><img src="{% static 'plants/img/perennial_icon.png' %}" alt="Icon for perennial plants"></span>Perennial</div>
+            <div><span><img src="{% static 'plants/img/succulent_icon.png' %}" alt="Icon for succulent plants"></span>Succulent</div>
         </div>
 
         <div class="row">
@@ -67,7 +68,7 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/name_styling.js' %}"></script>
+    <script src="{% static 'plants/js/name_styling.js' %}"></script>
     <script>
         mapboxgl.accessToken = "{{ mapbox_token }}";
         let map = new mapboxgl.Map({
@@ -183,58 +184,58 @@
             // add the point_count property to your source data.
 
             // Load all the icon images
-            map.loadImage('/static/img/annual_icon.png', function (error, image) {
+            map.loadImage('/static/plants/img/annual_icon.png', function (error, image) {
                 if (error) throw error;
 
                 map.addImage('Annual', image);
             });
-            map.loadImage('/static/img/bulb_icon.png', function (error, image) {
+            map.loadImage('/static/plants/img/bulb_icon.png', function (error, image) {
                 if (error) throw error;
 
                 map.addImage('Bulb', image);
             });
-            map.loadImage('/static/img/deciduous_shrub_icon.png', function (error, image) {
+            map.loadImage('/static/plants/img/deciduous_shrub_icon.png', function (error, image) {
                 if (error) throw error;
 
                 map.addImage('Deciduous Shrub', image);
             });
-            map.loadImage('/static/img/deciduous_tree_icon.png', function (error, image) {
+            map.loadImage('/static/plants/img/deciduous_tree_icon.png', function (error, image) {
                 if (error) throw error;
 
                 map.addImage('Deciduous Tree', image);
             });
-            map.loadImage('/static/img/evergreen_groundcover_icon.png', function (error, image) {
+            map.loadImage('/static/plants/img/evergreen_groundcover_icon.png', function (error, image) {
                 if (error) throw error;
 
                 map.addImage('Evergreen Groundcover', image);
             });
-            map.loadImage('/static/img/evergreen_shrub_icon.png', function (error, image) {
+            map.loadImage('/static/plants/img/evergreen_shrub_icon.png', function (error, image) {
                 if (error) throw error;
 
                 map.addImage('Evergreen Shrub', image);
             });
-            map.loadImage('/static/img/evergreen_tree_icon.png', function (error, image) {
+            map.loadImage('/static/plants/img/evergreen_tree_icon.png', function (error, image) {
                 if (error) throw error;
 
                 map.addImage('Evergreen Tree', image);
             });
-            map.loadImage('/static/img/vine_icon.png', function (error, image) {
+            map.loadImage('/static/plants/img/vine_icon.png', function (error, image) {
                 if (error) throw error;
 
                 map.addImage('Deciduous Vine', image);
                 map.addImage('Evergreen Vine', image);
             });
-            map.loadImage('/static/img/grass_icon.png', function (error, image) {
+            map.loadImage('/static/plants/img/grass_icon.png', function (error, image) {
                 if (error) throw error;
 
                 map.addImage('Grass', image);
             });
-            map.loadImage('/static/img/perennial_icon.png', function (error, image) {
+            map.loadImage('/static/plants/img/perennial_icon.png', function (error, image) {
                 if (error) throw error;
 
                 map.addImage('Perennial', image);
             });
-            map.loadImage('/static/img/succulent_icon.png', function (error, image) {
+            map.loadImage('/static/plants/img/succulent_icon.png', function (error, image) {
                 if (error) throw error;
 
                 map.addImage('Succulent', image);
@@ -438,6 +439,7 @@
                 const genus_name = e.features[0].properties.genus_name;
                 const species_name = e.features[0].properties.species_name;
                 const species_full_name = e.features[0].properties.species_full_name;
+                const species_id = e.features[0].properties.species_id;
                 const vernacular_name = e.features[0].properties.vernacular_name;
                 const habit = e.features[0].properties.habit;
                 const hardiness = e.features[0].properties.hardiness;
@@ -450,7 +452,7 @@
                 const garden_code = e.features[0].properties.garden_code;
                 const planted_on = e.features[0].properties.planted_on;
 
-                console.log(e.features[0].properties);
+                const formatted_species_full_name = formatSpeciesFullName(species_id, species_full_name);
 
                 // Ensure that if the map is zoomed out such that
                 // multiple copies of the feature are visible, the
@@ -472,7 +474,7 @@
                             '<span class="pop-up-label">Species Name: </span><span class="scientific-name">' + species_name + '</span>' +
                         '</div>' +
                         '<div class="pop-up-row">' +
-                            '<span class="pop-up-label">Full Name: </span>' + style_full_name(species_full_name) +
+                            formatted_species_full_name +
                         '</div>' +
                         '<div class="pop-up-row">' +
                             '<span class="pop-up-label">Vernacular Name: </span>' + vernacular_name +
@@ -517,6 +519,16 @@
             map.on('mouseleave', 'clusters', function () {
                 map.getCanvas().style.cursor = '';
             });
+
+            function formatSpeciesFullName(species_id, species_full_name) {
+                if (species_id) {
+                    return '<span class="pop-up-label">Full Name: </span><a href="/plants/species/' + species_id + '/"' +
+                        style_full_name(species_full_name) + '</a>'
+                } else {
+                    return '<span class="pop-up-label">Full Name: </span>' +
+                        style_full_name(species_full_name)
+                }
+            }
 
             function filterByElementValue() {
                 let value = normalize(filterEl.value);
