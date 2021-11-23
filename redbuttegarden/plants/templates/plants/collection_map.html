@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static wagtailcore_tags %}
 
 {% block title %}Living Collections Plant Map{% endblock %}
 
@@ -54,6 +54,10 @@
         </div>
 
         <div class="row">
+            <div class="tutorial">
+                <h5>Plant Collection Map Tutorial</h5>
+                <p>Click <a href="{% slugurl 'plant-app-tutorial' %}">HERE</a> for a guide on how to use this map and explore the rest of our living collections detail pages.</p>
+            </div>
             <div class="credits">
                 <h5>Icon Credit/Attribution</h5>
                 <div>Annual and evergreen groundcover icons made by <a href="https://www.flaticon.com/authors/darius-dan" title="Darius Dan">Darius Dan</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>

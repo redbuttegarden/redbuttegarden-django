@@ -70,7 +70,7 @@
 .map-overlay .listing a:hover {
     background: #f0f0f0;
 }
-.credits {
+.credits, .tutorial {
     margin: 15px;
 }
 #menu {
