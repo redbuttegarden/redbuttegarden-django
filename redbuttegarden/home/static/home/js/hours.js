@@ -46,13 +46,13 @@ concerts.push(new Date(2021, 09, 30));
 //#endregion
 
 
-//#region Constant Garden status variables and messages 
+//#region Constant Garden status variables and messages
 const manualOverrideTrue = (document.getElementById('hours_override').textContent === 'True')
 
 const daylightEndDay = 7;  // Day that Daylight Savings Time Ends in November of the current year
 const daylightStartDay = 8;  // Day that Daylight Savings Time Begins in March of the next year
 
-const thanksgivingDay = 26;  // Day of Month of Thanksgiving Holiday in November
+const thanksgivingDay = 25;  // Day of Month of Thanksgiving Holiday in November
 
 const holidayPartyDay = parseInt(document.getElementById('hours_holiday_day').textContent);  // Day of Month we close for Holiday Party in December
 const holidayPartyClosingHour = parseInt(document.getElementById('hours_holiday_hour').textContent);  // Hour we close on day of Holiday Party (military time)
@@ -94,11 +94,11 @@ function setHours() {
 
 /**
  *  Sets concert day status; Returns true if it's a concert day
- **/ 
+ **/
 function isConcertDay(concerts, busHours) {
-	didSetHours = false; 
+	didSetHours = false;
 
-	// Loops through each concert to check if it's a concert day; Runs in O(N) time. 
+	// Loops through each concert to check if it's a concert day; Runs in O(N) time.
 	concerts.forEach(concert => {
 		if (concert.getMonth() == month && concert.getDate() == day) {
 			document.getElementById("gardenHours").innerHTML = busHours;
@@ -107,7 +107,7 @@ function isConcertDay(concerts, busHours) {
 				status = gardenOpenMessage;
 				document.getElementById("gardenStatus").innerHTML = status;
 			}
-			
+
 			if (hours == 16) {
 				status = gardenWillCloseMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
 				document.getElementById("gardenStatus").innerHTML = status;
@@ -118,11 +118,11 @@ function isConcertDay(concerts, busHours) {
 				document.getElementById("gardenStatus").innerHTML = status;
 			}
 
-			didSetHours = true; 
-		} 
+			didSetHours = true;
+		}
 	})
 
-	return didSetHours; 
+	return didSetHours;
 }
 
 
@@ -296,10 +296,10 @@ function gardenYearlyHours() {
 		otherNotes = "*Garden Hours on Concert Days: 9AM-5PM";
 		document.getElementById("gardenHours").innerHTML = busHours;
 		document.getElementById("otherNotes").innerHTML = otherNotes;
-		
+
 		// Checks if it's a concert day, else continues as normal
 		if (isConcertDay(concerts, "Today (Concert Day): 9am-5pm"))
-			return;  
+			return;
 
 		if (hours >= 9 && hours < 20) {
 			status = gardenOpenMessage;
@@ -335,7 +335,7 @@ function gardenYearlyHours() {
 
 		// Specific check for Teton Gravity Event on Sept. 20th; Will be removed on Sept. 21st
 		if (day === 20 && isConcertDay(concerts, "Today (Garden Event): 9am-5pm"))
-			return; 
+			return;
 
 		// Checks if it's a concert day, else continues as normal
 		if (isConcertDay(concerts, "Today (Concert Day): 9am-5pm"))
