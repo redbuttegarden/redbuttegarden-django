@@ -140,40 +140,6 @@ function gardenYearlyHours() {
 		return;
 	}
 
-//#region Takes admission prices, converts them to integers, and divides them by two for half admission in December, January, and February
-
-	if ( (month === 12) || (month === 1) || (month === 2) ){
-
-		const adultAdm = document.getElementById("adult-adm").innerHTML;
-		const adultHalf = (parseInt(adultAdm, 10))/2;
-		document.getElementById("adult-adm").innerHTML = "<span style=\x22text-decoration:line-through;\x22>"+adultAdm+"</span>";
-		document.getElementById("adult-half").innerHTML = "&nbsp;&nbsp;$"+adultHalf;
-
-
-		const seniorAdm = document.getElementById("senior-adm").innerHTML;
-		const seniorHalf = (parseInt(seniorAdm, 10))/2;
-		document.getElementById("senior-adm").innerHTML = "<span style=\x22text-decoration:line-through;\x22>"+seniorAdm+"</span>";
-		document.getElementById("senior-half").innerHTML = "&nbsp;&nbsp;$"+seniorHalf;
-
-		const milAdm = document.getElementById("mil-adm").innerHTML;
-		const milHalf = (parseInt(milAdm, 10))/2;
-		document.getElementById("mil-adm").innerHTML = "<span style=\x22text-decoration:line-through;\x22>"+milAdm+"</span>";
-		document.getElementById("mil-half").innerHTML = "&nbsp;&nbsp;$"+milHalf;
-
-		const childAdm = document.getElementById("child-adm").innerHTML;
-		const childHalf = (parseInt(childAdm, 10))/2;
-		document.getElementById("child-adm").innerHTML = "<span style=\x22text-decoration:line-through;\x22>"+childAdm+"</span>";
-		document.getElementById("child-half").innerHTML = "&nbsp;&nbsp;$"+childHalf;
-
-
-		const staffAdm = document.getElementById("staff-adm").innerHTML;
-		const staffHalf = (parseInt(staffAdm, 10))/2;
-		document.getElementById("staff-adm").innerHTML = "<span style=\x22text-decoration:line-through;\x22>"+staffAdm+"</span>";
-		document.getElementById("staff-half").innerHTML = "&nbsp;&nbsp;$"+staffHalf;
-
-	}
-//#endregion
-
 	// TODO - Pass Concert objects to view so hours.js knows about early closing times
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	/* CHANGE YEARLY: Early Closing Days for Concerts and Gala  								  */
