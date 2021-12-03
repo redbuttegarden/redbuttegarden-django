@@ -17,32 +17,32 @@ let status;
 let concerts = []
 
 // #region CONCERT 'PUSH' OPERATIONS (HIDDEN)
-concerts.push(new Date(2021, 07, 30));
-concerts.push(new Date(2021, 08, 01));
-concerts.push(new Date(2021, 08, 04));
-concerts.push(new Date(2021, 08, 06));
-concerts.push(new Date(2021, 08, 08));
-concerts.push(new Date(2021, 08, 10));
-concerts.push(new Date(2021, 08, 13));
-concerts.push(new Date(2021, 08, 15));
-concerts.push(new Date(2021, 08, 16));
-concerts.push(new Date(2021, 08, 17));
-concerts.push(new Date(2021, 08, 19));
-concerts.push(new Date(2021, 08, 22));
-concerts.push(new Date(2021, 08, 23));
-concerts.push(new Date(2021, 08, 25));
-concerts.push(new Date(2021, 08, 26));
-concerts.push(new Date(2021, 08, 29));
-concerts.push(new Date(2021, 09, 02));
-concerts.push(new Date(2021, 09, 05));
-concerts.push(new Date(2021, 09, 12));
-concerts.push(new Date(2021, 09, 14));
-concerts.push(new Date(2021, 09, 16));
-concerts.push(new Date(2021, 09, 20));
-concerts.push(new Date(2021, 09, 22));
-concerts.push(new Date(2021, 09, 23));
-concerts.push(new Date(2021, 09, 29));
-concerts.push(new Date(2021, 09, 30));
+concerts.push(new Date(2021, 7, 30));
+concerts.push(new Date(2021, 8, 1));
+concerts.push(new Date(2021, 8, 4));
+concerts.push(new Date(2021, 8, 6));
+concerts.push(new Date(2021, 8, 8));
+concerts.push(new Date(2021, 8, 10));
+concerts.push(new Date(2021, 8, 13));
+concerts.push(new Date(2021, 8, 15));
+concerts.push(new Date(2021, 8, 16));
+concerts.push(new Date(2021, 8, 17));
+concerts.push(new Date(2021, 8, 19));
+concerts.push(new Date(2021, 8, 22));
+concerts.push(new Date(2021, 8, 23));
+concerts.push(new Date(2021, 8, 25));
+concerts.push(new Date(2021, 8, 26));
+concerts.push(new Date(2021, 8, 29));
+concerts.push(new Date(2021, 9, 2));
+concerts.push(new Date(2021, 9, 5));
+concerts.push(new Date(2021, 9, 12));
+concerts.push(new Date(2021, 9, 14));
+concerts.push(new Date(2021, 9, 16));
+concerts.push(new Date(2021, 9, 20));
+concerts.push(new Date(2021, 9, 22));
+concerts.push(new Date(2021, 9, 23));
+concerts.push(new Date(2021, 9, 29));
+concerts.push(new Date(2021, 9, 30));
 //#endregion
 
 
@@ -139,6 +139,40 @@ function gardenYearlyHours() {
 
 		return;
 	}
+
+//#region Takes admission prices, converts them to integers, and divides them by two for half admission in December, January, and February
+
+	if ( (month === 12) || (month === 1) || (month === 2) ){
+
+		const adultAdm = document.getElementById("adult-adm").innerHTML;
+		const adultHalf = (parseInt(adultAdm, 10))/2;
+		document.getElementById("adult-adm").innerHTML = "<span style=\x22text-decoration:line-through;\x22>"+adultAdm+"</span>";
+		document.getElementById("adult-half").innerHTML = "&nbsp;&nbsp;$"+adultHalf;
+
+
+		const seniorAdm = document.getElementById("senior-adm").innerHTML;
+		const seniorHalf = (parseInt(seniorAdm, 10))/2;
+		document.getElementById("senior-adm").innerHTML = "<span style=\x22text-decoration:line-through;\x22>"+seniorAdm+"</span>";
+		document.getElementById("senior-half").innerHTML = "&nbsp;&nbsp;$"+seniorHalf;
+
+		const milAdm = document.getElementById("mil-adm").innerHTML;
+		const milHalf = (parseInt(milAdm, 10))/2;
+		document.getElementById("mil-adm").innerHTML = "<span style=\x22text-decoration:line-through;\x22>"+milAdm+"</span>";
+		document.getElementById("mil-half").innerHTML = "&nbsp;&nbsp;$"+milHalf;
+
+		const childAdm = document.getElementById("child-adm").innerHTML;
+		const childHalf = (parseInt(childAdm, 10))/2;
+		document.getElementById("child-adm").innerHTML = "<span style=\x22text-decoration:line-through;\x22>"+childAdm+"</span>";
+		document.getElementById("child-half").innerHTML = "&nbsp;&nbsp;$"+childHalf;
+
+
+		const staffAdm = document.getElementById("staff-adm").innerHTML;
+		const staffHalf = (parseInt(staffAdm, 10))/2;
+		document.getElementById("staff-adm").innerHTML = "<span style=\x22text-decoration:line-through;\x22>"+staffAdm+"</span>";
+		document.getElementById("staff-half").innerHTML = "&nbsp;&nbsp;$"+staffHalf;
+
+	}
+//#endregion
 
 	// TODO - Pass Concert objects to view so hours.js knows about early closing times
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
