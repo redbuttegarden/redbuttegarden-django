@@ -49,10 +49,10 @@ concerts.push(new Date(2021, 9, 30));
 //#region Constant Garden status variables and messages
 const manualOverrideTrue = (document.getElementById('hours_override').textContent === 'True')
 
-const daylightEndDay = 7;  // Day that Daylight Savings Time Ends in November of the current year
-const daylightStartDay = 8;  // Day that Daylight Savings Time Begins in March of the next year
+const daylightEndDay = 6;  // Day that Daylight Savings Time Ends in November of the current year
+const daylightStartDay = 13;  // Day that Daylight Savings Time Begins in March of the next year
 
-const thanksgivingDay = 25;  // Day of Month of Thanksgiving Holiday in November
+const thanksgivingDay = 24;  // Day of Month of Thanksgiving Holiday in November
 
 const holidayPartyDay = parseInt(document.getElementById('hours_holiday_day').textContent);  // Day of Month we close for Holiday Party in December
 const holidayPartyClosingHour = parseInt(document.getElementById('hours_holiday_hour').textContent);  // Hour we close on day of Holiday Party (military time)
