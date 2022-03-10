@@ -144,7 +144,7 @@ function gardenYearlyHours() {
 		return;
 	}
 
-//#region Takes admission prices, converts them to integers, and divides them by two for half admission in December, January, and February
+	//#region Takes admission prices, converts them to integers, and divides them by two for half admission in December, January, and February
 
 	if ( (month === 12) || (month === 1) || (month === 2) ){
 
@@ -176,17 +176,17 @@ function gardenYearlyHours() {
 		document.getElementById("staff-half").innerHTML = "&nbsp;&nbsp;$"+staffHalf;
 
 	}
-//#endregion
+	//#endregion
 
-	// TODO - Pass Concert objects to view so hours.js knows about early closing times
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	/* CHANGE YEARLY: Early Closing Days for Concerts and Gala  								  */
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		// TODO - Pass Concert objects to view so hours.js knows about early closing times
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		/* CHANGE YEARLY: Early Closing Days for Concerts and Gala  								  */
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	// Hours for individual concert days (which will change every year),
-	// the Gala, and other miscellaneous days that we will close at 5PM
+		// Hours for individual concert days (which will change every year),
+		// the Gala, and other miscellaneous days that we will close at 5PM
 
-//#region Gala Month
+	//#region Gala Month
 	if (month === galaMonth && day === galaDay)		// Gala (if applicable)
 
 	{
@@ -218,14 +218,15 @@ function gardenYearlyHours() {
 			return;
 		}
 	}
-//#endregion
+	//#endregion
 
-//#region Jan 1 - Mar 31 General Hours
+	//#region Jan 1 - Mar 31 General Hours
 
 	if (month === 1 || month === 2 || month === 3) {
 
 		busHours = "Jan 2-Mar 31: 9AM-5PM";
 		document.getElementById("gardenHours").innerHTML = busHours;
+		document.getElementById("gardenHours2").innerHTML = busHours;
 
 		if (month === 1 || month === 2) {
 			admissionNotes = halfOffAdmission;
@@ -257,9 +258,9 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
-//#endregion
+	//#endregion
 
-//#region April 1-30 General Hours
+	//#region April 1-30 General Hours
 
 	else if (month === 4) {
 
@@ -291,9 +292,9 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
-//#endregion
+	//#endregion
 
-//#region May 1 - Aug 31 General Hours
+	//#region May 1 - Aug 31 General Hours
 
 	else if (month === 5 || month === 6 || month === 7 || month === 8) {
 		busHours = "May 1-Aug 31: 9AM-9PM*";
@@ -321,9 +322,9 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
-//#endregion
+	//#endregion
 
-//#region  Sep 1 - 30 General Hours
+	//#region  Sep 1 - 30 General Hours
 
 	else if (month === 9) {
 		busHours = "Sep 1-30: 9AM-7:30PM*";
@@ -370,9 +371,9 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
-//#endregion
+	//#endregion
 
-//#region Oct 1 - Dec 23 General hours
+	//#region Oct 1 - Dec 23 General hours
 	else if ( month === 10 || month === 11 || month === 12) {
 
 		busHours = "Oct 1-Dec 23: 9AM-5PM";
@@ -496,5 +497,5 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
-//#endregion
+	//#endregion
 }
