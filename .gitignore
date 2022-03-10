@@ -12,3 +12,5 @@
 /redbuttegarden/journal/fixtures/
 /redbuttegarden/redbuttegarden/fixtures/
 /redbuttegarden/collections.geojson
+/.vscode/
+*.pyc

@@ -82,9 +82,13 @@ function setHours() {
 		busHours = openHour + " &ndash; " + closeHour;
 		// Check if hours_man_open and hours_man_close is actually set before setting the gardenHours content, otherwise we end up with just the '-'
 		if (openHour && closeHour) {
+			// Large Screens
 			document.getElementById("gardenHours").innerHTML = busHours;
+			// Mobile
+			document.getElementById("gardenHours2").innerHTML = busHours;
 		}
 		document.getElementById("gardenStatus").innerHTML = document.getElementById("hours_man_add_msg").textContent;
+		document.getElementById("gardenStatus2").innerHTML = document.getElementById("hours_man_add_msg").textContent;
 		document.getElementById("gardenEmphatic").innerHTML = document.getElementById("hours_man_add_emph_msg").textContent;
 	} else {
 		gardenYearlyHours();
