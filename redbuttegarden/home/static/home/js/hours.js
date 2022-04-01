@@ -266,6 +266,7 @@ function gardenYearlyHours() {
 
 		busHours = "Apr 1-30: 9AM-7:30PM";
 		document.getElementById("gardenHours").innerHTML = busHours;
+		document.getElementById("gardenHours2").innerHTML = busHours;
 
 		if ((hours >= 9 && hours < 18) || (hours === 18 && minutes < 30)) {
 			status = gardenOpenMessage;
@@ -300,6 +301,7 @@ function gardenYearlyHours() {
 		busHours = "May 1-Aug 31: 9AM-9PM*";
 		otherNotes = "*Garden Hours on Concert Days: 9AM-5PM";
 		document.getElementById("gardenHours").innerHTML = busHours;
+		document.getElementById("gardenHours2").innerHTML = busHours;
 		document.getElementById("otherNotes").innerHTML = otherNotes;
 
 		// Checks if it's a concert day, else continues as normal
@@ -336,6 +338,7 @@ function gardenYearlyHours() {
 			otherNotes = "*Garden Hours on Concert Days: 9AM-5PM";
 
 		document.getElementById("gardenHours").innerHTML = busHours;
+		document.getElementById("gardenHours2").innerHTML = busHours;
 		document.getElementById("otherNotes").innerHTML = otherNotes;
 
 		// Specific check for Teton Gravity Event on Sept. 20th; Will be removed on Sept. 21st
@@ -379,6 +382,7 @@ function gardenYearlyHours() {
 		busHours = "Oct 1-Dec 23: 9AM-5PM";
 		otherNotes = "Closed Thanksgiving Day and Dec 24-Jan 1";
 		document.getElementById("gardenHours").innerHTML = busHours;
+		document.getElementById("gardenHours2").innerHTML = busHours;
 		document.getElementById("otherNotes").innerHTML = otherNotes;
 
 		if (month === 12) {
@@ -392,6 +396,7 @@ function gardenYearlyHours() {
 			document.getElementById("otherNotes").innerHTML = otherNotes;
 			busHours = "9AM-5PM for General Admission<br />6PM-9PM for Garden After Dark";
 			document.getElementById("gardenHours").innerHTML = busHours;
+			document.getElementById("gardenHours2").innerHTML = busHours;
 
 			if (hours >= 9 && hours < 16) {
 				status = gardenOpenMessage;
@@ -430,6 +435,7 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 			busHours = "";
 			document.getElementById("gardenHours").innerHTML = busHours;
+			document.getElementById("gardenHours2").innerHTML = busHours;
 			otherNotes = "The Garden is Closed for the Thanksgiving Holiday";
 			document.getElementById("otherNotes").innerHTML = otherNotes;
 			return;
@@ -450,6 +456,7 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 			busHours = "9AM-2PM";
 			document.getElementById("gardenHours").innerHTML = busHours;
+			document.getElementById("gardenHours2").innerHTML = busHours;
 			otherNotes = "The Garden Will Close Early for our Annual Staff Holiday Party";
 			document.getElementById("otherNotes").innerHTML = otherNotes;
 
@@ -478,6 +485,7 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 			busHours = "";
 			document.getElementById("gardenHours").innerHTML = busHours;
+			document.getElementById("gardenHours2").innerHTML = busHours;
 			otherNotes = "The Garden is Closed Dec 24-Jan 1";
 			document.getElementById("otherNotes").innerHTML = otherNotes;
 		}
