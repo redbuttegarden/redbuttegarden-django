@@ -13,36 +13,42 @@ let minutesBeforeOpeningOrClosing = 60 - minutes;
 let busHours;
 let status;
 
-// Concert List 2021 for easier hour mapping
+// Concert List 2022 for easier hour mapping
 let concerts = []
 
 // #region CONCERT 'PUSH' OPERATIONS (HIDDEN)
-concerts.push(new Date(2021, 7, 30));
-concerts.push(new Date(2021, 8, 1));
-concerts.push(new Date(2021, 8, 4));
-concerts.push(new Date(2021, 8, 6));
-concerts.push(new Date(2021, 8, 8));
-concerts.push(new Date(2021, 8, 10));
-concerts.push(new Date(2021, 8, 13));
-concerts.push(new Date(2021, 8, 15));
-concerts.push(new Date(2021, 8, 16));
-concerts.push(new Date(2021, 8, 17));
-concerts.push(new Date(2021, 8, 19));
-concerts.push(new Date(2021, 8, 22));
-concerts.push(new Date(2021, 8, 23));
-concerts.push(new Date(2021, 8, 25));
-concerts.push(new Date(2021, 8, 26));
-concerts.push(new Date(2021, 8, 29));
-concerts.push(new Date(2021, 9, 2));
-concerts.push(new Date(2021, 9, 5));
-concerts.push(new Date(2021, 9, 12));
-concerts.push(new Date(2021, 9, 14));
-concerts.push(new Date(2021, 9, 16));
-concerts.push(new Date(2021, 9, 20));
-concerts.push(new Date(2021, 9, 22));
-concerts.push(new Date(2021, 9, 23));
-concerts.push(new Date(2021, 9, 29));
-concerts.push(new Date(2021, 9, 30));
+concerts.push(new Date(2022, 6, 2));
+concerts.push(new Date(2022, 6, 14));
+concerts.push(new Date(2022, 6, 15));
+concerts.push(new Date(2022, 6, 16));
+concerts.push(new Date(2022, 6, 20));
+concerts.push(new Date(2022, 6, 21));
+concerts.push(new Date(2022, 6, 28));
+concerts.push(new Date(2022, 6, 29));
+concerts.push(new Date(2022, 7, 1));
+concerts.push(new Date(2022, 7, 6));
+concerts.push(new Date(2022, 7, 13));
+concerts.push(new Date(2022, 7, 19));
+concerts.push(new Date(2022, 7, 23));
+concerts.push(new Date(2022, 7, 27));
+concerts.push(new Date(2022, 7, 28));
+concerts.push(new Date(2022, 7, 29));
+concerts.push(new Date(2022, 8, 1));
+concerts.push(new Date(2022, 8, 4));
+concerts.push(new Date(2022, 8, 8));
+concerts.push(new Date(2022, 8, 13));
+concerts.push(new Date(2022, 8, 17));
+concerts.push(new Date(2022, 8, 18));
+concerts.push(new Date(2022, 8, 20));
+concerts.push(new Date(2022, 8, 21));
+concerts.push(new Date(2022, 8, 22));
+concerts.push(new Date(2022, 8, 29));
+concerts.push(new Date(2022, 8, 30));
+concerts.push(new Date(2022, 9, 8));
+concerts.push(new Date(2022, 9, 9));
+concerts.push(new Date(2022, 9, 18));
+concerts.push(new Date(2022, 9, 19));
+concerts.push(new Date(2022, 9, 20));
 //#endregion
 
 
