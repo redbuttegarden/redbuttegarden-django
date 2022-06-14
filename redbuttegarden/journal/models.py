@@ -1,21 +1,31 @@
+import logging
+
+from datetime import date
 from django import forms
 from django.conf import settings
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalManyToManyField, ParentalKey
 from taggit.models import TaggedItemBase, Tag as TaggitTag
-
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, ObjectList, StreamFieldPanel, TabbedInterface
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel, MultiFieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, Orderable
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.images.models import Image
+from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
 from events.models import BLOCK_TYPES
+from home.abstract_models import AbstractBase
+from home.models import ButtonListDropdownInfo
+from journal.utils import get_season
+
+
+logger = logging.getLogger(__name__)
 
 
 @register_snippet
@@ -46,25 +56,40 @@ class JournalPageTag(TaggedItemBase):
     content_object = ParentalKey('JournalPage', related_name='journal_tags')
 
 
-class JournalIndexPage(RoutablePageMixin, Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
+class JournalIndexPage(RoutablePageMixin, AbstractBase):
+    body = StreamField(block_types=BLOCK_TYPES, blank=True, null=True)
+    bottom_button_info = StreamField(block_types=[('dropdown_button_list', ButtonListDropdownInfo())], blank=True,
+                                     null=True, help_text=_('Dropdown buttons appear below the list of child pages'))
 
-    content_panels = Page.content_panels + [
-        ImageChooserPanel('banner'),
+    content_panels = AbstractBase.content_panels + [
+        StreamFieldPanel('body'),
+        StreamFieldPanel('bottom_button_info'),
     ]
 
     subpage_types = ['journal.JournalPage']
 
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+    ]
+
+    # Pagination for the index page. We use the `django.core.paginator` as any
+    # standard Django app would, but the difference here being we have it as a
+    # method on the model rather than within a view function
+    def paginate(self, request, *args):
+        page = request.GET.get('page')
+        paginator = Paginator(self.get_posts().order_by('-date'), 9)
+        try:
+            pages = paginator.page(page)
+        except PageNotAnInteger:
+            pages = paginator.page(1)
+        except EmptyPage:
+            pages = paginator.page(paginator.num_pages)
+        return pages
+
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
-        context = super().get_context(request)
-        posts = JournalPage.objects.child_of(self).order_by('-date')
+        context = super().get_context(request, *args, **kwargs)
+        posts = self.paginate(request, self.get_posts().order_by('-date'))
         context['posts'] = posts
         return context
 
@@ -106,46 +131,38 @@ class JournalIndexPage(RoutablePageMixin, Page):
         return Page.serve(self, request, *args, **kwargs)
 
 
-class JournalPage(Page):
-    image = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-    )
-    author = models.ForeignKey(
+class JournalPage(AbstractBase):
+    authors = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
-        blank=True, null=True,
-        verbose_name=_('Author'),
-        on_delete=models.SET_NULL,
-        related_name='author_pages',
+        blank=True,
+        verbose_name=_('Authors'),
+        related_name='author_posts'
     )
     date = models.DateTimeField(verbose_name="Post date", default=timezone.now)
     categories = ParentalManyToManyField('journal.JournalCategory', blank=True)
     tags = ClusterTaggableManager(through='journal.JournalPageTag', blank=True)
     body = StreamField(BLOCK_TYPES)
 
-    content_panels = Page.content_panels + [
-        ImageChooserPanel('image', help_text=_('Main image displayed on Journal index page')),
+    content_panels = AbstractBase.content_panels + [
         FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
         FieldPanel('tags'),
-        InlinePanel('gallery_images', label=_('gallery images')),
+        InlinePanel('gallery_images', label=_('gallery images'),
+                    help_text=_("Gallery images are displayed along the left side of the page")),
         StreamFieldPanel('body'),
     ]
 
-    promote_panels = Page.promote_panels + [
-        FieldPanel('author', help_text=_("If left blank, this will be set to the currently logged in user")),
+    promote_panels = AbstractBase.promote_panels + [
+        FieldPanel('authors', help_text=_("If left blank, this will be set to the currently logged in user")),
         FieldPanel('date')
     ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Content'),
-        ObjectList(promote_panels, heading='Promote'),
-        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
-    ])
-
     parent_page_types = ['journal.JournalIndexPage']
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+        index.SearchField('authors'),
+        index.FilterField('date')
+    ]
 
     @property
     def journal_index_page(self):
@@ -158,8 +175,17 @@ class JournalPage(Page):
         return context
 
     def save_revision(self, *args, **kwargs):
-        if not self.author:
-            self.author = self.owner
+        if self.get_parent().slug == 'whats-blooming-now' and self.banner is None:
+            # Get the appropriate banner based on the current month
+            season = get_season(date.today())
+            banner_query = Image.objects.filter().search("what's blooming now banner " + season)
+            try:
+                banner = banner_query[0]
+                self.banner = banner
+            except IndexError as e:
+                logger.error('[!] Failed to find seasonal banner for Journal Page: ', e)
+        if not self.authors.all():
+            self.authors.add(self.owner)
         return super().save_revision(*args, **kwargs)
 
 
@@ -168,7 +194,7 @@ class JournalPageGalleryImage(Orderable):
     image = models.ForeignKey(
         'wagtailimages.Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='+'
     )
-    caption = models.CharField(blank=True, max_length=255)
+    caption = models.CharField(blank=True, max_length=255, help_text=_("Displayed below the image in italics"))
 
     panels = [
         ImageChooserPanel('image'),

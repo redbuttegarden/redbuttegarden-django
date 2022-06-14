@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <div class="row-fluid text-center responsive">
+        {% image page.banner max-1280x500 %}
+    </div>
+    <br>
+
+    {% for block in page.body %}
+        <div class="row-fluid">
+            {% include_block block with id=block.id %}
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <div class="row-fluid text-center responsive">
+        {% image page.banner max-1280x500 %}
+    </div>
+    <br>
+
+    {% for block in page.body %}
+        {% include_block block with id=block.id %}
+    {% endfor %}
+
+    <br>
+
+    <div class="text-center">
+        <div class="tan-bg row-fluid">
+            {% for partner_block in page.retail_partners %}
+                <div class="col-md-4">
+                    {% include_block partner_block with id=block.id %}
+                </div>
+
+                {% if forloop.counter|divisibleby:3 and not forloop.last %}
+                    </div>
+                    <div class="{% cycle 'default' 'tan-bg' %} row-fluid">
+                {% endif %}
+            {% endfor %}
+
+            {# If the total number of retail partners isn't divivible by 3, we want to add text advertising potential new partners #}
+            {% if not page.retail_partners|length|divisibleby:3 %}
+                {# If the total plus 1 still doensn't make it divisible by 3, we know we have space to add two peices of text #}
+                {% if page.retail_partners|length|add:1|divisibleby:3 %}
+                    <div class="col-md-4">
+                        <h3 class="green">Your business could be here!</h3>
+                    </div>
+                    {% else %}
+                    <div class="col-md-4">
+                        <h3 class="green">Your business could be here!</h3>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 class="green">Your business could be here!</h3>
+                    </div>
+                    {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <br>
+
+{% endblock %}

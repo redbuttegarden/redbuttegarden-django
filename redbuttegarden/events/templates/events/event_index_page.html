@@ -1,17 +1,33 @@
 {% extends 'base.html' %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block title %}
+    {% ifequal page.search_type 'event-category' %}{{ page.cat_title }}{% else %}{{ block.super }}{% endifequal %}
+{% endblock %}
 
 {% block content %}
-    <div class="row-fluid">
-        {% image page.banner original class="responsive" %}
+    <div id="banner" class="row-fluid text-center responsive">
+        {% image page.banner max-1280x500 %}
     </div>
+
+    <br>
+
+    <div class="row-fluid text-center">
+        {{ page.intro|richtext }}
+    </div>
+
     <div class="row-fluid col xs-12">
         {% for event in events %}
             <div class="col-sm-4">
                 {% with event=event.specific %}
                     <a href="{% pageurl event %}">
-                        <div class="eventwrapsmall hover">
-                            {% image event.image original %}
+                        <div class="index-thumbnail hover">
+                            {% comment %}
+                                Added blank alt attribute to image thumbnails since these are primarily to create a
+                                larger surface area for the page links and alt attributes would unnecessarily complicate
+                                page navigation for users using screen readers.
+                            {% endcomment %}
+                            {% image event.thumbnail fill-385x385 alt="" %}
                             <div class="eventinfo">
                                 <div class="eventname">{{ event.title }}</div>
                                 <div class="eventdate">{{ event.event_dates }}</div>
@@ -24,7 +40,7 @@
         {% empty %}
             <br>
             <br>
-            <div class="row-fluid">
+            <div id="empty-msg" class="row-fluid">
                 <div class="tan-bg">
                     <h4 class="text-center green">
                         There are currently no planned events in the near future. Please check back soon!
@@ -39,11 +55,7 @@
 
     <div class="row-fluid">
         {% for block in page.body %}
-            {% if block.block_type == "green_heading" %}
-                <h4 class="green">
-                    {% include_block block %}
-                </h4>
-            {% elif block.block_type == "image" %}
+            {% if block.block_type == "image" %}
                 <br>
 
                 <div class="text-center">
@@ -51,6 +63,26 @@
                 </div>
 
                 <br>
+
+            {% elif block.block_type == "page_link" %}
+                <!-- spage is just short for specific page -->
+                {% with spage=block.value.specific %}
+                    <div class="col-sm-4 page-link">
+                        <a href="{% pageurl spage %}">
+                            <div class="index-thumbnail hover">
+                                {% comment %}
+                                Added blank alt attribute to image thumbnails since these are primarily to create a
+                                larger surface area for the page links and alt attributes would unnecessarily complicate
+                                page navigation for users using screen readers.
+                                {% endcomment %}
+                                {% image spage.thumbnail fill-385x385 alt="" %}
+                                <div class="eventinfo">
+                                    <div class="eventname">{{ spage.title }}</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endwith %}
             {% else %}
                 {% include_block block %}
                 <br>
@@ -58,4 +90,8 @@
             {% endif %}
         {% endfor %}
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'events/js/no_children_page_links.js' %}"></script>
 {% endblock %}

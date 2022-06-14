@@ -5,4 +5,12 @@
 /ve/
 /redbuttegarden/static/
 /redbuttegarden/media/
+/redbuttegarden/concerts/fixtures/
+/redbuttegarden/custom_user/fixtures/
+/redbuttegarden/events/fixtures/
+/redbuttegarden/home/fixtures/
+/redbuttegarden/journal/fixtures/
+/redbuttegarden/redbuttegarden/fixtures/
+/redbuttegarden/collections.geojson
+/.vscode/
 *.pyc

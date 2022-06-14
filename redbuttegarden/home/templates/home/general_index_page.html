@@ -1,29 +1,30 @@
 {% extends 'base.html' %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
-    <div class="row-fluid">
-        {% image page.banner original class="responsive" %}
+    <div class="row-fluid text-center responsive">
+        {% image page.banner max-1280x500 %}
     </div>
     <br>
 
     {% for block in page.body %}
-        {% if block.block_type == 'tan_bg_text' %}
-            <div class="tan-bg">
-                {% include_block block %}
-            </div>
-        {% else %}
-            {% include_block block %}
-        {% endif %}
+        {% include_block block with id=block.id %}
     {% endfor %}
 
-    <div class="row-fluid col xs-12">
+    <hr>
+
+    <div id="wagtail-children" class="row-fluid col xs-12">
         {% for sub in sub_pages %}
             <div class="col-sm-4">
                 {% with sub=sub.specific %}
                     <a href="{% pageurl sub %}">
-                        <div class="eventwrapsmall hover">
-                            {% image sub.thumbnail original %}
+                        <div class="index-thumbnail hover">
+                            {% comment %}
+                                Added blank alt attribute to image thumbnails since these are primarily to create a
+                                larger surface area for the page links and alt attributes would unnecessarily complicate
+                                page navigation for users using screen readers.
+                            {% endcomment %}
+                            {% image sub.thumbnail fill-385x385 alt="" %}
                             <div class="eventinfo">
                                 <div class="eventname">{{ sub.title }}</div>
                             </div>
@@ -43,4 +44,8 @@
             </div>
         {% endfor %}
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" src="{% static 'home/js/non_wagtail_child.js' %}"></script>
 {% endblock %}

@@ -1,13 +1,9 @@
 {% extends "base.html" %}
-{% load static wagtailcore_tags %}
+{% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
-{% block extra_css %}{% endblock extra_css %}
-
 {% block extra_includes %}
-    {% include 'home/includes/facebook-plugin.html' %}
-
     <div id="slider-wrapper">
         <div id="inner-slider-wrapper1">
             <div id="inner-slider-wrapper2">
@@ -16,7 +12,7 @@
                 <div id="slider1_container">
                     <!-- Slides Container -->
                     <div id="slides" u="slides">
-                        {% include 'home/includes/eventslides.html' %}
+                        {% include 'home/includes/eventslides.html' with slides=page.event_slides.all %}
                     </div>
 
                     <!-- bullet navigator container -->
@@ -35,9 +31,12 @@
 
                 <!-- Begin Page Down Code -->
                 <div id="page-down2" class="col-xs-12">
-                    <span class="page-down-icon"><img alt="downward-arrow" src="{% static 'img/down-arrow.png' %}" /></span>
-                    <!-- Code for Sprite Option -->
-                    <!-- <span class="page-down-icon" style="background-color:red;"><span class="jssora21l"></span></span> -->
+                    <span class="page-down-icon">
+                        <picture>
+                            <source srcset="{% static 'home/img/down-arrow.webp' %}" type="image/webp">
+                            <img alt="downward-arrow" src="{% static 'home/img/down-arrow.png' %}" />
+                        </picture>
+                    </span>
                 </div>
                 <!-- End Page Down Code -->
             </div>
@@ -47,22 +46,40 @@
             <div id="rbginfobg">
                 <div id="rbginfo" class="row-fluid clearfix">
 
-                    <div id="rbghours" class="col-xs-3"><a href="{% url 'home:general-info' %}"><div class="rbghours hover"></div></a>
+                    <div id="rbghours" class="col-xs-3">
+                        <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
+                            <div class="rbghours hover"></div>
+                        </a>
                         <div id="gardenHours"></div>
                         <div id="gardenStatus"></div>
                         <div id="gardenEmphatic" class="red text-center"></div>
                         <div id="otherNotes"></div>
                     </div>
 
-                    <div id="rbgadmission" class="col-xs-3" onclick="admissionHoverOn()"><a href="#"><div class="rbgadmission hover"></div></a></div>
-                    <div id="rbgdirections" class="col-xs-3"><a href="{% url 'home:directions' %}"><div class="rbgdirections hover"></div></a></div>
-                    <div id="rbgweather" class="col-xs-3"><a href="https://weather.com/weather/today/l/84108:4:US" target="_blank"><div class="rbgweather hover"></div></a></div>
+                    <div class="col-xs-3" onmouseenter="admissionHoverOn()">
+                        <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
+                            <div id="rbgadmission" class="rbgadmission hover"></div>
+                        </a>
+                    </div>
+                    <div id="rbgdirections" class="col-xs-3">
+                        <a href="{% slugurl 'directions' %}" aria-label="How to get to the garden">
+                            <div class="rbgdirections hover"></div>
+                        </a>
+                    </div>
+                    <div id="rbgweather" class="col-xs-3">
+                        <a href="https://www.weatherbug.com/weather-camera/?cam=SLTWK" target="_blank" aria-label="External link to weatherbug weather station with camera">
+                            <div class="rbgweather hover"></div>
+                        </a>
+                    </div>
 
                     <!-- Begin Page Down Code for Slides on Mobile -->
                     <div id="page-down" class="col-xs-12">
-                        <span class="page-down-icon"><img alt="downward-arrow" src="{% static 'img/down-arrow.png' %}" /></span>
-                        <!-- Code for Sprite Option -->
-                        <!-- <span class="page-down-icon" style="background-color:red;"><span class="jssora21l"></span></span> -->
+                        <span class="page-down-icon">
+                            <picture>
+                                <source srcset="{% static 'home/img/down-arrow.webp' %}" type="image/webp">
+                                <img alt="downward-arrow" src="{% static 'home/img/down-arrow.png' %}" width="75em" height="25em"/>
+                            </picture>
+                        </span>
                     </div>
                     <!-- End Page Down Code for Slides on Mobile -->
                 </div>
@@ -74,10 +91,11 @@
     <!-- Dump the RBG Hours snippit info for our hours.js script to consume -->
     <div id="rbg_hours_info" style="display: none;">
         <div id="hours_override">{{ page.hours.allow_override }}</div>
-        <div id="hours_man_open">{{ page.hours.garden_open|date:"g A" }}</div>
-        <div id="hours_man_close">{{ page.hours.garden_close|date:"g A" }}</div>
-        <div id="hours_man_add_msg">{{ page.hours.additional_message }}</div>
-        <div id="hours_man_add_emph_msg">{{ page.hours.additional_emphatic_mesg }}</div>
+        <div id="hours_man_open">{{ page.hours.garden_open|date:"g:i A" }}</div>
+        <div id="hours_man_close">{{ page.hours.garden_close|date:"g:i A" }}</div>
+        <!-- used default_if_none filter to prevent None from appearing literally if message not set -->
+        <div id="hours_man_add_msg">{{ page.hours.additional_message|default_if_none:"" }}</div>
+        <div id="hours_man_add_emph_msg">{{ page.hours.additional_emphatic_mesg|default_if_none:"" }}</div>
         <div id="hours_holiday_day">{{ page.hours.holiday_party_close_time.day }}</div>
         <div id="hours_holiday_hour">{{ page.hours.holiday_party_close_time.hour }}</div>
         <div id="hours_holiday_minute">{{ page.hours.holiday_party_close_time.minute }}</div>
@@ -85,7 +103,49 @@
         <div id="hours_gad_end">{{ page.hours.gad_end }}</div>
     </div>
 
+    <!-- Begin Outer Info Div -->
+    <div id="rbg-info-wrapper2">
+        <div id="rbginfobg2">
 
+            <div id="rbginfo" class="row">
+
+                <div id="rbghours" class="col-sm-3">
+                    <br>
+                    <b>GARDEN HOURS (MDT)</b>
+                    <!-- <div class="text-center red bold">The Garden is Closed Today due to Inclement Weather</div> -->
+                    <div id="gardenHours2">Oct 1-Dec 23: 9AM-5PM</div>
+                    <div id="gardenHours2-reservations"><span class="red text-center"></span></div>
+                    <div id="gardenStatus2"></div>
+                    <a href="{% slugurl 'general-info' %}" style="text-decoration:none;color:#FFFFFF;font-size:12px">CLICK TO SEE ALL HOURS</a>
+                    <br><br>
+                </div>
+
+                <div id="rbgadmission2" class="col-sm-3">
+                    {% include "home/includes/admission.html" %}
+                </div>
+
+                <div id="rbgdirections" class="col-sm-3">
+                    <div class="memfaqwrap">
+                        <br>
+                        <a href="{% slugurl 'directions' %}">
+                            <div class="memfaq volbutton">HOW TO GET HERE</div>
+                        </a>
+                        <br>
+                    </div>
+                </div>
+
+                <div id="rbgweather" class="col-sm-3">
+                    <div class="memfaqwrap">
+                        <br>
+                        <a href="https://weather.com/weather/today/l/84108:4:US" target="_blank">
+                            <div class="memfaq volbutton">TODAY'S WEATHER</div>
+                        </a>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- End Outer Info Div -->
 {% endblock %}
 
@@ -94,47 +154,75 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
-    <script src="{% static 'js/hours.js' %}?v={% include 'includes/css-js-versions.html' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jssor.slider.mini.js' %}"></script>
+    <script src="{% static 'home/js/ie10-viewport-bug-workaround.js' %}"></script>
+    <script src="{% static 'home/js/hours.js' %}"></script>
+    <script type="text/javascript" src="{% static 'home/js/jssor.slider.mini.js' %}"></script>
 
     {% include 'home/includes/jssor-slideshow-js.html' %}
 
     {% include 'home/includes/page-down.html' %}
 {% endblock %}
 
-{% block content %}
-    <br />
+{% block abnormal_content %}
+    <div id="rbghomebody" class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <br />
 
-    <div>
-        <hr class="hr-separator">
-        <div class="separator">MEDIA</div>
+                <div>
+                    <hr class="hr-separator">
+                    <div class="separator">MEDIA</div>
+                </div>
+
+                <div class="row-fluid">
+                    <div class="col-sm-6">
+                        <a href="{% slugurl 'whats-blooming-now' %}">
+                            <picture>
+                                <source srcset="{% static 'home/img/blog1.webp' %}" type="image/webp">
+                                <img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'home/img/blog1.jpg' %}" width="588em" height="332em">
+                            </picture>
+                        </a>
+                    </div>
+                    {# Social media page is the only non watail page. It's served from a view in the home app #}
+                    <div class="col-sm-6">
+                        <a href="/social-media">
+                            <picture>
+                                <source srcset="{% static 'home/img/socialMedia-small.webp' %}" type="image/webp">
+                                <img alt="hand holding smartphone" class="hover" src="{% static 'home/img/socialMedia-small.png' %}" width="588em" height="332em">
+                            </picture>
+                        </a>
+                    </div>
+                </div>
+
+                <br />
+                <br />
+                <br />
+
+                <div>
+                    <hr class="hr-separator">
+                    <div class="separator">EVENTS</div>
+                </div>
+
+                <br />
+
+                <div class="row-fluid">
+                    <div class="col-sm-12">
+                        <a href="{% slugurl 'calendar' %}">
+                            <picture>
+                                <source srcset="{% static 'home/img/whats-happening.webp' %}" type="image/webp">
+                                <img alt="text says whats happening over picture of red butte garden amphitheater" class="hover" src="{% static 'home/img/whats-happening.jpg' %}" width="1280em" height="325em">
+                            </picture>
+                        </a>
+                    </div>
+                </div>
+
+                <br />
+                <br />
+                <br />
+
+
+                <br />
+            </div>
+        </div>
     </div>
-
-    <div class="row-fluid">
-        <div class="col-sm-6"><a href="/whats-blooming"><img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'img/blog1.jpg' %}"></a></div>
-        <div class="col-sm-6"><a href="/social-media"><img alt="hand holding smartphone" class="hover" src="{% static 'img/socialMedia-small.png' %}"></a></div>
-    </div>
-
-    <br />
-    <br />
-    <br />
-
-    <div>
-        <hr class="hr-separator">
-        <div class="separator">EVENTS</div>
-    </div>
-
-    <br />
-
-    <div class="row-fluid">
-        <div class="col-sm-12"><a href="/calendar"><img alt="text says whats happening over picture of red butte garden amphitheater" class="hover" src="{% static 'img/whats-happening.jpg' %}"></a></div>
-    </div>
-
-    <br />
-    <br />
-    <br />
-
-
-    <br />
-{% endblock content %}
+{% endblock abnormal_content %}

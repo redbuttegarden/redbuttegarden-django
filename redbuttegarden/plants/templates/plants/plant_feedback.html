@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Plant Collection Feedback Form{% endblock %}
+
+{% block extra_css %}
+    <link href="{% static 'plants/css/feedback.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+    <h1>Report a Problem or Leave a Comment</h1>
+    <div class="container-fluid">
+        {% if species_id %}
+            <form action="{% url 'plants:species-feedback' species_id %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <br>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-light">Reset Form</button>
+            </form>
+        {% else %}
+            <form action="{% url 'plants:collection-feedback' collection_id %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <br>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-light">Reset Form</button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

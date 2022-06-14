@@ -10,7 +10,8 @@ DEBUG = False
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ['0.0.0.0', 'trjxa2b547.execute-api.us-east-1.amazonaws.com', 'dhsyi82ptcyu5.cloudfront.net', 'dev.redbuttegarden.org']
+ALLOWED_HOSTS = ['0.0.0.0', 'trjxa2b547.execute-api.us-east-1.amazonaws.com', 'dhsyi82ptcyu5.cloudfront.net',
+                 'dev.redbuttegarden.org', 'dev-shop.redbuttegarden.org', 'dev-train.redbuttegarden.org']
 
 BASE_URL = 'https://dev.redbuttegarden.org'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -32,6 +33,7 @@ DATABASES = {
 # Static files
 AWS_STORAGE_BUCKET_NAME = 'zappa-rbg-dev-static-east'
 AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_FILE_OVERWRITE = False
 STATIC_BUCKET = 'zappa-rbg-dev-static-east'
 STATICFILES_STORAGE = 'home.custom_storages.StaticStorage'
 MEDIA_BUCKET = 'zappa-rbg-dev-static-east'
@@ -43,7 +45,11 @@ MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
 WAGTAILFRONTENDCACHE = {
     'cloudfront': {
         'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
-        'DISTRIBUTION_ID': 'E5BZL9629SKXT',
+        'DISTRIBUTION_ID': {
+            'dev.redbuttegarden.org': 'E5BZL9629SKXT',
+            'dev-shop.redbuttegarden.org': 'E1ILRLJZBMHT88',
+            'dev-train.redbuttegarden.org': 'EV5FN74YZ4XU0',
+        },
     },
 }
 

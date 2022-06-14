@@ -1,0 +1,116 @@
+#map {
+    height: 400px;
+}
+
+#map-load-overlay {
+    position: fixed; /* Sit on top of the page content */
+    display: table;
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+    text-align: center;
+}
+#load-icon {
+    display: table-cell;
+    vertical-align: middle;
+    color: white;
+}
+.map-overlay {
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    background-color: #efefef;
+    overflow: hidden;
+    min-height: 250px;
+}
+
+.map-overlay fieldset {
+    display: none;
+    background: #ddd;
+    border: none;
+    padding: 10px;
+    margin: 0;
+}
+
+.map-overlay input {
+    display: block;
+    border: none;
+    width: 100%;
+    border-radius: 3px;
+    padding: 10px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.map-overlay .listing {
+    overflow: auto;
+    max-height: 100%;
+}
+
+.map-overlay .listing > * {
+    display: block;
+    padding: 5px 10px;
+    margin: 0;
+}
+
+.map-overlay .listing a {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    color: #404;
+    text-decoration: none;
+}
+
+.map-overlay .listing a:last-child {
+    border: none;
+}
+
+.map-overlay .listing a:hover {
+    background: #f0f0f0;
+}
+.credits, .tutorial {
+    margin: 15px;
+}
+#menu {
+    position: absolute;
+    z-index: 2;
+    background: #efefef;
+    padding: 10px;
+    font-family: 'Open Sans', sans-serif;
+}
+.pop-up-label {
+    font-weight: bold;
+}
+.scientific-name {
+    font-style: italic;
+}
+
+@media (min-width: 590px) {
+    #map {
+        float: right;
+        width: 75%;
+        height: 800px;
+    }
+
+    .map-overlay {
+        width: 25%;
+        float: left;
+        height: 800px;
+    }
+
+    #legend {
+        position: absolute;
+        top: 60px;
+        right: 25px;
+        overflow: auto;
+        background: rgba(255, 255, 255, 0.8);
+    }
+}
+
+@media (min-width: 1100px) {
+    .map-overlay {
+        height: 500px;
+    }
+}

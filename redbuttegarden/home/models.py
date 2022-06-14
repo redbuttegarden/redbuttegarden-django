@@ -1,23 +1,138 @@
-import json
+import logging
 
-from django.contrib.postgres.fields import DateRangeField
 from django.core.paginator import Paginator
+from django.core.validators import ValidationError, RegexValidator
 from django.db import models
-from django.forms import DateInput
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 
 from wagtail.core import blocks
-from wagtail.core.models import Page, Orderable
+from wagtail.core.models import Collection, Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel, FieldRowPanel
+from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.images.models import Image
+from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
+
+from home.abstract_models import AbstractBase
+
+
+logger = logging.getLogger(__name__)
+
+
+class ImageInfo(blocks.StructBlock):
+    image = ImageChooserBlock()
+    title = blocks.CharBlock(
+        label='Image Title',
+        help_text=_("Overlayed on image"),
+        max_length=100,
+        required=False,
+    )
+    subtitle = blocks.CharBlock(
+        label='Image Sub-title',
+        help_text=_("Overlayed on image below title"),
+        max_length=100,
+        required=False,
+    )
+    info_title = blocks.CharBlock(
+        label='Information Title',
+        help_text=_('Title heading for info displayed to the right of the image'),
+        max_length=500,
+        required=True,
+    )
+    info_subtitle = blocks.CharBlock(
+        label='Information Sub-title',
+        help_text=_('Subheading for info displayed beneath the Information Title'),
+        max_length=500,
+        required=False,
+    )
+    tan_bg_info = blocks.RichTextBlock(
+        label='Tan background info text',
+        help_text=_('Text is centered, bold and green inside a tan background element'),
+    )
+    tan_bg_button_text = blocks.CharBlock(
+        label='Button text',
+        help_text=_('Text for button within tan background element'),
+        required=False
+    )
+    tan_bg_button_url = blocks.URLBlock(
+        help_text=_('URL for button'),
+        required=False
+    )
+    additional_info = blocks.RichTextBlock(
+        help_text=_('Text displayed below tan background element'),
+        required=False
+    )
+
+
+class ImageInfoList(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        ImageInfo(),
+        label="Image Information"
+    )
+
+    class Meta:
+        template = 'blocks/image_info_list.html'
+
+
+class ImageCarousel(blocks.StructBlock):
+    images = blocks.ListBlock(
+        ImageChooserBlock(),
+    )
+
+    class Meta:
+        template = 'blocks/image_carousel.html'
+
+
+class ImageLink(blocks.StructBlock):
+    title = blocks.CharBlock(
+        label='Title',
+        max_length=200,
+        required=False,
+    )
+    url = blocks.URLBlock(
+        label="URL"
+    )
+    image = ImageChooserBlock()
+
+
+class ImageLinkList(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        ImageLink(),
+        label="Image Links"
+    )
+
+    class Meta:
+        template = 'blocks/image_link_list.html'
+
+
+class AlignedParagraphBlock(blocks.StructBlock):
+    alignment = blocks.ChoiceBlock([('left', 'Left'), ('text-center', 'Center'), ('right', 'Right')], default='left')
+    background_color = blocks.ChoiceBlock([('default', 'Default'), ('tan-bg', 'Tan'), ('green-bg', 'Green'),
+                                           ('dark-tan-bg', 'Dark Tan'), ('white-bg', 'White'), ('red-bg', 'Red'),
+                                           ('orange-bg', 'Orange')], default='default')
+    paragraph = blocks.RichTextBlock()
+
+    class Meta:
+        template = 'blocks/aligned_paragraph.html'
+
+
+class MultiColumnAlignedParagraphBlock(AlignedParagraphBlock):
+    title = blocks.CharBlock(max_length=100,
+                             required=False,
+                             help_text=_('Green centered heading above column content'))
+    paragraph = blocks.ListBlock(
+        blocks.RichTextBlock(),
+    )
+
+    class Meta:
+        template = 'blocks/multi_col_aligned_paragraph.html'
 
 
 class FAQItem(blocks.StructBlock):
@@ -25,7 +140,7 @@ class FAQItem(blocks.StructBlock):
         label='Title/Question',
         max_length=200,
     )
-    text = blocks.RichTextBlock(
+    text = AlignedParagraphBlock(
         label='Answer'
     )
 
@@ -100,7 +215,7 @@ class SingleListButtonDropdownInfo(blocks.StructBlock):
     )
     info_text = blocks.RichTextBlock(
         label='Info Text',
-        features=['h4', 'h5', 'bold', 'italic', 'link', 'ul']
+        features=['h4', 'h5', 'bold', 'italic', 'link', 'document-link', 'ul']
     )
 
 
@@ -114,11 +229,42 @@ class ButtonListDropdownInfo(blocks.StructBlock):
         template = 'blocks/button_list_dropdown_info.html'
 
 
+class SingleListCardDropdownInfo(blocks.StructBlock):
+    card_info = AlignedParagraphBlock(
+        label='Card Text',
+    )
+    info_text = blocks.RichTextBlock(
+        label='Info Text',
+    )
+    info_button_text = blocks.CharBlock(
+        max_length=100,
+        help_text=_('Button appears below Info Text'),
+        required=False,
+    )
+    info_button_url = blocks.URLBlock(
+        max_length=200,
+        label='Button URL',
+        required=False
+    )
+
+
+class CardListDropdownInfo(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        SingleListCardDropdownInfo(),
+        label="Card"
+    )
+
+    class Meta:
+        template = 'blocks/card_list_dropdown_info.html'
+
+
 class Heading(blocks.CharBlock):
+    """Green centered h2 element"""
+
     class Meta:
         template = 'blocks/heading.html'
         icon = 'grip'
-        label = 'Heading'
+        label = 'Green Centered Heading'
 
 
 class EmphaticText(blocks.CharBlock):
@@ -157,15 +303,97 @@ class ButtonBlock(blocks.StructBlock):
         template = 'blocks/button_block.html'
 
 
+class ButtonRow(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        ButtonBlock(),
+        label="Button"
+    )
+
+    class Meta:
+        template = 'blocks/button_row.html'
+
+
+class NewsletterBlock(blocks.StructBlock):
+    title = blocks.CharBlock(max_length=100, required=False)
+    embed = blocks.RawHTMLBlock(required=True)
+
+
+class NewsletterListBlock(blocks.StructBlock):
+    list_items = blocks.ListBlock(NewsletterBlock())
+
+    class Meta:
+        template = 'blocks/newsletter_list_block.html'
+
+
+class SingleThreeColumnDropdownInfoPanel(blocks.StructBlock):
+    background_color = blocks.ChoiceBlock([('default-panel', 'Default'), ('purple-panel', 'Purple'),
+                                           ('orange-panel', 'Orange'), ('blue-panel', 'Blue'), ('green-panel', 'Green'),
+                                           ], default='default-panel')
+    col_one_header = blocks.RichTextBlock(
+        label='Column One Panel Header',
+        help_text=_('Header for first column of dropdown panel'),
+        required=True,
+    )
+    col_two_header = blocks.RichTextBlock(
+        label='Column Two Panel Header',
+        help_text=_('Header for second column of dropdown panel'),
+        required=True,
+    )
+    col_three_header = blocks.RichTextBlock(
+        label='Column Three Panel Header',
+        help_text=_('Header for third column of dropdown panel'),
+        required=True,
+    )
+    class_info_subheaders = blocks.BooleanBlock(
+        label='Subheaders for Classes',
+        help_text=_('Select this option to include class-related subheadings for all columns (e.g. Grade, Ages, '
+                    'Session, Location, Cost'),
+    )
+    col_one_top_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears after the "GRADE:" subheading')
+    )
+    col_two_top_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears after the "AGES:" subheading')
+    )
+    col_three_top_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears after the "SESSION:" subheading')
+    )
+    middle_info = AlignedParagraphBlock(
+        help_text=_('Text info appearing inside expanded panel between top and bottom subheader content')
+    )
+    button = ButtonBlock(required=False)
+    col_one_bottom_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears beside the "LOCATION:" subheading')
+    )
+    col_two_bottom_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears beside the "COST:" subheading')
+    )
+    col_three_bottom_info = blocks.RichTextBlock(
+        help_text=_('If class subheaders are selected, this text appears beside the "CONTACT INFORMATION:" subheading')
+    )
+
+
+class ThreeColumnDropdownInfoPanel(blocks.StructBlock):
+    list_items = blocks.ListBlock(
+        SingleThreeColumnDropdownInfoPanel(),
+        label="Thee Column Dropdown Info Panel",
+    )
+
+    class Meta:
+        template = 'blocks/three_column_dropdown_info_panel.html'
+
+
 class ColumnBlock(blocks.StreamBlock):
     heading = Heading(classname='full title',
                       help_text=_('Text will be green and centered'))
     emphatic_text = EmphaticText(classname='full title',
                                  help_text=_('Text will be red, italic and centered'))
+    aligned_paragraph = AlignedParagraphBlock()
     paragraph = blocks.RichTextBlock()
     image = ImageChooserBlock()
     document = DocumentChooserBlock()
     button = ButtonBlock()
+    html = blocks.RawHTMLBlock()
 
     class Meta:
         template = 'blocks/column.html'
@@ -181,69 +409,44 @@ class TwoColumnBlock(blocks.StructBlock):
         label = 'Two Columns'
 
 
-class GeneralPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
-    thumbnail = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
-    )
+class GeneralPage(AbstractBase):
     body = StreamField(block_types=[
         ('button', ButtonBlock()),
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
-        ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
-        ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
-                                             help_text="Paragraph with a tan background")),
-        ('image', ImageChooserBlock()),
+        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
+        ('multi_column_paragraph', MultiColumnAlignedParagraphBlock()),
+        ('image', ImageChooserBlock(help_text=_('Centered image'))),
+        ('image_carousel', ImageCarousel()),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
+        ('dropdown_card_list', CardListDropdownInfo()),
         ('card_info_list', ImageListCardInfo()),
+        ('image_info_list', ImageInfoList()),
+        ('image_link_list', ImageLinkList()),
+        ('three_column_dropdown_info_panel', ThreeColumnDropdownInfoPanel()),
+        ('newsletters', NewsletterListBlock()),
     ], blank=False)
 
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            ImageChooserPanel('banner'),
-            ImageChooserPanel('thumbnail'),
-        ], classname="collapsible"),
+    content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
     ]
 
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+    ]
 
-class TwoColumnGeneralPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
-    thumbnail = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
-    )
+
+class TwoColumnGeneralPage(AbstractBase):
     body = StreamField(block_types=([
-        ('heading', Heading(classname='full title',
-                            help_text=_('Text will be green and centered'))),
+        ('green_heading', Heading(classname='full title',
+                                  help_text=_('Text will be green and centered'))),
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
-        ('paragraph', blocks.RichTextBlock()),
+        ('paragraph', AlignedParagraphBlock()),
         ('image', ImageChooserBlock()),
         ('document', DocumentChooserBlock()),
         ('two_columns', TwoColumnBlock()),
@@ -253,31 +456,28 @@ class TwoColumnGeneralPage(Page):
         ('dropdown_button_list', ButtonListDropdownInfo()),
     ]), null=True, blank=True)
 
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            ImageChooserPanel('banner'),
-            ImageChooserPanel('thumbnail'),
-        ], classname="collapsible"),
+    content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
     ]
 
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body')
+    ]
 
-class PlantCollectionsPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
+
+class PlantCollectionsPage(AbstractBase):
     intro = RichTextField()
     more_info_modal = RichTextField()
 
-    content_panels = Page.content_panels + [
-        ImageChooserPanel('banner'),
+    content_panels = AbstractBase.content_panels + [
         FieldPanel('intro'),
         FieldPanel('more_info_modal'),
         InlinePanel('plant_collections', label=_('Plant Collection')),
+    ]
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('intro'),
+        index.SearchField('more_info_modal')
     ]
 
 
@@ -319,45 +519,32 @@ class PlantCollections(Orderable):
     ]
 
 
-class GeneralIndexPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
-    thumbnail = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        help_text=_('You only need to add a thumbnail if this page is the child of a general index page')
-    )
+class GeneralIndexPage(AbstractBase):
     body = StreamField(block_types=[
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
-        ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
-        ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
-                                             help_text="Paragraph with a tan background")),
+        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
         ('image', ImageChooserBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
+        ('image_link_list', ImageLinkList()),
+        ('button', ButtonBlock()),
+        ('button_row', ButtonRow()),
     ], blank=True)
 
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            ImageChooserPanel('banner'),
-            ImageChooserPanel('thumbnail'),
-        ], classname="collapsible"),
+    content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
     ]
 
-    subpage_types = ['home.GeneralIndexPage', 'home.GeneralPage', 'home.TwoColumnGeneralPage']
+    subpage_types = ['events.EventPage', 'events.EventIndexPage', 'home.GeneralIndexPage', 'home.GeneralPage',
+                     'home.TwoColumnGeneralPage', 'concerts.ConcertPage', 'journal.JournalIndexPage']
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+    ]
 
     def get_general_items(self):
         # This returns a Django paginator of blog items in this section
@@ -373,34 +560,32 @@ class GeneralIndexPage(Page):
 
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
-        context = super().get_context(request)
+        context = super().get_context(request, *args, **kwargs)
         sub_pages = self.get_children().live().order_by('-latest_revision_created_at')
         context['sub_pages'] = sub_pages
         return context
 
 
-class FAQPage(Page):
-    banner = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
+class FAQPage(AbstractBase):
     body = StreamField(block_types=[
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
-        ('paragraph', blocks.RichTextBlock(required=True, classname='paragraph')),
-        ('tan_bg_text', blocks.RichTextBlock(required=False, classname='paragraph',
-                                             help_text="Paragraph with a tan background")),
+        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
+        ('image', ImageChooserBlock()),
+        ('html', blocks.RawHTMLBlock()),
         ('FAQ_list', FAQList()),
     ])
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            ImageChooserPanel('banner'),
-        ], classname="collapsible"),
+
+    content_panels = AbstractBase.content_panels + [
         StreamFieldPanel('body'),
     ]
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+    ]
+
+    class Meta:
+        verbose_name = "FAQ Page"
 
 
 @register_snippet
@@ -427,7 +612,8 @@ class RBGHours(models.Model):
                                                 help_text=_("Message under hours in RED text"))
 
     # Day and time we close for Holiday Party in December
-    holiday_party_close_time = models.DateTimeField(help_text=_("Day and time we close for Holiday Party in December"))
+    holiday_party_close_time = models.DateTimeField(null=True, blank=True,
+                                                    help_text=_("Day and time we close for Holiday Party in December"))
     """
     Originally created start and end dates for Garden After Dark but this won't work well
     when GAD occurs on non-consecutive dates.
@@ -462,7 +648,7 @@ class RBGHours(models.Model):
         verbose_name_plural = "RBG Hours"
 
 
-class HomePage(Page):
+class HomePage(AbstractBase):
     hours = models.ForeignKey(
         'home.RBGHours',
         null=True,
@@ -472,5 +658,94 @@ class HomePage(Page):
     )
 
     content_panels = Page.content_panels + [
-        SnippetChooserPanel('hours', help_text=_("Choose the set of hours to display on the home page"))
+        SnippetChooserPanel('hours', help_text=_("Choose the set of hours to display on the home page")),
+        InlinePanel('event_slides', label=_('Slideshow Images'))
     ]
+
+
+class EventSlides(Orderable):
+    page = ParentalKey(HomePage, on_delete=models.CASCADE, related_name='event_slides')
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+    link = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text=_('Link to Wagtail page')
+    )
+    alternate_link = models.URLField(blank=True, null=True,
+                                     help_text=_('Link to external URL or non-page Wagtail view'))
+    text = RichTextField(max_length=100,
+                         features=['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bold', 'italic'],
+                         null=True, blank=True)
+
+    panels = [
+        ImageChooserPanel('image'),
+        PageChooserPanel('link'),
+        FieldPanel('alternate_link'),
+        FieldPanel('text'),
+    ]
+
+    def clean(self):
+        if self.link and self.alternate_link:
+            raise ValidationError("Please choose only a page link OR an alternate link, not both")
+
+
+class AddressBlock(blocks.StructBlock):
+    street_address = blocks.CharBlock(max_length=40, required=False)
+    city = blocks.CharBlock(max_length=30, required=False)
+    # Looked up the minimum and maximum zipcode values in the USA
+    zipcode = blocks.IntegerBlock(min_value=501, max_value=99950, required=False)
+    phone = blocks.CharBlock(validators=[RegexValidator(r'\(?[0-9]{3}\)?[-|\s]?[0-9]{3}-?[0-9]{4}',
+                                                        'Please enter a valid phone number')])
+
+    class Meta:
+        template = 'blocks/address_block.html'
+
+
+class RetailPartnerBlock(blocks.StructBlock):
+    name = blocks.CharBlock(max_length=75)
+    addresses = blocks.ListBlock(AddressBlock(), required=False)
+    url = blocks.URLBlock(required=False)
+    info = blocks.RichTextBlock()
+
+    class Meta:
+        template = 'blocks/retail_partner_block.html'
+
+
+class RetailPartnerPage(AbstractBase):
+    body = StreamField(block_types=[
+        ('button', ButtonBlock()),
+        ('green_heading', Heading()),
+        ('paragraph', AlignedParagraphBlock()),
+    ])
+    retail_partners = StreamField(block_types=[
+        ('retail_partner', RetailPartnerBlock())
+    ])
+
+    content_panels = AbstractBase.content_panels + [
+        StreamFieldPanel('body'),
+        StreamFieldPanel('retail_partners')
+    ]
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+        index.SearchField('retail_partners'),
+    ]
+
+    def save_revision(self, *args, **kwargs):
+        if self.banner is None:
+            banner_query = Image.objects.filter().search("Retail Partner Banner")
+            try:
+                banner = banner_query[0]
+                self.banner = banner
+            except IndexError as e:
+                logger.error('[!] Failed to find banner for Retail Partner Page: ', e)
+        return super().save_revision(*args, **kwargs)

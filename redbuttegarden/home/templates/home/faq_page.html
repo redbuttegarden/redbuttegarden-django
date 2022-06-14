@@ -2,14 +2,14 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-    <div class="row-fluid">
-        {% image page.banner original class="responsive" %}
+    <div class="row-fluid text-center">
+        {% image page.banner max-1280x500 %}
     </div>
     <br>
 
     {% for block in page.body %}
-        {% if block.block_type == 'tan_bg_text' %}
-            <div class="tan-bg">
+        {% if block.block_type == 'image' %}
+            <div class="responsive">
                 {% include_block block %}
             </div>
         {% else %}

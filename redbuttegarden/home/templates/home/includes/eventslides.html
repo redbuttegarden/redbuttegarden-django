@@ -1,69 +1,15 @@
-{% load static %}
+{% load static wagtailcore_tags wagtailimages_tags %}
 
-<div>
-	<a href="/spring">
-		<img u="image" src2="{% static 'img/slideshow/spring-mini-blooms.jpg' %}" alt="Red Butte Garden Events" title="Red Butte Garden Events"/>
-		<div class="slide-description">SPRING EVENTS</div>
-	</a>
-</div>
-
-<div>
-	<a href="/kids-classes">
-		<img u="image" src2="{% static 'img/slideshow/summer-camp.jpg' %}" alt="Camps and Classes for Kids" title="Camps and Classes for Kids"/>
-		<div class="slide-description">SUMMER CAMP<br />&AMP; CLASSES FOR KIDS</div>
-	</a>
-</div>
-
-<div>
-	<a href="/adult-education">
-		<img u="image" src2="{% static 'img/slideshow/classes-workshops.jpg' %}" alt="Classes &amp; Workshops for Adults" title="Classes and Workshops for Adults"/>
-		<div class="slide-description">CLASSES &AMP; WORKSHOPS<br />FOR ADULTS</div>
-	</a>
-</div>
-
-<div>
-	<a href="/memberships">
-		<img u="image" src2="{% static 'img/slideshow/give-to-the-garden-floral-walk.jpg' %}" />
-		<div class="slide-description">BECOME A GARDEN MEMBER</div>
-	</a>
-</div>
-
-<div>
-	<a href="/water-conservation-garden-page">
-		<img u="image" src2="{% static 'img/slideshow/water-conservation-garden.jpg' %}" />
-		<div class="slide-description">WATER CONSERVATION GARDEN<br />DISCOVER THE BEAUTY OF ADAPTATION</div>
-	</a>
-</div>
-
-<!--
-<div>
-<a href="/garden-after-dark">
-	<img u="image" src2="/images/slideshow/garden-after-dark.jpg" alt="Garden After Dark" title="Garden After dark"/>
-	<div class="slide-description">GARDEN AFTER DARK - TROUBLE IN OZ<br /> OCTOBER 17-19 &AMP; 24-26</div>
-</a>
-</div>
-
-<div>
-	<a href="/glass-art-show">
-		<img u="image" src2="/images/slideshow/glass-art-show-slide.jpg" alt="Glass Art Show" title="Glass Art Show"/>
-		<div class="slide-description">GLASS ART SHOW<br />NOVEMBER 2 - DECEMBER 17</div>
-	</a>
-</div>
-
-	<div>
-		<a href="https://55218.blackbaudhosting.com/55218/Use-Where-Needed-Most">
-			<img u="image" src2="/images/slideshow/give-to-the-garden.jpg" />
-			<div class="slide-description">INSPIRE ADVENTURE, CURIOSITY &amp; HOPE <br />GIVE TO THE GARDEN</div>
-		</a>
-	</div>
-
-</div>-->
-
-<!-- This is the format that you will need for each picture - make sure to replace the # with an actual link or URL, and replace the src2 code with the proper image reference
-<div>
-	<a href="#">
-		<img u="image" src2="/images/slideshow/event01.jpg" />
-		<div class="slide-description">DESCRIPTION GOES HERE</div>
-	</a>
-</div>
--->
+{% for slide in slides %}
+    <div>
+        {% if slide.link.url %}
+            <a href="{{ slide.link.url }}">
+        {% else %}
+            <a href="{{ slide.alternate_link }}">
+        {% endif %}
+                {% image slide.image original as tmp_photo %}
+                <img u="image" src2="{{ tmp_photo.url }}" alt="{{ tmp_photo.alt }}"/>
+                <div class="slide-description">{{ slide.text|richtext }}</div>
+            </a>
+    </div>
+{% endfor %}

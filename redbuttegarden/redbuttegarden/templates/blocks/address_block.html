@@ -1,0 +1,4 @@
+<h6>{{ value.street_address }}{% if value.city %}, {{ value.city }}{% endif %}{% if value.zipcode %}, {{ value.zipcode|stringformat:"s" }}{% endif %}
+    {% if value.street_address or value.city %}-{% endif %}
+    <a href="tel:{{ value.phone }}">{{ value.phone }}</a>
+</h6>

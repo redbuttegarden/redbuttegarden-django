@@ -7,7 +7,7 @@
         <div class="col-sm-3">
             <!-- Event Picture-->
             <div class="event-pic">
-                {% image page.image fill-300x300 %}
+                {% image page.thumbnail fill-300x300 %}
             </div>
 
             <div class="ev-title-mobile">
@@ -33,7 +33,7 @@
             {% if page.additional_info %}
                 <div class="ev-info-header green">ADDITIONAL INFO:</div>
                 <div class="ev-member-sale">
-                    {{ page.additional_info }}
+                    {{ page.additional_info|richtext }}
                 </div>
 
                 <br>
@@ -50,17 +50,23 @@
             {% endif %}
 
             <!-- Price Info -->
-            <div class="ev-info-header green">COST:</div>
+            {% if page.member_cost or page.public_cost %}
+                <div class="ev-info-header green">COST:</div>
+            {% endif %}
 
-            <div>
-                <div class="inline"><strong>Garden Members:&nbsp;</strong></div>
-                <div class="ev-member-cost">{{ page.member_cost }}</div>
-            </div>
+            {% if page.member_cost %}
+                <div>
+                    <div class="inline"><strong>Garden Members:&nbsp;</strong></div>
+                    <div class="ev-member-cost">{{ page.member_cost }}</div>
+                </div>
+            {% endif %}
 
-            <div>
-                <div class="inline"><strong>General Public:&nbsp;</strong></div>
-                <div class="ev-public-cost"><span class="green bold">{{ page.public_cost }}</span></div>
-            </div>
+            {% if page.public_cost %}
+                <div>
+                    <div class="inline"><strong>General Public:&nbsp;</strong></div>
+                    <div class="ev-public-cost"><span class="green bold">{{ page.public_cost }}</span></div>
+                </div>
+            {% endif %}
 
             <br>
 
@@ -84,20 +90,29 @@
             <div class="ev-desc">
                 <div>
                     {% for block in page.body %}
-                        {% if block.block_type == 'tan_bg_text' %}
-                            <div class="tan-bg">
+                        <div class="row-fluid">
+                            {% if block.block_type == 'image' %}
+                                {% image block.value original class="responsive" %}
+                            {% else %}
                                 {% include_block block %}
-                            </div>
-                        {% elif block.block_type == 'green_heading' %}
-                            <h4 class="text-center green">
-                                {% include_block block %}
-                            </h4>
-                        {% elif block.block_type == 'image' %}
-                            {% image block.value original class="responsive" %}
-                        {% else %}
-                            {% include_block block %}
-                        {% endif %}
+                            {% endif %}
+                        </div>
                     {% endfor %}
+
+                    {% if page.policy.name %}
+
+                        <br>
+
+                        <div class="row-fluid">
+                            <p class="text-center">
+                                {% with policy_page=page.policy.policy_page.specific %}
+                                    <a href="{% pageurl policy_page %}">
+                                        {{ page.policy.link_text }}
+                                    </a>
+                                {% endwith %}
+                            </p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

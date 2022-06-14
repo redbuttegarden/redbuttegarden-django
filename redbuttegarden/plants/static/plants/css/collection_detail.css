@@ -1,0 +1,28 @@
+.common-name {
+    font-weight: lighter;
+}
+
+.scientific-name {
+    text-decoration: none;
+}
+
+.location {
+    font-size: smaller;
+}
+
+.collection-info > p {
+    margin: 0;
+}
+
+p.location {
+    margin-bottom: 10px;
+}
+
+#map {
+    width: 100%;
+    min-height: 500px;
+}
+
+.collection-info-container {
+    min-height: 500px;
+}

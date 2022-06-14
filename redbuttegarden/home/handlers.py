@@ -1,4 +1,7 @@
 import logging
+import os
+
+import requests
 
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -8,6 +11,31 @@ from wagtail.contrib.frontend_cache.utils import PurgeBatch
 from .models import GeneralIndexPage, GeneralPage, TwoColumnGeneralPage
 
 logger = logging.getLogger(__name__)
+
+
+# Send POST request to Microsoft Automate
+def send_to_automate(sender, **kwargs):
+    instance = kwargs['instance']
+    revision = kwargs['revision']
+    if not revision.user:
+        logger.info("No revision user; using instance owner")
+        user_fname = instance.owner.first_name
+        user_lname = instance.owner.last_name
+        user_username = instance.owner.username
+    else:
+        user_fname = revision.user.first_name
+        user_lname = revision.user.last_name
+        user_username = revision.user.username
+    url = os.environ.get('AUTOMATE_URL')
+    logger.info(f"Sending publish event to Microsoft Automate at url: {url}")
+    values = {
+        "text": f"{instance.title} was published by {user_fname} {user_lname} "
+                f"({user_username}).",
+        "url": f"{instance.full_url}",
+    }
+
+    response = requests.post(url, json=values)
+    logger.info(f'Response status code: {response.status_code}')
 
 
 def general_page_changed(general_page):

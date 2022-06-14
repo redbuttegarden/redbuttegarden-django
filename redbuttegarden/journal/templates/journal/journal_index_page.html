@@ -1,17 +1,29 @@
 {% extends 'base.html' %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
-    <div class="row-fluid">
-        {% image page.banner original class="responsive" %}
+    <div id="journal-banner" class="row-fluid text-center responsive">
+        {% image page.banner max-1280x500 %}
     </div>
+    <br>
+
+    {% for block in page.body %}
+        {% include_block block with id=block.id %}
+    {% endfor %}
+
+    <hr>
     <div class="row-fluid col xs-12">
         {% for post in posts %}
             <div class="col-sm-4">
                 {% with post=post.specific %}
                     <a href="{% pageurl post %}">
-                        <div class="eventwrapsmall hover">
-                            {% image post.image original %}
+                        <div class="index-thumbnail hover">
+                            {% comment %}
+                                Added blank alt attribute to image thumbnails since these are primarily to create a
+                                larger surface area for the page links and alt attributes would unnecessarily complicate
+                                page navigation for users using screen readers.
+                            {% endcomment %}
+                            {% image post.thumbnail fill-385x385 alt="" %}
                             <div class="eventinfo">
                                 <div class="eventname">{{ post.title }}</div>
                                 <div class="eventdate">{{ post.date|date:"F j, Y" }}</div>
@@ -32,4 +44,31 @@
             </div>
         {% endfor %}
     </div>
+
+    {% if posts.paginator.num_pages > 1 %}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    {% include "includes/pagination.html" with subpages=posts %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <br>
+    <hr>
+    <br>
+
+    <div class="row-fluid col xs-12">
+        {% for block in page.bottom_button_info %}
+            {% include_block block with id=block.id %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{# Enable automatic banner selection only for the What's Blooming Now Blog #}
+{% block extra_js %}
+    {% if page.slug == 'whats-blooming-now' %}
+        <script type="text/javascript" src="{% static 'journal/js/auto_journal_banner.js' %}"></script>
+    {% endif %}
 {% endblock %}

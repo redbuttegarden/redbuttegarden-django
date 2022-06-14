@@ -1,0 +1,44 @@
+{% load wagtailcore_tags %}
+
+<div class="{{ value.background_color }}">
+    <div class="row-fluid">
+        {% if value.title %}
+            <div class="col-sm-12">
+                <h3 class="text-center green">{{ value.title }}</h3>
+            </div>
+        {% endif %}
+        <div class="col-sm-12 {{ value.alignment }}">
+            {% if value.paragraph|length_is:"4" %}
+                {% for col_content in value.paragraph %}
+                    <div class="col-sm-3">
+                        {{ col_content|richtext }}
+                    </div>
+                {% endfor %}
+            {% elif value.paragraph|length_is:"3" %}
+                {% for col_content in value.paragraph %}
+                    <div class="col-sm-4">
+                        {{ col_content|richtext }}
+                    </div>
+                {% endfor %}
+            {% elif value.paragraph|length_is:"2" %}
+                {% for col_content in value.paragraph %}
+                    <div class="col-sm-6">
+                        {{ col_content|richtext }}
+                    </div>
+                {% endfor %}
+            {% elif value.paragraph|length_is:"1" %}
+                {% for col_content in value.paragraph %}
+                    <div class="col-sm-12">
+                        {{ col_content|richtext }}
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% for col_content in value.paragraph %}
+                    <div class="col-sm-2">
+                        {{ col_content|richtext }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block content %}
+    <div class="row-fluid text-center responsive">
+        {% image page.banner max-1280x500 %}
+    </div>
+    <br>
+
+    {% for block in page.body %}
+        {% include_block block %}
+    {% endfor %}
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'concerts/js/bootstrap_table_block.js' %}"></script>
+    <script src="{% static 'concerts/js/emphasize_waitlist.js' %}"></script>
+{% endblock %}

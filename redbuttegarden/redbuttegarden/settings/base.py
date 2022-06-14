@@ -32,12 +32,17 @@ INSTALLED_APPS = [
     'events',
     'home',
     'journal',
+    'plants',
     'search',
+    'shop',
 
     'wagtail.contrib.forms',
-    "wagtail.contrib.frontend_cache",
+    'wagtail.contrib.frontend_cache',
+    'wagtail.contrib.modeladmin',
     'wagtail.contrib.redirects',
     'wagtail.contrib.routable_page',
+    'wagtail.contrib.settings',
+    "wagtail.contrib.table_block",
     'wagtail.embeds',
     'wagtail.sites',
     'wagtail.users',
@@ -48,16 +53,20 @@ INSTALLED_APPS = [
     'wagtail.admin',
     'wagtail.core',
 
-    'cas',
+    'cas',  # Sometimes necessary to comment this app out to dump database
     'corsheaders',
     'modelcluster',
+    'rest_framework',
+    'rest_framework.authtoken',
     'storages',
     'taggit',
+    'wagtailaccessibility',
 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sitemaps',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
@@ -74,7 +83,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 
-    'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
@@ -93,6 +101,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'wagtail.contrib.settings.context_processors.settings',
             ],
         },
     },
@@ -169,6 +178,13 @@ WAGTAILEMBEDS_RESPONSIVE_HTML = True
 WAGTAIL_USER_EDIT_FORM = 'custom_user.forms.CustomUserEditForm'
 WAGTAIL_USER_CREATION_FORM = 'custom_user.forms.CustomUserCreationForm'
 WAGTAIL_USER_CUSTOM_FIELDS = ['title']
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = 4.5 * 1024 * 1024  # i.e. 4.5MB - Needed to avoid hitting AWS API Gateway payload limits
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.search.backends.database',
+        'SEARCH_CONFIG': 'english',
+    },
+}
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
@@ -186,7 +202,7 @@ MIDDLEWARE_CLASSES = (
     'cas.middleware.CASMiddleware',
 )
 CAS_SERVER_URL = "https://go.utah.edu/cas/"
-WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL = CAS_SERVER_URL
+WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'cas.backends.CASBackend',
@@ -197,3 +213,39 @@ CAS_AUTO_CREATE_USER = False
 CAS_RESPONSE_CALLBACKS = (
     'custom_user.cas_handler.create_cas_user',
 )
+
+ADMINS = [('IT', os.environ.get('IT_EMAIL'))]
+
+# Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('GMAIL_ACCOUNT')
+EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
+WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
+WAGTAILADMIN_NOTIFICATION_USE_HTML = True
+
+# This was setup to allow authentication for viewing VR Tours
+PASSWORD_REQUIRED_TEMPLATE = 'custom_user/password_required.html'
+LOGIN_URL = '/accounts/login'
+LOGIN_REDIRECT_URL = '/'
+
+# Prep for upgrade to Django 3.2
+# https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# Django REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+MAPBOX_API_TOKEN = "pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw"

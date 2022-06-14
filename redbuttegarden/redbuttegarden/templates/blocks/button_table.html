@@ -1,0 +1,27 @@
+{% load wagtailcore_tags %}
+
+<div class="row">
+    <div class="col-xs-12 lowpadding">
+			<span class="no-button-outline">
+				<button class="volbutton hover collapsed" data-target="#spon-table" data-toggle="collapse" aria-expanded="false">{{ value.button_text }}</button>
+			</span>
+
+        <div class="collapse" id="spon-table" aria-expanded="false" style="height: 0;">
+
+            <br>
+
+            {% for table_block in value.table_list %}
+                {% if block.block_type == 'table' %}
+                    <div class="table-responsive">
+                        {% include_block table_block %}
+                    </div>
+                {% else %}
+                    {% include_block table_block %}
+                {% endif %}
+            {% endfor %}
+
+            <br>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,178 @@
+figcaption {
+    text-align: center;
+    font-style: italic;
+}
+
+hr {
+    width: 95%;
+}
+
+#banner {
+    max-width: 1280px;
+}
+
+#image-list-card-info.lowpadding {
+    margin-bottom: 10px;
+}
+
+#journalpostbody {
+    margin: 0 auto 0 auto;
+    padding: 65px 15px 15px 15px;
+}
+
+#journalpostbody img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 15px;
+}
+
+.tags div {
+    display: inline-block;
+    margin-bottom: 3px;
+}
+
+/* Used for categories in journal_page.html */
+.tags ul li {
+    border: 1px solid rgba(25,97,67,.7);
+    border-radius: 10px;
+}
+
+#journalpostbody .col-sm-3 {
+    border-right: 1px solid rgba(25,97,67,.7);
+}
+
+#sponsor-list, #table-info-card-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#sponsor-list .info-table-card {
+    min-height: 200px;
+    margin: 5px 50px;
+}
+
+.sponinfo table caption {
+    color: #A26BA2;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#table-info-card-list thead th {
+    background-color: #196143;
+    color: white;
+    text-align: center;
+    border: 1px solid black;
+}
+
+/* Vertical Center */
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+}
+
+img.richtext-image {
+    padding: 10px;
+}
+
+img.right {
+    float: right;
+    height: auto;
+}
+
+img.left {
+    float: left;
+    height: auto;
+}
+
+img.full-width {
+    width: 100%;
+    height: auto;
+}
+
+/* For wagtail embeds */
+.responsive-object {
+    position: relative;
+}
+
+.responsive-object iframe,
+.responsive-object object,
+.responsive-object embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* To prevent collision between floated images and list style elements */
+ul, ol {
+    list-style-position: inside;
+}
+
+#search ul {
+    list-style-position: outside;
+}
+
+.image-list-dropdown {
+    min-height: 266px;
+}
+
+.foot-btn-wrap {
+    margin: 10px 0;
+}
+
+.footer-btn-inner {
+    min-height: 40px;
+}
+
+/* Pagination navigation */
+nav[role=pagination] {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.index-thumbnail img {
+    height: 385px;
+    width: 385px;
+    margin-top: 30px;
+}
+
+footer {
+    position: absolute;
+    width: 100%;
+}
+
+#navhide1, #navhide2, #navhide3, #navhide4 {
+    padding-right: 1px;
+}
+
+/* Changes color of last 3 dropdown menu items to yellow */
+#navhide1 > a, #navhide2 > a, #navhide3 > a, #navhide4 > a {
+    background-color: #2f7055;
+}
+
+@media (max-width: 1280px) {
+    #navhide1 > a, #navhide2 > a, #navhide3 > a, #navhide4 > a {
+        padding-bottom: 5px;
+    }
+}
+
+#navhide1 > a:focus, #navhide2 > a:focus, #navhide3 > a:focus, #navhide4 > a:focus,
+#navhide1 > a:hover, #navhide2 > a:hover, #navhide3 > a:hover, #navhide4 > a:hover {
+    background-color: #FF7744;
+}
+
+.memfaqwrap > a, .memfaqwrap > a:link, .memfaqwrap > a.visited {
+    text-decoration: none;
+}
