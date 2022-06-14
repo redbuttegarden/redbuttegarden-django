@@ -112,20 +112,24 @@ function isConcertDay(concerts, busHours) {
 	concerts.forEach(concert => {
 		if (concert.getMonth() == month && concert.getDate() == day) {
 			document.getElementById("gardenHours").innerHTML = busHours;
+			document.getElementById("gardenHours2").innerHTML = busHours;
 
 			if (hours >= 9 && hours < 16) {
-				status = gardenOpenMessage;
+				var status = gardenOpenMessage;
 				document.getElementById("gardenStatus").innerHTML = status;
+				document.getElementById("gardenStatus2").innerHTML = status;
 			}
 
 			if (hours == 16) {
 				status = gardenWillCloseMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
 				document.getElementById("gardenStatus").innerHTML = status;
+				document.getElementById("gardenStatus2").innerHTML = status;
 			}
 
 			else if (hours >= 17) {
 				status = gardenClosedMessage;
 				document.getElementById("gardenStatus").innerHTML = status;
+				document.getElementById("gardenStatus2").innerHTML = status;
 			}
 
 			didSetHours = true;
