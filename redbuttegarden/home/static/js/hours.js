@@ -57,8 +57,42 @@ function setHours() {
 }
 
 function gardenYearlyHours() {
+/**
+ *  Sets concert day status; Returns true if it's a concert day
+ **/
+function isConcertDay(concerts, busHours) {
+	didSetHours = false;
 
-	// Code to account for Daylight Savings Time
+	// Loops through each concert to check if it's a concert day; Runs in O(N) time.
+	concerts.forEach(concert => {
+		if (concert.getMonth() == month && concert.getDate() == day) {
+			document.getElementById("gardenHours").innerHTML = busHours;
+			document.getElementById("gardenHours2").innerHTML = busHours;
+
+			if (hours >= 9 && hours < 16) {
+				var status = gardenOpenMessage;
+				document.getElementById("gardenStatus").innerHTML = status;
+				document.getElementById("gardenStatus2").innerHTML = status;
+			}
+
+			if (hours == 16) {
+				status = gardenWillCloseMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
+				document.getElementById("gardenStatus").innerHTML = status;
+				document.getElementById("gardenStatus2").innerHTML = status;
+			}
+
+			else if (hours >= 17) {
+				status = gardenClosedMessage;
+				document.getElementById("gardenStatus").innerHTML = status;
+				document.getElementById("gardenStatus2").innerHTML = status;
+			}
+
+			didSetHours = true;
+		}
+	})
+
+	return didSetHours;
+}
 
 	if ( (month === 11 && day >= daylightEndDay) || (month === 12) || (month === 1) || (month === 2) || (month === 3 && day < daylightStartDay) ) {
 
@@ -66,11 +100,10 @@ function gardenYearlyHours() {
 	}
 
 	// Between 8AM and 9AM: shows how many minutes before the garden opens
-
-	if (hours === 8 ) {
-
-		status = gardenWillOpenMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
+	if (hours === 8) {
+		var status = gardenWillOpenMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
 		document.getElementById("gardenStatus").innerHTML = status;
+		document.getElementById("gardenStatus2").innerHTML = status;
 
 		return;
 	}
@@ -186,8 +219,7 @@ function gardenYearlyHours() {
 		}
 	}
 
-// April 1-30 General Hours
-
+	// April 1-30 General Hours
 	else if (month === 4) {
 
 		busHours = "Apr 1-30: 9AM-7:30PM";
@@ -219,8 +251,7 @@ function gardenYearlyHours() {
 		}
 	}
 
-// May 1 - Aug 31 General Hours
-
+	// May 1 - Aug 31 General Hours
 	else if (month === 5 || month === 6 || month === 7 || month === 8) {
 
 		busHours = "May 1-Aug 31: 9AM-9PM*";
@@ -245,8 +276,7 @@ function gardenYearlyHours() {
 		}
 	}
 
-// Sep 1 - 30 General Hours
-
+	// Sep 1 - 30 General Hours
 	else if (month === 9) {
 
 		busHours = "Sep 1-30: 9AM-7:30PM*";
@@ -282,8 +312,7 @@ function gardenYearlyHours() {
 		}
 	}
 
-// Oct 1 - Dec 23 General hours
-
+	// Oct 1 - Dec 23 General hours
 	else if ( month === 10 || month === 11 || month === 12) {
 
 		busHours = "Oct 1-Dec 23: 9AM-5PM";
