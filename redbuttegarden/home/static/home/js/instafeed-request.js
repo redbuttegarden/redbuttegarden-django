@@ -8,30 +8,20 @@ function assemblePosts() {
     });
 
     for (const post of posts) {
-        console.log('Assembling post...');
-
         let mediaParent = document.createElement('div');
-        mediaParent.id = "media-parent";
-        mediaParent.style = "margin-bottom: 3rem;";
+        mediaParent.className = "media-parent";
 
         let mediaLink = document.createElement('a');
         mediaLink.href = post['permalink'];
-        mediaLink.id = "media-link";
-        mediaLink.style = "text-decoration: none;";
+        mediaLink.className = "media-link";
 
         let mediaImg = document.createElement('img');
-        mediaImg.id = "media-img";
-
         mediaImg.src = post['media_url'];
-
-        mediaImg.style = (window.matchMedia("(max-width: 420px) and (max-height: 830px)").matches
-            ? "width: 150px; height: 150px;"
-            : "width: 350px; height: 350px;");
+        mediaImg.className = "media-img";
 
         let mediaCaption = document.createElement('p');
-        mediaCaption.id = "media-caption";
         mediaCaption.innerHTML = "(" + post['timestamp'].split("T")[0] + ")&nbsp;" + post['caption'];
-        mediaCaption.style = "color: black; margin-top: 1rem;";
+        mediaCaption.className = "media-caption";
 
         container.appendChild(mediaParent);
         mediaParent.appendChild(mediaLink);
