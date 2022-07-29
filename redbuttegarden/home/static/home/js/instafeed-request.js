@@ -1,7 +1,6 @@
 const access_token = window.document.getElementById("fb_token").innerText;
-const ig_user = "17841401164963561"
 
-fetch(`https://graph.facebook.com/v11.0/${ig_user}/media?access_token=${access_token}`)
+fetch(`https://graph.instagram.com/me/media?fields=id&access_token=${access_token}`)
     .then(res => res.json())
     .then(json => {
         const ids = []
@@ -12,8 +11,7 @@ fetch(`https://graph.facebook.com/v11.0/${ig_user}/media?access_token=${access_t
     })
     .then(ids => {
         for (let id of ids) {
-            fetch(`https://graph.facebook.com/v11.0/${id}?fields=media_url, caption, permalink, media_type
-                &access_token=${access_token}`)
+            fetch(`https://graph.instagram.com/${id}?fields=media_url,caption,permalink,media_type&access_token=${access_token}`)
                 .then(res => res.json())
                 .then(post => {
                     const media_url = (post.media_type === "IMAGE" ? post.media_url : "")
