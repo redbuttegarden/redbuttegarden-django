@@ -16,7 +16,7 @@ class Family(models.Model):
     name = models.CharField(max_length=255, unique=True)
     vernacular_name = models.CharField(max_length=255, blank=True, null=True)
 
-    def __repr__(self):
+    def __str__(self):
         return ' '.join([self.name])
 
     class Meta:
@@ -31,6 +31,7 @@ class Genus(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = 'genera'
 
 class Species(ClusterableModel):
     bloom_time_choices = [(' '.join([i, str(v)]), ' '.join([i, str(v)])) for _, v in MONTHS.items()
