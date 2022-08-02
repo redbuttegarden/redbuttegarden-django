@@ -1,5 +1,4 @@
 /.idea/
-*.pyc
 .DS_Store
 /redbuttegarden/.env.dev
 /redbuttegarden/.env.local
