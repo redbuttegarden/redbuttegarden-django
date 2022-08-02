@@ -11,7 +11,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: define the correct hosts in production!
 ALLOWED_HOSTS = ['0.0.0.0', 'trjxa2b547.execute-api.us-east-1.amazonaws.com', 'dhsyi82ptcyu5.cloudfront.net',
-                 'dev.redbuttegarden.org', 'dev-shop.redbuttegarden.org', 'dev-train.redbuttegarden.org']
+                 'dev.redbuttegarden.org', 'dev-shop.redbuttegarden.org', 'dev-train.redbuttegarden.org',
+                 'rbg-web-dev.redbutte.utah.edu']
 
 BASE_URL = 'https://dev.redbuttegarden.org'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

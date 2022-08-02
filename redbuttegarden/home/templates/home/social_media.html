@@ -8,110 +8,100 @@
 
 {% block abnormal_content %}
 <div id="fb-root"></div>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v9.0" nonce="dh5I48YB"></script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v14.0&appId=778744196497318&autoLogAppEvents=1" nonce="u5mhQpaY"></script>
 
 <div id="rbgdefaultbody" class="container-fluid">
-    <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-6 col-xs-3">
-            <!-- Tab Links for Logos -->
-            <div class="tab-wrapper">
-                <div class="tab">
-                    <button class="tablinks fb-tl" id="defaultOpen" onclick="openTab(event, 'Facebook')">
-                        <h6 class="button-text">Facebook</h6>
-                        <img id="Facebook-Logo" src="{% static 'home/img/logos/facebookLogo.png' %}" alt="Facebook Logo" />
-                    </button>
-                    <button class="tablinks tw-tl" onclick="openTab(event, 'Twitter')" id="twitterBtn">
-                        <h6 class="button-text">Twitter</h6>
-                        <img id="Twitter-Logo" src="{% static 'home/img/logos/TwitterLogo.png' %}" alt="Twitter Logo" />
-                    </button>
-                    <button class="tablinks pin-tl" onclick="openTab(event, 'Pinterest')">
-                        <h6 class="button-text">Pinterest</h6>
-                        <img id="Pinterest-Logo" src="{% static 'home/img/logos/pinterestLogo.png' %}" alt="Pinterest Logo" />
-                    </button>
-                    <button class="tablinks yt-tl" onclick="openTab(event, 'Youtube')">
-                        <h6 class="button-text">Youtube</h6>
-                        <img id="Youtube-Logo" src="{% static 'home/img/logos/youtubeLogo.png' %}" alt="youtube Logo" />
-                    </button>
-                    <button class="tablinks ig-tl" onclick="openTab(event, 'Instagram')">
-                        <h6 class="button-text">Instagram</h6>
-                        <img id="Instagram-Logo" src="{% static 'home/img/logos/instagramLogo.png' %}" alt="Instagram Logo" />
-                    </button>
-                </div>
+    <!-- Tab Links for Logos -->
+    <div class="tabs">
+        <button class="tablinks" id="defaultOpen" onclick="openTab(event, 'Facebook');">
+            <figure>
+                <img id="Facebook-Logo" src="{% static 'home/img/logos/facebookLogo.png' %}" alt="Facebook Logo" />
+                <figcaption>Facebook</figcaption>
+            </figure>
+        </button>
+        <button class="tablinks" onclick="openTab(event, 'Twitter');" id="twitterBtn">
+            <figure>
+                <img id="Twitter-Logo" src="{% static 'home/img/logos/TwitterLogo.png' %}" alt="Twitter Logo" />
+                <figcaption>Twitter</figcaption>
+            </figure>
+        </button>
+        <button class="tablinks" onclick="openTab(event, 'Pinterest');">
+            <figure>
+                <img id="Pinterest-Logo" src="{% static 'home/img/logos/pinterestLogo.png' %}" alt="Pinterest Logo" />
+                <figcaption>Pinterest</figcaption>
+            </figure>
+        </button>
+        <button class="tablinks" onclick="openTab(event, 'Youtube');">
+            <figure>
+                <img id="Youtube-Logo" src="{% static 'home/img/logos/youtubeLogo.png' %}" alt="youtube Logo" />
+                <figcaption>Youtube</figcaption>
+            </figure>
+        </button>
+        <button class="tablinks" onclick="openTab(event, 'Instagram');fetchInsta();">
+            <figure>
+                <img id="Instagram-Logo" src="{% static 'home/img/logos/instagramLogo.png' %}" alt="Instagram Logo" />
+                <figcaption>Instagram</figcaption>
+            </figure>
+        </button>
+    </div>
 
-                <!-- TAB CONTENT -->
-                <div class="tc-wrapper">
-                    <div id="Twitter" class="tabcontent">
-                        <!-- Twitter Feed -->
-                        <div class="Twitter-Feed">
-                            <a class="twitter-timeline" data-width="800" data-height="2300" data-theme="dark" data-link-color="#19CF86" href="https://twitter.com/redbuttegarden?ref_src=twsrc%5Etfw">
-                            </a>
-                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                        </div>
-                    </div>
-
-                    <div id="Facebook" class="tabcontent">
-                        <!-- Facebook Feed -->
-                        <div class="fb-page"
-                             data-href="https://www.facebook.com/redbutte/"
-                             data-tabs="timeline"
-                             data-width="400"
-                             data-height="650"
-                             data-small-header="false"
-                             data-adapt-container-width="true"
-                             data-hide-cover="false"
-                             data-show-facepile="false">
-                            <blockquote cite="https://www.facebook.com/redbutte/" class="fb-xfbml-parse-ignore">
-                                <a href="https://www.facebook.com/redbutte/"></a>
-                            </blockquote>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="Pinterest" class="tabcontent">
-                    <!-- Pinterest Feed -->
-                    <div class="pinterest-feed">
-                        <a data-pin-do="embedUser" href="https://www.pinterest.com/redbuttegarden/" data-pin-scale-width="120" data-pin-scale-height="920" data-pin-board-width="400">
-                        </a>
-                        <script async type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
-                    </div>
-                </div>
-
-                <div id="Youtube" class="tabcontent">
-                    <!-- Youtube Feed -->
-                    <iframe width="560" height="349" src="https://www.youtube.com/embed?listType=user_uploads&list=RedButteGarden" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-
-                <div id="Instagram" class="tabcontent">
-                    <!-- Instagram Feed -->
-                    <div id="images-container"></div>
-                </div>
+    <!-- TAB CONTENT -->
+    <div class="content">
+        <div id="Twitter" class="tabcontent">
+            <!-- Twitter Feed -->
+            <div class="Twitter-Feed">
+                <a class="twitter-timeline" data-width="800" data-height="2300" data-theme="dark" data-link-color="#19CF86" href="https://twitter.com/redbuttegarden?ref_src=twsrc%5Etfw"></a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             </div>
+        </div>
+
+        <div id="Facebook" class="tabcontent">
+            <!-- Facebook Feed -->
+            <div class="fb-page" 
+                data-href="https://www.facebook.com/redbutte" 
+                data-tabs="timeline" 
+                data-width="" 
+                data-height="" 
+                data-small-header="false" 
+                data-adapt-container-width="true" 
+                data-hide-cover="false" 
+                data-show-facepile="true">
+
+                <blockquote cite="https://www.facebook.com/redbutte" class="fb-xfbml-parse-ignore">
+                    <a href="https://www.facebook.com/redbutte">Red Butte Garden</a>
+                </blockquote>
+            </div>
+        </div>
+
+
+        <div id="Pinterest" class="tabcontent">
+            <!-- Pinterest Feed -->
+            <div class="pinterest-feed">
+                <a data-pin-do="embedUser" href="https://www.pinterest.com/redbuttegarden/" data-pin-scale-width="120" data-pin-scale-height="920" data-pin-board-width="400"></a>
+            </div>
+        </div>
+
+        <div id="Youtube" class="tabcontent">
+            <!-- Youtube Feed -->
+            <iframe height="349" src="https://www.youtube.com/embed?listType=user_uploads&list=RedButteGarden" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <div id="Instagram" class="tabcontent">
+            <!-- Instagram Feed -->
+            <div id="images-container"></div>
         </div>
     </div>
 </div>
 
-    <div id="fb_token" style="display: none">{{ fb_token }}</div>
+<div id="fb_token" style="display: none">{{ fb_token }}</div>
 {% endblock %}
 
 {% block extra_js %}
     <script src="{% static 'home/js/instafeed-request.js' %}"></script>
     <script src="{% static 'home/js/tabs.js' %}"></script>
+    <script async type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
     <script>
         // Get the element with id="defaultOpen" and click on it
         document.getElementById("defaultOpen").click();
-    </script>
-    <script>
-        // Executes only for mobile devices
-        if (window.matchMedia('(max-width: 500px)').matches) {
-            fb_page = document.getElementsByClassName("fb-page")
-            fb_page[0].setAttribute("data-width", "200")
-
-            // Loop through all 5 button texts and remove names since it's mobile
-            for (let i = 0; i < 5; i++)
-                document.getElementsByClassName("button-text")[i].style.display = "none"
-
-
-            console.log(document.getElementsByClassName("lightwidget-widget")[0].style.width = "125%")
-        }
     </script>
 {% endblock %}

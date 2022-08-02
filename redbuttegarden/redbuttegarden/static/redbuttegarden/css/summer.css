@@ -599,6 +599,13 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 
 /* For small devices, and after navbar collapses */
 @media only screen and (max-width : 950px) {
+    #rbg-info-wrapper1 {
+        display: none;
+    }
+
+    #rbg-info-wrapper2 {
+        background-color: #196143;
+    }
 
     #rbginfobg {
         position: relative;
@@ -615,6 +622,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     #rbghours, #rbgadmission, #rbgadmission2, #rbgdirections, #rbgweather {
         clear: both;
         width: 100%;
+        border-top: black 1px solid;
     }
 
     #page-down {

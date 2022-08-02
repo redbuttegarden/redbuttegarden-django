@@ -13,46 +13,52 @@ let minutesBeforeOpeningOrClosing = 60 - minutes;
 let busHours;
 let status;
 
-// Concert List 2021 for easier hour mapping
+// Concert List 2022 for easier hour mapping
 let concerts = []
 
 // #region CONCERT 'PUSH' OPERATIONS (HIDDEN)
-concerts.push(new Date(2021, 07, 30));
-concerts.push(new Date(2021, 08, 01));
-concerts.push(new Date(2021, 08, 04));
-concerts.push(new Date(2021, 08, 06));
-concerts.push(new Date(2021, 08, 08));
-concerts.push(new Date(2021, 08, 10));
-concerts.push(new Date(2021, 08, 13));
-concerts.push(new Date(2021, 08, 15));
-concerts.push(new Date(2021, 08, 16));
-concerts.push(new Date(2021, 08, 17));
-concerts.push(new Date(2021, 08, 19));
-concerts.push(new Date(2021, 08, 22));
-concerts.push(new Date(2021, 08, 23));
-concerts.push(new Date(2021, 08, 25));
-concerts.push(new Date(2021, 08, 26));
-concerts.push(new Date(2021, 08, 29));
-concerts.push(new Date(2021, 09, 02));
-concerts.push(new Date(2021, 09, 05));
-concerts.push(new Date(2021, 09, 12));
-concerts.push(new Date(2021, 09, 14));
-concerts.push(new Date(2021, 09, 16));
-concerts.push(new Date(2021, 09, 20));
-concerts.push(new Date(2021, 09, 22));
-concerts.push(new Date(2021, 09, 23));
-concerts.push(new Date(2021, 09, 29));
-concerts.push(new Date(2021, 09, 30));
+concerts.push(new Date(2022, 6, 2));
+concerts.push(new Date(2022, 6, 14));
+concerts.push(new Date(2022, 6, 15));
+concerts.push(new Date(2022, 6, 16));
+concerts.push(new Date(2022, 6, 20));
+concerts.push(new Date(2022, 6, 21));
+concerts.push(new Date(2022, 6, 28));
+concerts.push(new Date(2022, 6, 29));
+concerts.push(new Date(2022, 7, 1));
+concerts.push(new Date(2022, 7, 6));
+concerts.push(new Date(2022, 7, 13));
+concerts.push(new Date(2022, 7, 19));
+concerts.push(new Date(2022, 7, 23));
+concerts.push(new Date(2022, 7, 27));
+concerts.push(new Date(2022, 7, 28));
+concerts.push(new Date(2022, 7, 29));
+concerts.push(new Date(2022, 8, 1));
+concerts.push(new Date(2022, 8, 4));
+concerts.push(new Date(2022, 8, 8));
+concerts.push(new Date(2022, 8, 13));
+concerts.push(new Date(2022, 8, 17));
+concerts.push(new Date(2022, 8, 18));
+concerts.push(new Date(2022, 8, 20));
+concerts.push(new Date(2022, 8, 21));
+concerts.push(new Date(2022, 8, 22));
+concerts.push(new Date(2022, 8, 29));
+concerts.push(new Date(2022, 8, 30));
+concerts.push(new Date(2022, 9, 8));
+concerts.push(new Date(2022, 9, 9));
+concerts.push(new Date(2022, 9, 18));
+concerts.push(new Date(2022, 9, 19));
+concerts.push(new Date(2022, 9, 20));
 //#endregion
 
 
-//#region Constant Garden status variables and messages 
+//#region Constant Garden status variables and messages
 const manualOverrideTrue = (document.getElementById('hours_override').textContent === 'True')
 
-const daylightEndDay = 1;  // Day that Daylight Savings Time Ends in November of the current year
-const daylightStartDay = 8;  // Day that Daylight Savings Time Begins in March of the next year
+const daylightEndDay = 6;  // Day that Daylight Savings Time Ends in November of the current year
+const daylightStartDay = 13;  // Day that Daylight Savings Time Begins in March of the next year
 
-const thanksgivingDay = 26;  // Day of Month of Thanksgiving Holiday in November
+const thanksgivingDay = 24;  // Day of Month of Thanksgiving Holiday in November
 
 const holidayPartyDay = parseInt(document.getElementById('hours_holiday_day').textContent);  // Day of Month we close for Holiday Party in December
 const holidayPartyClosingHour = parseInt(document.getElementById('hours_holiday_hour').textContent);  // Hour we close on day of Holiday Party (military time)
@@ -82,9 +88,13 @@ function setHours() {
 		busHours = openHour + " &ndash; " + closeHour;
 		// Check if hours_man_open and hours_man_close is actually set before setting the gardenHours content, otherwise we end up with just the '-'
 		if (openHour && closeHour) {
+			// Large Screens
 			document.getElementById("gardenHours").innerHTML = busHours;
+			// Mobile
+			document.getElementById("gardenHours2").innerHTML = busHours;
 		}
 		document.getElementById("gardenStatus").innerHTML = document.getElementById("hours_man_add_msg").textContent;
+		document.getElementById("gardenStatus2").innerHTML = document.getElementById("hours_man_add_msg").textContent;
 		document.getElementById("gardenEmphatic").innerHTML = document.getElementById("hours_man_add_emph_msg").textContent;
 	} else {
 		gardenYearlyHours();
@@ -94,35 +104,39 @@ function setHours() {
 
 /**
  *  Sets concert day status; Returns true if it's a concert day
- **/ 
+ **/
 function isConcertDay(concerts, busHours) {
-	didSetHours = false; 
+	didSetHours = false;
 
-	// Loops through each concert to check if it's a concert day; Runs in O(N) time. 
+	// Loops through each concert to check if it's a concert day; Runs in O(N) time.
 	concerts.forEach(concert => {
 		if (concert.getMonth() == month && concert.getDate() == day) {
 			document.getElementById("gardenHours").innerHTML = busHours;
+			document.getElementById("gardenHours2").innerHTML = busHours;
 
 			if (hours >= 9 && hours < 16) {
-				status = gardenOpenMessage;
+				var status = gardenOpenMessage;
 				document.getElementById("gardenStatus").innerHTML = status;
+				document.getElementById("gardenStatus2").innerHTML = status;
 			}
-			
+
 			if (hours == 16) {
 				status = gardenWillCloseMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
 				document.getElementById("gardenStatus").innerHTML = status;
+				document.getElementById("gardenStatus2").innerHTML = status;
 			}
 
 			else if (hours >= 17) {
 				status = gardenClosedMessage;
 				document.getElementById("gardenStatus").innerHTML = status;
+				document.getElementById("gardenStatus2").innerHTML = status;
 			}
 
-			didSetHours = true; 
-		} 
+			didSetHours = true;
+		}
 	})
 
-	return didSetHours; 
+	return didSetHours;
 }
 
 
@@ -134,13 +148,14 @@ function gardenYearlyHours() {
 
 	// Between 8AM and 9AM: shows how many minutes before the garden opens
 	if (hours === 8) {
-		status = gardenWillOpenMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
+		var status = gardenWillOpenMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
 		document.getElementById("gardenStatus").innerHTML = status;
+		document.getElementById("gardenStatus2").innerHTML = status;
 
 		return;
 	}
 
-//#region Takes admission prices, converts them to integers, and divides them by two for half admission in December, January, and February
+	//#region Takes admission prices, converts them to integers, and divides them by two for half admission in December, January, and February
 
 	if ( (month === 12) || (month === 1) || (month === 2) ){
 
@@ -172,17 +187,17 @@ function gardenYearlyHours() {
 		document.getElementById("staff-half").innerHTML = "&nbsp;&nbsp;$"+staffHalf;
 
 	}
-//#endregion
+	//#endregion
 
-	// TODO - Pass Concert objects to view so hours.js knows about early closing times
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	/* CHANGE YEARLY: Early Closing Days for Concerts and Gala  								  */
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		// TODO - Pass Concert objects to view so hours.js knows about early closing times
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		/* CHANGE YEARLY: Early Closing Days for Concerts and Gala  								  */
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	// Hours for individual concert days (which will change every year),
-	// the Gala, and other miscellaneous days that we will close at 5PM
+		// Hours for individual concert days (which will change every year),
+		// the Gala, and other miscellaneous days that we will close at 5PM
 
-//#region Gala Month
+	//#region Gala Month
 	if (month === galaMonth && day === galaDay)		// Gala (if applicable)
 
 	{
@@ -214,14 +229,15 @@ function gardenYearlyHours() {
 			return;
 		}
 	}
-//#endregion
+	//#endregion
 
-//#region Jan 1 - Mar 31 General Hours
+	//#region Jan 1 - Mar 31 General Hours
 
 	if (month === 1 || month === 2 || month === 3) {
 
 		busHours = "Jan 2-Mar 31: 9AM-5PM";
 		document.getElementById("gardenHours").innerHTML = busHours;
+		document.getElementById("gardenHours2").innerHTML = busHours;
 
 		if (month === 1 || month === 2) {
 			admissionNotes = halfOffAdmission;
@@ -253,14 +269,14 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
-//#endregion
+	//#endregion
 
-//#region April 1-30 General Hours
-
+	// April 1-30 General Hours
 	else if (month === 4) {
 
 		busHours = "Apr 1-30: 9AM-7:30PM";
 		document.getElementById("gardenHours").innerHTML = busHours;
+		document.getElementById("gardenHours2").innerHTML = busHours;
 
 		if ((hours >= 9 && hours < 18) || (hours === 18 && minutes < 30)) {
 			status = gardenOpenMessage;
@@ -287,19 +303,19 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
-//#endregion
+	//#endregion
 
-//#region May 1 - Aug 31 General Hours
-
+	// May 1 - Aug 31 General Hours
 	else if (month === 5 || month === 6 || month === 7 || month === 8) {
 		busHours = "May 1-Aug 31: 9AM-9PM*";
 		otherNotes = "*Garden Hours on Concert Days: 9AM-5PM";
 		document.getElementById("gardenHours").innerHTML = busHours;
+		document.getElementById("gardenHours2").innerHTML = busHours;
 		document.getElementById("otherNotes").innerHTML = otherNotes;
-		
+
 		// Checks if it's a concert day, else continues as normal
 		if (isConcertDay(concerts, "Today (Concert Day): 9am-5pm"))
-			return;  
+			return;
 
 		if (hours >= 9 && hours < 20) {
 			status = gardenOpenMessage;
@@ -317,10 +333,9 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
-//#endregion
+	//#endregion
 
-//#region  Sep 1 - 30 General Hours
-
+	// Sep 1 - 30 General Hours
 	else if (month === 9) {
 		busHours = "Sep 1-30: 9AM-7:30PM*";
 
@@ -331,11 +346,12 @@ function gardenYearlyHours() {
 			otherNotes = "*Garden Hours on Concert Days: 9AM-5PM";
 
 		document.getElementById("gardenHours").innerHTML = busHours;
+		document.getElementById("gardenHours2").innerHTML = busHours;
 		document.getElementById("otherNotes").innerHTML = otherNotes;
 
 		// Specific check for Teton Gravity Event on Sept. 20th; Will be removed on Sept. 21st
 		if (day === 20 && isConcertDay(concerts, "Today (Garden Event): 9am-5pm"))
-			return; 
+			return;
 
 		// Checks if it's a concert day, else continues as normal
 		if (isConcertDay(concerts, "Today (Concert Day): 9am-5pm"))
@@ -366,14 +382,15 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
-//#endregion
+	//#endregion
 
-//#region Oct 1 - Dec 23 General hours
+	// Oct 1 - Dec 23 General hours
 	else if ( month === 10 || month === 11 || month === 12) {
 
 		busHours = "Oct 1-Dec 23: 9AM-5PM";
 		otherNotes = "Closed Thanksgiving Day and Dec 24-Jan 1";
 		document.getElementById("gardenHours").innerHTML = busHours;
+		document.getElementById("gardenHours2").innerHTML = busHours;
 		document.getElementById("otherNotes").innerHTML = otherNotes;
 
 		if (month === 12) {
@@ -387,6 +404,7 @@ function gardenYearlyHours() {
 			document.getElementById("otherNotes").innerHTML = otherNotes;
 			busHours = "9AM-5PM for General Admission<br />6PM-9PM for Garden After Dark";
 			document.getElementById("gardenHours").innerHTML = busHours;
+			document.getElementById("gardenHours2").innerHTML = busHours;
 
 			if (hours >= 9 && hours < 16) {
 				status = gardenOpenMessage;
@@ -425,6 +443,7 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 			busHours = "";
 			document.getElementById("gardenHours").innerHTML = busHours;
+			document.getElementById("gardenHours2").innerHTML = busHours;
 			otherNotes = "The Garden is Closed for the Thanksgiving Holiday";
 			document.getElementById("otherNotes").innerHTML = otherNotes;
 			return;
@@ -445,6 +464,7 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 			busHours = "9AM-2PM";
 			document.getElementById("gardenHours").innerHTML = busHours;
+			document.getElementById("gardenHours2").innerHTML = busHours;
 			otherNotes = "The Garden Will Close Early for our Annual Staff Holiday Party";
 			document.getElementById("otherNotes").innerHTML = otherNotes;
 
@@ -473,6 +493,7 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 			busHours = "";
 			document.getElementById("gardenHours").innerHTML = busHours;
+			document.getElementById("gardenHours2").innerHTML = busHours;
 			otherNotes = "The Garden is Closed Dec 24-Jan 1";
 			document.getElementById("otherNotes").innerHTML = otherNotes;
 		}
@@ -492,5 +513,5 @@ function gardenYearlyHours() {
 			document.getElementById("gardenStatus").innerHTML = status;
 		}
 	}
-//#endregion
+	//#endregion
 }

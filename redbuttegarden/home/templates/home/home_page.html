@@ -50,15 +50,15 @@
                         <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
                             <div class="rbghours hover"></div>
                         </a>
-                            <div id="gardenHours"></div>
-                            <div id="gardenStatus"></div>
-                            <div id="gardenEmphatic" class="red text-center"></div>
-                            <div id="otherNotes"></div>
+                        <div id="gardenHours"></div>
+                        <div id="gardenStatus"></div>
+                        <div id="gardenEmphatic" class="red text-center"></div>
+                        <div id="otherNotes"></div>
                     </div>
 
-                    <div id="rbgadmission" class="col-xs-3" onclick="admissionHoverOn()">
+                    <div class="col-xs-3" onmouseenter="admissionHoverOn()">
                         <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
-                            <div class="rbgadmission hover"></div>
+                            <div id="rbgadmission" class="rbgadmission hover"></div>
                         </a>
                     </div>
                     <div id="rbgdirections" class="col-xs-3">
@@ -103,7 +103,49 @@
         <div id="hours_gad_end">{{ page.hours.gad_end }}</div>
     </div>
 
+    <!-- Begin Outer Info Div -->
+    <div id="rbg-info-wrapper2">
+        <div id="rbginfobg2">
 
+            <div id="rbginfo" class="row">
+
+                <div id="rbghours" class="col-sm-3">
+                    <br>
+                    <b>GARDEN HOURS (MDT)</b>
+                    <!-- <div class="text-center red bold">The Garden is Closed Today due to Inclement Weather</div> -->
+                    <div id="gardenHours2">Oct 1-Dec 23: 9AM-5PM</div>
+                    <div id="gardenHours2-reservations"><span class="red text-center"></span></div>
+                    <div id="gardenStatus2"></div>
+                    <a href="{% slugurl 'general-info' %}" style="text-decoration:none;color:#FFFFFF;font-size:12px">CLICK TO SEE ALL HOURS</a>
+                    <br><br>
+                </div>
+
+                <div id="rbgadmission2" class="col-sm-3">
+                    {% include "home/includes/admission.html" %}
+                </div>
+
+                <div id="rbgdirections" class="col-sm-3">
+                    <div class="memfaqwrap">
+                        <br>
+                        <a href="{% slugurl 'directions' %}">
+                            <div class="memfaq volbutton">HOW TO GET HERE</div>
+                        </a>
+                        <br>
+                    </div>
+                </div>
+
+                <div id="rbgweather" class="col-sm-3">
+                    <div class="memfaqwrap">
+                        <br>
+                        <a href="https://weather.com/weather/today/l/84108:4:US" target="_blank">
+                            <div class="memfaq volbutton">TODAY'S WEATHER</div>
+                        </a>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- End Outer Info Div -->
 {% endblock %}
 

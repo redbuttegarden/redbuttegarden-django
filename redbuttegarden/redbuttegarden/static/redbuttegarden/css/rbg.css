@@ -172,3 +172,7 @@ footer {
 #navhide1 > a:hover, #navhide2 > a:hover, #navhide3 > a:hover, #navhide4 > a:hover {
     background-color: #FF7744;
 }
+
+.memfaqwrap > a, .memfaqwrap > a:link, .memfaqwrap > a.visited {
+    text-decoration: none;
+}
