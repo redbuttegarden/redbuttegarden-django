@@ -52,29 +52,29 @@ class SpeciesList(generics.ListCreateAPIView):
         queryset = Species.objects.all()
 
         genus = self.request.query_params.get('genus')
-        name = self.request.query_params.get('name')
-        subspecies = self.request.query_params.get('subspecies')
-        variety = self.request.query_params.get('variety')
-        subvariety = self.request.query_params.get('subvariety')
-        forma = self.request.query_params.get('forma')
-        subforma = self.request.query_params.get('subforma')
-        cultivar = self.request.query_params.get('cultivar')
+        name = self.request.query_params.get('name', 'unspecified')
+        subspecies = self.request.query_params.get('subspecies', 'unspecified')
+        variety = self.request.query_params.get('variety', 'unspecified')
+        subvariety = self.request.query_params.get('subvariety', 'unspecified')
+        forma = self.request.query_params.get('forma', 'unspecified')
+        subforma = self.request.query_params.get('subforma', 'unspecified')
+        cultivar = self.request.query_params.get('cultivar', 'unspecified')
 
         if genus:
             queryset = queryset.filter(genus__name=genus)
-        if name:
+        if name != 'unspecified':
             queryset = queryset.filter(name=name)
-        if subspecies:
+        if subspecies != 'unspecified':
             queryset = queryset.filter(subspecies=subspecies)
-        if variety:
+        if variety != 'unspecified':
             queryset = queryset.filter(variety=variety)
-        if subvariety:
+        if subvariety != 'unspecified':
             queryset = queryset.filter(subvariety=subvariety)
-        if forma:
+        if forma != 'unspecified':
             queryset = queryset.filter(forma=forma)
-        if subforma:
+        if subforma != 'unspecified':
             queryset = queryset.filter(subforma=subforma)
-        if cultivar:
+        if cultivar != 'unspecified':
             queryset = queryset.filter(cultivar=cultivar)
 
 

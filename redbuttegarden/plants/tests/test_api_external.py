@@ -310,3 +310,23 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
         self.assertEqual(Collection.objects.all().count(), 1)
 
         self.assertEqual(Collection.objects.first().species.flower_color, 'White')
+
+    def test_query_species_api(self):
+        """
+        If you query for just 'Genus species', while other fields are specified as empty strings,
+        it should not return Species objects with subspecies, cultivars, etc.
+        """
+        species_one = get_species(self.genus, name='species_one', full_name='Genus species_one',
+                                subspecies='', variety='', subvariety='', forma='', subforma='', cultivar='',
+                                vernacular_name='Species One')
+        species_subspecies = get_species(self.genus, name='species_one', full_name='Genus species_one subsp. subspecies',
+                                subspecies='subspecies', variety='', subvariety='', forma='', subforma='', cultivar='',
+                                vernacular_name='Subspecies One')
+        
+        search_payload = {'genus': 'Genus', 'name': 'species_one', 'subspecies': '', 'variety': '', 'subvariety': '', 'forma': '', 'subforma': '', 'cultivar': ''}
+
+        url = url = self.live_server_url + reverse('plants:api-species-list')
+        resp = self.client.get(url, params=search_payload)
+        content = resp.json()
+
+        self.assertEqual(content['count'], 1)
