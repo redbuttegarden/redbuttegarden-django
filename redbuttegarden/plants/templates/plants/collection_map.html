@@ -444,6 +444,7 @@
                 const species_name = e.features[0].properties.species_name;
                 const species_full_name = e.features[0].properties.species_full_name;
                 const species_id = e.features[0].properties.species_id;
+                const collection_id = e.features[0].properties.id;
                 const vernacular_name = e.features[0].properties.vernacular_name;
                 const habit = e.features[0].properties.habit;
                 const hardiness = e.features[0].properties.hardiness;
@@ -468,6 +469,9 @@
                 new mapboxgl.Popup()
                     .setLngLat(coordinates)
                     .setHTML(
+                        '<div class="pop-up-row">' +
+                            '<a href="/plants/collection/' + collection_id + '/">Collection Detail Page</a>' +
+                        '</div>' +
                         '<div class="pop-up-row">' +
                             '<span class="pop-up-label">Family Name: </span>' + family_name +
                         '</div>' +
@@ -515,6 +519,8 @@
                         '</div>'
                     )
                     .addTo(map);
+
+                    console.log(e.features[0]);
             });
 
             map.on('mouseenter', 'clusters', function () {
