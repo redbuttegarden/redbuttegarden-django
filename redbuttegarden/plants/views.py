@@ -174,7 +174,7 @@ def csrf_view(request):
 
 def plant_map_view(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'GET':
-        collections = Collection.objects.all()
+        collections = Collection.objects.exclude(location=None)
 
         scientific_name = request.GET.get('scientific_name', None)
         common_name = request.GET.get('common_name', None)
