@@ -134,7 +134,7 @@ class GardenArea(models.Model):
     code = models.CharField(max_length=20, blank=True, null=True, unique=True)  # Garden Location Code in BRAHMS
 
 class Collection(models.Model):
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.SET_NULL, blank=True, null=True)
     garden = models.ForeignKey(GardenArea, on_delete=models.SET_NULL, null=True)
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
     plant_date = models.DateField(blank=True, null=True)
