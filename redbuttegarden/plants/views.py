@@ -289,7 +289,7 @@ def collection_list(request):
 
     table = CollectionTable(collections)
     RequestConfig(request, paginate={"paginator_class": LazyPaginator}).configure(table)
-    table.paginate(page=request.GET.get("page", 1), per_page=25)
+    table.paginate(page=request.GET.get("page", 1), per_page=50)
 
     context = {
         'table': table
