@@ -55,6 +55,7 @@ INSTALLED_APPS = [
 
     'cas',  # Sometimes necessary to comment this app out to dump database
     'corsheaders',
+    'django_tables2',
     'modelcluster',
     'rest_framework',
     'rest_framework.authtoken',
