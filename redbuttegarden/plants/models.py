@@ -126,12 +126,15 @@ class Location(models.Model):
         unique_together = ['latitude', 'longitude']
 
     def __str__(self):
-        return ' '.join([str(self.latitude), str(self.longitude)])
+        return ', '.join([str(self.latitude), str(self.longitude)])
 
 class GardenArea(models.Model):
     area = models.CharField(max_length=255, blank=True, null=True)  # Garden Area/Zone in BRAHMS
     name = models.CharField(max_length=255, blank=True, null=True)  # Garden Location in BRAHMS
     code = models.CharField(max_length=20, blank=True, null=True, unique=True)  # Garden Location Code in BRAHMS
+
+    def __str__(self):
+        return '\n'.join([self.area, self.name, self.code])
 
 class Collection(models.Model):
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, blank=True, null=True)
