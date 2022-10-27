@@ -1,0 +1,59 @@
+/*
+Classes prefaced with ht are for tables created by handsontable
+https://handsontable.com/docs/6.2.2/demo-alignment.html
+*/
+.htLeft {
+    text-align: left;
+}
+
+.htCenter {
+    text-align: center;
+}
+
+.htRight {
+    text-align: right;
+}
+
+.htJustify {
+    text-align: justify;
+}
+
+.htTop {
+    vertical-align: top;
+}
+
+.htMiddle {
+    vertical-align: middle;
+}
+
+.htBottom {
+    vertical-align: bottom;
+}
+
+table {
+    font-weight: bold;
+}
+
+table > caption {
+    color: #196143;
+    text-align: center;
+    font-size: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    line-height: 1.1;
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+}
+
+th {
+    color: #FFF;
+    background-color: #196143;
+    font-size: 1.25em;
+    height: 28px;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: #F2EDE4;
+}

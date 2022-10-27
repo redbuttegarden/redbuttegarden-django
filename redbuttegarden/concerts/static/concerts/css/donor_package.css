@@ -1,0 +1,31 @@
+body.donor-packages table {
+    font-weight: normal;
+}
+
+.unreserved-seating, .reserved-table, .reserved-lawn {
+    border-radius: 25px;
+    border: 2px solid #1b2940;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.donor-package-tables table td:nth-child(5),
+.donor-package-tables table td:nth-child(6) {
+    color: orangered;
+}
+
+.donor-package-tables table tr:nth-child(2) td:nth-child(5),
+.donor-package-tables table tr:nth-child(2) td:nth-child(6),
+.donor-package-tables .unreserved-seating table tr:nth-child(9) td:nth-child(5),
+.donor-package-tables .unreserved-seating table tr:nth-child(9) td:nth-child(6) {
+    color: inherit;
+}
+
+.donor-package-tables table tr:nth-child(1),
+.donor-package-tables table tr:nth-child(2) {
+    font-weight: bold;
+}
+
+.donor-package-tables .unreserved-seating table tr:nth-child(9) {
+    font-weight: bold;
+}

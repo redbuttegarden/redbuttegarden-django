@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% load wagtailcore_tags wagtailimages_tags static %}
 
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'concerts/css/donor_package.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'concerts/css/table_style.css' %}">
+{% endblock %}
+
+{% block body_class %}donor-packages{% endblock %}
+
 {% block content %}
     <div class="row-fluid text-center responsive">
         {% image page.banner max-1280x500 %}
