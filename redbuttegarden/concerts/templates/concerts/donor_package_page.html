@@ -4,6 +4,7 @@
 {% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'concerts/css/donor_package.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'concerts/css/table_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'plants/css/image_modal.css' %}">
 {% endblock %}
 
 {% block body_class %}donor-packages{% endblock %}
@@ -17,9 +18,25 @@
     {% for block in page.body %}
         {% include_block block %}
     {% endfor %}
+
+    <div id="myModal" class="modal" onclick="closeModal()">
+        <span class="close cursor" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <div id="mapModal" class="mySlides text-center">
+                {# Injected by javascript #}
+            </div>
+
+            <div class="caption-container">
+                <p id="caption-display">
+                    {# injected by javascript #}
+                </p>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block extra_js %}
+    <script src="{% static 'concerts/js/seating_map_modal.js' %}"></script>
+    <script src="{% static 'plants/js/lightbox-modal.js' %}"></script>
     <script src="{% static 'concerts/js/bootstrap_table_block.js' %}"></script>
-    <script src="{% static 'concerts/js/emphasize_waitlist.js' %}"></script>
 {% endblock %}
