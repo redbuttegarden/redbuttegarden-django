@@ -4,6 +4,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.edit_handlers import MultiFieldPanel, TabbedInterface, ObjectList
 from wagtail.core.models import Page
+from wagtail.documents import get_document_model_string
+from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.utils.decorators import cached_classmethod
 
@@ -26,6 +28,16 @@ class AbstractBase(Page):
         related_name='+',
         help_text=_('You only need to add a thumbnail if this page is the child of a another page')
     )
+    custom_css = models.ForeignKey(
+        get_document_model_string(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text=_(
+            'Upload a CSS file to apply custom styling to this page. Note that editing an existing document will apply '
+            'the changes to ALL pages where the document is used')
+    )
 
     class Meta:
         abstract = True
@@ -34,6 +46,7 @@ class AbstractBase(Page):
         MultiFieldPanel([
             ImageChooserPanel('banner'),
             ImageChooserPanel('thumbnail'),
+            DocumentChooserPanel('custom_css')
         ], classname="collapsible"),
     ]
 
