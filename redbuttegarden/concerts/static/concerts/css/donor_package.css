@@ -9,11 +9,6 @@ body.donor-packages table {
     margin: 10px 0;
 }
 
-.donor-package-tables table td:nth-child(5),
-.donor-package-tables table td:nth-child(6) {
-    color: orangered;
-}
-
 .donor-package-tables table tr:nth-child(2) td:nth-child(5),
 .donor-package-tables table tr:nth-child(2) td:nth-child(6),
 .donor-package-tables .unreserved-seating table tr:nth-child(6) td:nth-child(5),
