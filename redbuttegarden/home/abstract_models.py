@@ -36,7 +36,8 @@ class AbstractBase(Page):
         related_name='+',
         help_text=_(
             'Upload a CSS file to apply custom styling to this page. Note that editing an existing document will apply '
-            'the changes to ALL pages where the document is used')
+            'the changes to ALL pages where the document is used'),
+        verbose_name='Custom CSS'
     )
 
     class Meta:
