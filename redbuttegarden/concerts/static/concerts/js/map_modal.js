@@ -1,9 +1,9 @@
 const mapModal = document.getElementById("mapModal");
 const modalCaption = document.getElementById("caption-display");
 const links = document.getElementsByTagName("a");
-const seatingMapURL = "/media/images/donor-seating-map-2018.original.jpg";
-const donorParkingMapURL = "/media/images/donor-permit-parking-map.original.jpg";
-const concertClubParkingMapURL = "/media/images/concert-club-parking-map.original.jpg";
+const seatingMapURL = "/media/original_images/donor-seating-map-2018.jpg";
+const donorParkingMapURL = "/media/original_images/donor-permit-parking-map.jpg";
+const concertClubParkingMapURL = "/media/original_images/concert-club-parking-map.jpg";
 
 function createSeatingMapImage() {
     let map = document.createElement('img');
