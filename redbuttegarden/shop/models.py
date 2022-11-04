@@ -1,11 +1,11 @@
 from django.core.paginator import Paginator
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel
+from wagtail.admin.edit_handlers import InlinePanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.core.models import Page, Orderable
-from wagtail.images.edit_handlers import ImageChooserPanel
 
 
 class Product(Page):
@@ -23,7 +23,7 @@ class Product(Page):
     content_panels = Page.content_panels + [
         FieldPanel('sku'),
         FieldPanel('price'),
-        ImageChooserPanel('image'),
+        FieldPanel('image'),
         FieldPanel('short_description'),
         InlinePanel('custom_fields', label='Custom fields'),
     ]
