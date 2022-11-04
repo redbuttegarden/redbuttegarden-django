@@ -48,24 +48,28 @@ class CollectionSearchForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         family_choices = [(family['id'], family['name']) for family in Family.objects.values('id', 'name')]
-        garden_name_choices = [(garden['name'], garden['name']) for garden in GardenArea.objects.values('name').distinct('name')]
+        garden_name_choices = [(garden['name'], garden['name']) for garden in
+                               GardenArea.objects.values('name').distinct('name')]
         habit_choices = [(species['habit'], species['habit']) for species in
                          Species.objects.order_by('habit').values('habit').distinct('habit')]
         exposure_choices = [(species['exposure'], species['exposure']) for species in
                             Species.objects.order_by('exposure').values('exposure').distinct('exposure')
-                            if species['exposure'] is not '' and species['exposure'] is not None]
+                            if species['exposure'] != '' and species['exposure'] is not None]
         water_need_choices = [(species['water_regime'], species['water_regime']) for species in
                               Species.objects.order_by('water_regime').values('water_regime').distinct('water_regime')]
         bloom_month_choices = [(v, v) for _, v in MONTHS.items()]
         # Flower color list of lists
         flower_colors_split = [species['flower_color'].split(',') for species in
                                Species.objects.order_by('flower_color').values('flower_color').distinct('flower_color')
-                               if species['flower_color'] is not '' and species['flower_color'] is not None]
-        flower_colors_split = [(color.strip(), color.strip()) for colors in flower_colors_split for color in colors]  # Flattens list of lists
+                               if species['flower_color'] != '' and species['flower_color'] is not None]
+        flower_colors_split = [(color.strip(), color.strip()) for colors in flower_colors_split for color in
+                               colors]  # Flattens list of lists
         flower_color_choices = sorted(list(OrderedDict.fromkeys(flower_colors_split)))  # Removes duplicates
-        commemoration_people_choices = [(collection['commemoration_person'], collection['commemoration_person']) for collection in
-                                        Collection.objects.order_by('commemoration_person').values('commemoration_person').distinct('commemoration_person')
-                                        if collection['commemoration_person'] is not ''
+        commemoration_people_choices = [(collection['commemoration_person'], collection['commemoration_person']) for
+                                        collection in
+                                        Collection.objects.order_by('commemoration_person').values(
+                                            'commemoration_person').distinct('commemoration_person')
+                                        if collection['commemoration_person'] != ''
                                         and collection['commemoration_person'] is not None]
 
         # Insert empty choice to lists that don't already have an empty option

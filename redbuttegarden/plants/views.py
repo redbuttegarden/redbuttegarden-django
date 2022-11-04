@@ -258,7 +258,7 @@ def collection_search(request):
         form = CollectionSearchForm(request.POST)
         if form.is_valid():
             # Not false filter added to exclude boolean fields unless marked True
-            params = {k: v for k, v in form.cleaned_data.items() if v is not ''
+            params = {k: v for k, v in form.cleaned_data.items() if v != ''
                       and v is not False}
 
             if 'map_search' in request.POST:
