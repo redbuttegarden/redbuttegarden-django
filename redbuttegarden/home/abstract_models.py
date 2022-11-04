@@ -2,12 +2,10 @@ import logging
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import MultiFieldPanel, TabbedInterface, ObjectList
+from wagtail.admin.edit_handlers import MultiFieldPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.core.models import Page
 from wagtail.documents import get_document_model_string
-from wagtail.documents.edit_handlers import DocumentChooserPanel
-from wagtail.images.edit_handlers import ImageChooserPanel
-from wagtail.utils.decorators import cached_classmethod
 
 logger = logging.getLogger(__name__)
 
@@ -45,9 +43,9 @@ class AbstractBase(Page):
 
     content_panels = Page.content_panels + [
         MultiFieldPanel([
-            ImageChooserPanel('banner'),
-            ImageChooserPanel('thumbnail'),
-            DocumentChooserPanel('custom_css')
+            FieldPanel('banner'),
+            FieldPanel('thumbnail'),
+            FieldPanel('custom_css')
         ], classname="collapsible"),
     ]
 
