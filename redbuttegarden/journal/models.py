@@ -24,7 +24,6 @@ from home.abstract_models import AbstractBase
 from home.models import ButtonListDropdownInfo
 from journal.utils import get_season
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -57,9 +56,10 @@ class JournalPageTag(TaggedItemBase):
 
 
 class JournalIndexPage(RoutablePageMixin, AbstractBase):
-    body = StreamField(block_types=BLOCK_TYPES, blank=True, null=True)
+    body = StreamField(block_types=BLOCK_TYPES, blank=True, null=True, use_json_field=True)
     bottom_button_info = StreamField(block_types=[('dropdown_button_list', ButtonListDropdownInfo())], blank=True,
-                                     null=True, help_text=_('Dropdown buttons appear below the list of child pages'))
+                                     null=True, help_text=_('Dropdown buttons appear below the list of child pages'),
+                                     use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('body'),
@@ -141,7 +141,7 @@ class JournalPage(AbstractBase):
     date = models.DateTimeField(verbose_name="Post date", default=timezone.now)
     categories = ParentalManyToManyField('journal.JournalCategory', blank=True)
     tags = ClusterTaggableManager(through='journal.JournalPageTag', blank=True)
-    body = StreamField(BLOCK_TYPES)
+    body = StreamField(BLOCK_TYPES, use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('categories', widget=forms.CheckboxSelectMultiple),

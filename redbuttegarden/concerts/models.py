@@ -229,7 +229,7 @@ class ConcertPage(AbstractBase):
         on_delete=models.SET_NULL,
         related_name='+',
     )
-    body = StreamField(ConcertStreamBlock(), null=True, blank=True)
+    body = StreamField(ConcertStreamBlock(), null=True, blank=True, use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('banner_link'),
@@ -282,7 +282,7 @@ class PastLineupStreamBlock(blocks.StreamBlock):
 
 
 class PastConcertPage(AbstractBase):
-    lineups = StreamField(PastLineupStreamBlock())
+    lineups = StreamField(PastLineupStreamBlock(), use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('lineups'),
@@ -309,7 +309,7 @@ class DonorPackagePage(AbstractBase):
         ('table_cards', TableInfoCardList()),
         ('table', TableBlock(table_options=donor_schedule_table_options,
                              help_text=_("Right-click to add/remove rows/columns"))),
-    ], blank=False)
+    ], blank=False, use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('body'),
@@ -328,7 +328,7 @@ class DonorSchedulePage(AbstractBase):
         ('table', TableBlock(table_options=donor_schedule_table_options,
                              help_text=_("Right-click to add/remove rows/columns"))),
         ('concerts', SimpleConcertStreamBlock()),
-    ], blank=False)
+    ], blank=False, use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('body'),
