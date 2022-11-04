@@ -10,11 +10,11 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalManyToManyField, ParentalKey
 from taggit.models import TaggedItemBase, Tag as TaggitTag
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel, MultiFieldPanel
+from wagtail.admin.edit_handlers import InlinePanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, Orderable
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
@@ -62,8 +62,8 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
                                      null=True, help_text=_('Dropdown buttons appear below the list of child pages'))
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
-        StreamFieldPanel('bottom_button_info'),
+        FieldPanel('body'),
+        FieldPanel('bottom_button_info'),
     ]
 
     subpage_types = ['journal.JournalPage']
@@ -148,7 +148,7 @@ class JournalPage(AbstractBase):
         FieldPanel('tags'),
         InlinePanel('gallery_images', label=_('gallery images'),
                     help_text=_("Gallery images are displayed along the left side of the page")),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     promote_panels = AbstractBase.promote_panels + [
@@ -197,6 +197,6 @@ class JournalPageGalleryImage(Orderable):
     caption = models.CharField(blank=True, max_length=255, help_text=_("Displayed below the image in italics"))
 
     panels = [
-        ImageChooserPanel('image'),
+        FieldPanel('image'),
         FieldPanel('caption'),
     ]
