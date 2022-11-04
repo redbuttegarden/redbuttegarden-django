@@ -42,7 +42,7 @@ openpyxl==3.0.9
 packaging==21.2
 Pillow==8.4.0
 pip-tools==6.4.0
-placebo==0.10.0
+placebo==0.8.1
 pluggy==0.13.1
 psycopg2-binary==2.9.1
 py==1.10.0
