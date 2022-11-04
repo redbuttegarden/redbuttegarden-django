@@ -7,17 +7,15 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 
 from wagtail.core import blocks
-from wagtail.core.models import Collection, Page, Orderable
+from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel
+from wagtail.admin.edit_handlers import MultiFieldPanel, InlinePanel, PageChooserPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.documents.blocks import DocumentChooserBlock
-from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import Image
 from wagtail.search import index
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from home.abstract_models import AbstractBase
@@ -432,7 +430,7 @@ class GeneralPage(AbstractBase):
     ], blank=False)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     search_fields = AbstractBase.search_fields + [
@@ -457,7 +455,7 @@ class TwoColumnGeneralPage(AbstractBase):
     ]), null=True, blank=True)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     search_fields = AbstractBase.search_fields + [
@@ -506,13 +504,13 @@ class PlantCollections(Orderable):
     slideshow_link = models.URLField()
 
     panels = [
-        ImageChooserPanel('image'),
+        FieldPanel('image'),
         FieldPanel('title'),
         FieldPanel('text'),
         MultiFieldPanel(
             [
                 FieldPanel('slideshow_link'),
-                DocumentChooserPanel('collection_doc')
+                FieldPanel('collection_doc')
             ],
             heading=_('Info for Collection buttons')
         ),
@@ -536,7 +534,7 @@ class GeneralIndexPage(AbstractBase):
     ], blank=True)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     subpage_types = ['events.EventPage', 'events.EventIndexPage', 'home.GeneralIndexPage', 'home.GeneralPage',
@@ -577,7 +575,7 @@ class FAQPage(AbstractBase):
     ])
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     search_fields = AbstractBase.search_fields + [
@@ -638,7 +636,7 @@ class RBGHours(models.Model):
             FieldPanel('additional_emphatic_mesg'),
         ], heading="Manual override settings", classname="collapsible collapsed"),
         FieldPanel('holiday_party_close_time'),
-        StreamFieldPanel('gad_dates'),
+        FieldPanel('gad_dates'),
     ]
 
     def __str__(self):
@@ -658,7 +656,7 @@ class HomePage(AbstractBase):
     )
 
     content_panels = Page.content_panels + [
-        SnippetChooserPanel('hours', help_text=_("Choose the set of hours to display on the home page")),
+        FieldPanel('hours', help_text=_("Choose the set of hours to display on the home page")),
         InlinePanel('event_slides', label=_('Slideshow Images'))
     ]
 
@@ -687,7 +685,7 @@ class EventSlides(Orderable):
                          null=True, blank=True)
 
     panels = [
-        ImageChooserPanel('image'),
+        FieldPanel('image'),
         PageChooserPanel('link'),
         FieldPanel('alternate_link'),
         FieldPanel('text'),
@@ -731,8 +729,8 @@ class RetailPartnerPage(AbstractBase):
     ])
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
-        StreamFieldPanel('retail_partners')
+        FieldPanel('body'),
+        FieldPanel('retail_partners')
     ]
 
     search_fields = AbstractBase.search_fields + [
