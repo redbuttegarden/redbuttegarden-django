@@ -7,10 +7,9 @@ from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.core import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
-from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, StreamFieldPanel
-from wagtail.core.models import Page, Orderable
+from wagtail.admin.edit_handlers import PageChooserPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.core.fields import RichTextField, StreamField
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
 from concerts.utils import live_in_the_past, on_demand_expired
@@ -235,12 +234,12 @@ class ConcertPage(AbstractBase):
     content_panels = AbstractBase.content_panels + [
         FieldPanel('banner_link'),
         FieldPanel('intro', classname="full"),
-        ImageChooserPanel('donor_banner'),
+        FieldPanel('donor_banner'),
         PageChooserPanel('button_one'),
         PageChooserPanel('button_two'),
         PageChooserPanel('button_three'),
         PageChooserPanel('button_four'),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     search_fields = AbstractBase.search_fields + [
@@ -286,7 +285,7 @@ class PastConcertPage(AbstractBase):
     lineups = StreamField(PastLineupStreamBlock())
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('lineups'),
+        FieldPanel('lineups'),
     ]
 
     search_fields = AbstractBase.search_fields + [
@@ -313,7 +312,7 @@ class DonorPackagePage(AbstractBase):
     ], blank=False)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
 
@@ -331,9 +330,8 @@ class DonorSchedulePage(AbstractBase):
         ('concerts', SimpleConcertStreamBlock()),
     ], blank=False)
 
-
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     search_fields = AbstractBase.search_fields + [
