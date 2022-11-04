@@ -6,7 +6,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, PageChooserPanel
+from wagtail.admin.edit_handlers import PageChooserPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core import blocks
 from wagtail.core.blocks import PageChooserBlock
@@ -14,7 +15,6 @@ from wagtail.core.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.models import Image
 from wagtail.search import index
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from home.abstract_models import AbstractBase
@@ -147,7 +147,7 @@ class EventIndexPage(RoutablePageMixin, AbstractBase):
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('intro'),
-        StreamFieldPanel('body', classname="full"),
+        FieldPanel('body', classname="full"),
     ]
 
     promote_panels = AbstractBase.promote_panels + [
@@ -249,8 +249,8 @@ class EventPage(AbstractBase):
         FieldPanel('event_dates'),
         FieldPanel('event_categories', widget=forms.CheckboxSelectMultiple),
         FieldPanel('notes'),
-        StreamFieldPanel('body'),
-        SnippetChooserPanel('policy', help_text=_("Optionally choose a policy link to include on the page"))
+        FieldPanel('body'),
+        FieldPanel('policy', help_text=_("Optionally choose a policy link to include on the page"))
     ]
 
     promote_panels = AbstractBase.promote_panels + [
