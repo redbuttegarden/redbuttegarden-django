@@ -2,16 +2,17 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'concerts/css/concerts.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'concerts/css/concert_page.css' %}">
 {% endblock %}
 
+{% block body_class %}concert-page{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-sm-12">
             <a href="{{ page.banner_link }}">
                 {% image page.banner original class="responsive" %}
             </a>
-            <div class="tan-bg text-center">
+            <div class="dark-blue-bg text-center white">
                 <div class="row-fluid">
                     {{ page.intro|richtext }}
                 </div>
@@ -29,7 +30,7 @@
                     {% if page.button_one is not None %}
                         <a href="{% pageurl page.button_one %}">
                             <div class="col-xs-6 col-sm-3">
-                                <div class="concertinfo hover green-bg center">
+                                <div class="concertinfo hover dark-blue-bg center">
                                     {{ page.button_one.title }}
                                 </div>
                             </div>
@@ -39,7 +40,7 @@
                     {% if page.button_two is not None %}
                         <a href="{% pageurl page.button_two %}">
                             <div class="col-xs-6 col-sm-3">
-                                <div class="concertinfo hover green-bg center">
+                                <div class="concertinfo hover dark-blue-bg center">
                                     {{ page.button_two.title }}
                                 </div>
                             </div>
@@ -49,7 +50,7 @@
                     {% if page.button_three is not None %}
                         <a href="{% pageurl page.button_three %}">
                             <div class="col-xs-6 col-sm-3">
-                                <div class="concertinfo hover green-bg center">
+                                <div class="concertinfo hover dark-blue-bg center">
                                     {{ page.button_three.title }}
                                 </div>
                             </div>
@@ -59,7 +60,7 @@
                     {% if page.button_four is not None %}
                         <a href="{% pageurl page.button_four %}">
                             <div class="col-xs-6 col-sm-3">
-                                <div class="concertinfo hover green-bg center">
+                                <div class="concertinfo hover dark-blue-bg center">
                                     {{ page.button_four.title }}
                                 </div>
                             </div>

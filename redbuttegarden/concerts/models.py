@@ -308,6 +308,8 @@ class DonorPackagePage(AbstractBase):
         ('sponsor_list', SponsorList()),
         ('button_table', ButtonTable()),
         ('table_cards', TableInfoCardList()),
+        ('table', TableBlock(table_options=donor_schedule_table_options,
+                             help_text=_("Right-click to add/remove rows/columns"))),
     ], blank=False)
 
     content_panels = AbstractBase.content_panels + [

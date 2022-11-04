@@ -2070,39 +2070,6 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     cursor: pointer; /* Adding this makes collapse panels with this class work on Safari on iOS devices */
 }
 
-.green-bg {
-    color: white;  /* Black text is too difficult to read with green background */
-    padding: 10px;
-    background-color: #196143;
-}
-
-.tan-bg {
-    padding: 10px;
-    background-color: #F2EDE4;
-}
-
-.dark-tan-bg {
-    padding: 10px;
-    background-color:#C4B59E;
-}
-
-.white-bg {
-    padding: 10px;
-    background-color: #FFF;
-}
-
-.red-bg {
-    color: white;  /* Better color contrast makes it easier to read with white text */
-    padding: 10px;
-    background-color: red;
-}
-
-.orange-bg {
-    font-weight: bold;  /* Again, makes text easier to read this way */
-    padding: 10px;
-    background-color: #FF7744;
-}
-
 #volunteer-apps {
     background-color:#f2ede4;
     margin-top: -4px;

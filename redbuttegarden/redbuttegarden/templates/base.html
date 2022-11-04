@@ -61,6 +61,11 @@
     <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/rbg.css' %}">
     <link rel="stylesheet" href="{% static 'redbuttegarden/css/summer.css' %}">
 
+    {# User uploaded CSS #}
+    {% if page.custom_css %}
+        <link rel="stylesheet" type="text/css" href="{{ page.custom_css.url }}">
+    {% endif %}
+
     {% block extra_css %}
         {# Override this in templates to add extra stylesheets #}
     {% endblock %}
