@@ -65,19 +65,6 @@ class AbstractBase(Page):
 
         return context
 
-    @cached_classmethod
-    def get_edit_handler(cls):
-        edit_handler = TabbedInterface([
-            ObjectList(cls.content_panels,
-                       heading=_('Content')),
-            ObjectList(cls.promote_panels,
-                       heading=_('Promote')),
-            ObjectList(cls.settings_panels,
-                       heading=_('Settings'),
-                       classname='settings'),
-        ])
-        return edit_handler.bind_to(model=cls)
-
     def save(self, clean=True, user=None, log_action=False, **kwargs):
         """
         If this page is new and it's parent is aliased, created an
