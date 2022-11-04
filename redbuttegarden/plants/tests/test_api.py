@@ -10,11 +10,12 @@ from rest_framework.test import APIClient
 from wagtail.core.models import Collection as WagtailCollection
 
 from plants.models import Collection
+# noinspection PyUnresolvedReferences
 from .utils import family, genus, species
 
 
 @pytest.mark.django_db
-class TestAPI:
+class APITestSetup:
     def __init__(self):
         user = self.user()
 
@@ -33,6 +34,7 @@ class TestAPI:
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         return client
+
 
 @pytest.fixture
 def collections_same_species_different_cultivars():
@@ -134,13 +136,12 @@ def collections_same_species_different_cultivars():
     return payloads
 
 
-
 @pytest.mark.django_db
 def test_collection_creation_api_two_cultivars(collections_same_species_different_cultivars):
     """
     Attempt to post collection with same plant_id should not create another collection
     """
-    api_client = TestAPI()
+    api_client = APITestSetup()
 
     collection_one_payload = collections_same_species_different_cultivars[0]
     collection_two_payload = collections_same_species_different_cultivars[1]
@@ -150,9 +151,10 @@ def test_collection_creation_api_two_cultivars(collections_same_species_differen
 
     assert Collection.objects.all().count() == 1
 
+
 @pytest.mark.django_db
 def test_species_image_setting(species):
-    api_client = TestAPI()
+    api_client = APITestSetup()
 
     img_one_file_obj = BytesIO()
     img_two_file_obj = BytesIO()
