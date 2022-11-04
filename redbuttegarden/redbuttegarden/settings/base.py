@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
-    'wagtail.core',
+    'wagtail',
 
     'cas',  # Sometimes necessary to comment this app out to dump database
     'corsheaders',
@@ -189,7 +189,7 @@ WAGTAILSEARCH_BACKENDS = {
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-BASE_URL = 'https://redbuttegarden.org'
+WAGTAILADMIN_BASE_URL = 'https://redbuttegarden.org'
 
 # Safe to do this as since our docs/images shouldn't contain sensitive info. Info: https://docs.wagtail.io/en/v2.8/reference/settings.html?highlight=images#documents
 WAGTAILDOCS_SERVE_METHOD = 'direct'

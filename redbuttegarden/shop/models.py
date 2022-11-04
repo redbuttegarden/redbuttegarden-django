@@ -1,11 +1,11 @@
 from django.core.paginator import Paginator
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import InlinePanel
+from wagtail.admin.panels import InlinePanel
 from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.registry import register_setting
-from wagtail.core.models import Page, Orderable
+from wagtail.models import Page, Orderable
 
 
 class Product(Page):

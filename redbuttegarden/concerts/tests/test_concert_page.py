@@ -4,7 +4,7 @@ import json
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
-from wagtail.core.models import Page
+from wagtail.models import Page
 from wagtail.images.tests.utils import Image, get_test_image_file
 
 from concerts.models import ConcertPage

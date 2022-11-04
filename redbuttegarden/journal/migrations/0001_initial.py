@@ -7,8 +7,8 @@ import django.utils.timezone
 import modelcluster.contrib.taggit
 import modelcluster.fields
 import wagtail.contrib.routable_page.models
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.images.blocks
 
 
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('date', models.DateTimeField(default=django.utils.timezone.now, verbose_name='Post date')),
-                ('body', wagtail.core.fields.StreamField([('green_heading', wagtail.core.blocks.CharBlock(help_text='Green centered text', max_length=200)), ('paragraph', wagtail.core.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.core.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('image', wagtail.images.blocks.ImageChooserBlock()), ('html', wagtail.core.blocks.RawHTMLBlock(required=False)), ('image_list', wagtail.core.blocks.StructBlock([('list_items', wagtail.core.blocks.ListBlock(wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(label='Image')), ('title', wagtail.core.blocks.CharBlock(label='Title', max_length=200)), ('sub_title', wagtail.core.blocks.CharBlock(label='Subtitle', max_length=200)), ('text', wagtail.core.blocks.RichTextBlock(label='Text')), ('link_url', wagtail.core.blocks.URLBlock(label='Link URL', max_length=200, required=False))]), label='List Item'))], required=False))])),
+                ('body', wagtail.fields.StreamField([('green_heading', wagtail.blocks.CharBlock(help_text='Green centered text', max_length=200)), ('paragraph', wagtail.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('image', wagtail.images.blocks.ImageChooserBlock()), ('html', wagtail.blocks.RawHTMLBlock(required=False)), ('image_list', wagtail.blocks.StructBlock([('list_items', wagtail.blocks.ListBlock(wagtail.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(label='Image')), ('title', wagtail.blocks.CharBlock(label='Title', max_length=200)), ('sub_title', wagtail.blocks.CharBlock(label='Subtitle', max_length=200)), ('text', wagtail.blocks.RichTextBlock(label='Text')), ('link_url', wagtail.blocks.URLBlock(label='Link URL', max_length=200, required=False))]), label='List Item'))], required=False))])),
                 ('author', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='author_pages', to=settings.AUTH_USER_MODEL, verbose_name='Author')),
                 ('categories', modelcluster.fields.ParentalManyToManyField(blank=True, to='journal.JournalCategory')),
                 ('image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),

@@ -2,8 +2,8 @@
 
 from django.db import migrations
 import django.utils.timezone
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rbghours',
             name='gad_dates',
-            field=wagtail.core.fields.StreamField([('date', wagtail.core.blocks.DateBlock(help_text='Date that GAD takes place', verbose_name='Garden After Dark date'))], default='', help_text='Choose the dates of GAD. If there are many, using the manual override might be easier'),
+            field=wagtail.fields.StreamField([('date', wagtail.blocks.DateBlock(help_text='Date that GAD takes place', verbose_name='Garden After Dark date'))], default='', help_text='Choose the dates of GAD. If there are many, using the manual override might be easier'),
             preserve_default=False,
         ),
     ]

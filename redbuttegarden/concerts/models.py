@@ -4,12 +4,12 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from wagtail.contrib.table_block.blocks import TableBlock
-from wagtail.core import blocks
+from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
-from wagtail.admin.edit_handlers import PageChooserPanel
+from wagtail.admin.panels import PageChooserPanel
 from wagtail.admin.panels import FieldPanel
-from wagtail.core.fields import RichTextField, StreamField
+from wagtail.fields import RichTextField, StreamField
 from wagtail.search import index
 
 from concerts.utils import live_in_the_past, on_demand_expired

@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.core.fields
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('generalpage_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='home.GeneralPage')),
                 ('event_dates', models.CharField(max_length=200)),
-                ('notes', wagtail.core.fields.RichTextField(blank=True, help_text='Notes will appear on the thumbnail image of the event on the event index page')),
+                ('notes', wagtail.fields.RichTextField(blank=True, help_text='Notes will appear on the thumbnail image of the event on the event index page')),
             ],
             options={
                 'abstract': False,

@@ -5,9 +5,9 @@ from django.db.models.functions import Length
 from django.utils.dates import MONTHS
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
-from wagtail.admin.edit_handlers import InlinePanel
+from wagtail.admin.panels import InlinePanel
 from wagtail.admin.panels import FieldPanel
-from wagtail.core.models import Orderable
+from wagtail.models import Orderable
 
 models.CharField.register_lookup(Length)
 

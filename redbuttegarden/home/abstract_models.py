@@ -2,9 +2,9 @@ import logging
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import MultiFieldPanel
+from wagtail.admin.panels import MultiFieldPanel
 from wagtail.admin.panels import FieldPanel
-from wagtail.core.models import Page
+from wagtail.models import Page
 from wagtail.documents import get_document_model_string
 
 logger = logging.getLogger(__name__)

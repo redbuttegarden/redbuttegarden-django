@@ -7,7 +7,7 @@ from django.core.files.images import ImageFile
 from PIL import Image
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
-from wagtail.core.models import Collection as WagtailCollection
+from wagtail.models import Collection as WagtailCollection
 
 from plants.models import Collection
 # noinspection PyUnresolvedReferences

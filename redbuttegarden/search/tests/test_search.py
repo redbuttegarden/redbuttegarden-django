@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, AnonymousUser
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
-from wagtail.core.models import Site, Page, PageViewRestriction
+from wagtail.models import Site, Page, PageViewRestriction
 
 from search.views import search
 

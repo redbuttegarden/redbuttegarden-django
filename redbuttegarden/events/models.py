@@ -6,12 +6,12 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
-from wagtail.admin.edit_handlers import PageChooserPanel
+from wagtail.admin.panels import PageChooserPanel
 from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from wagtail.core import blocks
-from wagtail.core.blocks import PageChooserBlock
-from wagtail.core.fields import RichTextField, StreamField
+from wagtail import blocks
+from wagtail.blocks import PageChooserBlock
+from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.models import Image
 from wagtail.search import index

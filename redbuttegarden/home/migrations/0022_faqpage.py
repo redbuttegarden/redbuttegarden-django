@@ -3,8 +3,8 @@
 from django.db import migrations, models
 import django.db.models.deletion
 import home.models
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             name='FAQPage',
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('body', wagtail.core.fields.StreamField([('heading', home.models.Heading(classname='full title', help_text='Text will be green and centered')), ('paragraph', wagtail.core.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.core.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('FAQ_list', wagtail.core.blocks.StructBlock([('list_items', wagtail.core.blocks.ListBlock(wagtail.core.blocks.StructBlock([('title_question', wagtail.core.blocks.CharBlock(label='Title/Question', max_length=200)), ('text', wagtail.core.blocks.RichTextBlock(label='Answer'))]), label='Question & Answer'))]))])),
+                ('body', wagtail.fields.StreamField([('heading', home.models.Heading(classname='full title', help_text='Text will be green and centered')), ('paragraph', wagtail.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('FAQ_list', wagtail.blocks.StructBlock([('list_items', wagtail.blocks.ListBlock(wagtail.blocks.StructBlock([('title_question', wagtail.blocks.CharBlock(label='Title/Question', max_length=200)), ('text', wagtail.blocks.RichTextBlock(label='Answer'))]), label='Question & Answer'))]))])),
                 ('banner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),
             ],
             options={

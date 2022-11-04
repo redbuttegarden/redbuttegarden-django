@@ -7,7 +7,7 @@ from PIL import Image
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import RequestsClient, APILiveServerTestCase
-from wagtail.core.models import Collection as WagtailCollection
+from wagtail.models import Collection as WagtailCollection
 
 from plants.models import SpeciesImage, Collection
 from .utils import get_custom_user, get_family, get_genus, get_species
