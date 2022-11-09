@@ -10,7 +10,9 @@ DEBUG = False
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ['0.0.0.0', 'trjxa2b547.execute-api.us-east-1.amazonaws.com', 'dhsyi82ptcyu5.cloudfront.net',
+ALLOWED_HOSTS = ['0.0.0.0', 'trjxa2b547.execute-api.us-east-1.amazonaws.com',
+                 'aflamznow5.execute-api.us-west-2.amazonaws.com',  # Newer AWS Account
+                 'dhsyi82ptcyu5.cloudfront.net',
                  'redbuttegarden.org', 'www.redbuttegarden.org', 'train.redbuttegarden.org']
 # TODO - Allow dev-shop here when we want to continue working on that
 
