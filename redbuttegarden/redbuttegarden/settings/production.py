@@ -41,8 +41,8 @@ AWS_S3_CUSTOM_DOMAIN = 'd7zmakezevavl.cloudfront.net'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
 MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
 
-AWS_ACCESS_KEY_ID = os.environ.get('STATIC_ACCESS_KEY_ID'),
-AWS_SECRET_ACCESS_KEY = os.environ.get('STATIC_SECRET_ACCESS_KEY'),
+AWS_ACCESS_KEY_ID = os.environ.get('STATIC_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('STATIC_SECRET_ACCESS_KEY')
 
 WAGTAILFRONTENDCACHE = {
     'cloudfront': {
@@ -102,10 +102,11 @@ CSP_IMG_SRC = ("'self'",
                'zappa-web-static.s3.amazonaws.com')
 
 CORS_ALLOWED_ORIGINS = [
-    "https://aflamznow5.execute-api.us-west-2.amazonaws.com",
+    'https://aflamznow5.execute-api.us-west-2.amazonaws.com',
     'https://zappa-web-code.s3.amazonaws.com',
-    'https://zappa-web-static.s3.amazonaws.com'
-    "http://0.0.0.0:8000",
+    'https://zappa-web-static.s3.amazonaws.com',
+    'd7zmakezevavl.cloudfront.net',
+    'http://0.0.0.0:8000',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
