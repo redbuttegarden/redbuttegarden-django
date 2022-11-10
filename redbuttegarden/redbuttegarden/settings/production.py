@@ -41,6 +41,9 @@ AWS_S3_CUSTOM_DOMAIN = 'd7zmakezevavl.cloudfront.net'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
 MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
 
+AWS_ACCESS_KEY_ID = os.environ.get('STATIC_ACCESS_KEY_ID'),
+AWS_SECRET_ACCESS_KEY = os.environ.get('STATIC_SECRET_ACCESS_KEY'),
+
 WAGTAILFRONTENDCACHE = {
     'cloudfront': {
         'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
