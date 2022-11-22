@@ -1,0 +1,51 @@
+#svg-container svg {
+  max-height: 350px;
+  overflow: visible;
+}
+
+#svg-container {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+#left-leaf {
+  transform-origin: 50% 50%;
+  animation: left-fall 3s 1;
+  animation-fill-mode: forwards;
+}
+
+#right-leaf {
+  transform-origin: 50% 50%;
+  animation: right-fall 3.5s 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes left-fall {
+  0% {
+    transform: translate(0);
+  }
+  50% {
+    transform: rotate(30deg) translate(-80px, 100px);
+  }
+  100% {
+    transform: rotate(-30deg) translate(-150px, 85px);
+  }
+}
+
+@keyframes right-fall {
+  0% {
+    transform: translate(0);
+  }
+  40% {
+    transform: rotate(45deg) translate(100px, -80px);
+  }
+  70% {
+    transform: rotate(-15deg) translate(50px, 100px);
+  }
+  100% {
+    transform: rotate(10deg) translate(50px, 120px);
+  }
+}
