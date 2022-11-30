@@ -11,9 +11,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: define the correct hosts in production!
 ALLOWED_HOSTS = ['0.0.0.0',
-                 'aflamznow5.execute-api.us-west-2.amazonaws.com',  # Newer AWS Account
-                 'd7zmakezevavl.cloudfront.net',
-                 'redbuttegarden.org', 'www.redbuttegarden.org', 'train.redbuttegarden.org']
+                 'davlmcslie.execute-api.us-east-1.amazonaws.com',  # Newer AWS Account
+                 'd1mg1drmxhfql.cloudfront.net',
+                 'redbuttegarden.org', 'www.redbuttegarden.org', 'training.redbuttegarden.org']
 # TODO - Allow dev-shop here when we want to continue working on that
 
 BASE_URL = 'https://redbuttegarden.org'
@@ -30,14 +30,14 @@ DATABASES = {
 }
 
 # Static files
-AWS_STORAGE_BUCKET_NAME = 'zappa-web-static'
-AWS_S3_REGION_NAME = 'us-west-2'
+AWS_STORAGE_BUCKET_NAME = 'rbg-web-static'
+AWS_S3_REGION_NAME = 'us-east-1'
 AWS_S3_FILE_OVERWRITE = True
 STATIC_BUCKET = AWS_STORAGE_BUCKET_NAME
 STATICFILES_STORAGE = 'home.custom_storages.StaticStorage'
 MEDIA_BUCKET = AWS_STORAGE_BUCKET_NAME
 DEFAULT_FILE_STORAGE = 'home.custom_storages.MediaStorage'
-AWS_S3_CUSTOM_DOMAIN = 'd7zmakezevavl.cloudfront.net'
+AWS_S3_CUSTOM_DOMAIN = 'redbuttegarden.org'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
 MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
 
@@ -48,10 +48,8 @@ WAGTAILFRONTENDCACHE = {
     'cloudfront': {
         'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
         'DISTRIBUTION_ID': {
-            'redbuttegarden.org': 'ESBVN4MRCUVZJ',
-            # TODO - Re-enable after adding dev-shop in ALLOWED_HOSTS
-            # 'dev-shop.redbuttegarden.org': 'E1ILRLJZBMHT88',
-            'train.redbuttegarden.org': 'EV5FN74YZ4XU0',
+            'redbuttegarden.org': 'E3VPUBUC4O7PM0',
+            'training.redbuttegarden.org': 'EV5FN74YZ4XU0',  # TODO - fix
         },
     },
 }
@@ -60,52 +58,52 @@ WAGTAILFRONTENDCACHE = {
 CSP_DEFAULT_SRC = ("'self'",
                    "'unsafe-inline'",
                    'redbuttegarden.org',
-                   'd7zmakezevavl.cloudfront.net',
+                   'd1mg1drmxhfql.cloudfront.net',
                    'aflamznow5.execute-api.us-west-2.amazonaws.com',
-                   'zappa-web-code.s3.amazonaws.com',
-                   'zappa-web-static.s3.amazonaws.com')
+                   'rbg-web-code.s3.amazonaws.com',
+                   'rbg-web-static.s3.amazonaws.com')
 CSP_STYLE_SRC = ("'self'",
                  "'unsafe-inline'",
                  'redbuttegarden.org',
-                 'd7zmakezevavl.cloudfront.net',
+                 'd1mg1drmxhfql.cloudfront.net',
                  'fonts.googleapis.com',
                  'maxcdn.bootstrapcdn.com',
-                 'aflamznow5.execute-api.us-west-2.amazonaws.com',
-                 'zappa-web-code.s3.amazonaws.com',
-                 'zappa-web-static.s3.amazonaws.com')
+                 'davlmcslie.execute-api.us-east-1.amazonaws.com',
+                 'rbg-web-code.s3.amazonaws.com',
+                 'rbg-web-static.s3.amazonaws.com')
 CSP_SCRIPT_SRC = ("'self'",
                   "'unsafe-inline'",
                   'redbuttegarden.org',
-                  'd7zmakezevavl.cloudfront.net',
+                  'd1mg1drmxhfql.cloudfront.net',
                   'www.googletagmanager.com',
                   'www.google-analytics.com',
                   'maxcdn.bootstrapcdn.com',
                   'ajax.googleapis.com',
                   'connect.facebook.net',
-                  'aflamznow5.execute-api.us-west-2.amazonaws.com',
-                  'zappa-web-code.s3.amazonaws.com',
-                  'zappa-web-static.s3.amazonaws.com')
+                  'davlmcslie.execute-api.us-east-1.amazonaws.com',
+                  'rbg-web-code.s3.amazonaws.com',
+                  'rbg-web-static.s3.amazonaws.com')
 CSP_FONT_SRC = ("'self'",
                 'redbuttegarden.org',
-                'd7zmakezevavl.cloudfront.net',
+                'd1mg1drmxhfql.cloudfront.net',
                 'fonts.gstatic.com',
                 'maxcdn.bootstrapcdn.com',
-                'aflamznow5.execute-api.us-west-2.amazonaws.com',
-                'zappa-web-code.s3.amazonaws.com',
-                'zappa-web-static.s3.amazonaws.com')
+                'davlmcslie.execute-api.us-east-1.amazonaws.com',
+                'rbg-web-code.s3.amazonaws.com',
+                'rbg-web-static.s3.amazonaws.com')
 CSP_IMG_SRC = ("'self'",
                'redbuttegarden.org',
-               'd7zmakezevavl.cloudfront.net',
+               'd1mg1drmxhfql.cloudfront.net',
                'www.gravatar.com',
-               'aflamznow5.execute-api.us-west-2.amazonaws.com',
-               'zappa-web-code.s3.amazonaws.com',
-               'zappa-web-static.s3.amazonaws.com')
+               'davlmcslie.execute-api.us-east-1.amazonaws.com',
+               'rbg-web-code.s3.amazonaws.com',
+               'rbg-web-static.s3.amazonaws.com')
 
 CORS_ALLOWED_ORIGINS = [
-    'https://aflamznow5.execute-api.us-west-2.amazonaws.com',
-    'https://zappa-web-code.s3.amazonaws.com',
-    'https://zappa-web-static.s3.amazonaws.com',
-    'd7zmakezevavl.cloudfront.net',
+    'davlmcslie.execute-api.us-east-1.amazonaws.com',
+    'https://rbg-web-code.s3.amazonaws.com',
+    'https://rbg-web-static.s3.amazonaws.com',
+    'd1mg1drmxhfql.cloudfront.net',
     'http://0.0.0.0:8000',
 ]
 
