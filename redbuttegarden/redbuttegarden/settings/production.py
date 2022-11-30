@@ -13,7 +13,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 ALLOWED_HOSTS = ['0.0.0.0',
                  'davlmcslie.execute-api.us-east-1.amazonaws.com',  # Newer AWS Account
                  'd1mg1drmxhfql.cloudfront.net',
-                 'redbuttegarden.org', 'www.redbuttegarden.org', 'training.redbuttegarden.org']
+                 'redbuttegarden.org', 'www.redbuttegarden.org', 'train.redbuttegarden.org']
 # TODO - Allow dev-shop here when we want to continue working on that
 
 BASE_URL = 'https://redbuttegarden.org'
@@ -49,7 +49,8 @@ WAGTAILFRONTENDCACHE = {
         'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
         'DISTRIBUTION_ID': {
             'redbuttegarden.org': 'E3VPUBUC4O7PM0',
-            'training.redbuttegarden.org': 'EV5FN74YZ4XU0',  # TODO - fix
+            'www.redbuttegarden.org': 'E3VPUBUC4O7PM0',
+            'train.redbuttegarden.org': 'ESBVN4MRCUVZJ',
         },
     },
 }
@@ -58,6 +59,8 @@ WAGTAILFRONTENDCACHE = {
 CSP_DEFAULT_SRC = ("'self'",
                    "'unsafe-inline'",
                    'redbuttegarden.org',
+                   'www.redbuttegarden.org',
+                   'train.redbuttegarden.org',
                    'd1mg1drmxhfql.cloudfront.net',
                    'aflamznow5.execute-api.us-west-2.amazonaws.com',
                    'rbg-web-code.s3.amazonaws.com',
@@ -65,6 +68,8 @@ CSP_DEFAULT_SRC = ("'self'",
 CSP_STYLE_SRC = ("'self'",
                  "'unsafe-inline'",
                  'redbuttegarden.org',
+                 'www.redbuttegarden.org',
+                 'train.redbuttegarden.org',
                  'd1mg1drmxhfql.cloudfront.net',
                  'fonts.googleapis.com',
                  'maxcdn.bootstrapcdn.com',
@@ -74,6 +79,8 @@ CSP_STYLE_SRC = ("'self'",
 CSP_SCRIPT_SRC = ("'self'",
                   "'unsafe-inline'",
                   'redbuttegarden.org',
+                  'www.redbuttegarden.org',
+                  'train.redbuttegarden.org',
                   'd1mg1drmxhfql.cloudfront.net',
                   'www.googletagmanager.com',
                   'www.google-analytics.com',
@@ -85,6 +92,8 @@ CSP_SCRIPT_SRC = ("'self'",
                   'rbg-web-static.s3.amazonaws.com')
 CSP_FONT_SRC = ("'self'",
                 'redbuttegarden.org',
+                'www.redbuttegarden.org',
+                'train.redbuttegarden.org',
                 'd1mg1drmxhfql.cloudfront.net',
                 'fonts.gstatic.com',
                 'maxcdn.bootstrapcdn.com',
@@ -93,6 +102,8 @@ CSP_FONT_SRC = ("'self'",
                 'rbg-web-static.s3.amazonaws.com')
 CSP_IMG_SRC = ("'self'",
                'redbuttegarden.org',
+               'www.redbuttegarden.org',
+               'train.redbuttegarden.org',
                'd1mg1drmxhfql.cloudfront.net',
                'www.gravatar.com',
                'davlmcslie.execute-api.us-east-1.amazonaws.com',
@@ -100,6 +111,9 @@ CSP_IMG_SRC = ("'self'",
                'rbg-web-static.s3.amazonaws.com')
 
 CORS_ALLOWED_ORIGINS = [
+    'redbuttegarden.org',
+    'www.redbuttegarden.org',
+    'train.redbuttegarden.org',
     'davlmcslie.execute-api.us-east-1.amazonaws.com',
     'https://rbg-web-code.s3.amazonaws.com',
     'https://rbg-web-static.s3.amazonaws.com',
