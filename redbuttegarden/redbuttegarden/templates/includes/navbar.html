@@ -83,6 +83,7 @@
                                href="{% slugurl 'concerts' %}">
                             <span class="concert-li">OUTDOOR CONCERT SERIES</span>
                         </a></li>
+                        {#  main_event_page set in get_context method of abstract base page #}
                         {% if main_event_page %}
                             <li><a title="Info for current and upcoming art displays at the garden"
                                    href="{% routablepageurl main_event_page 'event_by_category' 'art-exhibits' %}">ART
@@ -99,17 +100,18 @@
                             <li><a title="Links to events going on during the Winter season"
                                    href="{% routablepageurl main_event_page 'event_by_category' 'winter-events' %}">WINTER
                                 EVENTS</a></li>
+                        {# main_event_page won't be set for non-wagtail pages (e.g. social-media) so we hardcode the URLs #}
                         {% else %}
                             <li><a title="Info for current and upcoming art displays at the garden"
-                                   href="{% slugurl 'art-exhibits' %}">ART EXHIBITS</a></li>
+                                   href="/events/e-cat/art-exhibits/">ART EXHIBITS</a></li>
                             <li><a title="Links to events going on during the Spring season"
-                                   href="{% slugurl 'spring-events' %}">SPRING EVENTS</a></li>
+                                   href="/events/e-cat/spring-events/">SPRING EVENTS</a></li>
                             <li><a title="Links to events going on during the Summer season"
-                                   href="{% slugurl 'summer-events' %}">SUMMER EVENTS</a></li>
+                                   href="/events/e-cat/summer-events/">SUMMER EVENTS</a></li>
                             <li><a title="Links to events going on during the Fall season"
-                                   href="{% slugurl 'fall-events' %}">FALL EVENTS</a></li>
+                                   href="/events/e-cat/fall-events/">FALL EVENTS</a></li>
                             <li><a title="Links to events going on during the Winter season"
-                                   href="{% slugurl 'winter-events' %}">WINTER EVENTS</a></li>
+                                   href="/events/e-cat/winter-events/">WINTER EVENTS</a></li>
                         {% endif %}
                     </ul>
                 </li>
