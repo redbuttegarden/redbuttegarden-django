@@ -100,7 +100,7 @@
                             <li><a title="Links to events going on during the Winter season"
                                    href="{% routablepageurl main_event_page 'event_by_category' 'winter-events' %}">WINTER
                                 EVENTS</a></li>
-                        {# main_event_page won't be set for non-wagtail pages (e.g. social-media) so we hardcode the URLs #}
+                            {# main_event_page won't be set for non-wagtail pages (e.g. social-media) so we hardcode the URLs #}
                         {% else %}
                             <li><a title="Info for current and upcoming art displays at the garden"
                                    href="/events/e-cat/art-exhibits/">ART EXHIBITS</a></li>
@@ -146,6 +146,8 @@
                         </li>
                         <li><a title="Options for giving in memoriam" href="{% slugurl 'memorials-and-tributes' %}">MEMORIALS
                             &amp;<br/>TRIBUTES</a></li>
+                        <li><a title="Legacy giving as a way to donate to the garden"
+                               href="{% slugurl 'legacy-giving' %}">LEGACY GIVING</a></li>
                         <li><a title="Become a corporate sponsor" href="{% slugurl 'corporate-sponsors' %}">CORPORATE
                             <br/>SPONSORSHIP</a></li>
                         <li><a title="Join the Red Butte Garden team" href="{% slugurl 'employment' %}">EMPLOYMENT</a>
