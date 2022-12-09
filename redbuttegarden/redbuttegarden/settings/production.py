@@ -29,6 +29,16 @@ DATABASES = {
     }
 }
 
+# Email Settings
+EMAIL_BACKEND = 'django_ses.SESBackend'
+AWS_SES_ACCESS_KEY_ID = os.environ.get('SES_ACCESS_KEY')
+AWS_SES_SECRET_ACCESS_KEY = os.environ.get('SES_SECRET_ACCESS_KEY')
+AWS_SES_REGION_NAME = 'us-east-1'
+AWS_SES_REGION_ENDPOINT = 'email.us-east-1.amazonaws.com'
+AWS_SES_RETURN_PATH = os.environ.get('IT_EMAIL')
+WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = 'admin@redbuttegarden.org'
+WAGTAILADMIN_NOTIFICATION_USE_HTML = True
+
 # Static files
 AWS_STORAGE_BUCKET_NAME = 'rbg-web-static'
 AWS_S3_REGION_NAME = 'us-east-1'
