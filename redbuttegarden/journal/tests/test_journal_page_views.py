@@ -3,7 +3,7 @@ from django.test import TestCase
 from wagtail.models import Page
 from wagtail.images.tests.utils import Image, get_test_image_file
 
-from journal.models import JournalCategory, JournalIndexPage, JournalPage, JournalPageTag
+from journal.models import JournalCategory, JournalIndexPage, JournalPage, Tag
 
 
 class TestJournalIndex(TestCase):
@@ -84,3 +84,44 @@ class TestJournalCategory(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('<div class="eventname">Fall Journal Page</div>', html)
         self.assertNotIn('<div class="eventname">Spring Journal Page</div>', html)
+
+
+class TestJournalTag(TestCase):
+    def setUp(self):
+        self.root_page = Page.objects.get(id=2)
+        self.image = Image.objects.create(title='Test image', file=get_test_image_file())
+        self.user = get_user_model().objects.create_user('Test User', 'test@email.com', 'password')
+        self.journal_index = JournalIndexPage(owner=self.user,
+                                              slug='journal-index-page',
+                                              title='Journal Index Page')
+        self.root_page.add_child(instance=self.journal_index)
+        self.journal_index.save_revision().publish()
+
+        self.plant_tag = Tag(name="Plant Tag", slug="plant-tag")
+        self.season_tag = Tag(name="Spring Tag", slug="spring-tag")
+        self.plant_tag.save()
+        self.season_tag.save()
+
+        self.journal_page_fall = JournalPage(owner=self.user,
+                                             slug='journal-page-fall',
+                                             title='Plant Tagged Page')
+        self.journal_index.add_child(instance=self.journal_page_fall)
+        self.journal_page_fall.save_revision()
+        self.journal_page_fall.tags.add(self.plant_tag)
+        self.journal_page_fall.save_revision().publish()
+
+        self.journal_page_spring = JournalPage(owner=self.user,
+                                               slug='journal-page-spring',
+                                               title='Season Tagged Page')
+        self.journal_index.add_child(instance=self.journal_page_spring)
+        self.journal_page_spring.save_revision()
+        self.journal_page_spring.tags.add(self.season_tag)
+        self.journal_page_spring.save_revision().publish()
+
+    def test_tag_view(self):
+        tag_url = self.journal_index.reverse_subpage('post_by_tag', args=(self.plant_tag.slug,))
+        response = self.client.get(self.journal_index.url + tag_url)
+        html = response.content.decode('utf8')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('<div class="eventname">Plant Tagged Page</div>', html)
+        self.assertNotIn('<div class="eventname">Season Tagged Page</div>', html)
