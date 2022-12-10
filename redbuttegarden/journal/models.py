@@ -12,9 +12,9 @@ from modelcluster.fields import ParentalManyToManyField, ParentalKey
 from taggit.models import TaggedItemBase, Tag as TaggitTag
 from wagtail.admin.panels import InlinePanel
 from wagtail.admin.panels import FieldPanel
-from wagtail.contrib.routable_page.models import RoutablePageMixin, route
+from wagtail.contrib.routable_page.models import RoutablePageMixin, re_path
 from wagtail.fields import StreamField
-from wagtail.models import Page, Orderable
+from wagtail.models import Orderable
 from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
@@ -75,9 +75,12 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
     # Pagination for the index page. We use the `django.core.paginator` as any
     # standard Django app would, but the difference here being we have it as a
     # method on the model rather than within a view function
-    def paginate(self, request, *args):
+    def paginate(self, request, posts=None):
         page = request.GET.get('page')
-        paginator = Paginator(self.get_posts().order_by('-date'), 9)
+        if posts:
+            paginator = Paginator(posts, 9)
+        else:
+            paginator = Paginator(self.get_posts(), 9)
         try:
             pages = paginator.page(page)
         except PageNotAnInteger:
@@ -89,7 +92,7 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
         context = super().get_context(request, *args, **kwargs)
-        posts = self.paginate(request, self.get_posts().order_by('-date'))
+        posts = self.paginate(request)
         context['posts'] = posts
         return context
 
@@ -97,11 +100,11 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
         """
         Method of returning JournalPage objects that can be further filtered
         """
-        return JournalPage.objects.descendant_of(self).live()
+        return JournalPage.objects.descendant_of(self).live().order_by('-date')
 
     def get_journal_items(self):
         # This returns a Django paginator of blog items in this section
-        return Paginator(self.get_children().live(), 6)
+        return Paginator(self.get_children().live(), 9)
 
     def get_cached_paths(self):
         # Yield the main URL
@@ -111,24 +114,23 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
         for page_number in range(1, self.get_journal_items().num_pages + 1):
             yield '/?page=' + str(page_number)
 
-    @route(r'^tag/(?P<tag>[-\w]+)/$')
+    @re_path(r'^tag/(?P<tag>[-\w]+)/$')
     def post_by_tag(self, request, tag, *args, **kwargs):
         self.search_type = 'tag'
         self.search_term = tag
         self.posts = self.get_posts().filter(tags__slug=tag)
-        return Page.serve(self, request, *args, **kwargs)
+        return self.render(request, context_overrides={
+            'posts': self.paginate(request, self.posts)
+        }, *args, **kwargs)
 
-    @route(r'^category/(?P<category>[-\w]+)/$')
+    @re_path(r'^category/(?P<category>[-\w]+)/$')
     def post_by_category(self, request, category, *args, **kwargs):
         self.search_type = 'category'
         self.search_term = category
         self.posts = self.get_posts().filter(categories__slug=category)
-        return Page.serve(self, request, *args, **kwargs)
-
-    @route(r'^$')
-    def post_list(self, request, *args, **kwargs):
-        self.posts = self.get_journal_items()
-        return Page.serve(self, request, *args, **kwargs)
+        return self.render(request, context_overrides={
+            'posts': self.paginate(request, self.posts)
+        }, *args, **kwargs)
 
 
 class JournalPage(AbstractBase):
