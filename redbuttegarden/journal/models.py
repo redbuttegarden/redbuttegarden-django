@@ -75,9 +75,12 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
     # Pagination for the index page. We use the `django.core.paginator` as any
     # standard Django app would, but the difference here being we have it as a
     # method on the model rather than within a view function
-    def paginate(self, request, *args):
+    def paginate(self, request, posts=None):
         page = request.GET.get('page')
-        paginator = Paginator(self.get_posts().order_by('-date'), 9)
+        if posts:
+            paginator = Paginator(posts, 9)
+        else:
+            paginator = Paginator(self.get_posts(), 9)
         try:
             pages = paginator.page(page)
         except PageNotAnInteger:
@@ -89,7 +92,7 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by reverse-chron
         context = super().get_context(request, *args, **kwargs)
-        posts = self.paginate(request, self.get_posts().order_by('-date'))
+        posts = self.paginate(request)
         context['posts'] = posts
         return context
 
@@ -97,11 +100,11 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
         """
         Method of returning JournalPage objects that can be further filtered
         """
-        return JournalPage.objects.descendant_of(self).live()
+        return JournalPage.objects.descendant_of(self).live().order_by('-date')
 
     def get_journal_items(self):
         # This returns a Django paginator of blog items in this section
-        return Paginator(self.get_children().live(), 6)
+        return Paginator(self.get_children().live(), 9)
 
     def get_cached_paths(self):
         # Yield the main URL
@@ -117,7 +120,7 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
         self.search_term = tag
         self.posts = self.get_posts().filter(tags__slug=tag)
         return self.render(request, context_overrides={
-            'posts': self.posts
+            'posts': self.paginate(request, self.posts)
         }, *args, **kwargs)
 
     @re_path(r'^category/(?P<category>[-\w]+)/$')
@@ -126,7 +129,7 @@ class JournalIndexPage(RoutablePageMixin, AbstractBase):
         self.search_term = category
         self.posts = self.get_posts().filter(categories__slug=category)
         return self.render(request, context_overrides={
-            'posts': self.posts
+            'posts': self.paginate(request, self.posts)
         }, *args, **kwargs)
 
 
