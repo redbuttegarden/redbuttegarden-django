@@ -132,7 +132,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
-CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
+CSRF_TRUSTED_ORIGINS = ['https://' + domain for domain in ALLOWED_HOSTS]
 
 LOGGING = {
     'version': 1,
