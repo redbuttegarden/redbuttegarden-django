@@ -2,7 +2,7 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block title %}
-    {% ifequal page.search_type 'event-category' %}{{ page.cat_title }}{% else %}{{ block.super }}{% endifequal %}
+    {% if page.search_type == 'event-category' %}{{ page.cat_title }}{% else %}{{ block.super }}{% endif %}
 {% endblock %}
 
 {% block content %}
