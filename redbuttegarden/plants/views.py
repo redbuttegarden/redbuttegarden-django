@@ -237,7 +237,7 @@ def species_or_collection_feedback(request, species_id=None, collection_id=None)
             subject = 'RBG Website Plants Feedback: ' + subject
             message = style_message(
                 request, species, collection, original_message)
-            send_mail(subject, message, sender, recipients)
+            send_mail(subject, message, getattr(settings, 'DEFAULT_FROM_EMAIL', 'admin@redbuttegarden.org'), recipients)
             return HttpResponseRedirect(reverse('plants:feedback-thanks'))
     else:
         form = FeedbackReportForm(species_id, collection_id)
