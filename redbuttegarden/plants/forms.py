@@ -3,6 +3,7 @@ from collections import OrderedDict
 from django import forms
 from django.forms import CheckboxInput
 from django.utils.dates import MONTHS
+from django.utils.translation import gettext_lazy as _
 
 from plants.models import Family, Species, Collection, GardenArea
 
@@ -106,8 +107,8 @@ class FeedbackReportForm(forms.Form):
                                                           empty_label=None)
     subject = forms.CharField(max_length=100)
     message = forms.CharField(widget=forms.Textarea)
-    sender = forms.EmailField()
-    cc_myself = forms.BooleanField(required=False)
+    sender = forms.EmailField(help_text=_("Your email address"), required=False)
+    cc_myself = forms.BooleanField(required=False, label='CC Me')
 
     def __init__(self, species_id, collection_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
