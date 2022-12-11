@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.middleware.csrf import get_token
 from django.urls import reverse
@@ -231,13 +231,14 @@ def species_or_collection_feedback(request, species_id=None, collection_id=None)
 
             recipients = [user.email for user in get_user_model().objects.filter(
                 groups__name='Plant Collection Curators')]
-            if cc_myself:
-                recipients.append(sender)
 
             subject = 'RBG Website Plants Feedback: ' + subject
             message = style_message(
                 request, species, collection, original_message)
-            send_mail(subject, message, getattr(settings, 'DEFAULT_FROM_EMAIL', 'admin@redbuttegarden.org'), recipients)
+            email = EmailMessage(subject=subject, body=message,
+                                 from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'admin@redbuttegarden.org'),
+                                 to=recipients, cc=(sender,) if cc_myself else None, reply_to=(sender,))
+            email.send()
             return HttpResponseRedirect(reverse('plants:feedback-thanks'))
     else:
         form = FeedbackReportForm(species_id, collection_id)

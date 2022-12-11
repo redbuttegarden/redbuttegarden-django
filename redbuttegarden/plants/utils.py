@@ -24,6 +24,7 @@ MAP_ICONS = {
     'Succulent': static('img/succulent_icon.png'),
 }
 
+
 def get_feature_collection(collections):
     features = []
     for collection in collections:
@@ -65,6 +66,7 @@ def get_feature_collection(collections):
 
     return FeatureCollection(features)
 
+
 def style_message(request, species, collection, original_message):
     if species:
         url = request.build_absolute_uri(reverse('plants:species-detail', args=[species.id]))
@@ -74,7 +76,13 @@ def style_message(request, species, collection, original_message):
         logger.error('No species or collection provided')
         raise ValueError('No species or collection provided')
 
-    return f"The following feedback has been provided for this page:\n{url}\n\n{original_message}"
+    return f"""The following feedback has been provided for this page: {url}
+    
+Be wary of the message contents since it's possible it could contain malicious content.
+
+Message Contents:
+    
+    {original_message}"""
 
 
 def filter_by_parameter(request, initial_queryset=None):
@@ -105,7 +113,7 @@ def filter_by_parameter(request, initial_queryset=None):
         collections = collections.filter(species__full_name__icontains=scientific_name)
     if common_name:
         collections = collections.annotate(search=SearchVector('species__cultivar',
-                                                                'species__vernacular_name'))
+                                                               'species__vernacular_name'))
     if family:
         collections = collections.filter(species__genus__family_id=family)
     if garden_name:

@@ -105,9 +105,10 @@ class FeedbackReportForm(forms.Form):
     """
     species_or_collection_object = forms.ModelChoiceField(queryset=Collection.objects.none(), disabled=True,
                                                           empty_label=None)
-    subject = forms.CharField(max_length=100)
-    message = forms.CharField(widget=forms.Textarea)
-    sender = forms.EmailField(help_text=_("Your email address"), required=False)
+    subject = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Subject'}))
+    message = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Your feedback'}))
+    sender = forms.EmailField(required=False,
+                              widget=forms.TextInput(attrs={'placeholder': 'Your email address - Optional!'}))
     cc_myself = forms.BooleanField(required=False, label='CC Me')
 
     def __init__(self, species_id, collection_id, *args, **kwargs):
