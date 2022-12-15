@@ -87,15 +87,17 @@
 
 {% block extra_includes %}{% endblock %}
 
-{% block abnormal_content %}
-<div id="rbgdefaultbody" class="container-fluid">
-  <div class="row">
-  	  <div class="col-sm-12">
-        {% block content %}{% endblock %}
-    </div>
-  </div>
-</div>
-{% endblock %}
+<main id="main">
+    {% block abnormal_content %}
+        <div id="rbgdefaultbody" class="container-fluid">
+          <div class="row">
+              <div class="col-sm-12">
+                {% block content %}{% endblock %}
+            </div>
+          </div>
+        </div>
+    {% endblock %}
+</main>
 
 {% block extra_js %}
     {# Override this in templates to add extra javascript #}
