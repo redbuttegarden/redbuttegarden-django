@@ -142,10 +142,13 @@ nav[role=pagination] {
     text-align: center;
 }
 
+.index-tile {
+    margin-top: 30px;
+}
+
 .index-thumbnail img {
     height: 385px;
     width: 385px;
-    margin-top: 30px;
 }
 
 footer {

@@ -18,10 +18,10 @@
 
     <div class="row-fluid col xs-12">
         {% for event in events %}
-            <div class="col-sm-4">
+            <div class="col-sm-4 index-tile">
                 {% with event=event.specific %}
-                    <a href="{% pageurl event %}">
-                        <div class="index-thumbnail hover">
+                    <a class="hover" href="{% pageurl event %}">
+                        <div class="index-thumbnail">
                             {% comment %}
                                 Added blank alt attribute to image thumbnails since these are primarily to create a
                                 larger surface area for the page links and alt attributes would unnecessarily complicate

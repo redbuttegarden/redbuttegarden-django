@@ -35,8 +35,10 @@ hr {
     margin-bottom: 3px;
 }
 
-.hover:hover {
+.hover:hover, .hover:focus {
     opacity: .9;
+    outline: none;
+    box-shadow: 0 0 0 5px #FF7744 inset;
 }
 
 .panel-heading:hover {
