@@ -68,8 +68,8 @@
                 <!-- spage is just short for specific page -->
                 {% with spage=block.value.specific %}
                     <div class="col-sm-4 page-link">
-                        <a href="{% pageurl spage %}">
-                            <div class="index-thumbnail hover">
+                        <a class="hover" href="{% pageurl spage %}">
+                            <div class="index-thumbnail">
                                 {% comment %}
                                 Added blank alt attribute to image thumbnails since these are primarily to create a
                                 larger surface area for the page links and alt attributes would unnecessarily complicate
