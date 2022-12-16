@@ -9,10 +9,10 @@
                         <div class="media-left media-middle">
                             {% if list_item.link_url %}
                                 <a href="{{ list.link_url }}">
-                                    <img class="img-rounded" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
+                                    <img class="rounded" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
                                 </a>
                             {% else %}
-                                <img class="img-rounded" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
+                                <img class="rounded" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
                             {% endif %}
                         </div>
                         <div class="media-body">
