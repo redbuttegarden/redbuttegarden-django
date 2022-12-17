@@ -182,6 +182,12 @@ footer {
     text-decoration: none;
 }
 
+.hover:hover, .hover:focus {
+    opacity: .9;
+    outline: #ff7744 auto 10px;
+    outline-offset: -2px;
+}
+
 /* Backgrounds */
 .green-bg {
     color: white;  /* Black text is too difficult to read with green background */
