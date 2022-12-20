@@ -55,67 +55,6 @@ a:hover {
     color: #C4B59E;     /* color when hyperlinks hovered over on default pages*/
 }
 
-/*******************************************/
-/************** Begin Nav Bar **************/
-/*******************************************/
-.dropdown-menu li:hover {
-    background-color: #F2EDE4;
-    color: #000;
-}
-
-nav a, nav a:link, nav a:visited, nav a:active {
-    text-decoration: none;
-}
-
-/* Makes dropdown menu headers change color when selected or clicked, as well as mobile menu icon (Hamburger Menu icon) change to same color */
-nav ul.navbar-nav li.dropdown > a:active,
-nav ul.navbar-nav li.dropdown > a:focus,
-nav ul.navbar-nav li.dropdown > a:hover
-{
-    background-color: #FF7744;
-}
-
-.dropdown-menu li {
-    background-color: #FFF;
-}
-
-.dropdown-menu li:hover, .dropdown-menu li:focus {
-    background-color: #F2EDE4;
-}
-
-.dropdown-menu a:hover li, .dropdown-menu a:focus li {
-    background-color: #F2EDE4;
-    text-decoration: none;
-}
-
-.dropdown ul {
-    padding-top: 0;
-    padding-bottom: 0;
-    font-weight: bold;
-}
-
-nav.navbar {
-    background-color: #00502F;
-    margin-bottom: 0;
-}
-
-#logo img {
-    max-height: 50px;
-    width: auto;
-    padding: 3px 0 3px 0;
-}
-
-@media (max-width: 1320px) {
-    #logo img {
-        padding-right: 0;
-        padding-left: 0;
-    }
-}
-
-/*****************************************/
-/************** End Nav Bar **************/
-/*****************************************/
-
 /************************/
 /** Begin RBG Info Div **/
 /************************/
