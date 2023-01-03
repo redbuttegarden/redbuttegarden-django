@@ -57,11 +57,19 @@ function getSeasonalBanner(season) {
     }
 }
 
-// Clear any existing banner image in the parent banner div
-bannerDiv.innerHTML = '';
-const bannerImage = document.createElement("img");
-bannerImage.setAttribute("src", getSeasonalBanner(season(todaysDate, seasons)));
-bannerImage.setAttribute("alt", "Seasonal banner for What's Blooming Now Blog");
-bannerImage.setAttribute("height", "100");
-bannerImage.setAttribute("width", "1280");
-bannerDiv.appendChild(bannerImage);
+function setSeasonalBanner() {
+    const season = season(todaysDate, seasons);
+
+    if(typeof season !== "undefined") {
+        // Clear any existing banner image in the parent banner div
+        bannerDiv.innerHTML = '';
+        const bannerImage = document.createElement("img");
+        bannerImage.setAttribute("src", getSeasonalBanner(season));
+        bannerImage.setAttribute("alt", "Seasonal banner for What's Blooming Now Blog");
+        bannerImage.setAttribute("height", "100");
+        bannerImage.setAttribute("width", "1280");
+        bannerDiv.appendChild(bannerImage);
+    }
+}
+
+setSeasonalBanner();
