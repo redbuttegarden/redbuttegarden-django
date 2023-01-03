@@ -38,12 +38,6 @@ const seasons = {
 
 const todaysDate = new Date();
 
-console.log(
-    'It is currently',
-    season(todaysDate, seasons),
-    'in northern hemisphere on 4 season astronomical calendar'
-)
-
 function getSeasonalBanner(season) {
     switch (season) {
         case 'spring':
@@ -57,14 +51,17 @@ function getSeasonalBanner(season) {
     }
 }
 
-function setSeasonalBanner() {
-    const season = season(todaysDate, seasons);
-
-    if(typeof season !== "undefined") {
+function setSeasonalBanner(calculatedSeason) {
+    console.log(
+        'It is currently',
+        calculatedSeason,
+        'in northern hemisphere on 4 season astronomical calendar'
+    )
+    if (typeof calculatedSeason !== "undefined") {
         // Clear any existing banner image in the parent banner div
         bannerDiv.innerHTML = '';
         const bannerImage = document.createElement("img");
-        bannerImage.setAttribute("src", getSeasonalBanner(season));
+        bannerImage.setAttribute("src", getSeasonalBanner(calculatedSeason));
         bannerImage.setAttribute("alt", "Seasonal banner for What's Blooming Now Blog");
         bannerImage.setAttribute("height", "100");
         bannerImage.setAttribute("width", "1280");
@@ -72,4 +69,4 @@ function setSeasonalBanner() {
     }
 }
 
-setSeasonalBanner();
+setSeasonalBanner(season(todaysDate, seasons));
