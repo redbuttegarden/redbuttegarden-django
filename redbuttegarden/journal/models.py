@@ -12,6 +12,7 @@ from modelcluster.fields import ParentalManyToManyField, ParentalKey
 from taggit.models import TaggedItemBase, Tag as TaggitTag
 from wagtail.admin.panels import InlinePanel
 from wagtail.admin.panels import FieldPanel
+from wagtail.api import APIField
 from wagtail.contrib.routable_page.models import RoutablePageMixin, re_path
 from wagtail.fields import StreamField
 from wagtail.models import Orderable
@@ -164,6 +165,11 @@ class JournalPage(AbstractBase):
         index.SearchField('body'),
         index.SearchField('authors'),
         index.FilterField('date')
+    ]
+
+    api_fields = [
+        APIField('date'),
+        APIField('body')
     ]
 
     @property

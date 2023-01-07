@@ -11,6 +11,8 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from search import views as search_views
 
+from .api import api_router
+
 urlpatterns = []
 """
 Needed to use this wonky method of defining urlpatterns to avoid having the local
@@ -39,6 +41,7 @@ urlpatterns += [
     path('documents/', include(wagtaildocs_urls)),
 
     path('search/', search_views.search, name='search'),
+    path('api/v2/', api_router.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
 ]
