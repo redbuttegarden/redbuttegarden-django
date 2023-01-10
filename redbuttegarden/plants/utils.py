@@ -10,18 +10,18 @@ from .models import Collection
 logger = logging.getLogger(__name__)
 
 MAP_ICONS = {
-    'Annual': static('img/annual_icon.png'),
-    'Bulb': static('img/bulb_icon.png'),
-    'Deciduous Shrub': static('img/deciduous_shrub_icon.png'),
-    'Deciduous Tree': static('img/deciduous_tree_icon.png'),
-    'Deciduous Vine': static('img/vine_icon.png'),
-    'Evergreen Groundcover': static('img/evergreen_groundcover_icon.png'),
-    'Evergreen Shrub': static('img/evergreen_shrub_icon.png'),
-    'Evergreen Tree': static('img/evergreen_tree_icon.png'),
-    'Evergreen Vine': static('img/vine_icon.png'),
-    'Grass': static('img/grass_icon.png'),
-    'Perennial': static('img/perennial_icon.png'),
-    'Succulent': static('img/succulent_icon.png'),
+    'Annual': static('plants/img/annual_icon.png'),
+    'Bulb': static('plants/img/bulb_icon.png'),
+    'Deciduous Shrub': static('plants/img/deciduous_shrub_icon.png'),
+    'Deciduous Tree': static('plants/img/deciduous_tree_icon.png'),
+    'Deciduous Vine': static('plants/img/vine_icon.png'),
+    'Evergreen Groundcover': static('plants/img/evergreen_groundcover_icon.png'),
+    'Evergreen Shrub': static('plants/img/evergreen_shrub_icon.png'),
+    'Evergreen Tree': static('plants/img/evergreen_tree_icon.png'),
+    'Evergreen Vine': static('plants/img/vine_icon.png'),
+    'Grass': static('plants/img/grass_icon.png'),
+    'Perennial': static('plants/img/perennial_icon.png'),
+    'Succulent': static('plants/img/succulent_icon.png'),
 }
 
 
