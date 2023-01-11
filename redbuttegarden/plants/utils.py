@@ -113,7 +113,7 @@ def filter_by_parameter(request, initial_queryset=None):
         collections = collections.filter(species__full_name__icontains=scientific_name)
     if common_name:
         collections = collections.annotate(search=SearchVector('species__cultivar',
-                                                               'species__vernacular_name'))
+                                                               'species__vernacular_name')).filter(search=common_name)
     if family:
         collections = collections.filter(species__genus__family_id=family)
     if garden_name:

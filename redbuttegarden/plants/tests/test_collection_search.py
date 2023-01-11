@@ -165,3 +165,45 @@ class PlantSearchViewTestCase(TestCase):
 
         json_response = json.loads(response.json())
         self.assertEqual(len(json_response['features']), 1)
+
+    def test_collection_search_by_common_name(self):
+        """Common name search should return hits from both vernacular_name and cultivar."""
+        get_collection(plant_id='1', family_name='Grossulariaceae', genus_name='Ribes', species_name='rubrum',
+                       cultivar='Red Lake', full_name="Ribes rubrum 'Red Lake'", vernacular_name='Red Lake Currant')
+        get_collection(plant_id='2', family_name='Grossulariaceae', genus_name='Ribes', species_name='rubrum',
+                       cultivar='red Lake', full_name="Ribes rubrum 'Red Lake'", vernacular_name='Lake Currant')
+        get_collection(plant_id='3', family_name='Pinaceae', genus_name='Pinus', species_name='resinosa',
+                       cultivar='Don Smith', full_name="Pinus resinosa 'Don Smith'",
+                       vernacular_name='Currant')
+
+        # Should return 2 since plants 1 & 2 have 'red' in their vernacular_name or cultivar name
+        params = {'common_name': 'Red'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        self.assertEqual(len(json_response['features']), 2)
+
+        # Should return 2 since plants 1 & 2 have 'lake' in their vernacular_name or cultivar name
+        params = {'common_name': 'lake'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        self.assertEqual(len(json_response['features']), 2)
+
+        # Should return 3 since all plants have 'currant' in their vernacular_name or cultivar name
+        params = {'common_name': 'currant'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        self.assertEqual(len(json_response['features']), 3)
+
+        # Should return 1 since only plants 3 has 'don smith' in their vernacular_name or cultivar name
+        params = {'common_name': 'don smith'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        self.assertEqual(len(json_response['features']), 1)
