@@ -169,7 +169,8 @@ class JournalPage(AbstractBase):
 
     api_fields = [
         APIField('date'),
-        APIField('body')
+        APIField('body'),
+        APIField('authors')
     ]
 
     @property
