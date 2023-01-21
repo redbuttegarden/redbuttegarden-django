@@ -1,4 +1,4 @@
-{% load static wagtailuserbar wagtailaccessibility_tags %}
+{% load static wagtailcore_tags wagtailuserbar wagtailaccessibility_tags %}
 
 <!DOCTYPE html>
 <html class="no-js" lang="en">
@@ -12,7 +12,7 @@
     <meta name="description" content="{{ page.title }}">
     <meta name="author" content="Red Butte Garden">
     <!-- Facebook Domain Verification -->
-    <meta name="facebook-domain-verification" content="7xf5nzx39bpdnc9taftqhsn1zzvr2e" />
+    <meta name="facebook-domain-verification" content="7xf5nzx39bpdnc9taftqhsn1zzvr2e"/>
     <!-- Chrome, Firefox OS, Opera and Vivaldi -->
     <meta name="theme-color" content="#196143">
     <!-- Windows Phone -->
@@ -23,7 +23,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{% block title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}{% endblock %}
+    <title>
+        {% block title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}{% endblock %}
         {% block title_suffix %}
             {% with self.get_site.site_name as site_name %}
                 {% if site_name %}- {{ site_name }}{% endif %}
@@ -43,7 +44,7 @@
             timeout: 2000
         };
 
-        (function(d) {
+        (function (d) {
             var wf = d.createElement('script'), s = d.scripts[0];
             wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js';
             wf.async = true;
@@ -53,6 +54,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="{% static 'redbuttegarden/js/modernizr-webp.min.js' %}"></script>
+
+    {% if page.dialog_display %}
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/hot-sneaks/jquery-ui.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
+                integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    {% endif %}
 
     {% include "includes/searchbar-toggle.html" %}
 
@@ -78,8 +86,10 @@
 
 {% if not request.is_preview %}
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T35W7V4"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T35W7V4"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
     <!-- End Google Tag Manager (noscript) -->
 {% endif %}
 
@@ -90,20 +100,24 @@
 <main id="main">
     {% block abnormal_content %}
         <div id="rbgdefaultbody" class="container-fluid">
-          <div class="row">
-              <div class="col-sm-12">
-                {% block content %}{% endblock %}
+            <div class="row">
+                <div class="col-sm-12">
+                    {% block content %}{% endblock %}
+                </div>
             </div>
-          </div>
         </div>
     {% endblock %}
 </main>
+
+{% include 'includes/footer.html' %}
+
+{% if page.dialog_display %}
+    <div id="dialog" title="{{ page.dialog_title }}">{{ page.dialog_content|richtext }}</div>
+    <script src="{% static 'redbuttegarden/js/dialog-display.js' %}"></script>
+{% endif %}
 
 {% block extra_js %}
     {# Override this in templates to add extra javascript #}
 {% endblock %}
 </body>
-
-{% include 'includes/footer.html' %}
-
 </html>
