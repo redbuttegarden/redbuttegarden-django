@@ -3,7 +3,7 @@ import logging
 from django import forms
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel, TabbedInterface, ObjectList
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.fields import RichTextField
 from wagtail.models import Page
 from wagtail.documents import get_document_model_string
@@ -68,13 +68,6 @@ class AbstractBase(Page):
         FieldPanel('dialog_content'),
         FieldPanel('dialog_style')
     ]
-
-    edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Content'),
-        ObjectList(dialog_box_panels, heading='Dialog'),
-        ObjectList(Page.promote_panels, heading='Promote'),
-        ObjectList(Page.settings_panels, heading='Settings'),
-    ])
 
     def get_context(self, request, *args, **kwargs):
         from events.models import EventIndexPage

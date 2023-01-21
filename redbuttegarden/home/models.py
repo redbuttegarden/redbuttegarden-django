@@ -9,8 +9,7 @@ from modelcluster.fields import ParentalKey
 from wagtail import blocks
 from wagtail.models import Page, Orderable
 from wagtail.fields import RichTextField, StreamField
-from wagtail.admin.panels import MultiFieldPanel, InlinePanel, PageChooserPanel
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel, TabbedInterface, ObjectList
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
@@ -436,6 +435,13 @@ class GeneralPage(AbstractBase):
     search_fields = AbstractBase.search_fields + [
         index.SearchField('body'),
     ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(AbstractBase.dialog_box_panels, heading='Dialog'),
+        ObjectList(AbstractBase.promote_panels, heading='Promote'),
+        ObjectList(AbstractBase.settings_panels, heading='Settings'),
+    ])
 
 
 class TwoColumnGeneralPage(AbstractBase):

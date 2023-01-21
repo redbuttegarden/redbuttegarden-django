@@ -112,7 +112,7 @@
 {% include 'includes/footer.html' %}
 
 {% if page.dialog_display %}
-    <div id="dialog" title="{{ page.dialog_title }}">{{ page.dialog_content|richtext }}</div>
+    <div id="dialog" class="{{ page.dialog_style }}" title="{{ page.dialog_title }}">{{ page.dialog_content|richtext }}</div>
     <script src="{% static 'redbuttegarden/js/dialog-display.js' %}"></script>
 {% endif %}
 
