@@ -6,8 +6,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
-from wagtail.admin.panels import PageChooserPanel
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, ObjectList, PageChooserPanel, TabbedInterface
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail import blocks
 from wagtail.blocks import PageChooserBlock
@@ -311,6 +310,13 @@ class EventGeneralPage(GeneralPage):
         index.SearchField('event_dates'),
         index.SearchField('notes')
     ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(AbstractBase.dialog_box_panels, heading='Dialog'),
+        ObjectList(promote_panels, heading='Promote'),
+        ObjectList(AbstractBase.settings_panels, heading='Settings'),
+    ])
 
     def get_cached_paths(self):
         """
