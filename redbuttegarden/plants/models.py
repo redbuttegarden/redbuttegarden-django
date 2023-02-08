@@ -25,13 +25,14 @@ class Family(models.Model):
 
 class Genus(models.Model):
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
 
     def __str__(self):
         return ' '.join([self.name, f'({self.family.name})'])
 
     class Meta:
         ordering = ['name']
+        unique_together = ['family', 'name']
         verbose_name_plural = 'genera'
 
 
