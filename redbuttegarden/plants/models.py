@@ -51,7 +51,7 @@ class Species(ClusterableModel):
     subforma = models.CharField(max_length=255, blank=True, null=True)
     cultivar = models.CharField(max_length=255, blank=True, null=True)
     vernacular_name = models.CharField(max_length=255)
-    habit = models.CharField(max_length=255)
+    habit = models.CharField(max_length=255, blank=True, null=True)
     hardiness = ArrayField(base_field=models.PositiveSmallIntegerField(validators=[MinValueValidator(1),
                                                                                    MaxValueValidator(13)]),
                            size=13, blank=True, null=True)

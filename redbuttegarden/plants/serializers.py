@@ -31,7 +31,7 @@ class GenusSerializer(serializers.ModelSerializer):
 
 class SpeciesSerializer(serializers.ModelSerializer):
     genus = GenusSerializer()
-    habit = serializers.CharField(max_length=255, required=False)
+    habit = serializers.CharField(max_length=255, required=False, allow_blank=True)
     hardiness = serializers.ListField(allow_empty=True, allow_null=True,
                                       child=serializers.IntegerField(label='Hardiness',
                                                                      max_value=13,
