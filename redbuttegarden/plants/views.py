@@ -4,6 +4,7 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
+from django.db import IntegrityError
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.middleware.csrf import get_token
 from django.urls import reverse
@@ -158,12 +159,19 @@ def set_image(request, pk):
         if img_created:
             image.tags.add('BRAHMS')
 
-        species_image, species_img_created = SpeciesImage.objects.get_or_create(
-            species=species,
-            image=image,
-            copyright=copyright_text,
-            defaults={'caption': species.full_name}
-        )
+        try:
+            species_image, species_img_created = SpeciesImage.objects.get_or_create(
+                species=species,
+                image=image,
+                copyright=copyright_text,
+                defaults={'caption': species.full_name}
+            )
+        except IntegrityError:
+            logger.debug(
+                f'Failed to add image for species {species} ({pk}).\n\n\rImage: {image}\n\rCopyright: {copyright_text}')
+            return JsonResponse({'status': 'failure',
+                                 'image_created': img_created,
+                                 'species_image_created': False})
 
         return JsonResponse({'status': 'success',
                              'image_created': img_created,
