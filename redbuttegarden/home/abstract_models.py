@@ -1,9 +1,10 @@
 import logging
 
+from django import forms
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import MultiFieldPanel
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.fields import RichTextField
 from wagtail.models import Page
 from wagtail.documents import get_document_model_string
 
@@ -37,6 +38,18 @@ class AbstractBase(Page):
             'the changes to ALL pages where the document is used'),
         verbose_name='Custom CSS'
     )
+    dialog_display = models.BooleanField(help_text=_('Should this dialog be displayed?'), null=True, blank=True,
+                                         default=False)
+    dialog_title = models.CharField(help_text=_("Title for pop-up dialog box"),
+                                    max_length=100, null=True, blank=True)
+    dialog_content = RichTextField(
+        help_text=_('Main content of the dialog box'),
+        null=True, blank=True
+    )
+    dialog_style = models.CharField(choices=[
+        ('corner', 'Corner'),
+        ('full', 'Full Page')
+    ], null=True, blank=True, max_length=6)
 
     class Meta:
         abstract = True
@@ -47,6 +60,13 @@ class AbstractBase(Page):
             FieldPanel('thumbnail'),
             FieldPanel('custom_css')
         ], classname="collapsible"),
+    ]
+
+    dialog_box_panels = [
+        FieldPanel('dialog_display', widget=forms.CheckboxInput),
+        FieldPanel('dialog_title'),
+        FieldPanel('dialog_content'),
+        FieldPanel('dialog_style')
     ]
 
     def get_context(self, request, *args, **kwargs):

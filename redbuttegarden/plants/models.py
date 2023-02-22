@@ -25,13 +25,14 @@ class Family(models.Model):
 
 class Genus(models.Model):
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
 
     def __str__(self):
         return ' '.join([self.name, f'({self.family.name})'])
 
     class Meta:
         ordering = ['name']
+        unique_together = ['family', 'name']
         verbose_name_plural = 'genera'
 
 
@@ -50,7 +51,7 @@ class Species(ClusterableModel):
     subforma = models.CharField(max_length=255, blank=True, null=True)
     cultivar = models.CharField(max_length=255, blank=True, null=True)
     vernacular_name = models.CharField(max_length=255)
-    habit = models.CharField(max_length=255)
+    habit = models.CharField(max_length=255, blank=True, null=True)
     hardiness = ArrayField(base_field=models.PositiveSmallIntegerField(validators=[MinValueValidator(1),
                                                                                    MaxValueValidator(13)]),
                            size=13, blank=True, null=True)
