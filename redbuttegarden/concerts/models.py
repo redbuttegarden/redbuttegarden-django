@@ -135,8 +135,8 @@ class TableInfoCardList(blocks.StructBlock):
 
 class ConcertBlock(blocks.StructBlock):
     band_img = ImageChooserBlock(required=True)
-    hidden = blocks. BooleanBlock(default=True, help_text=_('If hidden box is checked, concert will not be displayed on'
-                                                            ' the page'), required=False)
+    hidden = blocks.BooleanBlock(default=True, help_text=_('If hidden box is checked, concert will not be displayed on'
+                                                           ' the page'), required=False)
     on_sale = blocks.BooleanBlock(default=True, help_text=_('If unchecked, Buy Tickets button will be grayed out'),
                                   required=False)
     virtual = blocks.BooleanBlock(default=False, help_text=_('Is this a virtual concert?'), required=False)
@@ -178,6 +178,7 @@ class SimpleConcertBlock(blocks.StructBlock):
 
 class ConcertStreamBlock(blocks.StreamBlock):
     concerts = ConcertBlock()
+    paragraph = AlignedParagraphBlock()
 
     class Meta:
         required = False
@@ -255,7 +256,9 @@ class ConcertPage(AbstractBase):
     def sort_visible_concerts(self):
         # Get a list of concert objects and determine the following:
         # Are they in the past and if they are virtual, is the on-demand offering also in the past?
-        concerts = [concert.value for concert in self.body if not concert.value['hidden'] and len(concert.value['concert_dates']) > 0]
+        concerts = [concert.value for concert in self.body if
+                    concert.block_type == 'concerts' and not concert.value['hidden'] and len(
+                        concert.value['concert_dates']) > 0]
         for concert in concerts:
             concert['concert_dates'] = sorted(concert['concert_dates'])
             concert.soonest_date = sorted(concert['concert_dates'])[-1]
@@ -264,6 +267,7 @@ class ConcertPage(AbstractBase):
 
         # Sort concerts by soonest date
         return sorted(concerts, key=lambda x: x.soonest_date)
+
 
 class LineupBlock(blocks.StructBlock):
     year = blocks.IntegerBlock(min_value=1980, required=True)
