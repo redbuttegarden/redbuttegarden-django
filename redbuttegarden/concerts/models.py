@@ -182,7 +182,6 @@ class SimpleConcertBlock(blocks.StructBlock):
 
 class ConcertStreamBlock(blocks.StreamBlock):
     concerts = ConcertBlock()
-    paragraph = AlignedParagraphBlock()
 
     class Meta:
         required = False
