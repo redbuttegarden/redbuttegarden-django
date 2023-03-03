@@ -135,6 +135,10 @@ class TableInfoCardList(blocks.StructBlock):
 
 class ConcertBlock(blocks.StructBlock):
     band_img = ImageChooserBlock(required=True)
+    wave = blocks.ChoiceBlock(choices=[
+        (1, 'Wave 1'),
+        (2, 'Wave 2')
+    ], required=False)
     hidden = blocks.BooleanBlock(default=True, help_text=_('If hidden box is checked, concert will not be displayed on'
                                                            ' the page'), required=False)
     on_sale = blocks.BooleanBlock(default=True, help_text=_('If unchecked, Buy Tickets button will be grayed out'),

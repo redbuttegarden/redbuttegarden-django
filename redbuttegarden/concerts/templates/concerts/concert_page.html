@@ -85,16 +85,25 @@
                                     <picture>
                                         {% image concert.band_img fill-300x300 alt="" %}
 
+                                        {% if concert.wave %}
+                                            <div class="soldout wave-banner">
+                                                {% if concert.wave == '1' %}
+                                                    {# TODO - change to wave banners #}
+                                                    <img src="{% static 'concerts/img/cancelled.png' %}" alt="Wave 1 concert">
+                                                {% elif concert.wave == '2' %}
+                                                    <img src="{% static 'concerts/img/cancelled.png' %}" alt="Wave 2 concert">
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+
                                         {% if concert.canceled %}
                                             <div class="soldout">
                                                 <img src="{% static 'concerts/img/cancelled.png' %}" alt="Concert canceled">
                                             </div>
-
                                         {% elif concert.postponed %}
                                             <div class="soldout">
                                                 <img src="{% static 'concerts/img/postponed.png' %}" alt="Concert postponed">
                                             </div>
-
                                         {% elif concert.sold_out %}
                                             <div class="soldout">
                                                 <img src="{% static 'concerts/img/SoldOut.png' %}" alt="Concert sold out">
