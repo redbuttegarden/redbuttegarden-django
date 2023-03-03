@@ -200,6 +200,7 @@ class ConcertPage(AbstractBase):
     intro = RichTextField(blank=True)
     wave_one_info = RichTextField(blank=True, help_text=_('Displayed at the top of the list of concerts'))
     wave_two_info = RichTextField(blank=True, help_text=_('Displayed above any wave 2 concerts (if there are any)'))
+    wave_two_sale_date = models.DateField(default=None, null=True, blank=True)
     donor_banner = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -247,6 +248,7 @@ class ConcertPage(AbstractBase):
         PageChooserPanel('button_four'),
         FieldPanel('wave_one_info', classname="full"),
         FieldPanel('wave_two_info', classname="full"),
+        FieldPanel('wave_two_sale_date'),
         FieldPanel('body'),
     ]
 
@@ -257,15 +259,24 @@ class ConcertPage(AbstractBase):
     def get_context(self, request, **kwargs):
         context = super().get_context(request, **kwargs)
 
-        context['concerts'] = self.sort_visible_concerts()
+        concerts = self.get_visible_concerts()
+        if self.wave_two_sale_date and datetime.date.today() < self.wave_two_sale_date:
+            context['wave_one_concerts'] = self.sort_concerts(
+                [concert for concert in concerts if concert['wave'] and concert['wave'] == '1'])
+            context['wave_two_concerts'] = self.sort_concerts(
+                [concert for concert in concerts if concert['wave'] and concert['wave'] == '2'])
+        else:
+            context['concerts'] = self.sort_concerts(concerts)
         return context
 
-    def sort_visible_concerts(self):
-        # Get a list of concert objects and determine the following:
+    def get_visible_concerts(self):
+        return [concert.value for concert in self.body if
+                concert.block_type == 'concerts' and not concert.value['hidden'] and len(
+                    concert.value['concert_dates']) > 0]
+
+    def sort_concerts(self, concerts):
+        # Determine the following:
         # Are they in the past and if they are virtual, is the on-demand offering also in the past?
-        concerts = [concert.value for concert in self.body if
-                    concert.block_type == 'concerts' and not concert.value['hidden'] and len(
-                        concert.value['concert_dates']) > 0]
         for concert in concerts:
             concert['concert_dates'] = sorted(concert['concert_dates'])
             concert.soonest_date = sorted(concert['concert_dates'])[-1]

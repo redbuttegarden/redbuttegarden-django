@@ -70,6 +70,16 @@
     left: unset;
 }
 
+.wave-info {
+    padding: 1em;
+    margin: 1em;
+    font-size: larger;
+}
+
+.wave-info > p, .wave-info > h2, .wave-info > h3, .wave-info > h4 {
+    margin: 0.1em;
+}
+
 .invisible{
     display: none;
 }
