@@ -198,6 +198,8 @@ class ConcertPage(AbstractBase):
     banner_link = models.URLField(help_text=_("Where to direct the banner image link"),
                                   blank=True)
     intro = RichTextField(blank=True)
+    wave_one_info = RichTextField(blank=True, help_text=_('Displayed at the top of the list of concerts'))
+    wave_two_info = RichTextField(blank=True, help_text=_('Displayed above any wave 2 concerts (if there are any)'))
     donor_banner = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
