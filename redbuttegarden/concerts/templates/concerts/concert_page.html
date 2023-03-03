@@ -73,6 +73,10 @@
                 <div class="row text-center">
                     <a href="{% get_media_prefix %}concert_calendar_{{ page.slug }}.ics">Download iCal Event Calendar</a>
                 </div>
+
+                <div id='wave-one-info' class="dark-blue-bg text-center white">
+                    {{ page.wave_one_info|richtext }}
+                </div>
             {% endif %}
 
             <div class="row-fluid">

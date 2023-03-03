@@ -245,6 +245,8 @@ class ConcertPage(AbstractBase):
         PageChooserPanel('button_two'),
         PageChooserPanel('button_three'),
         PageChooserPanel('button_four'),
+        FieldPanel('wave_one_info', classname="full"),
+        FieldPanel('wave_two_info', classname="full"),
         FieldPanel('body'),
     ]
 
