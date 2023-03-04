@@ -7,8 +7,7 @@ from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
-from wagtail.admin.panels import PageChooserPanel
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, PageChooserPanel
 from wagtail.fields import RichTextField, StreamField
 from wagtail.search import index
 
@@ -163,7 +162,11 @@ class ConcertBlock(blocks.StructBlock):
     public_price = blocks.CharBlock(default='$', max_length=100)
 
     # Added a ticket URL for concerts that are sold from a non-standard URL
-    ticket_url = blocks.URLBlock(default='https://redbuttegarden.ticketfly.com')
+    ticket_url = blocks.URLBlock(default='https://www.etix.com/ticket/v/16193/red-butte-garden')
+
+    class Meta:
+        icon = 'music'
+        form_template = 'concerts/block_forms/concert.html'
 
 
 class SimpleConcertBlock(blocks.StructBlock):
