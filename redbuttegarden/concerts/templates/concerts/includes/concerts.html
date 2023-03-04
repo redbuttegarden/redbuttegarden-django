@@ -14,9 +14,11 @@
                                 <div class="soldout wave-banner">
                                     {% if concert.wave == '1' %}
                                         {# TODO - change to wave banners #}
-                                        <img src="{% static 'concerts/img/cancelled.png' %}" alt="Wave 1 concert">
+                                        <img class="wave-one-banner" src="{% static 'concerts/img/wave1.png' %}"
+                                             alt="Wave 1 concert">
                                     {% elif concert.wave == '2' %}
-                                        <img src="{% static 'concerts/img/cancelled.png' %}" alt="Wave 2 concert">
+                                        <img class="wave-two-banner" src="{% static 'concerts/img/wave2.png' %}"
+                                             alt="Wave 2 concert">
                                     {% endif %}
                                 </div>
                             {% endif %}
