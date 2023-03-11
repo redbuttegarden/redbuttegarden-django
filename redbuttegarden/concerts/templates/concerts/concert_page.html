@@ -75,9 +75,11 @@
                 </div>
 
                 {% if wave_one_concerts %}
-                    <div class="dark-blue-bg text-center white wave-info">
-                        {{ page.wave_one_info|richtext }}
-                    </div>
+                    {% if page.wave_one_info %}
+                        <div class="dark-blue-bg text-center white wave-info">
+                            {{ page.wave_one_info|richtext }}
+                        </div>
+                    {% endif %}
 
                     {% include 'concerts/includes/concerts.html' with concerts=wave_one_concerts %}
 
