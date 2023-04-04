@@ -72,7 +72,7 @@ urllib3==1.26.7
 wagtail==4.1.4
 wagtail-accessibility==0.2.1
 webencodings==0.5.1
-Werkzeug==0.16.1
+Werkzeug==2.2.3
 Willow==1.4
 wsgi-request-logger==0.4.6
 xlrd==2.0.1
