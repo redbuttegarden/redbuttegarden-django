@@ -575,6 +575,7 @@ class FAQPage(AbstractBase):
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
+        ('dropdown_button_list', ButtonListDropdownInfo()),
         ('image', ImageChooserBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('FAQ_list', FAQList()),
