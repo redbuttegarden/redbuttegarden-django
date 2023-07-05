@@ -2,6 +2,7 @@ import logging
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from django.db import IntegrityError
@@ -263,6 +264,12 @@ def collection_search(request):
     """
     View for filtering Collection objects to be displayed on the plant map.
     """
+    form = CollectionSearchForm()
+
+    context = {
+        'form': form
+    }
+
     if request.method == 'POST':
         form = CollectionSearchForm(request.POST)
         if form.is_valid():
@@ -281,13 +288,10 @@ def collection_search(request):
                 url += '?' + urlencode(params)
 
             return redirect(url)
-    else:
-        form = CollectionSearchForm()
+        else:
+            messages.add_message(request, messages.ERROR, "Received invalid form data. Please edit your request and try again")
 
-        context = {
-            'form': form
-        }
-        return render(request, 'plants/collection_search.html', context)
+    return render(request, 'plants/collection_search.html', context)
 
 
 def collection_list(request):
