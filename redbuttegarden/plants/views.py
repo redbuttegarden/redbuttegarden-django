@@ -4,6 +4,7 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.db import IntegrityError
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponseNotFound
@@ -187,8 +188,12 @@ def csrf_view(request):
 
 def plant_map_view(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'GET':
-        collections = filter_by_parameter(
-            request, Collection.objects.exclude(location=None))
+        try:
+            collections = filter_by_parameter(
+                request, Collection.objects.exclude(location=None))
+        except ValidationError:
+            return JsonResponse(data={'message': 'Encountered error while parsing parameters.'}, status=400)
+
         feature_collection = get_feature_collection(collections)
         collection_geojson = dumps(feature_collection)
         return JsonResponse(collection_geojson, safe=False)

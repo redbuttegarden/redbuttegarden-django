@@ -12,7 +12,6 @@ def get_collection(latitude=40, longitude=-111,  # Location
                    area="Butterfly Walk", ga_name="Children's Garden", code="CG-06",  # GardenArea
                    family_name="family",  # Family
                    genus_name="genus",  # Genus
-
                    # Species
                    species_name="praecox", full_name="Cytisus × praecox 'Allgold'", subspecies=None,
                    variety=None, subvariety=None, forma=None, subforma=None, cultivar="Allgold",
@@ -20,7 +19,6 @@ def get_collection(latitude=40, longitude=-111,  # Location
                    water_regime="Low", exposure="Full Sun to Part Shade", bloom_time=None,
                    plant_size="5' h x 5' w", flower_color="Yellow", utah_native=False, plant_select=False,
                    deer_resist=True, rabbit_resist=True, bee_friend=False, high_elevation=False,
-
                    plant_date="2000-5-1", plant_id="2000-1024*1", commemoration_category=None,
                    commemoration_person=None):
     if hardiness is None:
