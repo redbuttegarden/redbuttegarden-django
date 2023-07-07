@@ -2067,7 +2067,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     min-width: 100px;
     max-width: 1280px;
     width: 100%;
-    background-color:#c4b59e;
+    background-color:#65563E;
     cursor: pointer; /* Adding this makes collapse panels with this class work on Safari on iOS devices */
 }
 
