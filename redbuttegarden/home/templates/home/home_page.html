@@ -48,7 +48,10 @@
 
                     <div id="rbghours" class="col-xs-3">
                         <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
-                            <div class="rbghours hover"></div>
+                            <div class="rbghours hover">
+                                <div><span class="fa fa-regular fa-clock fa-4x"></span></div>
+                                <div>HOURS OF OPERATION</div>
+                            </div>
                         </a>
                         <div id="gardenHours"></div>
                         <div id="gardenStatus"></div>
@@ -58,17 +61,26 @@
 
                     <div class="col-xs-3" onmouseenter="admissionHoverOn()">
                         <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
-                            <div id="rbgadmission" class="rbgadmission hover"></div>
+                            <div id="rbgadmission" class="rbgadmission hover">
+                                <div><span class="fa fa-regular fa-ticket fa-4x"></span></div>
+                                <div>ADMISSION RATES</div>
+                            </div>
                         </a>
                     </div>
                     <div id="rbgdirections" class="col-xs-3">
                         <a href="{% slugurl 'directions' %}" aria-label="How to get to the garden">
-                            <div class="rbgdirections hover"></div>
+                            <div class="rbgdirections hover">
+                                <div><span class="fa fa-solid fa-map fa-4x"></span></div>
+                                <div>HOW TO GET HERE</div>
+                            </div>
                         </a>
                     </div>
                     <div id="rbgweather" class="col-xs-3">
                         <a href="https://www.weatherbug.com/weather-camera/?cam=SLTWK" target="_blank" aria-label="External link to weatherbug weather station with camera">
-                            <div class="rbgweather hover"></div>
+                            <div class="rbgweather hover">
+                                <div><span class="fa fa-solid fa-cloud-sun fa-4x"></span></div>
+                                <div>TODAY'S WEATHER</div>
+                            </div>
                         </a>
                     </div>
 

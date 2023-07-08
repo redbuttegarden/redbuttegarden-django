@@ -46,7 +46,7 @@ hr {
 }
 
 a, a:link, a:visited, a:active {
-	color: #A7916E;		/* hyperlink color for default pages */
+	color: #65563E;		/* hyperlink color for default pages */
 	font-weight: bold;
 	text-decoration: underline;
 }
@@ -498,12 +498,10 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 #rbginfo, #rbginfo2 {
     max-width: 1280px;
     margin: 0 auto 0 auto;
-    color: #FFF;
 }
 
-#rbghours {
-    text-align: center;
-    font-size: 11px;
+#rbginfobg, #rbginfo a:link, #rbginfo a:visited {
+    color: #FFF;
 }
 
 #rbgadmission table, #rbgadmission2 table {
@@ -512,6 +510,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     font-size: 11px;
     color: #FFF;
     width: 215px;
+    text-align: left;
 }
 
 #admissionDiscount {
@@ -878,8 +877,11 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 
 #prefooter {
     max-width: 1280px;
-    margin: 0 auto 0 auto;
-    clear: both;
+    margin: 1em auto;
+}
+
+#prefooter a:link, #prefooter a:visited {
+    color: #65563E;
 }
 
 #infoempty1, #infoempty2, #empty1, #empty2 {
@@ -950,7 +952,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 }
 
 .rbgfooterlinks a:hover {
-    color: #C4B59E;
+    color: #F2EDE4;
 }
 
 #social-media-wrapper {
@@ -1022,22 +1024,6 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 .googleplus {
     width:39px;
     height: 39px;
-}
-
-.no-webp .googleplus {
-    background: url('../img/sprites.png') -160px -130px;
-}
-
-.webp .googleplus {
-    background: url('../img/sprites.webp') -160px -130px;
-}
-
-.no-webp .googleplus:hover {
-    background: url('../img/sprites.png') -200px -130px;
-}
-
-.webp .googleplus:hover {
-    background: url('../img/sprites.webp') -200px -130px;
 }
 
 .facebook {
@@ -1143,27 +1129,6 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 
 .no-webp .snapchat:hover {
     background: url('../img/sprites.webp') -360px -130px;
-}
-
-.reddit {
-    width:39px;
-    height: 39px;
-}
-
-.no-webp .reddit {
-    background: url('../img/sprites.png') -0px -130px;
-}
-
-.webp .reddit {
-    background: url('../img/sprites.webp') -0px -130px;
-}
-
-.no-webp .reddit:hover {
-    background: url('../img/sprites.png') -40px -130px;
-}
-
-.webp .reddit:hover {
-    background: url('../img/sprites.webp') -40px -130px;
 }
 
 .pinterest {
@@ -2398,73 +2363,9 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     background-color: #A9EAA9;
 }
 
-/********************************/
-/* Test Sprite for Presentation */
-/********************************/
-
-.rbgadmission, .rbghours, .rbgdirections, .rbgweather {
-    max-width: 100%;
-    background-size: 100%;
-}
-
-.rbghours {
-    display:block;
+#rbginfo {
+    text-align: center;
     margin: 20px auto 0 auto;
-    width:135px;
-    height:84px;
-}
-
-.no-webp .rbghours {
-    background: url('../img/sprites.png') 0 -323px ;
-}
-
-.webp .rbghours {
-    background: url('../img/sprites.webp') 0 -323px ;
-}
-
-.rbgadmission {
-    display:block;
-    margin: 20px auto 0 auto;
-    width:135px;
-    height:84px;
-}
-
-.no-webp .rbgadmission {
-    background: url('../img/sprites.png') -150px -328px ;
-}
-
-.webp .rbgadmission {
-    background: url('../img/sprites.webp') -150px -328px ;
-}
-
-.rbgdirections {
-    display:block;
-    margin: 20px auto 0 auto;
-    width:135px;
-    height:84px;
-}
-
-.no-webp .rbgdirections {
-    background: url('../img/sprites.png') -315px -170px ;
-}
-
-.webp .rbgdirections {
-    background: url('../img/sprites.webp') -315px -170px ;
-}
-
-.rbgweather {
-    display:block;
-    margin: 20px auto 0 auto;
-    width:135px;
-    height:84px;
-}
-
-.no-webp .rbgweather {
-    background: url('../img/sprites.png') -180px -170px ;
-}
-
-.webp .rbgweather {
-    background: url('../img/sprites.webp') -180px -170px ;
 }
 
 /* Hides image on mobile devices */
