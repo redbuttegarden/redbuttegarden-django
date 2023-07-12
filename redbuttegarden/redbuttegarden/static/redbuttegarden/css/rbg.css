@@ -3,6 +3,11 @@ figcaption {
     font-style: italic;
 }
 
+#rbginfo figcaption {
+    font-style: normal;
+    margin-bottom: 1em;
+}
+
 hr {
     width: 95%;
 }

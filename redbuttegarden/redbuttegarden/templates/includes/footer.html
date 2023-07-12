@@ -10,7 +10,9 @@
                         <div class="hover">
                             <figure>
                                 <picture>
-                                    <img src="{% static 'redbuttegarden/img/footer/become_a_member.png' %}">
+                                    <source srcset="{% static 'redbuttegarden/img/footer/become_a_member_icon.webp' %}" type="image/webp">
+                                    <source srcset="{% static 'redbuttegarden/img/footer/become_a_member_icon.png' %}" type="image/png">
+                                    <img src="{% static 'redbuttegarden/img/footer/become_a_member_icon.png' %}" alt="ID card icon">
                                 </picture>
                                 <figcaption>BECOME A MEMBER</figcaption>
                             </figure>
@@ -20,16 +22,28 @@
                 <div class="col-xs-4">
                     <a href="{% include 'includes/give-link.html' %}">
                         <div class="hover">
-                            <div><span class="fa fa-solid fa-money fa-4x"></span></div>
-                            <div>DONATE TO THE GARDEN</div>
+                            <figure>
+                                <picture>
+                                    <source srcset="{% static 'redbuttegarden/img/footer/donate_to_the_garden_icon.webp' %}" type="image/webp">
+                                    <source srcset="{% static 'redbuttegarden/img/footer/donate_to_the_garden_icon.png' %}" type="image/png">
+                                    <img src="{% static 'redbuttegarden/img/footer/donate_to_the_garden_icon.png' %}" alt="Dollar symbol icon">
+                                </picture>
+                                <figcaption>DONATE TO THE GARDEN</figcaption>
+                            </figure>
                         </div>
                     </a>
                 </div>
                 <div class="col-xs-4">
                     <a href="{% slugurl 'volunteer-at-red-butte-garden' %}">
                         <div class="hover">
-                            <div><span class="fa fa-solid fa-seedling fa-4x"></span></div>
-                            <div>VOLUNTEER WITH US</div>
+                            <figure>
+                                <picture>
+                                    <source srcset="{% static 'redbuttegarden/img/footer/volunteer_with_us_icon.webp' %}" type="image/webp">
+                                    <source srcset="{% static 'redbuttegarden/img/footer/volunteer_with_us_icon.png' %}" type="image/png">
+                                    <img src="{% static 'redbuttegarden/img/footer/volunteer_with_us_icon.png' %}" alt="Shovel icon">
+                                </picture>
+                                <figcaption>VOLUNTEER WITH US</figcaption>
+                            </figure>
                         </div>
                     </a>
                 </div>
