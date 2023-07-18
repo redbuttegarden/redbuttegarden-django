@@ -18,6 +18,8 @@
 {% endblock %}
 
 {% block extra_js %}
+    <script src="https://www.etix.com/ticket/bundles/websiteConversion.bundle.js"></script>
+
     <!-- get order data -->
     <script>
         const order = getEtixOrder();
@@ -28,8 +30,8 @@
         firstName.textContent = order.firstName;
         total.textContent = order.total;
         currency.textContent = order.currency;
-    </script>
 
-    <!-- KSL Conversion Tracking -->
-    <script async src='https://tag.simpli.fi/sifitag/334e2690-d5ee-0139-47a1-06abc14c0bc6'></script>
+        // FB Pixel code is added via Google Tag Manager
+        fbq('track', 'Purchase', {value: order.total, currency: order.currency});
+    </script>
 {% endblock %}
