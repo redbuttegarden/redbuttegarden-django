@@ -13,8 +13,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 ALLOWED_HOSTS = ['0.0.0.0',
                  'davlmcslie.execute-api.us-east-1.amazonaws.com',  # Newer AWS Account
                  'd1mg1drmxhfql.cloudfront.net',
-                 'redbuttegarden.org', 'www.redbuttegarden.org', 'train.redbuttegarden.org']
-# TODO - Allow dev-shop here when we want to continue working on that
+                 'redbuttegarden.org', 'www.redbuttegarden.org', 'train.redbuttegarden.org',
+                 'dev-shop.redbuttegarden.org']
 
 BASE_URL = 'https://redbuttegarden.org'
 

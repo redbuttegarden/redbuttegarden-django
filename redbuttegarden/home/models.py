@@ -7,9 +7,12 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 
 from wagtail import blocks
-from wagtail.models import Page, Orderable
+from wagtail.contrib.settings.models import BaseSiteSetting
+from wagtail.contrib.settings.registry import register_setting
+from wagtail.models import Page, Orderable, DraftStateMixin, RevisionMixin, PreviewableMixin, TranslatableMixin
 from wagtail.fields import RichTextField, StreamField
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel, TabbedInterface, ObjectList
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel, TabbedInterface, \
+    ObjectList, PublishingPanel
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
@@ -754,3 +757,48 @@ class RetailPartnerPage(AbstractBase):
             except IndexError as e:
                 logger.error('[!] Failed to find banner for Retail Partner Page: ', e)
         return super().save_revision(*args, **kwargs)
+
+class FooterText(
+    DraftStateMixin,
+    RevisionMixin,
+    PreviewableMixin,
+    TranslatableMixin,
+    models.Model,
+):
+    """
+    This provides editable text for the site footer. It is made
+    accessible on the template via a template tag defined in base/templatetags/
+    navigation_tags.py
+    """
+
+    body = RichTextField()
+
+    panels = [
+        FieldPanel("body"),
+        PublishingPanel(),
+    ]
+
+    def __str__(self):
+        return "Footer text"
+
+    def get_preview_template(self, request, mode_name):
+        return "base.html"
+
+    def get_preview_context(self, request, mode_name):
+        return {"footer_text": self.body}
+
+    class Meta(TranslatableMixin.Meta):
+        verbose_name_plural = "Footer Text"
+
+@register_setting
+class SiteSettings(BaseSiteSetting):
+    title_suffix = models.CharField(
+        verbose_name="Title suffix",
+        max_length=255,
+        help_text="The suffix for the title meta tag e.g. ' | Red Butte Garden'",
+        default="Red Butte Garden",
+    )
+
+    panels = [
+        FieldPanel("title_suffix"),
+    ]
