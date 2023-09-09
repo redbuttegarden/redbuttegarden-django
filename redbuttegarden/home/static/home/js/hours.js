@@ -46,7 +46,7 @@ concerts.push(new Date(2023, 9, 7));
 concerts.push(new Date(2023, 9, 10));
 concerts.push(new Date(2023, 9, 11));
 concerts.push(new Date(2023, 9, 13));
-concerts.push(new Date(2023, 9, 19));
+concerts.push(new Date(2023, 9, 18));
 concerts.push(new Date(2023, 9, 20));
 //#endregion
 
