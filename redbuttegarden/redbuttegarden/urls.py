@@ -32,6 +32,7 @@ urlpatterns += [
     path('plants/', include('plants.urls', namespace='plants')),
     path('accounts/', include('custom_user.urls', namespace='custom-user')),
     path('concerts/', include('concerts.urls', namespace='concerts')),
+    path('shop/', include('shop.urls', namespace='shop')),
 
     path('django-admin/', admin.site.urls),
 
