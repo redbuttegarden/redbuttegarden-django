@@ -1,9 +1,9 @@
 import json
 from django.contrib.auth.models import Group
-from wagtail.core.models import Page
+from wagtail.models import Page
 from wagtail.images import get_image_model
 from wagtail.images.tests.utils import get_test_image_file
-from wagtail.tests.utils import WagtailPageTests, get_user_model
+from wagtail.test.utils import WagtailPageTests, get_user_model
 
 from home.models import RetailPartnerPage
 

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 def concert_page_changed(concert_page):
     logger.info('Generating new iCal file with concerts from %s...', concert_page.title)
     c = Calendar()
-    concerts = concert_page.sort_visible_concerts()
+    concerts = concert_page.sort_concerts(concert_page.get_visible_concerts())
 
     for concert in concerts:
         e = Event()

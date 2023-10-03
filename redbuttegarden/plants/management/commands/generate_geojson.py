@@ -11,7 +11,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            feature_collection = get_feature_collection(Collection.objects.all())
+            # Get all collections with Locations
+            feature_collection = get_feature_collection(Collection.objects.exclude(location=None))
 
             with open('collections.geojson', 'w') as f:
                 dump(feature_collection, f)

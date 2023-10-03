@@ -1,47 +1,116 @@
-{% load  static  wagtailsettings_tags wagtailuserbar %}
+{% load navigation_tags static wagtailsettings_tags wagtailuserbar %}
 {% get_settings %}
 
-{# Global stylesheets #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>
+        {% block title %}
+            {% if page.seo_title %}
+                {{ page.seo_title }}
+            {% else %}
+                {{ page.title }}
+            {% endif %}
+        {% endblock %}
+        {% block title_suffix %}
+            | {{ settings.home.SiteSettings.title_suffix }}
+        {% endblock %}
+    </title>
+    <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% endif %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
-<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
-<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+    {# Force all links in the live preview panel to be opened in a new tab #}
+    {% if request.in_preview_panel %}
+        <base target="_blank">
+    {% endif %}
 
+    {# Global stylesheets #}
+    <link rel="stylesheet" type="text/css" href="{% static 'shop/css/main.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+</head>
+
+<body class="{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}">
 {# Snipcart #}
-
 {% if settings.shop.SnipcartSettings.api_key %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <script src="https://cdn.snipcart.com/scripts/2.0/snipcart.js" id="snipcart" data-api-key="{{ settings.shop.SnipcartSettings.api_key }}"></script>
-    <link href="https://cdn.snipcart.com/themes/2.0/base/snipcart.min.css" type="text/css" rel="stylesheet" />
-{% endif %}
+    <script>
+        window.SnipcartSettings = {
+            publicApiKey: "{{ settings.shop.SnipcartSettings.api_key }}",
+            loadStrategy: "on-user-interaction",
+            version: "3.7.1",
+            timeoutDuration: 5000,
+            addProductBehavior: "none",
+            modalStyle: "side",
+        };
 
+        (function () {
+            var c, d;
+            (d = (c = window.SnipcartSettings).version) != null || (c.version = "3.0");
+            var s, S;
+            (S = (s = window.SnipcartSettings).timeoutDuration) != null || (s.timeoutDuration = 2750);
+            var l, p;
+            (p = (l = window.SnipcartSettings).domain) != null || (l.domain = "cdn.snipcart.com");
+            var w, u;
+            (u = (w = window.SnipcartSettings).protocol) != null || (w.protocol = "https");
+            var m, g;
+            (g = (m = window.SnipcartSettings).loadCSS) != null || (m.loadCSS = !0);
+            var y = window.SnipcartSettings.version.includes("v3.0.0-ci") || window.SnipcartSettings.version != "3.0" && window.SnipcartSettings.version.localeCompare("3.4.0", void 0, {
+                numeric: !0,
+                sensitivity: "base"
+            }) === -1, f = ["focus", "mouseover", "touchmove", "scroll", "keydown"];
+            window.LoadSnipcart = o;
+            document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", r) : r();
+
+            function r() {
+                window.SnipcartSettings.loadStrategy ? window.SnipcartSettings.loadStrategy === "on-user-interaction" && (f.forEach(function (t) {
+                    return document.addEventListener(t, o)
+                }), setTimeout(o, window.SnipcartSettings.timeoutDuration)) : o()
+            }
+
+            var a = !1;
+
+            function o() {
+                if (a) return;
+                a = !0;
+                let t = document.getElementsByTagName("head")[0], n = document.querySelector("#snipcart"),
+                    i = document.querySelector('src[src^="'.concat(window.SnipcartSettings.protocol, "://").concat(window.SnipcartSettings.domain, '"][src$="snipcart.js"]')),
+                    e = document.querySelector('link[href^="'.concat(window.SnipcartSettings.protocol, "://").concat(window.SnipcartSettings.domain, '"][href$="snipcart.css"]'));
+                n || (n = document.createElement("div"), n.id = "snipcart", n.setAttribute("hidden", "true"), document.body.appendChild(n)), h(n), i || (i = document.createElement("script"), i.src = "".concat(window.SnipcartSettings.protocol, "://").concat(window.SnipcartSettings.domain, "/themes/v").concat(window.SnipcartSettings.version, "/default/snipcart.js"), i.async = !0, t.appendChild(i)), !e && window.SnipcartSettings.loadCSS && (e = document.createElement("link"), e.rel = "stylesheet", e.type = "text/css", e.href = "".concat(window.SnipcartSettings.protocol, "://").concat(window.SnipcartSettings.domain, "/themes/v").concat(window.SnipcartSettings.version, "/default/snipcart.css"), t.prepend(e)), f.forEach(function (v) {
+                    return document.removeEventListener(v, o)
+                })
+            }
+
+            function h(t) {
+                !y || (t.dataset.apiKey = window.SnipcartSettings.publicApiKey, window.SnipcartSettings.addProductBehavior && (t.dataset.configAddProductBehavior = window.SnipcartSettings.addProductBehavior), window.SnipcartSettings.modalStyle && (t.dataset.configModalStyle = window.SnipcartSettings.modalStyle), window.SnipcartSettings.currency && (t.dataset.currency = window.SnipcartSettings.currency), window.SnipcartSettings.templatesUrl && (t.dataset.templatesUrl = window.SnipcartSettings.templatesUrl))
+            }
+        })();
+    </script>
+{% endif %}
 {% wagtailuserbar %}
 
-<div class="container grid-lg">
-    <header class="navbar">
+{% block header %}
+    {% include "shop/includes/header.html" with parent=site_root calling_page=self %}
+{% endblock header %}
 
-        <section class="navbar-section">
-            <a href="/" class="navbar-brand mr-2">
-                Products
-            </a>
-        </section>
+{% block breadcrumbs %}
+    {# breadcrumbs is defined in home/templatetags/navigation_tags.py #}
+    {% breadcrumbs %}
+{% endblock breadcrumbs %}
 
-        <!-- Snipcart summary and View cart button -->
-        <section class="navbar-section snipcart-summary">
-            <div class="input-group input-line">
-                <a href="" class="btn btn-primary snipcart-checkout">
-                    <i class="icon icon-apps"></i>
-                    View cart (<span class="snipcart-total-items">0</span>)
-                </a>
-            </div>
-        </section>
+{% block messages %}
+    {% include "shop/includes/messages.html" %}
+{% endblock messages %}
 
-    </header>
-</div>
+<main class="container grid-lg">
+    {% block content %}
+    {% endblock content %}
+</main>
 
-<div class="container grid-lg">
-    {% block content %}{% endblock %}
-</div>
+<hr>
+
+{% include "shop/includes/footer.html" %}
 
 {# Global javascript #}
 <script type="text/javascript" src="{% static 'shop/js/shop.js' %}"></script>
@@ -49,3 +118,5 @@
 {% block extra_js %}
     {# Override this in templates to add extra javascript #}
 {% endblock %}
+</body>
+</html>

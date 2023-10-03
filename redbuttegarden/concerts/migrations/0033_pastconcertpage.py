@@ -2,8 +2,8 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.images.blocks
 
 
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             name='PastConcertPage',
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('lineups', wagtail.core.fields.StreamField([('lineup', wagtail.core.blocks.StructBlock([('year', wagtail.core.blocks.IntegerBlock(min_value=1980, required=True)), ('poster', wagtail.images.blocks.ImageChooserBlock(required=True)), ('artists', wagtail.core.blocks.RichTextBlock(required=True))]))])),
+                ('lineups', wagtail.fields.StreamField([('lineup', wagtail.blocks.StructBlock([('year', wagtail.blocks.IntegerBlock(min_value=1980, required=True)), ('poster', wagtail.images.blocks.ImageChooserBlock(required=True)), ('artists', wagtail.blocks.RichTextBlock(required=True))]))])),
                 ('banner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),
                 ('thumbnail', models.ForeignKey(blank=True, help_text='You only need to add a thumbnail if this page is the child of a another page', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),
             ],

@@ -3,7 +3,7 @@
 from django.db import migrations, models
 import django.db.models.deletion
 import modelcluster.fields
-import wagtail.core.fields
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('text', wagtail.core.fields.RichTextField(max_length=100)),
+                ('text', wagtail.fields.RichTextField(max_length=100)),
                 ('image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),
                 ('link', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailcore.Page')),
                 ('page', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='event_slides', to='home.HomePage')),

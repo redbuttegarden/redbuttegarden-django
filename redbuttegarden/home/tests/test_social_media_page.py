@@ -1,7 +1,7 @@
 """
 The social media page doesn't use a wagtail model so we just want to load it to make sure there are no errors
 """
-from wagtail.tests.utils import WagtailPageTests
+from wagtail.test.utils import WagtailPageTests
 
 
 class SocialMediaPageTest(WagtailPageTests):

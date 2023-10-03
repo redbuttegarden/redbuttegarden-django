@@ -8,8 +8,10 @@
     <br>
 
     {% for block in page.body %}
-        <div class="row-fluid">
+        {% if block.block_type == 'image' %}
+            {% image block.value original class="img-center img-responsive" %}
+        {% else %}
             {% include_block block with id=block.id %}
-        </div>
+        {% endif %}
     {% endfor %}
 {% endblock %}

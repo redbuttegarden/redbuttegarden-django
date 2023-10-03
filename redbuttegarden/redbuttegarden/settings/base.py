@@ -51,10 +51,11 @@ INSTALLED_APPS = [
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
-    'wagtail.core',
+    'wagtail',
 
     'cas',  # Sometimes necessary to comment this app out to dump database
     'corsheaders',
+    'django_tables2',
     'modelcluster',
     'rest_framework',
     'rest_framework.authtoken',
@@ -188,7 +189,7 @@ WAGTAILSEARCH_BACKENDS = {
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-BASE_URL = 'https://redbuttegarden.org'
+WAGTAILADMIN_BASE_URL = 'https://redbuttegarden.org'
 
 # Safe to do this as since our docs/images shouldn't contain sensitive info. Info: https://docs.wagtail.io/en/v2.8/reference/settings.html?highlight=images#documents
 WAGTAILDOCS_SERVE_METHOD = 'direct'
@@ -215,17 +216,8 @@ CAS_RESPONSE_CALLBACKS = (
 )
 
 ADMINS = [('IT', os.environ.get('IT_EMAIL'))]
-
-# Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get('GMAIL_ACCOUNT')
-EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
-DEFAULT_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
-WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = os.environ.get('GMAIL_ACCOUNT')
-WAGTAILADMIN_NOTIFICATION_USE_HTML = True
+DEFAULT_FROM_EMAIL = 'admin@redbuttegarden.org'
+SERVER_EMAIL = os.environ.get('IT_EMAIL')
 
 # This was setup to allow authentication for viewing VR Tours
 PASSWORD_REQUIRED_TEMPLATE = 'custom_user/password_required.html'

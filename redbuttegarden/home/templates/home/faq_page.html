@@ -9,9 +9,7 @@
 
     {% for block in page.body %}
         {% if block.block_type == 'image' %}
-            <div class="responsive">
-                {% include_block block %}
-            </div>
+            {% image block.value original class="img-responsive" %}
         {% else %}
             {% include_block block %}
         {% endif %}

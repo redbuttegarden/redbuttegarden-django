@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group
-from wagtail.core.models import Page
-from wagtail.tests.utils import WagtailPageTests, get_user_model
-from wagtail.tests.utils.form_data import nested_form_data, streamfield, inline_formset, rich_text
+from wagtail.models import Page
+from wagtail.test.utils import WagtailPageTests, get_user_model
+from wagtail.test.utils.form_data import nested_form_data, streamfield, inline_formset, rich_text
 
 from home.models import FAQPage, GeneralPage, GeneralIndexPage, HomePage, PlantCollectionsPage, TwoColumnGeneralPage, \
     RetailPartnerPage

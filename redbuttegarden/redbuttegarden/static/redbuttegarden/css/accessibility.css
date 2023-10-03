@@ -4,3 +4,32 @@
 h1:empty, h2:empty, h3:empty, h4:empty, h5:empty, h6:empty {
     display: none;
 }
+
+/* Handles skip to main link before navbar so keyboard only users don't have to tab thru
+ * the entire navbar to get to the main content of the page.
+ */
+a.skip-main {
+    left:-999px;
+    position:absolute;
+    top:auto;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+    z-index:-999;
+}
+a.skip-main:focus, a.skip-main:active {
+    color: #fff;
+    background-color:#000;
+    left: auto;
+    top: auto;
+    width: 30%;
+    height: auto;
+    overflow:auto;
+    padding:5px;
+    border-radius: 15px;
+    border:4px solid yellow;
+    text-align:center;
+    font-size:1.2em;
+    z-index:999;
+    margin-top: 50px;
+}

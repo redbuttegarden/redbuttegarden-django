@@ -26,8 +26,8 @@
             {% for collection in collections %}
                 <div class="row-fluid">
                     <div class="col-sm-6">
-                        <a href="{{ collection.slideshow_link }}" target="_blank">
-                            <div class="collectionswrap hover">
+                        <a class="hover" href="{{ collection.slideshow_link }}" target="_blank">
+                            <div class="collectionswrap">
                                 {% image collection.image width-385 %}
                                 <div class="eventinfo">
                                     <div class="eventname">{{ collection.title }}</div>
@@ -42,13 +42,13 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                <a href="{{ collection.slideshow_link }}" target="_blank">
-                                    <button class="apply-button hover">View Our Slideshow</button>
+                                <a class="hover" href="{{ collection.slideshow_link }}" target="_blank">
+                                    <button class="apply-button">View Our Slideshow</button>
                                 </a>
                             </div>
                             <div class="col-sm-6">
-                                <a href="{{ collection.collection_doc.file.url }}">
-                                    <button class="apply-button hover">More Information</button>
+                                <a class="hover" href="{{ collection.collection_doc.file.url }}">
+                                    <button class="apply-button">More Information</button>
                                 </a>
                             </div>
                         </div>

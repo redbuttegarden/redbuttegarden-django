@@ -2,8 +2,8 @@
 
 from django.db import migrations
 import home.models
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.images.blocks
 
 
@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='generalpage',
             name='body',
-            field=wagtail.core.fields.StreamField([('heading', home.models.Heading(classname='full title')), ('paragraph', wagtail.core.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.core.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('image', wagtail.images.blocks.ImageChooserBlock()), ('html', wagtail.core.blocks.RawHTMLBlock()), ('dropdown_image_list', wagtail.core.blocks.StructBlock([('list_items', wagtail.core.blocks.ListBlock(wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(label='Image')), ('title', wagtail.core.blocks.CharBlock(label='Title', max_length=200)), ('text', wagtail.core.blocks.RichTextBlock(label='Text'))]), label='List Item'))]))]),
+            field=wagtail.fields.StreamField([('heading', home.models.Heading(classname='full title')), ('paragraph', wagtail.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('image', wagtail.images.blocks.ImageChooserBlock()), ('html', wagtail.blocks.RawHTMLBlock()), ('dropdown_image_list', wagtail.blocks.StructBlock([('list_items', wagtail.blocks.ListBlock(wagtail.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(label='Image')), ('title', wagtail.blocks.CharBlock(label='Title', max_length=200)), ('text', wagtail.blocks.RichTextBlock(label='Text'))]), label='List Item'))]))]),
         ),
     ]

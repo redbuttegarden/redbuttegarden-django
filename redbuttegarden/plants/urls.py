@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+
 from plants import views
 
 router = DefaultRouter()
@@ -39,6 +40,9 @@ urlpatterns = [
     path('search/',
          views.collection_search,
          name='collection-search'),
+    path('collection-list/',
+         views.collection_list,
+         name='collection-list'),
     path('species-feedback/<int:species_id>/',
          views.species_or_collection_feedback,
          name='species-feedback'),

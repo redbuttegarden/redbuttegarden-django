@@ -1,0 +1,70 @@
+/* Breadcrumbs */
+.breadcrumb-container {
+  position: relative;
+  z-index: 3;
+  margin-bottom: 15px;
+}
+
+.breadcrumb {
+  color: var(--dark);
+  font-family: var(--font--secondary);
+  font-size: var(--font-sm);
+  line-height: 1.5;
+  margin-bottom: 0;
+  padding-left: 0;
+  background-color: transparent;
+}
+
+.breadcrumb > li + li::before {
+  display: none;
+}
+
+.breadcrumb__chevron-icon {
+  width: 8px;
+  height: 16px;
+  margin: 0 10px;
+}
+
+.breadcrumb__chevron-icon path {
+  fill: var(--dark);
+}
+
+.breadcrumb a,
+.breadcrumb .active {
+  color: var(--dark);
+  text-decoration: underline;
+}
+
+.breadcrumb a:hover {
+  color: var(--dark-orange);
+}
+
+/* Pagination navigation */
+.pagination {
+  display: block;
+  margin: 0 auto 40px;
+}
+
+.pagination__list {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  gap: 20px;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.pagination .page-item a {
+  text-transform: capitalize;
+  text-decoration: underline;
+}
+
+.pagination .page-item.active span {
+  color: var(--grey);
+}
+
+.pagination .page-item.disabled a {
+  color: var(--grey);
+  text-decoration: none;
+  cursor: default;
+}

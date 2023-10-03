@@ -3,6 +3,11 @@ figcaption {
     font-style: italic;
 }
 
+#rbginfo figcaption {
+    font-style: normal;
+    margin-bottom: 1em;
+}
+
 hr {
     width: 95%;
 }
@@ -142,10 +147,15 @@ nav[role=pagination] {
     text-align: center;
 }
 
+.index-tile {
+    margin-top: 30px;
+    max-width: 415px;
+    overflow: hidden;
+}
+
 .index-thumbnail img {
     height: 385px;
     width: 385px;
-    margin-top: 30px;
 }
 
 footer {
@@ -176,3 +186,43 @@ footer {
 .memfaqwrap > a, .memfaqwrap > a:link, .memfaqwrap > a.visited {
     text-decoration: none;
 }
+
+/* Backgrounds */
+.green-bg {
+    color: white;  /* Black text is too difficult to read with green background */
+    padding: 10px;
+    background-color: #196143;
+}
+
+.tan-bg {
+    padding: 10px;
+    background-color: #F2EDE4;
+}
+
+.dark-tan-bg {
+    padding: 10px;
+    background-color:#C4B59E;
+}
+
+.white-bg {
+    padding: 10px;
+    background-color: #FFF;
+}
+
+.red-bg {
+    color: white;  /* Better color contrast makes it easier to read with white text */
+    padding: 10px;
+    background-color: red;
+}
+
+.orange-bg {
+    font-weight: bold;  /* Again, makes text easier to read this way */
+    padding: 10px;
+    background-color: #FF7744;
+}
+
+.dark-blue-bg {
+    padding: 10px;
+    background-color: #1b2940;
+}
+/* End backgrounds */

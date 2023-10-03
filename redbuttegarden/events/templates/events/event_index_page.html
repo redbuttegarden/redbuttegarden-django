@@ -2,7 +2,7 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block title %}
-    {% ifequal page.search_type 'event-category' %}{{ page.cat_title }}{% else %}{{ block.super }}{% endifequal %}
+    {% if page.search_type == 'event-category' %}{{ page.cat_title }}{% else %}{{ block.super }}{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -18,10 +18,10 @@
 
     <div class="row-fluid col xs-12">
         {% for event in events %}
-            <div class="col-sm-4">
+            <div class="col-sm-4 index-tile">
                 {% with event=event.specific %}
-                    <a href="{% pageurl event %}">
-                        <div class="index-thumbnail hover">
+                    <a class="hover" href="{% pageurl event %}">
+                        <div class="index-thumbnail">
                             {% comment %}
                                 Added blank alt attribute to image thumbnails since these are primarily to create a
                                 larger surface area for the page links and alt attributes would unnecessarily complicate
@@ -59,7 +59,7 @@
                 <br>
 
                 <div class="text-center">
-                    {% image block.value width-200 %}
+                    {% image block.value width-200 class="img-responsive" %}
                 </div>
 
                 <br>
@@ -68,8 +68,8 @@
                 <!-- spage is just short for specific page -->
                 {% with spage=block.value.specific %}
                     <div class="col-sm-4 page-link">
-                        <a href="{% pageurl spage %}">
-                            <div class="index-thumbnail hover">
+                        <a class="hover" href="{% pageurl spage %}">
+                            <div class="index-thumbnail">
                                 {% comment %}
                                 Added blank alt attribute to image thumbnails since these are primarily to create a
                                 larger surface area for the page links and alt attributes would unnecessarily complicate

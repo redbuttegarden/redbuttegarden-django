@@ -6,15 +6,14 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, PageChooserPanel
+from wagtail.admin.panels import FieldPanel, ObjectList, PageChooserPanel, TabbedInterface
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from wagtail.core import blocks
-from wagtail.core.blocks import PageChooserBlock
-from wagtail.core.fields import RichTextField, StreamField
+from wagtail import blocks
+from wagtail.blocks import PageChooserBlock
+from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.models import Image
 from wagtail.search import index
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from home.abstract_models import AbstractBase
@@ -142,12 +141,12 @@ BLOCK_TYPES = [
 
 class EventIndexPage(RoutablePageMixin, AbstractBase):
     intro = RichTextField(blank=True)
-    body = StreamField(BLOCK_TYPES + [('page_link', PageChooserBlock())], blank=True)
+    body = StreamField(BLOCK_TYPES + [('page_link', PageChooserBlock())], blank=True, use_json_field=True)
     order_date = models.DateTimeField(default=timezone.now)  # Allow editors to control displayed order of pages
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('intro'),
-        StreamFieldPanel('body', classname="full"),
+        FieldPanel('body', classname="full"),
     ]
 
     promote_panels = AbstractBase.promote_panels + [
@@ -229,7 +228,7 @@ class EventPage(AbstractBase):
     event_categories = ParentalManyToManyField(EventCategory, blank=True)
     notes = RichTextField(blank=True,
                           help_text="Notes will appear on the thumbnail image of the event on the event index page")
-    body = StreamField(BLOCK_TYPES)
+    body = StreamField(BLOCK_TYPES, use_json_field=True)
     policy = models.ForeignKey(
         'events.PolicyLink',
         null=True,
@@ -249,8 +248,8 @@ class EventPage(AbstractBase):
         FieldPanel('event_dates'),
         FieldPanel('event_categories', widget=forms.CheckboxSelectMultiple),
         FieldPanel('notes'),
-        StreamFieldPanel('body'),
-        SnippetChooserPanel('policy', help_text=_("Optionally choose a policy link to include on the page"))
+        FieldPanel('body'),
+        FieldPanel('policy', help_text=_("Optionally choose a policy link to include on the page"))
     ]
 
     promote_panels = AbstractBase.promote_panels + [
@@ -311,6 +310,13 @@ class EventGeneralPage(GeneralPage):
         index.SearchField('event_dates'),
         index.SearchField('notes')
     ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(AbstractBase.dialog_box_panels, heading='Dialog'),
+        ObjectList(promote_panels, heading='Promote'),
+        ObjectList(AbstractBase.settings_panels, heading='Settings'),
+    ])
 
     def get_cached_paths(self):
         """

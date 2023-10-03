@@ -4,13 +4,11 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from wagtail.contrib.table_block.blocks import TableBlock
-from wagtail.core import blocks
+from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
-from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, StreamFieldPanel
-from wagtail.core.models import Page, Orderable
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.admin.panels import FieldPanel, PageChooserPanel
+from wagtail.fields import RichTextField, StreamField
 from wagtail.search import index
 
 from concerts.utils import live_in_the_past, on_demand_expired
@@ -136,8 +134,12 @@ class TableInfoCardList(blocks.StructBlock):
 
 class ConcertBlock(blocks.StructBlock):
     band_img = ImageChooserBlock(required=True)
-    hidden = blocks. BooleanBlock(default=True, help_text=_('If hidden box is checked, concert will not be displayed on'
-                                                            ' the page'), required=False)
+    wave = blocks.ChoiceBlock(choices=[
+        (1, 'Wave 1'),
+        (2, 'Wave 2')
+    ], required=False)
+    hidden = blocks.BooleanBlock(default=True, help_text=_('If hidden box is checked, concert will not be displayed on'
+                                                           ' the page'), required=False)
     on_sale = blocks.BooleanBlock(default=True, help_text=_('If unchecked, Buy Tickets button will be grayed out'),
                                   required=False)
     virtual = blocks.BooleanBlock(default=False, help_text=_('Is this a virtual concert?'), required=False)
@@ -160,7 +162,12 @@ class ConcertBlock(blocks.StructBlock):
     public_price = blocks.CharBlock(default='$', max_length=100)
 
     # Added a ticket URL for concerts that are sold from a non-standard URL
-    ticket_url = blocks.URLBlock(default='https://redbuttegarden.ticketfly.com')
+    ticket_url = blocks.URLBlock(
+        default='https://www.etix.com/ticket/e/1035223/2023-season-salt-lake-city-red-butte-garden')
+
+    class Meta:
+        icon = 'music'
+        form_template = 'concerts/block_forms/concert.html'
 
 
 class SimpleConcertBlock(blocks.StructBlock):
@@ -195,6 +202,9 @@ class ConcertPage(AbstractBase):
     banner_link = models.URLField(help_text=_("Where to direct the banner image link"),
                                   blank=True)
     intro = RichTextField(blank=True)
+    wave_one_info = RichTextField(blank=True, help_text=_('Displayed at the top of the list of concerts'))
+    wave_two_info = RichTextField(blank=True, help_text=_('Displayed above any wave 2 concerts (if there are any)'))
+    wave_two_sale_date = models.DateField(default=None, null=True, blank=True)
     donor_banner = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -230,17 +240,20 @@ class ConcertPage(AbstractBase):
         on_delete=models.SET_NULL,
         related_name='+',
     )
-    body = StreamField(ConcertStreamBlock(), null=True, blank=True)
+    body = StreamField(ConcertStreamBlock(), null=True, blank=True, use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('banner_link'),
         FieldPanel('intro', classname="full"),
-        ImageChooserPanel('donor_banner'),
+        FieldPanel('donor_banner'),
         PageChooserPanel('button_one'),
         PageChooserPanel('button_two'),
         PageChooserPanel('button_three'),
         PageChooserPanel('button_four'),
-        StreamFieldPanel('body'),
+        FieldPanel('wave_one_info', classname="full"),
+        FieldPanel('wave_two_info', classname="full"),
+        FieldPanel('wave_two_sale_date'),
+        FieldPanel('body'),
     ]
 
     search_fields = AbstractBase.search_fields + [
@@ -250,13 +263,24 @@ class ConcertPage(AbstractBase):
     def get_context(self, request, **kwargs):
         context = super().get_context(request, **kwargs)
 
-        context['concerts'] = self.sort_visible_concerts()
+        concerts = self.get_visible_concerts()
+        if self.wave_two_sale_date and datetime.date.today() < self.wave_two_sale_date:
+            context['wave_one_concerts'] = self.sort_concerts(
+                [concert for concert in concerts if concert['wave'] and concert['wave'] == '1'])
+            context['wave_two_concerts'] = self.sort_concerts(
+                [concert for concert in concerts if concert['wave'] and concert['wave'] == '2'])
+        else:
+            context['concerts'] = self.sort_concerts(concerts)
         return context
 
-    def sort_visible_concerts(self):
-        # Get a list of concert objects and determine the following:
+    def get_visible_concerts(self):
+        return [concert.value for concert in self.body if
+                concert.block_type == 'concerts' and not concert.value['hidden'] and len(
+                    concert.value['concert_dates']) > 0]
+
+    def sort_concerts(self, concerts):
+        # Determine the following:
         # Are they in the past and if they are virtual, is the on-demand offering also in the past?
-        concerts = [concert.value for concert in self.body if not concert.value['hidden'] and len(concert.value['concert_dates']) > 0]
         for concert in concerts:
             concert['concert_dates'] = sorted(concert['concert_dates'])
             concert.soonest_date = sorted(concert['concert_dates'])[-1]
@@ -265,6 +289,7 @@ class ConcertPage(AbstractBase):
 
         # Sort concerts by soonest date
         return sorted(concerts, key=lambda x: x.soonest_date)
+
 
 class LineupBlock(blocks.StructBlock):
     year = blocks.IntegerBlock(min_value=1980, required=True)
@@ -283,10 +308,10 @@ class PastLineupStreamBlock(blocks.StreamBlock):
 
 
 class PastConcertPage(AbstractBase):
-    lineups = StreamField(PastLineupStreamBlock())
+    lineups = StreamField(PastLineupStreamBlock(), use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('lineups'),
+        FieldPanel('lineups'),
     ]
 
     search_fields = AbstractBase.search_fields + [
@@ -308,10 +333,12 @@ class DonorPackagePage(AbstractBase):
         ('sponsor_list', SponsorList()),
         ('button_table', ButtonTable()),
         ('table_cards', TableInfoCardList()),
-    ], blank=False)
+        ('table', TableBlock(table_options=donor_schedule_table_options,
+                             help_text=_("Right-click to add/remove rows/columns"))),
+    ], blank=False, use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
 
@@ -327,11 +354,10 @@ class DonorSchedulePage(AbstractBase):
         ('table', TableBlock(table_options=donor_schedule_table_options,
                              help_text=_("Right-click to add/remove rows/columns"))),
         ('concerts', SimpleConcertStreamBlock()),
-    ], blank=False)
-
+    ], blank=False, use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     search_fields = AbstractBase.search_fields + [

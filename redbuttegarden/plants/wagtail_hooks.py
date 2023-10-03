@@ -1,6 +1,34 @@
 from wagtail.contrib.modeladmin.options import (
     ModelAdmin, modeladmin_register, ModelAdminGroup)
-from .models import Collection, Species
+
+from .models import Collection, Species, Genus, Family
+
+class FamilyAdmin(ModelAdmin):
+    model = Family
+    menu_label = 'Family'  # ditch this to use verbose_name_plural from model
+    menu_icon = 'pilcrow'  # change as required
+    list_display = ('name', 'vernacular_name')
+    search_fields = ('name', 'vernacular_name')
+
+
+class GenusAdmin(ModelAdmin):
+    model = Genus
+    menu_label = 'Genus'  # ditch this to use verbose_name_plural from model
+    menu_icon = 'pilcrow'  # change as required
+    list_display = ('family', 'name')
+    list_filter = ('family',)
+    search_fields = ('family__name', 'name')
+    ordering = ('family', 'name')
+
+    def get_queryset(self, request):
+        qs = self.model._default_manager.select_related(
+            'family'
+        )
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
+
+        return qs
 
 
 class SpeciesAdmin(ModelAdmin):
@@ -47,7 +75,7 @@ class PlantGroup(ModelAdminGroup):
     menu_label = 'Plants'
     menu_icon = 'folder-open-inverse'  # change as required
     menu_order = 200  # will put in 3rd place (000 being 1st, 100 2nd)
-    items = (SpeciesAdmin, CollectionsAdmin)
+    items = (FamilyAdmin, GenusAdmin, SpeciesAdmin, CollectionsAdmin)
 
 # Now you just need to register your customised ModelAdmin class with Wagtail
 modeladmin_register(PlantGroup)

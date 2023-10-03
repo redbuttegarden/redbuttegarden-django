@@ -15,7 +15,8 @@
             {% csrf_token %}
             {{ form }}
             <br>
-            <button type="submit" class="btn btn-primary">Search</button>
+            <input type="submit" name="map_search" class="btn btn-primary" value="Map Search Results" />
+            <input type="submit" name="list_search" class="btn btn-primary" value="List Search Results" />
             <button type="reset" class="btn btn-light">Reset Form</button>
         </form>
     </div>

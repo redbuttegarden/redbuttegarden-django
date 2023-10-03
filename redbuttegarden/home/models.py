@@ -6,18 +6,18 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 
-from wagtail.core import blocks
-from wagtail.core.models import Collection, Page, Orderable
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.admin.edit_handlers import StreamFieldPanel, FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel
+from wagtail import blocks
+from wagtail.contrib.settings.models import BaseSiteSetting
+from wagtail.contrib.settings.registry import register_setting
+from wagtail.models import Page, Orderable, DraftStateMixin, RevisionMixin, PreviewableMixin, TranslatableMixin
+from wagtail.fields import RichTextField, StreamField
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel, TabbedInterface, \
+    ObjectList, PublishingPanel
 from wagtail.documents.blocks import DocumentChooserBlock
-from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import Image
 from wagtail.search import index
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from home.abstract_models import AbstractBase
@@ -429,15 +429,22 @@ class GeneralPage(AbstractBase):
         ('image_link_list', ImageLinkList()),
         ('three_column_dropdown_info_panel', ThreeColumnDropdownInfoPanel()),
         ('newsletters', NewsletterListBlock()),
-    ], blank=False)
+    ], blank=False, use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     search_fields = AbstractBase.search_fields + [
         index.SearchField('body'),
     ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(AbstractBase.dialog_box_panels, heading='Dialog'),
+        ObjectList(AbstractBase.promote_panels, heading='Promote'),
+        ObjectList(AbstractBase.settings_panels, heading='Settings'),
+    ])
 
 
 class TwoColumnGeneralPage(AbstractBase):
@@ -454,10 +461,10 @@ class TwoColumnGeneralPage(AbstractBase):
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
-    ]), null=True, blank=True)
+    ]), null=True, blank=True, use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     search_fields = AbstractBase.search_fields + [
@@ -506,13 +513,13 @@ class PlantCollections(Orderable):
     slideshow_link = models.URLField()
 
     panels = [
-        ImageChooserPanel('image'),
+        FieldPanel('image'),
         FieldPanel('title'),
         FieldPanel('text'),
         MultiFieldPanel(
             [
                 FieldPanel('slideshow_link'),
-                DocumentChooserPanel('collection_doc')
+                FieldPanel('collection_doc')
             ],
             heading=_('Info for Collection buttons')
         ),
@@ -533,10 +540,10 @@ class GeneralIndexPage(AbstractBase):
         ('image_link_list', ImageLinkList()),
         ('button', ButtonBlock()),
         ('button_row', ButtonRow()),
-    ], blank=True)
+    ], blank=True, use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     subpage_types = ['events.EventPage', 'events.EventIndexPage', 'home.GeneralIndexPage', 'home.GeneralPage',
@@ -571,13 +578,14 @@ class FAQPage(AbstractBase):
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
+        ('dropdown_button_list', ButtonListDropdownInfo()),
         ('image', ImageChooserBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('FAQ_list', FAQList()),
-    ])
+    ], use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
     search_fields = AbstractBase.search_fields + [
@@ -626,7 +634,7 @@ class RBGHours(models.Model):
     gad_dates = StreamField(block_types=[
         ('date', blocks.DateBlock(verbose_name="Garden After Dark date", help_text=_("Date that GAD takes place")))
     ], help_text=_("Choose the dates of GAD. If there are many, using the manual override might be easier"),
-        blank=True, null=True)
+        blank=True, null=True, use_json_field=True)
 
     panels = [
         FieldPanel('name'),
@@ -638,7 +646,7 @@ class RBGHours(models.Model):
             FieldPanel('additional_emphatic_mesg'),
         ], heading="Manual override settings", classname="collapsible collapsed"),
         FieldPanel('holiday_party_close_time'),
-        StreamFieldPanel('gad_dates'),
+        FieldPanel('gad_dates'),
     ]
 
     def __str__(self):
@@ -658,7 +666,7 @@ class HomePage(AbstractBase):
     )
 
     content_panels = Page.content_panels + [
-        SnippetChooserPanel('hours', help_text=_("Choose the set of hours to display on the home page")),
+        FieldPanel('hours', help_text=_("Choose the set of hours to display on the home page")),
         InlinePanel('event_slides', label=_('Slideshow Images'))
     ]
 
@@ -687,7 +695,7 @@ class EventSlides(Orderable):
                          null=True, blank=True)
 
     panels = [
-        ImageChooserPanel('image'),
+        FieldPanel('image'),
         PageChooserPanel('link'),
         FieldPanel('alternate_link'),
         FieldPanel('text'),
@@ -725,14 +733,14 @@ class RetailPartnerPage(AbstractBase):
         ('button', ButtonBlock()),
         ('green_heading', Heading()),
         ('paragraph', AlignedParagraphBlock()),
-    ])
+    ], use_json_field=True)
     retail_partners = StreamField(block_types=[
         ('retail_partner', RetailPartnerBlock())
-    ])
+    ], use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
-        StreamFieldPanel('body'),
-        StreamFieldPanel('retail_partners')
+        FieldPanel('body'),
+        FieldPanel('retail_partners')
     ]
 
     search_fields = AbstractBase.search_fields + [
@@ -749,3 +757,48 @@ class RetailPartnerPage(AbstractBase):
             except IndexError as e:
                 logger.error('[!] Failed to find banner for Retail Partner Page: ', e)
         return super().save_revision(*args, **kwargs)
+
+class FooterText(
+    DraftStateMixin,
+    RevisionMixin,
+    PreviewableMixin,
+    TranslatableMixin,
+    models.Model,
+):
+    """
+    This provides editable text for the site footer. It is made
+    accessible on the template via a template tag defined in base/templatetags/
+    navigation_tags.py
+    """
+
+    body = RichTextField()
+
+    panels = [
+        FieldPanel("body"),
+        PublishingPanel(),
+    ]
+
+    def __str__(self):
+        return "Footer text"
+
+    def get_preview_template(self, request, mode_name):
+        return "base.html"
+
+    def get_preview_context(self, request, mode_name):
+        return {"footer_text": self.body}
+
+    class Meta(TranslatableMixin.Meta):
+        verbose_name_plural = "Footer Text"
+
+@register_setting
+class SiteSettings(BaseSiteSetting):
+    title_suffix = models.CharField(
+        verbose_name="Title suffix",
+        max_length=255,
+        help_text="The suffix for the title meta tag e.g. ' | Red Butte Garden'",
+        default="Red Butte Garden",
+    )
+
+    panels = [
+        FieldPanel("title_suffix"),
+    ]

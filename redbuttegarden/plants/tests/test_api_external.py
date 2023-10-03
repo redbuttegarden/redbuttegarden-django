@@ -7,7 +7,7 @@ from PIL import Image
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import RequestsClient, APILiveServerTestCase
-from wagtail.core.models import Collection as WagtailCollection
+from wagtail.models import Collection as WagtailCollection
 
 from plants.models import SpeciesImage, Collection
 from .utils import get_custom_user, get_family, get_genus, get_species
@@ -310,3 +310,137 @@ class TestCollectionsAPIFromExternalPerspective(APILiveServerTestCase):
         self.assertEqual(Collection.objects.all().count(), 1)
 
         self.assertEqual(Collection.objects.first().species.flower_color, 'White')
+
+    def test_posting_same_collection_with_modified_species(self):
+        url = self.live_server_url + reverse('plants:api-collection-list')
+        payloads = [
+            {'species':
+                {'genus': {
+                    'family': {
+                        'name': 'Poaceae',
+                        'vernacular_name': 'Grass'
+                    },
+                    'name': 'Koeleria'
+                },
+                    'name': 'macrantha',
+                    'full_name': "Koeleria macrantha 'Cherry Tart'",
+                    'subspecies': '',
+                    'variety': '',
+                    'subvariety': '',
+                    'forma': '',
+                    'subforma': '',
+                    'cultivar': 'Cherry Tart',
+                    'vernacular_name': 'Sunsparkler® Cherry Tart Stonecrop',
+                    'habit': 'Grass',
+                    'hardiness': [3, 4, 5, 6, 7, 8],
+                    'water_regime': 'Low',
+                    'exposure': 'Full Sun',
+                    'bloom_time': ['April', 'May', 'June'],
+                    'plant_size': '',
+                    'flower_color': 'Green, Yellow, Tan, Inconspicuous',
+                    'utah_native': True,
+                    'plant_select': False,
+                    'deer_resist': False,
+                    'rabbit_resist': False,
+                    'bee_friend': False,
+                    'high_elevation': True
+                },
+                'garden': {
+                    'area': 'Stable Slope Garden',
+                    'name': 'Water Conservation Garden',
+                    'code': 'WCG-23'
+                },
+                'location': {
+                    'latitude': 40.767455,
+                    'longitude': -111.823362
+                },
+                'plant_date': '2016-11-10',
+                'plant_id': '2016-0804*1',
+                'commemoration_category': '',
+                'commemoration_person': ''
+            },
+
+            {'species':
+                {'genus': {
+                    'family': {
+                        'name': 'Poaceae',
+                        'vernacular_name': 'Grass'
+                    },
+                    'name': 'Koeleria'
+                },
+                    'name': 'macrantha',
+                    'full_name': "Koeleria macrantha",
+                    'subspecies': '',
+                    'variety': '',
+                    'subvariety': '',
+                    'forma': '',
+                    'subforma': '',
+                    'cultivar': '',
+                    'vernacular_name': 'June Grass',
+                    'habit': 'Grass',
+                    'hardiness': [3, 4, 5, 6, 7, 8],
+                    'water_regime': 'Low',
+                    'exposure': 'Full Sun',
+                    'bloom_time': ['April', 'May', 'June'],
+                    'plant_size': '',
+                    'flower_color': 'Green, Yellow, Tan, Inconspicuous',
+                    'utah_native': True,
+                    'plant_select': False,
+                    'deer_resist': False,
+                    'rabbit_resist': False,
+                    'bee_friend': False,
+                    'high_elevation': True
+                },
+                'garden': {
+                    'area': 'Stable Slope Garden',
+                    'name': 'Water Conservation Garden',
+                    'code': 'WCG-23'
+                },
+                'location': {
+                    'latitude': 40.767455,
+                    'longitude': -111.823362
+                },
+                'plant_date': '2016-11-10',
+                'plant_id': '2016-0804*1',
+                'commemoration_category': '',
+                'commemoration_person': ''
+            },
+        ]
+
+        self.assertEqual(Collection.objects.all().count(), 0)
+
+        first_response = self.client.post(url, json=payloads[0])
+        self.assertTrue(status.is_success(first_response.status_code))
+
+        self.assertEqual(Collection.objects.all().count(), 1)
+
+        self.assertEqual(Collection.objects.first().species.full_name, "Koeleria macrantha 'Cherry Tart'")
+        self.assertEqual(Collection.objects.first().species.vernacular_name, "Sunsparkler® Cherry Tart Stonecrop")
+
+        second_response = self.client.post(url, json=payloads[1])
+        self.assertTrue(status.is_success(second_response.status_code))
+
+        self.assertEqual(Collection.objects.all().count(), 1)
+
+        self.assertEqual(Collection.objects.first().species.full_name, 'Koeleria macrantha')
+        self.assertEqual(Collection.objects.first().species.vernacular_name, "June Grass")
+
+    def test_query_species_api(self):
+        """
+        If you query for just 'Genus species', while other fields are specified as empty strings,
+        it should not return Species objects with subspecies, cultivars, etc.
+        """
+        species_one = get_species(self.genus, name='species_one', full_name='Genus species_one',
+                                subspecies='', variety='', subvariety='', forma='', subforma='', cultivar='',
+                                vernacular_name='Species One')
+        species_subspecies = get_species(self.genus, name='species_one', full_name='Genus species_one subsp. subspecies',
+                                subspecies='subspecies', variety='', subvariety='', forma='', subforma='', cultivar='',
+                                vernacular_name='Subspecies One')
+        
+        search_payload = {'genus': 'Genus', 'name': 'species_one', 'subspecies': '', 'variety': '', 'subvariety': '', 'forma': '', 'subforma': '', 'cultivar': ''}
+
+        url = url = self.live_server_url + reverse('plants:api-species-list')
+        resp = self.client.get(url, params=search_payload)
+        content = resp.json()
+
+        self.assertEqual(content['count'], 1)

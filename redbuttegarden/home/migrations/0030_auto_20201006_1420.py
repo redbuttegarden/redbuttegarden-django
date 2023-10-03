@@ -2,8 +2,8 @@
 
 from django.db import migrations
 import home.models
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.images.blocks
 
 
@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='faqpage',
             name='body',
-            field=wagtail.core.fields.StreamField([('heading', home.models.Heading(classname='full title', help_text='Text will be green and centered')), ('paragraph', wagtail.core.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.core.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('image', wagtail.images.blocks.ImageChooserBlock()), ('FAQ_list', wagtail.core.blocks.StructBlock([('list_items', wagtail.core.blocks.ListBlock(wagtail.core.blocks.StructBlock([('title_question', wagtail.core.blocks.CharBlock(label='Title/Question', max_length=200)), ('text', wagtail.core.blocks.RichTextBlock(label='Answer'))]), label='Question & Answer'))]))]),
+            field=wagtail.fields.StreamField([('heading', home.models.Heading(classname='full title', help_text='Text will be green and centered')), ('paragraph', wagtail.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('image', wagtail.images.blocks.ImageChooserBlock()), ('FAQ_list', wagtail.blocks.StructBlock([('list_items', wagtail.blocks.ListBlock(wagtail.blocks.StructBlock([('title_question', wagtail.blocks.CharBlock(label='Title/Question', max_length=200)), ('text', wagtail.blocks.RichTextBlock(label='Answer'))]), label='Question & Answer'))]))]),
         ),
     ]

@@ -37,3 +37,5 @@ def show_toolbar(request):
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': 'redbuttegarden.settings.local.show_toolbar',
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

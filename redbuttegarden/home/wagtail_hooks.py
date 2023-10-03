@@ -1,7 +1,8 @@
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 from django.http import HttpResponse
 from wagtail.admin.rich_text.converters.html_to_contentstate import InlineStyleElementHandler
-from wagtail.core import hooks
+from wagtail import hooks
+from wagtail.admin.menu import MenuItem
 
 
 @hooks.register("register_rich_text_features")
@@ -38,3 +39,9 @@ def serve_pdf(document, request):
     if request.GET.get('download', False) in [True, 'True', 'true']:
         response['Content-Disposition'] = 'attachment; ' + response['Content-Disposition']
     return response
+
+
+@hooks.register('register_help_menu_item')
+def register_rbg_style_guide_menu_item():
+    return MenuItem(name='rbg_style_guide', label='RBG Style Guide',
+                        url='https://uofu.box.com/s/3ud6o8pyuou2wq7n6avpcejo3ulhhbfi', icon_name='link')

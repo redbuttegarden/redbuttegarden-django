@@ -2,8 +2,8 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.images.blocks
 
 
@@ -22,14 +22,14 @@ class Migration(migrations.Migration):
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('location', models.CharField(max_length=100)),
-                ('additional_info', wagtail.core.fields.RichTextField(blank=True)),
+                ('additional_info', wagtail.fields.RichTextField(blank=True)),
                 ('instructor', models.CharField(blank=True, max_length=100)),
                 ('member_cost', models.CharField(help_text='Accepts numbers or text. e.g. Free!', max_length=100)),
                 ('public_cost', models.CharField(help_text='Accepts numbers or text. e.g. $35', max_length=200)),
                 ('sub_heading', models.CharField(blank=True, help_text='e.g. 500,000 Blooming Bulbs', max_length=200)),
                 ('event_dates', models.CharField(max_length=200)),
-                ('notes', wagtail.core.fields.RichTextField(blank=True, help_text='Notes will appear on the thumbnail image of the event on the event index page')),
-                ('body', wagtail.core.fields.StreamField([('green_heading', wagtail.core.blocks.CharBlock(help_text='Green centered text', max_length=200)), ('paragraph', wagtail.core.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.core.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('image', wagtail.images.blocks.ImageChooserBlock()), ('html', wagtail.core.blocks.RawHTMLBlock(required=False)), ('image_list', wagtail.core.blocks.StructBlock([('list_items', wagtail.core.blocks.ListBlock(wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(label='Image')), ('title', wagtail.core.blocks.CharBlock(label='Title', max_length=200)), ('sub_title', wagtail.core.blocks.CharBlock(label='Subtitle', max_length=200)), ('text', wagtail.core.blocks.RichTextBlock(label='Text')), ('link_url', wagtail.core.blocks.URLBlock(label='Link URL', max_length=200, required=False))]), label='List Item'))], required=False))])),
+                ('notes', wagtail.fields.RichTextField(blank=True, help_text='Notes will appear on the thumbnail image of the event on the event index page')),
+                ('body', wagtail.fields.StreamField([('green_heading', wagtail.blocks.CharBlock(help_text='Green centered text', max_length=200)), ('paragraph', wagtail.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('image', wagtail.images.blocks.ImageChooserBlock()), ('html', wagtail.blocks.RawHTMLBlock(required=False)), ('image_list', wagtail.blocks.StructBlock([('list_items', wagtail.blocks.ListBlock(wagtail.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(label='Image')), ('title', wagtail.blocks.CharBlock(label='Title', max_length=200)), ('sub_title', wagtail.blocks.CharBlock(label='Subtitle', max_length=200)), ('text', wagtail.blocks.RichTextBlock(label='Text')), ('link_url', wagtail.blocks.URLBlock(label='Link URL', max_length=200, required=False))]), label='List Item'))], required=False))])),
                 ('image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),
             ],
             options={
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
             name='EventIndexPage',
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('body', wagtail.core.fields.StreamField([('green_heading', wagtail.core.blocks.CharBlock(help_text='Green centered text', max_length=200)), ('paragraph', wagtail.core.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.core.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('image', wagtail.images.blocks.ImageChooserBlock()), ('html', wagtail.core.blocks.RawHTMLBlock(required=False)), ('image_list', wagtail.core.blocks.StructBlock([('list_items', wagtail.core.blocks.ListBlock(wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(label='Image')), ('title', wagtail.core.blocks.CharBlock(label='Title', max_length=200)), ('sub_title', wagtail.core.blocks.CharBlock(label='Subtitle', max_length=200)), ('text', wagtail.core.blocks.RichTextBlock(label='Text')), ('link_url', wagtail.core.blocks.URLBlock(label='Link URL', max_length=200, required=False))]), label='List Item'))], required=False))], blank=True)),
+                ('body', wagtail.fields.StreamField([('green_heading', wagtail.blocks.CharBlock(help_text='Green centered text', max_length=200)), ('paragraph', wagtail.blocks.RichTextBlock(classname='paragraph', required=True)), ('tan_bg_text', wagtail.blocks.RichTextBlock(classname='paragraph', help_text='Paragraph with a tan background', required=False)), ('image', wagtail.images.blocks.ImageChooserBlock()), ('html', wagtail.blocks.RawHTMLBlock(required=False)), ('image_list', wagtail.blocks.StructBlock([('list_items', wagtail.blocks.ListBlock(wagtail.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(label='Image')), ('title', wagtail.blocks.CharBlock(label='Title', max_length=200)), ('sub_title', wagtail.blocks.CharBlock(label='Subtitle', max_length=200)), ('text', wagtail.blocks.RichTextBlock(label='Text')), ('link_url', wagtail.blocks.URLBlock(label='Link URL', max_length=200, required=False))]), label='List Item'))], required=False))], blank=True)),
                 ('banner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),
             ],
             options={

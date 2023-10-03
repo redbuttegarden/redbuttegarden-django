@@ -1,4 +1,4 @@
-FROM lambci/lambda:build-python3.7
+FROM lambci/lambda:build-python3.8
 
 LABEL maintainer="avery.uslaner@redbuttegarden.org"
 

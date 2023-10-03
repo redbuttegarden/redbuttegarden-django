@@ -4,7 +4,7 @@ import json
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
-from wagtail.core.models import Page
+from wagtail.models import Page
 from wagtail.images.tests.utils import Image, get_test_image_file
 
 from concerts.models import ConcertPage
@@ -47,7 +47,7 @@ class TestConcert(TestCase):
         response = self.client.get('/concert-test-page', follow=True)
         html = response.content.decode('utf8')
         self.assertTrue(html.startswith('\n\n<!DOCTYPE html>'))
-        self.assertIn('<title>Concert Test Page', html)
+        self.assertIn('<title>\n        Concert Test Page', html)
         self.assertTrue(html.endswith('</html>\n'))
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Available On Demand")

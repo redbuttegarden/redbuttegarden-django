@@ -48,7 +48,16 @@
 
                     <div id="rbghours" class="col-xs-3">
                         <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
-                            <div class="rbghours hover"></div>
+                            <div class="rbghours hover">
+                                <figure>
+                                    <picture>
+                                        <source srcset="{% static 'home/img/hours_of_operation_icon.webp' %}" type="image/webp">
+                                        <source srcset="{% static 'home/img/hours_of_operation_icon.png' %}" type="image/png">
+                                        <img src="{% static 'home/img/hours_of_operation_icon.png' %}" alt="Clock icon">
+                                    </picture>
+                                    <figcaption>HOURS OF OPERATION</figcaption>
+                                </figure>
+                            </div>
                         </a>
                         <div id="gardenHours"></div>
                         <div id="gardenStatus"></div>
@@ -58,17 +67,44 @@
 
                     <div class="col-xs-3" onmouseenter="admissionHoverOn()">
                         <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
-                            <div id="rbgadmission" class="rbgadmission hover"></div>
+                            <div id="rbgadmission" class="rbgadmission hover">
+                                <figure>
+                                    <picture>
+                                        <source srcset="{% static 'home/img/admission_rates_icon.webp' %}" type="image/webp">
+                                        <source srcset="{% static 'home/img/admission_rates_icon.png' %}" type="image/png">
+                                        <img src="{% static 'home/img/admission_rates_icon.png' %}" alt="Clock icon">
+                                    </picture>
+                                    <figcaption>ADMISSION RATES</figcaption>
+                                </figure>
+                            </div>
                         </a>
                     </div>
                     <div id="rbgdirections" class="col-xs-3">
                         <a href="{% slugurl 'directions' %}" aria-label="How to get to the garden">
-                            <div class="rbgdirections hover"></div>
+                            <div class="rbgdirections hover">
+                                <figure>
+                                    <picture>
+                                        <source srcset="{% static 'home/img/how_to_get_here_icon.webp' %}" type="image/webp">
+                                        <source srcset="{% static 'home/img/how_to_get_here_icon.png' %}" type="image/png">
+                                        <img src="{% static 'home/img/how_to_get_here_icon.png' %}" alt="Clock icon">
+                                    </picture>
+                                    <figcaption>HOW TO GET HERE</figcaption>
+                                </figure>
+                            </div>
                         </a>
                     </div>
                     <div id="rbgweather" class="col-xs-3">
                         <a href="https://www.weatherbug.com/weather-camera/?cam=SLTWK" target="_blank" aria-label="External link to weatherbug weather station with camera">
-                            <div class="rbgweather hover"></div>
+                            <div class="rbgweather hover">
+                                <figure>
+                                    <picture>
+                                        <source srcset="{% static 'home/img/todays_weather_icon.webp' %}" type="image/webp">
+                                        <source srcset="{% static 'home/img/todays_weather_icon.png' %}" type="image/png">
+                                        <img src="{% static 'home/img/todays_weather_icon.png' %}" alt="Clock icon">
+                                    </picture>
+                                    <figcaption>TODAY'S WEATHER</figcaption>
+                                </figure>
+                            </div>
                         </a>
                     </div>
 

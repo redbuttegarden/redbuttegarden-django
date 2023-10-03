@@ -2,7 +2,7 @@ import logging
 
 from django.apps import AppConfig
 
-from wagtail.core.signals import page_published
+from wagtail.signals import page_published
 
 logger = logging.getLogger(__name__)
 

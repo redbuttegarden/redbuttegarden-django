@@ -7,8 +7,6 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
     <link href="{% static 'plants/css/plant_map.css' %}" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
-
-    <script src="https://kit.fontawesome.com/332beda55d.js" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block abnormal_content %}
@@ -327,7 +325,7 @@
             } else {
                 map.addSource('collections', {
                     type: 'geojson',
-                    data: 'https://zappa-rbg-dev-static-east.s3.amazonaws.com/media/collections.geojson',
+                    data: 'https://redbuttegarden.org/media/collections.geojson',
                     cluster: true,
                     clusterMaxZoom: 17, // Max zoom to cluster points on
                     clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
@@ -444,6 +442,7 @@
                 const species_name = e.features[0].properties.species_name;
                 const species_full_name = e.features[0].properties.species_full_name;
                 const species_id = e.features[0].properties.species_id;
+                const collection_id = e.features[0].properties.id;
                 const vernacular_name = e.features[0].properties.vernacular_name;
                 const habit = e.features[0].properties.habit;
                 const hardiness = e.features[0].properties.hardiness;
@@ -468,6 +467,9 @@
                 new mapboxgl.Popup()
                     .setLngLat(coordinates)
                     .setHTML(
+                        '<div class="pop-up-row">' +
+                            '<a href="/plants/collection/' + collection_id + '/">Collection Detail Page</a>' +
+                        '</div>' +
                         '<div class="pop-up-row">' +
                             '<span class="pop-up-label">Family Name: </span>' + family_name +
                         '</div>' +
@@ -515,6 +517,8 @@
                         '</div>'
                     )
                     .addTo(map);
+
+                    console.log(e.features[0]);
             });
 
             map.on('mouseenter', 'clusters', function () {

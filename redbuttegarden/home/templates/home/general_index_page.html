@@ -15,10 +15,10 @@
 
     <div id="wagtail-children" class="row-fluid col xs-12">
         {% for sub in sub_pages %}
-            <div class="col-sm-4">
+            <div class="col-sm-4 index-tile">
                 {% with sub=sub.specific %}
-                    <a href="{% pageurl sub %}">
-                        <div class="index-thumbnail hover">
+                    <a class="hover" href="{% pageurl sub %}">
+                        <div class="index-thumbnail">
                             {% comment %}
                                 Added blank alt attribute to image thumbnails since these are primarily to create a
                                 larger surface area for the page links and alt attributes would unnecessarily complicate

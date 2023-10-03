@@ -31,7 +31,7 @@ class GenusSerializer(serializers.ModelSerializer):
 
 class SpeciesSerializer(serializers.ModelSerializer):
     genus = GenusSerializer()
-    habit = serializers.CharField(max_length=255, required=False)
+    habit = serializers.CharField(max_length=255, required=False, allow_blank=True)
     hardiness = serializers.ListField(allow_empty=True, allow_null=True,
                                       child=serializers.IntegerField(label='Hardiness',
                                                                      max_value=13,
@@ -51,6 +51,10 @@ class SpeciesSerializer(serializers.ModelSerializer):
         }
 
 class LocationSerializer(serializers.ModelSerializer):
+    # We allow null here so we can still post Collections without Locations
+    latitude = serializers.CharField(allow_blank=True, allow_null=True)
+    longitude = serializers.CharField(allow_blank=True, allow_null=True)
+
     class Meta:
         model = Location
         fields = ['id', 'latitude', 'longitude']
@@ -97,7 +101,6 @@ class CollectionSerializer(serializers.ModelSerializer):
 
         family, _ = Family.objects.get_or_create(**family_data)
         genus, _ = Genus.objects.get_or_create(family=family, **genus_data)
-        # TODO - Catch errors when species data are changed
         species, _ = Species.objects.update_or_create(genus=genus,
                                                    name=species_data['name'],
                                                    subspecies=species_data['subspecies'],
@@ -123,7 +126,11 @@ class CollectionSerializer(serializers.ModelSerializer):
                                                        'high_elevation': species_data['high_elevation']
                                                    })
 
-        location, _ = Location.objects.get_or_create(**location_data)
+        if location_data['longitude'] and location_data['latitude']:
+            location, _ = Location.objects.get_or_create(**location_data)
+        else:
+            location = None
+
         garden, _ = GardenArea.objects.get_or_create(**garden_data)
         collection, _ = Collection.objects.update_or_create(plant_id=validated_data['plant_id'],
                                                             defaults={
