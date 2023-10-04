@@ -498,6 +498,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 #rbginfo, #rbginfo2 {
     max-width: 1280px;
     margin: 0 auto 0 auto;
+    color: white;
 }
 
 #rbginfobg, #rbginfo a:link, #rbginfo a:visited {

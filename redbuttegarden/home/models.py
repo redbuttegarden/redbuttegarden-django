@@ -1,3 +1,4 @@
+import json
 import logging
 
 from django.core.paginator import Paginator
@@ -21,7 +22,6 @@ from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
 from home.abstract_models import AbstractBase
-
 
 logger = logging.getLogger(__name__)
 
@@ -664,11 +664,32 @@ class HomePage(AbstractBase):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    concert_page = models.ForeignKey(
+        'concerts.ConcertPage',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text=_('Set to this years concert Wagtail page to extract concert dates')
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel('hours', help_text=_("Choose the set of hours to display on the home page")),
-        InlinePanel('event_slides', label=_('Slideshow Images'))
+        InlinePanel('event_slides', label=_('Slideshow Images')),
+        FieldPanel('concert_page', permission='superuser')  # Arbitrary permission name; only superusers can access this
     ]
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, **kwargs)
+
+        if self.concert_page:
+            concerts = self.concert_page.get_visible_concerts()
+            concert_info = [
+                {"TicketURL": concert['ticket_url'] if not concert['sold_out'] else None, "Date": concert_date} for
+                concert in concerts for concert_date in concert['concert_dates']]
+            context['concert_info'] = json.dumps(concert_info, default=str)
+
+        return context
 
 
 class EventSlides(Orderable):
@@ -758,6 +779,7 @@ class RetailPartnerPage(AbstractBase):
                 logger.error('[!] Failed to find banner for Retail Partner Page: ', e)
         return super().save_revision(*args, **kwargs)
 
+
 class FooterText(
     DraftStateMixin,
     RevisionMixin,
@@ -789,6 +811,7 @@ class FooterText(
 
     class Meta(TranslatableMixin.Meta):
         verbose_name_plural = "Footer Text"
+
 
 @register_setting
 class SiteSettings(BaseSiteSetting):
