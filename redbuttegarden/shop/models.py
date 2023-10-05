@@ -3,8 +3,7 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import InlinePanel
 from wagtail.admin.panels import FieldPanel
-from wagtail.contrib.settings.models import BaseSetting
-from wagtail.contrib.settings.registry import register_setting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.models import Page, Orderable
 
 
@@ -55,7 +54,7 @@ class ProductCustomField(Orderable):
 
 
 @register_setting
-class SnipcartSettings(BaseSetting):
+class SnipcartSettings(BaseSiteSetting):
     api_key = models.CharField(
         max_length=255,
         help_text='Your Snipcart public API key'
