@@ -4,125 +4,93 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_includes %}
-    <div id="slider-wrapper">
-        <div id="inner-slider-wrapper1">
-            <div id="inner-slider-wrapper2">
+    <!-- Begin Inner Info Div -->
+    <div id="rbg-info-wrapper1">
+        <div id="rbginfobg">
+            <div id="rbginfo" class="row-fluid clearfix">
 
-                <!-- Jssor Slider Begin -->
-                <div id="slider1_container">
-                    <!-- Slides Container -->
-                    <div id="slides" u="slides">
-                        {% include 'home/includes/eventslides.html' with slides=page.event_slides.all %}
-                    </div>
-
-                    <!-- bullet navigator container -->
-                    <div u="navigator" class="jssorb21" style="top: 68px;">
-                        <!-- bullet navigator item prototype -->
-                        <div u="prototype"></div>
-                    </div>
-
-                    <!-- Arrow Left -->
-                    <span u="arrowleft" class="jssora21l" style="top: 123px; left: 8px;"></span>
-
-                    <!-- Arrow Right -->
-                    <span u="arrowright" class="jssora21r" style="top: 123px; right: 8px;"></span>
+                <div id="rbghours" class="col-xs-3">
+                    <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
+                        <div class="rbghours hover">
+                            <figure>
+                                <picture>
+                                    <source srcset="{% static 'home/img/hours_of_operation_icon.webp' %}"
+                                            type="image/webp">
+                                    <source srcset="{% static 'home/img/hours_of_operation_icon.png' %}"
+                                            type="image/png">
+                                    <img src="{% static 'home/img/hours_of_operation_icon.png' %}" alt="Clock icon">
+                                </picture>
+                                <figcaption>HOURS OF OPERATION</figcaption>
+                            </figure>
+                        </div>
+                    </a>
+                    <div id="gardenHours"></div>
+                    <div id="gardenStatus"></div>
+                    <div id="gardenEmphatic" class="red text-center"></div>
+                    <div id="otherNotes"></div>
                 </div>
-                <!-- Jssor Slider End -->
 
-                <!-- Begin Page Down Code -->
-                <div id="page-down2" class="col-xs-12">
-                    <span class="page-down-icon">
-                        <picture>
-                            <source srcset="{% static 'home/img/down-arrow.webp' %}" type="image/webp">
-                            <img alt="downward-arrow" src="{% static 'home/img/down-arrow.png' %}" />
-                        </picture>
-                    </span>
+                <div class="col-xs-3" onmouseenter="admissionHoverOn()">
+                    <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
+                        <div id="rbgadmission" class="rbgadmission hover">
+                            <figure>
+                                <picture>
+                                    <source srcset="{% static 'home/img/admission_rates_icon.webp' %}"
+                                            type="image/webp">
+                                    <source srcset="{% static 'home/img/admission_rates_icon.png' %}" type="image/png">
+                                    <img src="{% static 'home/img/admission_rates_icon.png' %}" alt="Clock icon">
+                                </picture>
+                                <figcaption>ADMISSION RATES</figcaption>
+                            </figure>
+                        </div>
+                    </a>
                 </div>
-                <!-- End Page Down Code -->
-            </div>
-        </div>
-        <!-- Begin Inner Info Div -->
-        <div id="rbg-info-wrapper1">
-            <div id="rbginfobg">
-                <div id="rbginfo" class="row-fluid clearfix">
+                <div id="rbgdirections" class="col-xs-3">
+                    <a href="{% slugurl 'directions' %}" aria-label="How to get to the garden">
+                        <div class="rbgdirections hover">
+                            <figure>
+                                <picture>
+                                    <source srcset="{% static 'home/img/how_to_get_here_icon.webp' %}"
+                                            type="image/webp">
+                                    <source srcset="{% static 'home/img/how_to_get_here_icon.png' %}" type="image/png">
+                                    <img src="{% static 'home/img/how_to_get_here_icon.png' %}" alt="Clock icon">
+                                </picture>
+                                <figcaption>HOW TO GET HERE</figcaption>
+                            </figure>
+                        </div>
+                    </a>
+                </div>
+                <div id="rbgweather" class="col-xs-3">
+                    <a href="https://www.weatherbug.com/weather-camera/?cam=SLTWK" target="_blank"
+                       aria-label="External link to weatherbug weather station with camera">
+                        <div class="rbgweather hover">
+                            <figure>
+                                <picture>
+                                    <source srcset="{% static 'home/img/todays_weather_icon.webp' %}" type="image/webp">
+                                    <source srcset="{% static 'home/img/todays_weather_icon.png' %}" type="image/png">
+                                    <img src="{% static 'home/img/todays_weather_icon.png' %}" alt="Clock icon">
+                                </picture>
+                                <figcaption>TODAY'S WEATHER</figcaption>
+                            </figure>
+                        </div>
+                    </a>
+                </div>
 
-                    <div id="rbghours" class="col-xs-3">
-                        <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
-                            <div class="rbghours hover">
-                                <figure>
-                                    <picture>
-                                        <source srcset="{% static 'home/img/hours_of_operation_icon.webp' %}" type="image/webp">
-                                        <source srcset="{% static 'home/img/hours_of_operation_icon.png' %}" type="image/png">
-                                        <img src="{% static 'home/img/hours_of_operation_icon.png' %}" alt="Clock icon">
-                                    </picture>
-                                    <figcaption>HOURS OF OPERATION</figcaption>
-                                </figure>
-                            </div>
-                        </a>
-                        <div id="gardenHours"></div>
-                        <div id="gardenStatus"></div>
-                        <div id="gardenEmphatic" class="red text-center"></div>
-                        <div id="otherNotes"></div>
-                    </div>
-
-                    <div class="col-xs-3" onmouseenter="admissionHoverOn()">
-                        <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
-                            <div id="rbgadmission" class="rbgadmission hover">
-                                <figure>
-                                    <picture>
-                                        <source srcset="{% static 'home/img/admission_rates_icon.webp' %}" type="image/webp">
-                                        <source srcset="{% static 'home/img/admission_rates_icon.png' %}" type="image/png">
-                                        <img src="{% static 'home/img/admission_rates_icon.png' %}" alt="Clock icon">
-                                    </picture>
-                                    <figcaption>ADMISSION RATES</figcaption>
-                                </figure>
-                            </div>
-                        </a>
-                    </div>
-                    <div id="rbgdirections" class="col-xs-3">
-                        <a href="{% slugurl 'directions' %}" aria-label="How to get to the garden">
-                            <div class="rbgdirections hover">
-                                <figure>
-                                    <picture>
-                                        <source srcset="{% static 'home/img/how_to_get_here_icon.webp' %}" type="image/webp">
-                                        <source srcset="{% static 'home/img/how_to_get_here_icon.png' %}" type="image/png">
-                                        <img src="{% static 'home/img/how_to_get_here_icon.png' %}" alt="Clock icon">
-                                    </picture>
-                                    <figcaption>HOW TO GET HERE</figcaption>
-                                </figure>
-                            </div>
-                        </a>
-                    </div>
-                    <div id="rbgweather" class="col-xs-3">
-                        <a href="https://www.weatherbug.com/weather-camera/?cam=SLTWK" target="_blank" aria-label="External link to weatherbug weather station with camera">
-                            <div class="rbgweather hover">
-                                <figure>
-                                    <picture>
-                                        <source srcset="{% static 'home/img/todays_weather_icon.webp' %}" type="image/webp">
-                                        <source srcset="{% static 'home/img/todays_weather_icon.png' %}" type="image/png">
-                                        <img src="{% static 'home/img/todays_weather_icon.png' %}" alt="Clock icon">
-                                    </picture>
-                                    <figcaption>TODAY'S WEATHER</figcaption>
-                                </figure>
-                            </div>
-                        </a>
-                    </div>
-
-                    <!-- Begin Page Down Code for Slides on Mobile -->
-                    <div id="page-down" class="col-xs-12">
+                <!-- Begin Page Down Code for Slides on Mobile -->
+                <div id="page-down" class="col-xs-12">
                         <span class="page-down-icon">
                             <picture>
                                 <source srcset="{% static 'home/img/down-arrow.webp' %}" type="image/webp">
-                                <img alt="downward-arrow" src="{% static 'home/img/down-arrow.png' %}" width="75em" height="25em"/>
+                                <img alt="downward-arrow" src="{% static 'home/img/down-arrow.png' %}" width="75em"
+                                     height="25em"/>
                             </picture>
                         </span>
-                    </div>
-                    <!-- End Page Down Code for Slides on Mobile -->
                 </div>
+                <!-- End Page Down Code for Slides on Mobile -->
             </div>
         </div>
-        <!-- End Inner Info Div-->
     </div>
+    <!-- End Inner Info Div-->
 
     <!-- Dump the RBG Hours snippit info for our hours.js script to consume -->
     <div id="rbg_hours_info" style="display: none;">
@@ -151,7 +119,8 @@
                     <div id="gardenHours2"></div>
                     <div id="gardenHours2-reservations"><span class="red text-center"></span></div>
                     <div id="gardenStatus2"></div>
-                    <a href="{% slugurl 'general-info' %}" style="text-decoration:none;color:#FFFFFF;font-size:12px">CLICK TO SEE ALL HOURS</a>
+                    <a href="{% slugurl 'general-info' %}" style="text-decoration:none;color:#FFFFFF;font-size:12px">CLICK
+                        TO SEE ALL HOURS</a>
                     <br><br>
                 </div>
 
@@ -195,22 +164,17 @@
         let concertInfo = {{ concert_info|safe }};
         // Convert date strings to javascript Date objects
         for (let i = 0; i < concertInfo.length; i++) {
-           concertInfo[i]["Date"] = new Date(concertInfo[i]["Date"]);
+            concertInfo[i]["Date"] = new Date(concertInfo[i]["Date"]);
         }
     </script>
     <script src="{% static 'home/js/hours.js' %}"></script>
-    <script type="text/javascript" src="{% static 'home/js/jssor.slider.mini.js' %}"></script>
-
-    {% include 'home/includes/jssor-slideshow-js.html' %}
-
-    {% include 'home/includes/page-down.html' %}
 {% endblock %}
 
 {% block abnormal_content %}
     <div id="rbghomebody" class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                <br />
+                <br/>
 
                 <div>
                     <hr class="hr-separator">
@@ -222,7 +186,8 @@
                         <a href="{% slugurl 'whats-blooming-now' %}">
                             <picture>
                                 <source srcset="{% static 'home/img/blog1.webp' %}" type="image/webp">
-                                <img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'home/img/blog1.jpg' %}" width="588em" height="332em">
+                                <img alt="Text says whats blooming over picture of several purple irises" class="hover"
+                                     src="{% static 'home/img/blog1.jpg' %}" width="588em" height="332em">
                             </picture>
                         </a>
                     </div>
@@ -231,40 +196,43 @@
                         <a href="/social-media">
                             <picture>
                                 <source srcset="{% static 'home/img/socialMedia-small.webp' %}" type="image/webp">
-                                <img alt="hand holding smartphone" class="hover" src="{% static 'home/img/socialMedia-small.png' %}" width="588em" height="332em">
+                                <img alt="hand holding smartphone" class="hover"
+                                     src="{% static 'home/img/socialMedia-small.png' %}" width="588em" height="332em">
                             </picture>
                         </a>
                     </div>
                 </div>
 
-                <br />
-                <br />
-                <br />
+                <br/>
+                <br/>
+                <br/>
 
                 <div>
                     <hr class="hr-separator">
                     <div class="separator">EVENTS</div>
                 </div>
 
-                <br />
+                <br/>
 
                 <div class="row-fluid">
                     <div class="col-sm-12">
                         <a href="{% slugurl 'calendar' %}">
                             <picture>
                                 <source srcset="{% static 'home/img/whats-happening.webp' %}" type="image/webp">
-                                <img alt="text says whats happening over picture of red butte garden amphitheater" class="hover" src="{% static 'home/img/whats-happening.jpg' %}" width="1280em" height="325em">
+                                <img alt="text says whats happening over picture of red butte garden amphitheater"
+                                     class="hover" src="{% static 'home/img/whats-happening.jpg' %}" width="1280em"
+                                     height="325em">
                             </picture>
                         </a>
                     </div>
                 </div>
 
-                <br />
-                <br />
-                <br />
+                <br/>
+                <br/>
+                <br/>
 
 
-                <br />
+                <br/>
             </div>
         </div>
     </div>
