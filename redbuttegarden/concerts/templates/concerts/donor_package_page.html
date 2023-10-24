@@ -16,14 +16,18 @@
     <br>
 
     {% for block in page.body %}
-        {% include_block block %}
+        {% if block.block_type == 'image' %}
+            {% image block.value original class="img-center img-responsive" %}
+        {% else %}
+            {% include_block block with id=block.id %}
+        {% endif %}
     {% endfor %}
 
     <div id="myModal" class="modal" onclick="closeModal()">
         <span class="close cursor" onclick="closeModal()">&times;</span>
         <div class="modal-content">
             <div id="mapModal" class="mySlides text-center">
-                {# Injected by javascript #}
+                {# injected by javascript #}
             </div>
 
             <div class="caption-container">
