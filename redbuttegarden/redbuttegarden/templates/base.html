@@ -45,7 +45,7 @@
     {# Global stylesheets #}
     <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/accessibility.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/rbg.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/summer.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/theme.css' %}">
 
     {# User uploaded CSS #}
     {% if page.custom_css %}
@@ -58,6 +58,8 @@
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
+
+<script src="{% static 'redbuttegarden/js/theme-toggle.js' %}"></script>
 
 {% wagtailuserbar %}
 {% tota11y %}

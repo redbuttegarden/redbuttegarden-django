@@ -1,3 +1,25 @@
+.navbar {
+    --bs-navbar-padding-y: 0;
+}
+
+.navbar .nav-link {
+    color: var(--bs-white);
+    font-weight: bold;
+}
+
+#logo img {
+  max-height: 50px;
+  width: auto;
+  padding: 3px 0 3px 0;
+}
+
+.bi {
+  width: 1em;
+  height: 1em;
+  vertical-align: -.125em;
+  fill: currentcolor;
+}
+
 figcaption {
     text-align: center;
     font-style: italic;
