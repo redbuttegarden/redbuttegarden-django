@@ -1,0 +1,41 @@
+#homePageCarousel .carousel-item img {
+  object-fit: cover;
+  object-position: center;
+  height: 80vh;
+  overflow: hidden;
+}
+
+#homePageCarousel.carousel .carousel-control-next,
+#homePageCarousel.carousel .carousel-control-prev {
+	opacity: 0.7;
+}
+
+#homePageCarousel.carousel .carousel-control-next-icon,
+#homePageCarousel.carousel .carousel-control-prev-icon {
+	filter: none;
+}
+
+#slides .carousel-caption {
+	font-size: 4em;
+	font-weight: bold;
+	color: #fff;
+	text-transform: capitalize;
+	text-shadow: -2px 0 #196143, 0 2px #196143, 2px 0 #196143, 0 -2px #196143;
+}
+
+#pause-btn {
+	position: absolute;
+	right: 50%;
+	bottom: 0.25rem;
+	left: 50%;
+	color: #fff;
+	text-align: center;
+	background: 0 0;
+  	border: 0;
+	visibility: hidden;
+	opacity: 0.7;
+}
+
+#pause-btn:hover {
+	border: 2px solid var(--rbg-secondary-green);
+}

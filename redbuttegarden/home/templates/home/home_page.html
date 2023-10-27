@@ -1,14 +1,39 @@
 {% extends "base.html" %}
 {% load static wagtailcore_tags wagtailimages_tags %}
 
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'home/css/home_page.css' %}">
+{% endblock %}
+
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_includes %}
+    <!-- Begin Image Carousel -->
+    <div id="homePageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-pause="false"
+         onmouseover="show('pause-btn')" onmouseout="hide('pause-btn')">
+        <div class="carousel-inner">
+            <div id="slides" u="slides">
+                {% include 'home/includes/slides.html' with slides=page.event_slides.all %}
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#homePageCarousel"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button id="pause-btn" type="button" aria-label="pause slideshow">Pause Slideshow</button>
+        <button class="carousel-control-next" type="button" data-bs-target="#homePageCarousel"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <!-- End Image Carousel -->
+
     <!-- Begin Inner Info Div -->
-    <div id="rbg-info-wrapper1">
+    <div id="rbg-info-wrapper">
         <div id="rbginfobg">
             <div id="rbginfo" class="row-fluid clearfix">
-
                 <div id="rbghours" class="col-xs-3">
                     <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
                         <div class="rbghours hover">
@@ -75,18 +100,6 @@
                         </div>
                     </a>
                 </div>
-
-                <!-- Begin Page Down Code for Slides on Mobile -->
-                <div id="page-down" class="col-xs-12">
-                        <span class="page-down-icon">
-                            <picture>
-                                <source srcset="{% static 'home/img/down-arrow.webp' %}" type="image/webp">
-                                <img alt="downward-arrow" src="{% static 'home/img/down-arrow.png' %}" width="75em"
-                                     height="25em"/>
-                            </picture>
-                        </span>
-                </div>
-                <!-- End Page Down Code for Slides on Mobile -->
             </div>
         </div>
     </div>
@@ -106,71 +119,12 @@
         <div id="hours_gad_start">{{ page.hours.gad_start }}</div>
         <div id="hours_gad_end">{{ page.hours.gad_end }}</div>
     </div>
-
-    <!-- Begin Outer Info Div -->
-    <div id="rbg-info-wrapper2">
-        <div id="rbginfobg2">
-
-            <div id="rbginfo" class="row">
-
-                <div id="rbghours" class="col-sm-3">
-                    <br>
-                    <b>GARDEN HOURS (MDT)</b>
-                    <div id="gardenHours2"></div>
-                    <div id="gardenHours2-reservations"><span class="red text-center"></span></div>
-                    <div id="gardenStatus2"></div>
-                    <a href="{% slugurl 'general-info' %}" style="text-decoration:none;color:#FFFFFF;font-size:12px">CLICK
-                        TO SEE ALL HOURS</a>
-                    <br><br>
-                </div>
-
-                <div id="rbgadmission2" class="col-sm-3">
-                    {% include "home/includes/admission.html" %}
-                </div>
-
-                <div id="rbgdirections" class="col-sm-3">
-                    <div class="memfaqwrap">
-                        <br>
-                        <a href="{% slugurl 'directions' %}">
-                            <div class="memfaq volbutton">HOW TO GET HERE</div>
-                        </a>
-                        <br>
-                    </div>
-                </div>
-
-                <div id="rbgweather" class="col-sm-3">
-                    <div class="memfaqwrap">
-                        <br>
-                        <a href="https://weather.com/weather/today/l/84108:4:US" target="_blank">
-                            <div class="memfaq volbutton">TODAY'S WEATHER</div>
-                        </a>
-                        <br>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Outer Info Div -->
-{% endblock %}
-
-{% block extra_js %}
-    <script>
-        // List of concert dates and their ticket URL
-        let concertInfo = {{ concert_info|safe }};
-        // Convert date strings to javascript Date objects
-        for (let i = 0; i < concertInfo.length; i++) {
-            concertInfo[i]["Date"] = new Date(concertInfo[i]["Date"]);
-        }
-    </script>
-    <script src="{% static 'home/js/hours.js' %}"></script>
 {% endblock %}
 
 {% block abnormal_content %}
     <div id="rbghomebody" class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                <br/>
-
                 <div>
                     <hr class="hr-separator">
                     <div class="separator">MEDIA</div>
@@ -232,3 +186,17 @@
         </div>
     </div>
 {% endblock abnormal_content %}
+
+{% block extra_js %}
+    <script>
+        // List of concert dates and their ticket URL
+        let concertInfo = {{ concert_info|safe }};
+        // Convert date strings to javascript Date objects
+        for (let i = 0; i < concertInfo.length; i++) {
+            concertInfo[i]["Date"] = new Date(concertInfo[i]["Date"]);
+        }
+    </script>
+    <script type="text/javascript" src="{% static 'home/js/hours.js' %}"></script>
+    <script type="text/javascript" src="{% static 'home/js/home_page.js' %}"></script>
+    <script type="text/javascript" src="{% static 'redbuttegarden/js/util.js' %}"></script>
+{% endblock %}

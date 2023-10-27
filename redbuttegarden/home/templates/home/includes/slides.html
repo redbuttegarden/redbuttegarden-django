@@ -1,0 +1,12 @@
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% for slide in slides %}
+    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <a href="{% if slide.link.url %}{{ slide.link.url }}{% else %}{{ slide.alternate_link }}{% endif %}">
+            {% image slide.image original class="d-block w-100" %}
+            <div class="carousel-caption d-none d-md-block">
+                {{ slide.text|richtext }}
+            </div>
+        </a>
+    </div>
+{% endfor %}
