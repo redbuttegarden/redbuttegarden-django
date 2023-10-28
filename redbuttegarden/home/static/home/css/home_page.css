@@ -1,10 +1,9 @@
 #carousel-info-container {
 	padding: 0;
-	min-height: 90vh;  /* 100 minus navbar height */
 }
 
 #homePageCarousel {
-	height: 70vh;
+	height: 90vh;  /* 100 minus navbar height */
 }
 
 #homePageCarousel .carousel-inner {
@@ -22,7 +21,7 @@
 #homePageCarousel .carousel-item img {
   object-fit: cover;
   position: absolute;
-  bottom: -40vh;
+  bottom: 0;
 }
 
 #homePageCarousel.carousel .carousel-control-next,
@@ -41,11 +40,12 @@
 	color: #fff;
 	text-transform: capitalize;
 	text-shadow: -2px 0 #196143, 0 2px #196143, 2px 0 #196143, 0 -2px #196143;
+	margin-bottom: 10rem;
 }
 
 #pause-btn {
 	position: absolute;
-	bottom: -1rem;
+	top: 2rem;
 	right: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
@@ -62,5 +62,11 @@
 }
 
 #rbginfobg {
+	position: absolute;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.7);
+}
+
+#rbginfo {
 	padding: 1rem;
 }
