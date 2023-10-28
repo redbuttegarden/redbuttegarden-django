@@ -1,5 +1,6 @@
 #carousel-info-container {
 	padding: 0;
+	position: relative;
 }
 
 #homePageCarousel {
@@ -27,6 +28,8 @@
 #homePageCarousel.carousel .carousel-control-next,
 #homePageCarousel.carousel .carousel-control-prev {
 	opacity: 0.7;
+	height: 10vh;
+	top: 50%;
 }
 
 #homePageCarousel.carousel .carousel-control-next-icon,
@@ -53,7 +56,6 @@
 	text-align: center;
 	background: 0 0;
   	border: 0;
-	visibility: hidden;
 	opacity: 0.7;
 }
 
@@ -65,8 +67,13 @@
 	position: absolute;
 	bottom: 0;
 	background-color: rgba(0,0,0,0.7);
+	font-size: 14px;
 }
 
 #rbginfo {
-	padding: 1rem;
+	padding-top: 1rem;
+}
+
+#rbginfobg, #rbginfo a:link, #rbginfo a:visited {
+	color: white;
 }

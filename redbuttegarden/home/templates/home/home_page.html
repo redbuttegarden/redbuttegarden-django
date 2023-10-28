@@ -8,10 +8,10 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_includes %}
-    <div id="carousel-info-container" class="container-fluid">
+    <div id="carousel-info-container" class="container-fluid" onmouseover="show('pause-btn')"
+         onmouseout="hide('pause-btn')">
         <!-- Begin Image Carousel -->
-        <div id="homePageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-pause="false"
-             onmouseover="show('pause-btn')" onmouseout="hide('pause-btn')">
+        <div id="homePageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-pause="false">
             <div class="carousel-inner">
                 <div id="slides" u="slides">
                     {% include 'home/includes/slides.html' with slides=page.event_slides.all %}
@@ -22,7 +22,7 @@
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button id="pause-btn" type="button" aria-label="pause slideshow">Pause Slideshow</button>
+            <button id="pause-btn" class="d-none" type="button" aria-label="pause slideshow">Pause Slideshow</button>
             <button class="carousel-control-next" type="button" data-bs-target="#homePageCarousel"
                     data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
@@ -55,9 +55,10 @@
                     <div id="otherNotes"></div>
                 </div>
 
-                <div class="col-md-3 text-center" onmouseenter="admissionHoverOn()">
+                <div class="col-md-3 text-center" onmouseover="show('admission-table')"
+                     onmouseout="hide('admission-table')">
                     <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
-                        <div id="rbgadmission" class="rbgadmission hover">
+                        <div id="rbgadmission" class="rbgadmission">
                             <figure>
                                 <picture>
                                     <source srcset="{% static 'home/img/admission_rates_icon.webp' %}"
@@ -65,7 +66,68 @@
                                     <source srcset="{% static 'home/img/admission_rates_icon.png' %}" type="image/png">
                                     <img src="{% static 'home/img/admission_rates_icon.png' %}" alt="Clock icon">
                                 </picture>
-                                <figcaption>ADMISSION RATES</figcaption>
+                                <figcaption>
+                                    ADMISSION RATES
+                                    <table id="admission-table" class="d-none col-12 text-start">
+                                        <tbody>
+                                        <tr>
+                                            <td>MEMBERS:</td>
+                                            <td class="td-padding">FREE</td>
+                                        </tr>
+                                        <tr>
+                                            <!-- ADULT ADMISSION PRICE -->
+                                            <td>ADULTS (ages 18-64):</td>
+                                            <td class="td-padding">
+                                                $<span id="adult-adm">14</span>
+                                                <span id="adult-half"></span>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <!-- SENIOR ADMISSION PRICE -->
+                                            <td>SENIORS (ages 65+):</td>
+                                            <td class="td-padding">
+                                                $<span id="senior-adm">12</span>
+                                                <span id="senior-half"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!-- MILITARY ADMISSION PRICE -->
+                                            <td>MILITARY w/ID:</td>
+                                            <td class="td-padding">
+                                                $<span id="mil-adm">12</span>
+                                                <span id="mil-half"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!-- CHILD 3-7 ADMISSION PRICE -->
+                                            <td>CHILDREN (ages 3-17):</td>
+                                            <td class="td-padding">
+                                                $<span id="child-adm">7</span>
+                                                <span id="child-half"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>CHILDREN (under 3):</td>
+                                            <td class="td-padding">FREE</td>
+                                        </tr>
+                                        <tr>
+                                            <!-- STAFF/FACULTY ADMISSION PRICE -->
+                                            <td>UofU FACULTY/STAFF:</td>
+                                            <td class="td-padding">
+                                                <span id="staff-adm">FREE w/VALID ID</span>
+                                                <span id="staff-half"></span>
+                                            </td>
+
+                                        </tr>
+                                        <tr class="tr-final">
+                                            <td class="td-final1">UofU STUDENTS:</td>
+                                            <td class="td-final2">FREE w/VALID ID</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="admissionDiscount"></div>
+                                </figcaption>
                             </figure>
                         </div>
                     </a>

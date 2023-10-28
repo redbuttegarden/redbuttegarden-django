@@ -1,7 +1,7 @@
 function show(id) {
-    document.getElementById(id).style.visibility = "visible";
+    document.getElementById(id).classList.remove("d-none");
 }
 
 function hide(id) {
-    document.getElementById(id).style.visibility = "hidden";
+    document.getElementById(id).classList.add("d-none");
 }

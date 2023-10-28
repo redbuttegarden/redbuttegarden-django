@@ -31,4 +31,3 @@ function toggleSlideShow() {
         paused = false;
     }
 }
-
