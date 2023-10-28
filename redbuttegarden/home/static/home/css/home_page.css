@@ -1,8 +1,11 @@
+#homePageCarousel .carousel-item {
+	height: 80vh;
+}
+
 #homePageCarousel .carousel-item img {
   object-fit: cover;
-  object-position: center;
-  height: 80vh;
-  overflow: hidden;
+  position: absolute;
+  bottom: -40vh;
 }
 
 #homePageCarousel.carousel .carousel-control-next,
