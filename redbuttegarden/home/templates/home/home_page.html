@@ -31,10 +31,9 @@
     <!-- End Image Carousel -->
 
     <!-- Begin Inner Info Div -->
-    <div id="rbg-info-wrapper">
-        <div id="rbginfobg">
-            <div id="rbginfo" class="row-fluid clearfix">
-                <div id="rbghours" class="col-xs-3">
+        <div id="rbginfobg container">
+            <div id="rbginfo" class="row">
+                <div id="rbghours" class="col-md-3">
                     <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
                         <div class="rbghours hover">
                             <figure>
@@ -55,7 +54,7 @@
                     <div id="otherNotes"></div>
                 </div>
 
-                <div class="col-xs-3" onmouseenter="admissionHoverOn()">
+                <div class="col-md-3" onmouseenter="admissionHoverOn()">
                     <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
                         <div id="rbgadmission" class="rbgadmission hover">
                             <figure>
@@ -70,7 +69,7 @@
                         </div>
                     </a>
                 </div>
-                <div id="rbgdirections" class="col-xs-3">
+                <div id="rbgdirections" class="col-md-3">
                     <a href="{% slugurl 'directions' %}" aria-label="How to get to the garden">
                         <div class="rbgdirections hover">
                             <figure>
@@ -85,7 +84,7 @@
                         </div>
                     </a>
                 </div>
-                <div id="rbgweather" class="col-xs-3">
+                <div id="rbgweather" class="col-md-3">
                     <a href="https://www.weatherbug.com/weather-camera/?cam=SLTWK" target="_blank"
                        aria-label="External link to weatherbug weather station with camera">
                         <div class="rbgweather hover">
@@ -102,7 +101,6 @@
                 </div>
             </div>
         </div>
-    </div>
     <!-- End Inner Info Div-->
 
     <!-- Dump the RBG Hours snippit info for our hours.js script to consume -->
