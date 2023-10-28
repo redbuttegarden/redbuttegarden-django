@@ -1,5 +1,22 @@
+#carousel-info-container {
+	padding: 0;
+	min-height: 90vh;  /* 100 minus navbar height */
+}
+
+#homePageCarousel {
+	height: 70vh;
+}
+
+#homePageCarousel .carousel-inner {
+	height: 100%;
+}
+
+#homePageCarousel #slides {
+	height: 100%;
+}
+
 #homePageCarousel .carousel-item {
-	height: 80vh;
+	height: 100%;
 }
 
 #homePageCarousel .carousel-item img {
@@ -19,7 +36,7 @@
 }
 
 #slides .carousel-caption {
-	font-size: 4em;
+	font-size: 3vw;
 	font-weight: bold;
 	color: #fff;
 	text-transform: capitalize;
@@ -28,9 +45,10 @@
 
 #pause-btn {
 	position: absolute;
+	bottom: -1rem;
 	right: 50%;
-	bottom: 0.25rem;
 	left: 50%;
+	transform: translate(-50%, -50%);
 	color: #fff;
 	text-align: center;
 	background: 0 0;
@@ -41,4 +59,8 @@
 
 #pause-btn:hover {
 	border: 2px solid var(--rbg-secondary-green);
+}
+
+#rbginfobg {
+	padding: 1rem;
 }

@@ -1,5 +1,6 @@
 .navbar {
     --bs-navbar-padding-y: 0;
+    height: 10vh;
 }
 
 .navbar .nav-link {

@@ -8,32 +8,33 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_includes %}
-    <!-- Begin Image Carousel -->
-    <div id="homePageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-pause="false"
-         onmouseover="show('pause-btn')" onmouseout="hide('pause-btn')">
-        <div class="carousel-inner">
-            <div id="slides" u="slides">
-                {% include 'home/includes/slides.html' with slides=page.event_slides.all %}
+    <div id="carousel-info-container" class="container-fluid">
+        <!-- Begin Image Carousel -->
+        <div id="homePageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-pause="false"
+             onmouseover="show('pause-btn')" onmouseout="hide('pause-btn')">
+            <div class="carousel-inner">
+                <div id="slides" u="slides">
+                    {% include 'home/includes/slides.html' with slides=page.event_slides.all %}
+                </div>
             </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#homePageCarousel"
+                    data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button id="pause-btn" type="button" aria-label="pause slideshow">Pause Slideshow</button>
+            <button class="carousel-control-next" type="button" data-bs-target="#homePageCarousel"
+                    data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#homePageCarousel"
-                data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button id="pause-btn" type="button" aria-label="pause slideshow">Pause Slideshow</button>
-        <button class="carousel-control-next" type="button" data-bs-target="#homePageCarousel"
-                data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
-    <!-- End Image Carousel -->
+        <!-- End Image Carousel -->
 
-    <!-- Begin Inner Info Div -->
-        <div id="rbginfobg container">
-            <div id="rbginfo" class="row">
-                <div id="rbghours" class="col-md-3">
+        <!-- Begin Inner Info Div -->
+        <div id="rbginfobg" class="container-fluid">
+            <div id="rbginfo" class="row gy-3">
+                <div id="rbghours" class="col-md-3 text-center">
                     <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
                         <div class="rbghours hover">
                             <figure>
@@ -54,7 +55,7 @@
                     <div id="otherNotes"></div>
                 </div>
 
-                <div class="col-md-3" onmouseenter="admissionHoverOn()">
+                <div class="col-md-3 text-center" onmouseenter="admissionHoverOn()">
                     <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
                         <div id="rbgadmission" class="rbgadmission hover">
                             <figure>
@@ -69,7 +70,7 @@
                         </div>
                     </a>
                 </div>
-                <div id="rbgdirections" class="col-md-3">
+                <div id="rbgdirections" class="col-md-3 text-center">
                     <a href="{% slugurl 'directions' %}" aria-label="How to get to the garden">
                         <div class="rbgdirections hover">
                             <figure>
@@ -84,7 +85,7 @@
                         </div>
                     </a>
                 </div>
-                <div id="rbgweather" class="col-md-3">
+                <div id="rbgweather" class="col-md-3 text-center">
                     <a href="https://www.weatherbug.com/weather-camera/?cam=SLTWK" target="_blank"
                        aria-label="External link to weatherbug weather station with camera">
                         <div class="rbgweather hover">
@@ -101,21 +102,22 @@
                 </div>
             </div>
         </div>
-    <!-- End Inner Info Div-->
+        <!-- End Inner Info Div-->
 
-    <!-- Dump the RBG Hours snippit info for our hours.js script to consume -->
-    <div id="rbg_hours_info" style="display: none;">
-        <div id="hours_override">{{ page.hours.allow_override }}</div>
-        <div id="hours_man_open">{{ page.hours.garden_open|date:"g:i A" }}</div>
-        <div id="hours_man_close">{{ page.hours.garden_close|date:"g:i A" }}</div>
-        <!-- used default_if_none filter to prevent None from appearing literally if message not set -->
-        <div id="hours_man_add_msg">{{ page.hours.additional_message|default_if_none:"" }}</div>
-        <div id="hours_man_add_emph_msg">{{ page.hours.additional_emphatic_mesg|default_if_none:"" }}</div>
-        <div id="hours_holiday_day">{{ page.hours.holiday_party_close_time.day }}</div>
-        <div id="hours_holiday_hour">{{ page.hours.holiday_party_close_time.hour }}</div>
-        <div id="hours_holiday_minute">{{ page.hours.holiday_party_close_time.minute }}</div>
-        <div id="hours_gad_start">{{ page.hours.gad_start }}</div>
-        <div id="hours_gad_end">{{ page.hours.gad_end }}</div>
+        <!-- Dump the RBG Hours snippit info for our hours.js script to consume -->
+        <div id="rbg_hours_info" style="display: none;">
+            <div id="hours_override">{{ page.hours.allow_override }}</div>
+            <div id="hours_man_open">{{ page.hours.garden_open|date:"g:i A" }}</div>
+            <div id="hours_man_close">{{ page.hours.garden_close|date:"g:i A" }}</div>
+            <!-- used default_if_none filter to prevent None from appearing literally if message not set -->
+            <div id="hours_man_add_msg">{{ page.hours.additional_message|default_if_none:"" }}</div>
+            <div id="hours_man_add_emph_msg">{{ page.hours.additional_emphatic_mesg|default_if_none:"" }}</div>
+            <div id="hours_holiday_day">{{ page.hours.holiday_party_close_time.day }}</div>
+            <div id="hours_holiday_hour">{{ page.hours.holiday_party_close_time.hour }}</div>
+            <div id="hours_holiday_minute">{{ page.hours.holiday_party_close_time.minute }}</div>
+            <div id="hours_gad_start">{{ page.hours.gad_start }}</div>
+            <div id="hours_gad_end">{{ page.hours.gad_end }}</div>
+        </div>
     </div>
 {% endblock %}
 
