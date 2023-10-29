@@ -2,7 +2,7 @@
 
 {% for block in blocks %}
     {% if block.block_type == 'image' %}
-        {% image block.value original class="img-responsive" %}
+        {% image block.value original class="img-fluid" %}
     {% else %}
         <section class="block-{{ block.block_type }}">
             {% include_block block %}

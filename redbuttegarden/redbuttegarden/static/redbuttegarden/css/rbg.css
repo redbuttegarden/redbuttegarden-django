@@ -21,6 +21,82 @@
   fill: currentcolor;
 }
 
+#prefooter {
+	background-color: var(--bs-highlight-bg);
+	border-top: 1px solid #000;
+	border-bottom: 1px solid var(--bs-success-text-emphasis);
+    margin-top: 2rem;
+}
+
+#prefooter a:link, #prefooter a:visited {
+	color: var(--bs-highlight-color);
+}
+
+#rbgfooter {
+	background-color: var(--rbg-primary-green);
+    color: white;
+}
+
+#social-media-wrapper li {
+	display: inline-block;
+	list-style-type: none;
+	box-sizing: border-box;
+	text-align: center;
+	margin: 0 11px 4px 11px;
+}
+
+#social-media-wrapper div:hover {
+    filter: invert(50%);
+}
+
+.yelp {
+	background: url('../img/sprites.webp') -200px -90px;
+    width: 39px;
+	height: 39px;
+}
+
+.tripadvisor {
+    background: url('../img/sprites.webp') -360px -90px;
+	width: 39px;
+	height: 39px;
+}
+
+.facebook {
+    background: url('../img/sprites.webp') -40px -90px;
+	width: 39px;
+	height: 39px;
+}
+
+.instagram {
+    background: url('../img/sprites.webp') -240px -130px;
+	width: 39px;
+	height: 39px;
+}
+
+.twitter {
+    background: url('../img/sprites.webp') -280px -90px;
+	width: 39px;
+	height: 39px;
+}
+
+.youtube {
+    background: url('../img/sprites.webp') -120px -90px;
+	width: 39px;
+	height: 39px;
+}
+
+.pinterest {
+    background: url('../img/sprites.webp') -80px -130px;
+	width: 39px;
+	height: 39px;
+}
+
+.rbgfooterlinks a:link, .rbgfooterlinks a:visited, .rbgfooterlinks a:active {
+	font-weight: bold;
+	text-decoration: none;
+    color: white;
+}
+
 figcaption {
     text-align: center;
     font-style: italic;
@@ -29,6 +105,19 @@ figcaption {
 #rbginfo figcaption {
     font-style: normal;
     margin-bottom: 1em;
+}
+
+.rbgfooterlinks li {
+	display: inline-block;
+	list-style-type: none;
+    line-height: 2rem;
+    border-right: 2px solid var(--bs-dark-border-subtle);
+    padding-right: 1rem;
+    margin-right: 1rem;
+}
+
+.rbgfooterlinks li:last-child {
+    border-right: none;
 }
 
 hr {

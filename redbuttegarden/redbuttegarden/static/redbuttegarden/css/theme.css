@@ -5,6 +5,7 @@
     --rbg-primary-green-rgb: 0, 80, 47;
     --rbg-secondary-green: #5c873b;
     --rbg-secondary-green-rgb: 92, 135, 59;
+    --rbg-highlight-bg: #F2EDE4;
     --rbg-teal: #005a65;
     --rbg-teal-rgb: 0, 90, 101;
     --rbg-dark-blue: #1a2d44;
@@ -46,7 +47,7 @@
   --bs-gray-900: #212529;
   --bs-primary: #0d6efd;
   --bs-secondary: #6c757d;
-  --bs-success: #5c873b;
+  --bs-success: var(--rbg-secondary-green);
   --bs-info: #0dcaf0;
   --bs-warning: #ffc107;
   --bs-danger: #dc3545;
@@ -91,7 +92,7 @@
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);
-  --bs-body-font-size: 1rem;
+  --bs-body-font-size: 16px;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
   --bs-body-color: #212529;
@@ -116,7 +117,7 @@
   --bs-link-hover-color-rgb: 10, 88, 202;
   --bs-code-color: #432f71;
   --bs-highlight-color: #212529;
-  --bs-highlight-bg: #fff3cd;
+  --bs-highlight-bg: var(--rbg-highlight-bg);
   --bs-border-width: 1px;
   --bs-border-style: solid;
   --bs-border-color: #dee2e6;
