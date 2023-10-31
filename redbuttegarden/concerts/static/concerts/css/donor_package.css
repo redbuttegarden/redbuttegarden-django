@@ -89,7 +89,9 @@ th.font-italic {
 .reserved-table tr:nth-child(12),
 .reserved-table tr:nth-child(15),
 .reserved-lawn tr:nth-child(3),
-.reserved-lawn tr:nth-child(5) {
+.reserved-lawn tr:nth-child(5),
+.reserved-lawn tr:nth-child(7),
+.reserved-lawn tr:nth-child(9) {
     font-style: italic;
 }
 
