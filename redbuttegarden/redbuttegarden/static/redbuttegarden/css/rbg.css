@@ -16,10 +16,6 @@ hr {
     max-width: 1280px;
 }
 
-#image-list-card-info.lowpadding {
-    margin-bottom: 10px;
-}
-
 #journalpostbody {
     margin: 0 auto 0 auto;
     padding: 65px 15px 15px 15px;
@@ -226,3 +222,14 @@ footer {
     background-color: #1b2940;
 }
 /* End backgrounds */
+
+.equal {
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
+}
+
+.image-list-card {
+    margin-bottom: 1em;
+    border-left: 2px solid black;
+}
