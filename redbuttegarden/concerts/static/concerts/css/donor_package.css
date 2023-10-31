@@ -78,3 +78,22 @@ th.font-italic {
     font-style: italic;
     font-size: inherit;
 }
+
+/* Italicize rows with 'Charitable Gift Portion' */
+.unreserved-seating tr:nth-child(3),
+.unreserved-seating tr:nth-child(6),
+.reserved-table tr:nth-child(3),
+.reserved-table tr:nth-child(5),
+.reserved-table tr:nth-child(7),
+.reserved-table tr:nth-child(10),
+.reserved-table tr:nth-child(12),
+.reserved-table tr:nth-child(15),
+.reserved-lawn tr:nth-child(3),
+.reserved-lawn tr:nth-child(5) {
+    font-style: italic;
+}
+
+/* Don't italicize the 'n/a' in 'Concert Club Flex Seating' table */
+.unreserved-seating tr:nth-child(6) td:nth-child(2) {
+    font-style: normal;
+}

@@ -40,10 +40,3 @@ $(".donor-package-tables table td:nth-child(6)").each(function() {
         $(this).wrapInner(concert_club_parking_map);
     }
 });
-
-/* Italicize "Charitable Gift Portion" text */
-$(".donor-package-tables table tr th").each(function() {
-    if (this.innerText.trim() === "Charitable Gift Portion") {
-        this.classList.add("font-italic");
-    }
-});
