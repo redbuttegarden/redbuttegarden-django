@@ -2,11 +2,29 @@ body.donor-packages table {
     font-weight: normal;
 }
 
+.donor-package-tables td, .donor-package-tables th {
+    border: 1px solid #ddd;
+}
+
+.donor-package-tables {
+    overflow-x: scroll;
+}
+
 .unreserved-seating, .reserved-table, .reserved-lawn {
-    border-radius: 25px;
-    border: 2px solid #1b2940;
     padding: 10px;
     margin: 10px 0;
+    border-radius: 25px;
+    border: 2px solid #1b2940;
+}
+
+@media (max-width: 700px) {
+    .unreserved-seating, .reserved-table, .reserved-lawn {
+        border: None;
+    }
+
+    body.donor-packages table > caption {
+        text-align: left;
+    }
 }
 
 .donor-package-tables table tr:nth-child(2) td:nth-child(5),
@@ -16,11 +34,47 @@ body.donor-packages table {
     color: inherit;
 }
 
-.donor-package-tables table tr:nth-child(1),
-.donor-package-tables table tr:nth-child(2) {
+.donor-package-tables table tr:nth-child(1) {
     font-weight: bold;
 }
 
-.donor-package-tables .unreserved-seating table tr:nth-child(6) {
+.donor-package-tables .unreserved-seating table tr:nth-child(2) td:nth-child(2),
+.donor-package-tables .unreserved-seating table tr:nth-child(2) td:nth-child(3),
+.donor-package-tables .unreserved-seating table tr:nth-child(2) td:nth-child(4),
+.donor-package-tables .unreserved-seating table tr:nth-child(5) td:nth-child(2),
+.donor-package-tables .unreserved-seating table tr:nth-child(5) td:nth-child(3),
+.donor-package-tables .unreserved-seating table tr:nth-child(5) td:nth-child(4),
+.donor-package-tables .unreserved-seating table tr:nth-child(6) td:nth-child(2) {
     font-weight: bold;
+}
+
+body,
+h1, h2, h3, h4, h5, h6,
+h2.green {
+    color: #1b2940;
+}
+
+body.donor-packages table > caption {
+    color: white;
+    font-weight: bold;
+    background-color: #1b2940;
+}
+
+body.donor-packages table th {
+    color: inherit;
+    background-color: inherit;
+    font-size: inherit;
+}
+
+body.donor-packages .table-striped > tbody > tr:nth-of-type(2n+1), body.donor-packages .table-striped > tbody > tr:nth-of-type(2n+1) a {
+    background-color: #d3d3d3;
+}
+
+a.red {
+    color: red;
+}
+
+th.font-italic {
+    font-style: italic;
+    font-size: inherit;
 }

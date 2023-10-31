@@ -1218,105 +1218,23 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
 /*************  Begin CSS for membership page *************/
 /**********************************************************/
 
-#memcontain {
-    max-width:1280px;
-    margin-left:auto;
-    margin-right:auto;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    position: relative;
-}
-
-.memwrap{
-    width: 100%;
-    position: relative;
-    min-height: 227px;
-}
-
 .mempic {
-    float: left;
-    max-width:175px;
-    margin:0;
-    border-left: 1px solid black;
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
-    /**min-height: 223px;
-    width: 175px;**/
+    border: 2px solid black;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+}
+
+.mempic img {
+    flex-shrink: 0;
+    min-width: 100%;
+    min-height: 100%;
 }
 
 .meminfo {
-    max-width:455px;
-    float: left;
-    width: 100%;
     background-color: #F2EDE4;
-    min-height: 226px;
-    padding: 7px;
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
-    border-right: 1px solid black;
-    font-size: 12px;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-}
-
-.memcorp {
-    border-left: 1px solid black;
-    min-height: 250px;
-    padding: 15px;
-}
-
-@media (max-width:1295px) {
-    .meminfo {
-        max-width: 1200px;
-        border-left: 1px solid black;
-        border-radius: 0px;
-    }
-
-    .memwrap{
-        border-bottom: 1px solid black;
-    }
-
-    /* Hides mempic for mobile*/
-    .mempic {
-        display: none;
-    }
-
-    #memcontain .row, #sponcontain .row {
-        margin-bottom: 0px !important;
-    }
-
-    .memcorp {
-        clear:both;
-        margin: 0;
-    }
-}
-
-@media (max-width:768px) {
-    #memcontain, .memwrap {
-        margin-left: 0;
-        margin-right: 0;
-        padding: 0;
-        max-width: 768px;
-        width: 100%;
-    }
-
-    .memcorp {
-        min-height: 227px;
-    }
-
-    #rbgdefaultbody #memcontain h1 {
-        font-size: 22px;
-    }
-
-    #rbgdefaultbody #memcontain h2 {
-        font-size: 20px;
-    }
-
-    .lowpadding {
-        padding: 0px !important;
-        margin: 0 !important;
-    }
-
+    border: 2px solid black;
+    padding: 0.5em;
 }
 
 .meminfo h4 {
@@ -1329,10 +1247,6 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     font-weight: bold;
     padding-bottom: 0px;
 
-}
-
-#memcontain .row, #sponcontain .row {
-    margin-bottom: 10px;
 }
 
 .membutton, .apply-button,

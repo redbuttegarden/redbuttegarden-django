@@ -5,25 +5,27 @@
 <div class="row">
     {% for list_item in value.list_items %}
         {% if list_item.image %}
-        <div id="image-list-card-info" class="col-sm-6 lowpadding">
-            <div class="memwrap">
-                <div class="mempic">
-                    <img class="responsive" width="175" height="225" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
-                </div>
-                <div class="meminfo">
-                    {% include_block list_item.text %}
-                    {% if list_item.button_text %}
-                        <a href="{{ list_item.button_url }}">
-                            <input class="membutton" type="submit" value="{{ list_item.button_text }}">
-                        </a>
-                    {% endif %}
+            <div class="col-md-6">
+                <div class="col-md-12">
+                    <div class="image-list-card row equal">
+                        <div class="mempic col-xs-3">
+                            <img src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
+                        </div>
+                        <div class="meminfo col-xs-9">
+                            {% include_block list_item.text %}
+                            {% if list_item.button_text %}
+                                <a class="row" href="{{ list_item.button_url }}">
+                                    <input class="membutton" type="submit" value="{{ list_item.button_text }}">
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
         {% else %}
-            <div class="col-md-4 lowpadding">
-                <div class="memwrap">
-                    <div class="meminfo memcorp">
+            <div class="col-md-4">
+                <div class="container-fluid">
+                    <div class="meminfo">
                         {% include_block list_item.text %}
                         {% if list_item.button_text %}
                             <a href="{{ list_item.button_url }}">
