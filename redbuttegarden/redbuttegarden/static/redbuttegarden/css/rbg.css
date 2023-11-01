@@ -9,87 +9,91 @@
 }
 
 #logo img {
-  max-height: 50px;
-  width: auto;
-  padding: 3px 0 3px 0;
+    max-height: 50px;
+    width: auto;
+    padding: 3px 0 3px 0;
 }
 
 .bi {
-  width: 1em;
-  height: 1em;
-  vertical-align: -.125em;
-  fill: currentcolor;
+    width: 1em;
+    height: 1em;
+    vertical-align: -.125em;
+    fill: currentcolor;
 }
 
 #prefooter {
-	background-color: var(--bs-highlight-bg);
-	border-top: 1px solid #000;
-	border-bottom: 1px solid var(--bs-success-text-emphasis);
+    background-color: var(--bs-highlight-bg);
+    border-top: 1px solid #000;
+    border-bottom: 1px solid var(--bs-success-text-emphasis);
     margin-top: 2rem;
 }
 
 #prefooter a:link, #prefooter a:visited {
-	color: var(--bs-highlight-color);
+    color: var(--bs-highlight-color);
 }
 
 #rbgfooter {
-	background-color: var(--rbg-primary-green);
+    background-color: var(--rbg-primary-green);
     color: white;
 }
 
+#rbgfooter #contactinfo1 a {
+    display: inline;
+}
+
 #social-media-wrapper li {
-	display: inline-block;
-	list-style-type: none;
-	box-sizing: border-box;
-	text-align: center;
-	margin: 0 11px 4px 11px;
+    display: inline-block;
+    list-style-type: none;
+    box-sizing: border-box;
+    text-align: center;
+    margin: 0 11px 4px 11px;
 }
 
 .yelp {
-	background: url('../img/sprites.webp') -200px -90px;
+    background: url('../img/sprites.webp') -200px -90px;
     width: 39px;
-	height: 39px;
+    height: 39px;
 }
 
 .tripadvisor {
     background: url('../img/sprites.webp') -360px -90px;
-	width: 39px;
-	height: 39px;
+    width: 39px;
+    height: 39px;
 }
 
 .facebook {
     background: url('../img/sprites.webp') -40px -90px;
-	width: 39px;
-	height: 39px;
+    width: 39px;
+    height: 39px;
 }
 
 .instagram {
     background: url('../img/sprites.webp') -240px -130px;
-	width: 39px;
-	height: 39px;
+    width: 39px;
+    height: 39px;
 }
 
 .twitter {
     background: url('../img/sprites.webp') -280px -90px;
-	width: 39px;
-	height: 39px;
+    width: 39px;
+    height: 39px;
 }
 
 .youtube {
     background: url('../img/sprites.webp') -120px -90px;
-	width: 39px;
-	height: 39px;
+    width: 39px;
+    height: 39px;
 }
 
 .pinterest {
     background: url('../img/sprites.webp') -80px -130px;
-	width: 39px;
-	height: 39px;
+    width: 39px;
+    height: 39px;
 }
 
 .rbgfooterlinks a:link, .rbgfooterlinks a:visited, .rbgfooterlinks a:active {
-	font-weight: bold;
-	text-decoration: none;
+    font-weight: bold;
+    text-decoration: none;
     color: white;
 }
 
@@ -108,8 +112,8 @@ figcaption {
 }
 
 .rbgfooterlinks li {
-	display: inline-block;
-	list-style-type: none;
+    display: inline-block;
+    list-style-type: none;
     line-height: 2rem;
     border-right: 2px solid var(--bs-dark-border-subtle);
     padding-right: 1rem;
@@ -147,12 +151,12 @@ hr {
 
 /* Used for categories in journal_page.html */
 .tags ul li {
-    border: 1px solid rgba(25,97,67,.7);
+    border: 1px solid rgba(25, 97, 67, .7);
     border-radius: 10px;
 }
 
 #journalpostbody .col-sm-3 {
-    border-right: 1px solid rgba(25,97,67,.7);
+    border-right: 1px solid rgba(25, 97, 67, .7);
 }
 
 #sponsor-list, #table-info-card-list {
@@ -255,17 +259,6 @@ nav[role=pagination] {
     text-align: center;
 }
 
-.index-tile {
-    margin-top: 30px;
-    max-width: 415px;
-    overflow: hidden;
-}
-
-.index-thumbnail img {
-    height: 385px;
-    width: 385px;
-}
-
 footer {
     position: absolute;
     width: 100%;
@@ -275,11 +268,15 @@ footer {
     text-decoration: none;
 }
 
+.green {
+    color: var(--bs-success-text-emphasis);
+}
+
 /* Backgrounds */
 .green-bg {
-    color: white;  /* Black text is too difficult to read with green background */
+    color: white; /* Black text is too difficult to read with green background */
     padding: 10px;
-    background-color: #196143;
+    background-color: var(--rbg-primary-green);
 }
 
 .tan-bg {
@@ -289,7 +286,7 @@ footer {
 
 .dark-tan-bg {
     padding: 10px;
-    background-color:#C4B59E;
+    background-color: #C4B59E;
 }
 
 .white-bg {
@@ -298,13 +295,13 @@ footer {
 }
 
 .red-bg {
-    color: white;  /* Better color contrast makes it easier to read with white text */
+    color: white; /* Better color contrast makes it easier to read with white text */
     padding: 10px;
     background-color: red;
 }
 
 .orange-bg {
-    font-weight: bold;  /* Again, makes text easier to read this way */
+    font-weight: bold; /* Again, makes text easier to read this way */
     padding: 10px;
     background-color: #FF7744;
 }
@@ -313,15 +310,54 @@ footer {
     padding: 10px;
     background-color: #1b2940;
 }
+
 /* End backgrounds */
 
 .equal {
-  display: flex;
-  display: -webkit-flex;
-  flex-wrap: wrap;
+    display: flex;
+    display: -webkit-flex;
+    flex-wrap: wrap;
 }
 
 .image-list-card {
     margin-bottom: 1em;
     border-left: 2px solid black;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+}
+
+a {
+    display: inline-block;
+    position: relative;
+}
+
+a::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    border-radius: 4px;
+    background-color: #18272F;
+    bottom: 0;
+    left: 0;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform .3s ease-in-out;
+}
+
+a:hover::before {
+    transform-origin: left;
+    transform: scaleX(1);
+}
+
+a, a:link, a:visited, a:active {
+    color: var(--bs-link-color);
+    font-weight: bold;
+    text-decoration: var(--bs-link-decoration);
+}
+
+a:hover {
+    color: var(--bs-link-hover-color);
 }

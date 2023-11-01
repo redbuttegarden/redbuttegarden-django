@@ -1,0 +1,19 @@
+.index-tile {
+    max-width: 385px;
+    max-height: 385px;
+    overflow: hidden;
+}
+
+.eventinfo {
+    position: relative;
+    width: 80%;
+    z-index: 5;
+    bottom: 8rem;
+    background-color: var(--rbg-primary-green);
+    opacity: 80%;
+    padding: 15px;
+}
+
+.index-tile a::before {
+    bottom: 8rem;
+}

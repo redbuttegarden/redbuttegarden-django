@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 {% load wagtailcore_tags wagtailimages_tags static %}
 
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'home/css/general_index_page.css' %}">
+{% endblock %}
+
 {% block content %}
-    <div class="row-fluid text-center responsive">
-        {% image page.banner max-1280x500 %}
-    </div>
-    <br>
+    {% if page.banner %}
+        <div class="row text-center">
+            {% image page.banner max-1280x500 class="img-fluid" %}
+        </div>
+    {% endif %}
 
     {% for block in page.body %}
         {% include_block block with id=block.id %}
@@ -13,36 +18,39 @@
 
     <hr>
 
-    <div id="wagtail-children" class="row-fluid col xs-12">
-        {% for sub in sub_pages %}
-            <div class="col-sm-4 index-tile">
-                {% with sub=sub.specific %}
-                    <a class="hover" href="{% pageurl sub %}">
-                        <div class="index-thumbnail">
-                            {% comment %}
-                                Added blank alt attribute to image thumbnails since these are primarily to create a
-                                larger surface area for the page links and alt attributes would unnecessarily complicate
-                                page navigation for users using screen readers.
-                            {% endcomment %}
-                            {% image sub.thumbnail fill-385x385 alt="" %}
-                            <div class="eventinfo">
-                                <div class="eventname">{{ sub.title }}</div>
+    <div id="wagtail-children" class="container-fluid">
+        <div class="row gy-3 justify-content-center">
+            {% for sub in sub_pages %}
+                <div class="col-lg-4 index-tile">
+                    {% with sub=sub.specific %}
+                        <a href="{% pageurl sub %}">
+                            <div class="index-thumbnail">
+                                {% comment %}
+                                    Added blank alt attribute to image thumbnails since these are primarily to create a
+                                    larger surface area for the page links and alt attributes would unnecessarily
+                                    complicate
+                                    page navigation for users using screen readers.
+                                {% endcomment %}
+                                {% image sub.thumbnail fill-385x385 alt="" %}
+                                <div class="eventinfo">
+                                    <div class="eventname text-white">{{ sub.title }}</div>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                {% endwith %}
-            </div>
-        {% empty %}
-            <br>
-            <br>
-            <div class="row-fluid">
-                <div class="tan-bg">
-                    <h4 class="text-center green">
-                        Please check back later when we've added more specific information!
-                    </h4>
+                        </a>
+                    {% endwith %}
                 </div>
-            </div>
-        {% endfor %}
+                {% empty %}
+                <br>
+                <br>
+                <div class="row-fluid">
+                    <div class="tan-bg">
+                        <h4 class="text-center green">
+                            Please check back later when we've added more specific information!
+                        </h4>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
 
