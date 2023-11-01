@@ -45,10 +45,6 @@
 	margin: 0 11px 4px 11px;
 }
 
-#social-media-wrapper div:hover {
-    filter: invert(50%);
-}
-
 .yelp {
 	background: url('../img/sprites.webp') -200px -90px;
     width: 39px;
@@ -95,6 +91,10 @@
 	font-weight: bold;
 	text-decoration: none;
     color: white;
+}
+
+#rbgfooter a:hover {
+    filter: invert(50%);
 }
 
 figcaption {

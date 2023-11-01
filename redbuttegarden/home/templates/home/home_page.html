@@ -32,9 +32,9 @@
         <!-- End Image Carousel -->
 
         <!-- Begin Inner Info Div -->
-        <div id="rbginfobg" class="container-fluid">
-            <div id="rbginfo" class="row gy-3">
-                <div id="rbghours" class="col-md-3 text-center">
+        <div id="rbginfobg" class="container-fluid mt-3">
+            <div id="rbginfo" class="row gy-3 text-center">
+                <div id="rbghours" class="col-md-3">
                     <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
                         <div class="rbghours">
                             <figure>
@@ -55,7 +55,7 @@
                     <div id="otherNotes"></div>
                 </div>
 
-                <div class="col-md-3 text-center" onmouseover="show('admission-table')"
+                <div class="col-md-3" onmouseover="show('admission-table')"
                      onmouseout="hide('admission-table')">
                     <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
                         <div id="rbgadmission" class="rbgadmission">
@@ -132,7 +132,7 @@
                         </div>
                     </a>
                 </div>
-                <div id="rbgdirections" class="col-md-3 text-center">
+                <div id="rbgdirections" class="col-md-3">
                     <a href="{% slugurl 'directions' %}" aria-label="How to get to the garden">
                         <div class="rbgdirections">
                             <figure>
@@ -147,7 +147,7 @@
                         </div>
                     </a>
                 </div>
-                <div id="rbgweather" class="col-md-3 text-center">
+                <div id="rbgweather" class="col-md-3">
                     <a href="https://www.weatherbug.com/weather-camera/?cam=SLTWK" target="_blank"
                        aria-label="External link to weatherbug weather station with camera">
                         <div class="rbgweather">
