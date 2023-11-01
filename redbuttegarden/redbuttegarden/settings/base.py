@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'wagtail.contrib.modeladmin',
     'wagtail.contrib.redirects',
     'wagtail.contrib.routable_page',
+    'wagtail.contrib.search_promotions',
     'wagtail.contrib.settings',
     "wagtail.contrib.table_block",
     'wagtail.embeds',
@@ -138,8 +139,6 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'America/Denver'
 
 USE_I18N = True
-
-USE_L10N = True
 
 USE_TZ = True
 

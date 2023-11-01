@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% load wagtailcore_tags wagtailimages_tags %}
 
+{% block extra_css %}
+    {# Hacky way of limiting FA kit loads #}
+    {% if page.slug == 'concert-club-portal' %}
+        <script src="https://kit.fontawesome.com/332beda55d.js" crossorigin="anonymous"></script>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     <div class="row-fluid text-center responsive">
         {% image page.banner max-1280x500 %}
