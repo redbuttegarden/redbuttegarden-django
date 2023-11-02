@@ -33,12 +33,12 @@
 }
 
 #rbgfooter {
-    background-color: var(--rbg-primary-green);
     color: white;
 }
 
 #rbgfooter #contactinfo1 a {
     display: inline;
+    color: white;
 }
 
 #social-media-wrapper li {
@@ -339,7 +339,7 @@ a::before {
     width: 100%;
     height: 4px;
     border-radius: 4px;
-    background-color: #18272F;
+    background-color: var(--bs-highlight-color);
     bottom: 0;
     left: 0;
     transform-origin: right;

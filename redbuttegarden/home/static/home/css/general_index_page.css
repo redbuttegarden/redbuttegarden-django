@@ -16,4 +16,6 @@
 
 .index-tile a::before {
     bottom: 8rem;
+    z-index: 6;
+    width: 80%;
 }
