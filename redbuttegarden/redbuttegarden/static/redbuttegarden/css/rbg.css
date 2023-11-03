@@ -281,12 +281,7 @@ footer {
 
 .tan-bg {
     padding: 10px;
-    background-color: #F2EDE4;
-}
-
-.dark-tan-bg {
-    padding: 10px;
-    background-color: #C4B59E;
+    background-color: var(--bs-tan);
 }
 
 .white-bg {
