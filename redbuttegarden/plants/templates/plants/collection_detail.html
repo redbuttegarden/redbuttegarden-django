@@ -9,38 +9,39 @@
 
 {% block content %}
     <div id="collection-info-container" class="container-fluid">
-        <div class="col-md-6">
-            <h1>Collection Detail</h1>
-            <div class="names">
-                {% if collection.species.vernacular_name %}
-                    <h4 class="common-name">{{ collection.species.vernacular_name }}</h4>
-                {% endif %}
-                <h4 class="scientific-name">
-                    <a href="{% url 'plants:species-detail' collection.species_id %}" id="full-name"></a>
-                </h4>
+        <div class="row">
+            <div class="col-md-6">
+                <h1>Collection Detail</h1>
+                <div class="names">
+                    {% if collection.species.vernacular_name %}
+                        <h4 class="common-name">{{ collection.species.vernacular_name }}</h4>
+                    {% endif %}
+                    <h4 class="scientific-name">
+                        <a href="{% url 'plants:species-detail' collection.species_id %}" id="full-name"></a>
+                    </h4>
+                </div>
+                <div class="collection-info">
+                    <p id="coords"
+                       class="location">{{ collection.location.latitude }}, {{ collection.location.longitude }}</p>
+                    {% if collection.plant_id %}
+                        <p><span class="fw-bold">Plant ID: </span>{{ collection.plant_id }}</p>
+                    {% endif %}
+                    <p><span class="fw-bold">Family: </span>{{ collection.species.genus.family.name }}</p>
+                    <p><span class="fw-bold">Garden Area: </span>{{ collection.garden.area }}</p>
+                    <p><span class="fw-bold">Garden Name: </span>{{ collection.garden.name }}</p>
+                    <p><span class="fw-bold">Bed #: </span>{{ collection.garden.code }}</p>
+                    {% if collection.plant_date %}
+                        <p><span class="fw-bold">Date Planted: </span>{{ collection.plant_date }}</p>
+                    {% endif %}
+                </div>
             </div>
-            <div class="collection-info">
-                <p id="coords" class="location">{{ collection.location.latitude }}, {{ collection.location.longitude }}</p>
-                {% if collection.plant_id %}
-                    <p><span class="bold">Plant ID: </span>{{ collection.plant_id }}</p>
-                {% endif %}
-                <p><span class="bold">Family: </span>{{ collection.species.genus.family.name }}</p>
-                <p><span class="bold">Garden Area: </span>{{ collection.garden.area }}</p>
-                <p><span class="bold">Garden Name: </span>{{ collection.garden.name }}</p>
-                <p><span class="bold">Bed #: </span>{{ collection.garden.code }}</p>
-                {% if collection.plant_date %}
-                    <p><span class="bold">Date Planted: </span>{{ collection.plant_date }}</p>
-                {% endif %}
+            <div class="col-md-6">
+                <div id="map"></div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div id="map"></div>
-        </div>
 
-        <div class="row small text-center">
-            <br>
-
-            Spotted an issue?
+        <div class="row small text-center p-3">
+            <p>Spotted an issue?</p>
             <a href="{% url 'plants:collection-feedback' collection.id %}"> Leave a comment with our feedback form.</a>
         </div>
     </div>
