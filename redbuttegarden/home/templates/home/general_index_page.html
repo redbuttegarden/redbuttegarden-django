@@ -2,7 +2,7 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'home/css/general_index_page.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/index_page.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@
     <hr>
 
     <div id="wagtail-children" class="container-fluid">
-        <div class="row gy-3 justify-content-center">
+        <div class="row gy-5 justify-content-between">
             {% for sub in sub_pages %}
                 <div class="col-lg-4 index-tile">
                     {% with sub=sub.specific %}
@@ -28,8 +28,8 @@
                                     page navigation for users using screen readers.
                                 {% endcomment %}
                                 {% image sub.thumbnail fill-385x385 alt="" %}
-                                <div class="eventinfo">
-                                    <div class="eventname text-white">{{ sub.title }}</div>
+                                <div class="eventinfo text-white">
+                                    <div class="eventname">{{ sub.title }}</div>
                                 </div>
                             </div>
                         </a>

@@ -2,10 +2,8 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-    <div class="row-fluid text-center responsive">
-        {% image page.banner max-1280x500 %}
-    </div>
-    <br>
+    {% include 'includes/banner_image.html' %}
+
     {% include_block page.intro|richtext %}
     <div class="panel-group" id="accordion">
 		    <div class="panel panel-default">

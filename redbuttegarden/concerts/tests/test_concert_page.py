@@ -375,7 +375,7 @@ class TestConcert(TestCase):
         self.assertContains(response, 'alt="Ticket purchase disabled"')
         self.assertContains(response, '<div class="disable-buy">')
         self.assertNotContains(response, 'alt="Buy ticket button"')
-        self.assertNotContains(response, '<img class="responsive con-button hover"')
+        self.assertNotContains(response, '<img class="con-button"')
 
     def test_concert_times_tbd(self):
         """
