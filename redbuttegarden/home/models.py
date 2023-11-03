@@ -279,11 +279,9 @@ class EmphaticText(blocks.CharBlock):
 class ButtonBlock(blocks.StructBlock):
     GREEN = 'green'
     TAN = 'tan'
-    DARK_TAN = 'dk-tn'
     RED = 'red'
     ORANGE = 'org'
     COLOR_CHOICES = [
-        (DARK_TAN, 'Dark Tan'),
         (GREEN, 'Green'),
         (ORANGE, 'Orange'),
         (RED, 'Red'),
