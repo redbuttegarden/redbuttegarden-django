@@ -1,5 +1,7 @@
-<div style="text-align: {{ value.alignment }}">
-    <a href="{{ value.url }}">
-        <input class="{{ value.color }}-button hover" type="submit" value="{{ value.text }}">
-    </a>
+<div class="d-flex justify-content-{{ value.alignment }}">
+    <div class="{{ value.color }}-button glow-on-hover d-flex justify-content-center align-items-center">
+        <a href="{{ value.url }}">
+            <span>{{ value.text }}</span>
+        </a>
+    </div>
 </div>

@@ -292,9 +292,11 @@ class ButtonBlock(blocks.StructBlock):
     color = blocks.ChoiceBlock(choices=COLOR_CHOICES)
     alignment = blocks.ChoiceBlock(choices=[
         ('center', 'Center'),
-        ('justify', 'Justified'),
-        ('left', 'Left'),
-        ('right', 'Right')
+        ('start', 'Start'),
+        ('end', 'End'),
+        ('between', 'Between'),
+        ('around', 'Around'),
+        ('evenly', 'Evenly'),
     ])
 
     class Meta:
