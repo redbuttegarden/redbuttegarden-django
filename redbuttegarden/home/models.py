@@ -115,7 +115,7 @@ class ImageLinkList(blocks.StructBlock):
 class AlignedParagraphBlock(blocks.StructBlock):
     alignment = blocks.ChoiceBlock([('left', 'Left'), ('text-center', 'Center'), ('right', 'Right')], default='left')
     background_color = blocks.ChoiceBlock([('default', 'Default'), ('tan-bg', 'Tan'), ('green-bg', 'Green'),
-                                           ('dark-tan-bg', 'Dark Tan'), ('white-bg', 'White'), ('red-bg', 'Red'),
+                                           ('white-bg', 'White'), ('red-bg', 'Red'),
                                            ('orange-bg', 'Orange')], default='default')
     paragraph = blocks.RichTextBlock()
 
@@ -279,11 +279,9 @@ class EmphaticText(blocks.CharBlock):
 class ButtonBlock(blocks.StructBlock):
     GREEN = 'green'
     TAN = 'tan'
-    DARK_TAN = 'dk-tn'
     RED = 'red'
     ORANGE = 'org'
     COLOR_CHOICES = [
-        (DARK_TAN, 'Dark Tan'),
         (GREEN, 'Green'),
         (ORANGE, 'Orange'),
         (RED, 'Red'),
@@ -294,9 +292,11 @@ class ButtonBlock(blocks.StructBlock):
     color = blocks.ChoiceBlock(choices=COLOR_CHOICES)
     alignment = blocks.ChoiceBlock(choices=[
         ('center', 'Center'),
-        ('justify', 'Justified'),
-        ('left', 'Left'),
-        ('right', 'Right')
+        ('start', 'Start'),
+        ('end', 'End'),
+        ('between', 'Between'),
+        ('around', 'Around'),
+        ('evenly', 'Evenly'),
     ])
 
     class Meta:

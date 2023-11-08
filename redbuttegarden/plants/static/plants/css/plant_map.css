@@ -22,15 +22,13 @@
     color: white;
 }
 .map-overlay {
-    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-    background-color: #efefef;
     overflow: hidden;
     min-height: 250px;
 }
 
 .map-overlay fieldset {
     display: none;
-    background: #ddd;
+    background: var(--bs-tan);
     border: none;
     padding: 10px;
     margin: 0;
@@ -59,7 +57,7 @@
 
 .map-overlay .listing a {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    color: #404;
+    color: var(--bs-light-text-emphasis);
     text-decoration: none;
 }
 
@@ -68,17 +66,19 @@
 }
 
 .map-overlay .listing a:hover {
-    background: #f0f0f0;
+    background: var(--bs-light-bg-subtle);
 }
+
 .credits, .tutorial {
     margin: 15px;
 }
+
 #menu {
     position: absolute;
     z-index: 2;
     background: #efefef;
     padding: 10px;
-    font-family: 'Open Sans', sans-serif;
+    color: black;
 }
 .pop-up-label {
     font-weight: bold;
@@ -102,9 +102,10 @@
 
     #legend {
         position: absolute;
-        top: 60px;
+        top: 75px;
         right: 25px;
         overflow: auto;
+        color: black;
         background: rgba(255, 255, 255, 0.8);
     }
 }
@@ -113,4 +114,8 @@
     .map-overlay {
         height: 500px;
     }
+}
+
+.mapboxgl-popup-content {
+    color: black;
 }

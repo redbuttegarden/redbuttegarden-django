@@ -10,8 +10,7 @@ let currentHour = d.getHours() + offsetDifference;
 let currentMinute = d.getMinutes();
 let minutesBeforeOpeningOrClosing = 60 - currentMinute;
 
-const desktopHours = document.getElementById("gardenHours");
-const mobileHours = document.getElementById("gardenHours2");
+const gardenHours = document.getElementById("gardenHours");
 
 let busHours;
 let status;
@@ -70,13 +69,9 @@ function setHours() {
         busHours = openHour + " &ndash; " + closeHour;
         // Check if hours_man_open and hours_man_close is actually set before setting the gardenHours content, otherwise we end up with just the '-'
         if (openHour && closeHour) {
-            // Large Screens
             document.getElementById("gardenHours").innerHTML = busHours;
-            // Mobile
-            document.getElementById("gardenHours2").innerHTML = busHours;
         }
         document.getElementById("gardenStatus").innerHTML = document.getElementById("hours_man_add_msg").textContent;
-        document.getElementById("gardenStatus2").innerHTML = document.getElementById("hours_man_add_msg").textContent;
         document.getElementById("gardenEmphatic").innerHTML = document.getElementById("hours_man_add_emph_msg").textContent;
     } else {
         gardenYearlyHours();
@@ -315,12 +310,10 @@ function gardenYearlyHours() {
 }
 
 function writeDataToPage() {
-    desktopHours.innerHTML = busHours;
-    mobileHours.innerHTML = busHours;
+    gardenHours.innerHTML = busHours;
 
     if (buyLink) {
-        desktopHours.appendChild(buyLink.cloneNode(true));
-        mobileHours.appendChild(buyLink.cloneNode(true));
+        gardenHours.appendChild(buyLink.cloneNode(true));
     }
 
     document.getElementById("gardenStatus").innerHTML = status;

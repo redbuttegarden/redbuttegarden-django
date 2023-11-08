@@ -10,14 +10,14 @@
 {% block body_class %}donor-packages{% endblock %}
 
 {% block content %}
-    <div class="row-fluid text-center responsive">
+    <div class="row-fluid text-center">
         {% image page.banner max-1280x500 %}
     </div>
     <br>
 
     {% for block in page.body %}
         {% if block.block_type == 'image' %}
-            {% image block.value original class="img-center img-responsive" %}
+            {% image block.value original class="img-center img-fluid" %}
         {% else %}
             {% include_block block with id=block.id %}
         {% endif %}

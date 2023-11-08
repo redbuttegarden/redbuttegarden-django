@@ -10,155 +10,162 @@
     <div class="container-fluid">
 
         <div class="row">
-            <div class="header">
-                <h1>{{ species.vernacular_name }}</h1>
-                <h3 id="full-name" class="scientific-name"></h3>
-                <h4 class="family">{{ species.genus.family.name }}
-                    {% if species.genus.family.vernacular_name %}
-                        <span>({{ species.genus.family.vernacular_name }} Family)</span>
-                    {% endif %}
-                </h4>
+            <div class="col-md-6">
+                <div class="header">
+                    <h1>{{ species.vernacular_name }}</h1>
+                    <h3 id="full-name" class="scientific-name"></h3>
+                    <h4 class="family">{{ species.genus.family.name }}
+                        {% if species.genus.family.vernacular_name %}
+                            <span>({{ species.genus.family.vernacular_name }} Family)</span>
+                        {% endif %}
+                    </h4>
+                </div>
+
+                <div class="species-info">
+                    <div class="details">
+                        {% if species.cultivar %}
+                            <p><span class="fw-bold">Cultivar:</span> {{ species.cultivar }}</p>
+                        {% endif %}
+                        <p><span class="fw-bold">Habit:</span> {{ species.habit }}</p>
+                        {% if species.water_regime %}
+                            <p><span class="fw-bold">Water Needs:</span> {{ species.water_regime }}</p>
+                        {% endif %}
+                        {% if species.exposure %}
+                            <p><span class="fw-bold">Exposure:</span> {{ species.exposure }}</p>
+                        {% endif %}
+                        {% if species.hardiness %}
+                            <p><span class="fw-bold">Hardiness:</span> {{ species.hardiness|join:", " }}</p>
+                        {% endif %}
+                        {% if species.plant_size %}
+                            <p><span class="fw-bold">Size:</span> {{ species.plant_size }}</p>
+                        {% endif %}
+                        {% if species.flower_color %}
+                            <p><span class="fw-bold">Flower Color:</span> {{ species.flower_color }}</p>
+                        {% endif %}
+                        {% if species.bloom_time %}
+                            <p><span class="fw-bold">Bloom Times:</span> {{ species.bloom_time|join:", " }}</p>
+                        {% endif %}
+
+                        <div class="icons">
+                            {% if species.utah_native %}
+                                <img src="{% static 'plants/img/utah_native.png' %}"
+                                     alt="Icon indicating this species is native to Utah"
+                                     width="50px" height="50px">
+                            {% endif %}
+                            {% if species.deer_resist %}
+                                <img src="{% static 'plants/img/deer_resistant.png' %}"
+                                     alt="Icon indicating this species is resistant to deer"
+                                     width="50px" height="50px">
+                            {% endif %}
+                            {% if species.rabbit_resist %}
+                                <img src="{% static 'plants/img/rabbit_resistant.png' %}"
+                                     alt="Icon indicating this species is resistant to rabbits"
+                                     width="50px" height="50px">
+                            {% endif %}
+                            {% if species.bee_friend %}
+                                <img src="{% static 'plants/img/attracts_bees.png' %}"
+                                     alt="Icon indicating this species is pollinator friendly"
+                                     width="50px" height="50px">
+                            {% endif %}
+                            {% if species.plant_select %}
+                                <img src="{% static 'plants/img/plant_select.png' %}"
+                                     alt="Icon indicating this species is a Plant Select® cultivar"
+                                     width="50px" height="50px">
+                            {% endif %}
+                            {% if species.high_elevation %}
+                                <img src="{% static 'plants/img/high_elevation_icon.png' %}"
+                                     alt="Icon indicating this species is adapted to high elevation"
+                                     width="50px" height="50px">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="main-image">
+            <div class="main-image col-md-6">
                 {% if images %}
                     {% image images.first.image max-500x500 as main_img %}
                     <img src="{{ main_img.url }}" width="{{ main_img.width }}"
                          height="{{ main_img.height }}" alt="{{ main_img.alt }}"
                          onclick="openModal();currentSlide(1)"
-                         class="hover-shadow cursor">
+                         class="hover-shadow cursor float-end">
                 {% else %}
                     <picture>
                         <source srcset="{% static 'redbuttegarden/img/Image_Coming_Soon.webp' %}" type="image/webp">
-                        <img src="{% static 'redbuttegarden/img/Image_Coming_Soon.jpg' %}" class="hover-shadow responsive"
+                        <img src="{% static 'redbuttegarden/img/Image_Coming_Soon.jpg' %}"
+                             class="hover-shadow img-fluid"
                              alt="Images coming soon" title="Placeholder Image" width="350em" height="350em"
                              onclick="openModal();currentSlide(1)"
                         />
                     </picture>
                 {% endif %}
             </div>
+        </div>
+    </div>
 
-            <div class="species-info">
-                <div class="details">
-                    {% if species.cultivar %}
-                        <p><span class="bold">Cultivar:</span> {{ species.cultivar }}</p>
-                    {% endif %}
-                    <p><span class="bold">Habit:</span> {{ species.habit }}</p>
-                    {% if species.water_regime %}
-                        <p><span class="bold">Water Needs:</span> {{ species.water_regime }}</p>
-                    {% endif %}
-                    {% if species.exposure %}
-                        <p><span class="bold">Exposure:</span> {{ species.exposure }}</p>
-                    {% endif %}
-                    {% if species.hardiness %}
-                        <p><span class="bold">Hardiness:</span> {{ species.hardiness|join:", " }}</p>
-                    {% endif %}
-                    {% if species.plant_size %}
-                        <p><span class="bold">Size:</span> {{ species.plant_size }}</p>
-                    {% endif %}
-                    {% if species.flower_color %}
-                        <p><span class="bold">Flower Color:</span> {{ species.flower_color }}</p>
-                    {% endif %}
-                    {% if species.bloom_time %}
-                        <p><span class="bold">Bloom Times:</span> {{ species.bloom_time|join:", " }}</p>
-                    {% endif %}
-
-                    <div class="row icons">
-                        {% if species.utah_native %}
-                            <img src="{% static 'plants/img/utah_native.png' %}"
-                                 alt="Icon indicating this species is native to Utah"
-                                 width="50px" height="50px">
-                        {% endif %}
-                        {% if species.deer_resist %}
-                            <img src="{% static 'plants/img/deer_resistant.png' %}"
-                                 alt="Icon indicating this species is resistant to deer"
-                                 width="50px" height="50px">
-                        {% endif %}
-                        {% if species.rabbit_resist %}
-                            <img src="{% static 'plants/img/rabbit_resistant.png' %}"
-                                 alt="Icon indicating this species is resistant to rabbits"
-                                 width="50px" height="50px">
-                        {% endif %}
-                        {% if species.bee_friend %}
-                            <img src="{% static 'plants/img/attracts_bees.png' %}"
-                                 alt="Icon indicating this species is pollinator friendly"
-                                 width="50px" height="50px">
-                        {% endif %}
-                        {% if species.plant_select %}
-                            <img src="{% static 'plants/img/plant_select.png' %}"
-                                 alt="Icon indicating this species is a Plant Select® cultivar"
-                                 width="50px" height="50px">
-                        {% endif %}
-                        {% if species.high_elevation %}
-                            <img src="{% static 'plants/img/high_elevation_icon.png' %}"
-                                 alt="Icon indicating this species is adapted to high elevation"
-                                 width="50px" height="50px">
-                        {% endif %}
-                    </div>
+    {% if images.count > 1 %}
+        <div class="row">
+            <div class="additional-photos">
+                <p id="add-photo-label">Additional photos:</p>
+                <div class="thumb-row">
+                    {% for species_image in images|slice:"1:" %}
+                        <div class="thumb-col">
+                            {% image species_image.image height-100 as thumb %}
+                            <img src="{{ thumb.url }}" width="{{ thumb.width }}"
+                                 height="{{ thumb.height }}" alt="{{ thumb.alt }}"
+                                 onclick="openModal();currentSlide({{ forloop.counter|add:1 }})"
+                                 class="hover-shadow cursor">
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
 
-        {% if images.count > 1 %}
-            <div class="row">
-                <div class="additional-photos">
-                    <p id="add-photo-label">Additional photos:</p>
-                    <div class="thumb-row">
-                        {% for species_image in images|slice:"1:" %}
+        <div id="myModal" class="modal">
+            <span class="close cursor" onclick="closeModal()">&times;</span>
+            <div class="modal-content">
+                {% for species_image in images %}
+                    <div class="mySlides text-center">
+                        <div class="numbertext">{{ forloop.counter }} / {{ images|length }}</div>
+                        {% image species_image.image original %}
+                    </div>
+                {% endfor %}
+
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+
+                <div class="caption-container">
+                    <p id="caption-display">
+                            <span class="italic">
+                               {# injected by javascript #}
+                            </span>
+                    </p>
+                    <p id="copyright-display">{# injected by javascript #}</p>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="d-flex flex-row">
+                        {% for species_image in images %}
                             <div class="thumb-col">
-                                {% image species_image.image height-100 as thumb %}
-                                <img src="{{ thumb.url }}" width="{{ thumb.width }}"
-                                     height="{{ thumb.height }}" alt="{{ thumb.alt }}"
-                                     onclick="openModal();currentSlide({{ forloop.counter|add:1 }})"
-                                     class="hover-shadow cursor">
+                                {% image species_image.image height-100 as modal_thumb %}
+                                <img src="{{ modal_thumb.url }}" width="{{ modal_thumb.width }}"
+                                     height="{{ modal_thumb.height }}"
+                                     alt="{{ modal_thumb.copyright }}"
+                                     onclick="currentSlide({{ forloop.counter }})"
+                                     class="demo cursor" title="{{ modal_thumb.title }}">
+                                <div class="caption-text d-none">{{ species_image.caption }}</div>
+                                <div class="copyright-text d-none">{{ species_image.copyright }}</div>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
-
-            <div id="myModal" class="modal">
-                <span class="close cursor" onclick="closeModal()">&times;</span>
-                <div class="modal-content">
-                    {% for species_image in images %}
-                        <div class="mySlides text-center">
-                            <div class="numbertext">{{ forloop.counter }} / {{ images|length }}</div>
-                            {% image species_image.image original %}
-                        </div>
-                    {% endfor %}
-
-                    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-                    <a class="next" onclick="plusSlides(1)">&#10095;</a>
-
-                    <div class="caption-container">
-                        <p id="caption-display">
-                            <span class="italic">
-                               {# injected by javascript #}
-                            </span>
-                        </p>
-                        <p id="copyright-display">{# injected by javascript #}</p>
-                    </div>
-
-                    {% for species_image in images %}
-                        <div class="thumb-col">
-                            {% image species_image.image height-100 as modal_thumb %}
-                            <img src="{{ modal_thumb.url }}" width="{{ modal_thumb.width }}"
-                                 height="{{ modal_thumb.height }}"
-                                 alt="{{ modal_thumb.copyright }}"
-                                 onclick="currentSlide({{ forloop.counter }})"
-                                 class="demo cursor" title="{{ modal_thumb.title }}">
-                            <div class="caption-text hidden">{{ species_image.caption }}</div>
-                            <div class="copyright-text hidden">{{ species_image.copyright }}</div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endif %}
-
-        <div class="row small text-center">
-            Spotted an issue?
-            <a href="{% url 'plants:species-feedback' species.id %}"> Leave a comment with our feedback form.</a>
         </div>
+    {% endif %}
+
+    <div class="row small text-center p-3">
+        <p>Spotted an issue?</p>
+        <a href="{% url 'plants:species-feedback' species.id %}"> Leave a comment with our feedback form.</a>
     </div>
 {% endblock %}
 

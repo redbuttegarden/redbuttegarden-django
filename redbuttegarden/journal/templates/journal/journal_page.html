@@ -3,10 +3,7 @@
 
 {% block abnormal_content %}
     <div id="journalpostbody" class="container-fluid">
-        <div class="row text-center responsive">
-            {% image page.banner max-1280x500 %}
-        </div>
-        <br>
+        {% include 'includes/banner_image.html' %}
 
         <div class="row">
             {% with gallery_items=post.gallery_images.all %}
@@ -45,12 +42,12 @@
                         </div>
                     {% endif %}
                 {% endwith %}
-                <div class="row-fluid">
+                <div class="row">
                     {% with gallery_items=post.gallery_images.all %}
                         {% if gallery_items %}
                             {% for item in post.gallery_images.all %}
                                 <figure>
-                                    {% image item.image width-400 class="responsive" %}
+                                    {% image item.image width-400 class="img-fluid" %}
                                     <figcaption>{{ item.caption }}</figcaption>
                                 </figure>
                             {% endfor %}

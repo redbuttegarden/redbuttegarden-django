@@ -7,11 +7,9 @@
 
 {% block content %}
     <div class="row">
-        <div class="row-fluid text-center responsive">
-            {% image page.banner max-1280x500 %}
-        </div>
+        {% include 'includes/banner_image.html' %}
 
-        <div id="poster-holder" class="row-fluid">
+        <div id="poster-holder" class="row">
             {% for lineup in page.lineups %}
                 <div class="col-sm-4">
                     <div id="poster-outer-{{ forloop.counter0 }}" class="poster-outer collapsed" data-target="#{{ lineup.id }}" data-toggle="collapse" href="#{{ lineup.id }}" aria-expanded="false">

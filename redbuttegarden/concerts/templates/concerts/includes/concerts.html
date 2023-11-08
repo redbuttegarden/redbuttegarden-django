@@ -83,13 +83,13 @@
                             <div class="row-fluid">
                                 {% if concert.on_sale %}
                                     <a href="{{ concert.ticket_url }}">
-                                        <img class="responsive con-button hover"
+                                        <img class="con-button"
                                              src="{% static 'concerts/img/buy-tickets.png' %}"
                                              alt="Buy ticket button">
                                     </a>
                                 {% else %}
                                     <div class="disable-buy">
-                                        <img class="responsive" src="{% static 'concerts/img/buy-tickets.png' %}"
+                                        <img class="img-fluid" src="{% static 'concerts/img/buy-tickets.png' %}"
                                              alt="Ticket purchase disabled">
                                     </div>
                                 {% endif %}

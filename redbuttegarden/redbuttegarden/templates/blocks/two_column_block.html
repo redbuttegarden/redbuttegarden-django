@@ -1,11 +1,11 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
-<div class="row-fluid">
+<div class="row">
     <div class="col-md-6">
         {% for block in self.left_column %}
             {% if block.block_type == 'image' %}
                 <div class="textwrapper">
-                    {% image block.value original class="img-responsive" %}
+                    {% image block.value original class="img-fluid" %}
                 </div>
             {% else %}
                 <section class="block-{{ block.block_type }}">
@@ -18,7 +18,7 @@
         {% for block in self.right_column %}
             {% if block.block_type == 'image' %}
                 <div class="textwrapper">
-                    {% image block.value original class="img-responsive" %}
+                    {% image block.value original class="img-fluid" %}
                 </div>
             {% else %}
                 <section class="block-{{ block.block_type }}">
