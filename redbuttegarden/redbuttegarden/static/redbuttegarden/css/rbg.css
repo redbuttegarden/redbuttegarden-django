@@ -382,4 +382,13 @@ a:hover {
   border: 1px solid black;
   font-weight: bold; }
 
+.eventwrapsmall, .collectionswrap {
+  display: block;
+  height: 385px;
+  overflow: hidden; }
+
+.eventwrapsmall img, .collectionswrap img {
+  width: 385px;
+  height: 385px; }
+
 /*# sourceMappingURL=rbg.css.map */
