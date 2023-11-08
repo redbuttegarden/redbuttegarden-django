@@ -1,29 +1,36 @@
 {% extends 'base.html' %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'home/css/plant_collections.css' %}">
+{% endblock %}
 
 {% block content %}
     {% include 'includes/banner_image.html' %}
 
     {% include_block page.intro|richtext %}
-    <div class="panel-group" id="accordion">
-		    <div class="panel panel-default">
-		      <a data-toggle="collapse" data-parent="#accordion" href="#PC" class="" aria-expanded="true">
-		      	<div class="panel-heading">
-			        <div class="panel-title text-center">Click Here for More Info on our Types of Plant Collections</div>
-				</div>
-		      </a>
-		      <div id="PC" class="panel-collapse collapse" aria-expanded="false">
-		        <div class="panel-body">
-		        	{% include_block page.more_info_modal|richtext %}
-				</div>
-		      </div>
-		    </div>
-		</div>
+
+    <div class="accordion" id="accordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    Click Here for More Info on our Types of Plant Collections
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordion">
+                <div class="accordion-body">
+                    {% include_block page.more_info_modal|richtext %}
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% with collections=page.plant_collections.all %}
         {% if collections %}
             {% for collection in collections %}
-                <div class="row-fluid">
-                    <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-md-6">
                         <a class="hover" href="{{ collection.slideshow_link }}" target="_blank">
                             <div class="collectionswrap">
                                 {% image collection.image width-385 %}
@@ -33,18 +40,18 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-md-6">
                         <div class="collectionswrap green">
                             <h4 class="text-center">{{ collection.title }}</h4>
                             {% include_block collection.text|richtext %}
                         </div>
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-md-6">
                                 <a class="hover" href="{{ collection.slideshow_link }}" target="_blank">
                                     <button class="apply-button">View Our Slideshow</button>
                                 </a>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-md-6">
                                 <a class="hover" href="{{ collection.collection_doc.file.url }}">
                                     <button class="apply-button">More Information</button>
                                 </a>
@@ -52,8 +59,6 @@
                         </div>
                     </div>
                 </div>
-                <br>
-
                 <hr>
             {% endfor %}
         {% endif %}

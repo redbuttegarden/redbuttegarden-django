@@ -108,6 +108,19 @@ hr {
 #banner {
   max-width: 1280px; }
 
+.eventinfo {
+  position: relative;
+  width: 80%;
+  z-index: 5;
+  bottom: 8rem;
+  background-color: var(--rbg-primary-green);
+  opacity: 80%;
+  padding: 15px; }
+
+.eventname {
+  font-weight: bold;
+  color: #FFF; }
+
 #journalpostbody {
   margin: 0 auto 0 auto;
   padding: 65px 15px 15px 15px; }
@@ -361,5 +374,12 @@ a:hover {
 
 .green-button a, .tan-button a, .red-button a, .org-button a {
   color: #FFF; }
+
+.membutton, .apply-button, #accordion .apply-button .btn-inner {
+  background-color: #196143;
+  color: #FFF;
+  height: 40px;
+  border: 1px solid black;
+  font-weight: bold; }
 
 /*# sourceMappingURL=rbg.css.map */
