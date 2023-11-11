@@ -1,18 +1,18 @@
-<nav role="pagination" aria-label="Pagination">
-    <ul class="pagination">
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
         {% if subpages.has_previous %}
             <li class="page-item">
-                <a href="?page={{ subpages.previous_page_number }}" class="page-link previous arrows">previous</a>
+                <a href="?page={{ subpages.previous_page_number }}" class="page-link">Previous</a>
             </li>
         {% else %}
             <li class="page-item disabled">
-                <a class="page-link">previous</a>
+                <a class="page-link">Previous</a>
             </li>
         {% endif %}
 
         {% for i in subpages.paginator.page_range %}
             {% if subpages.number == i %}
-                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                <li class="page-item active" aria-current="page"><a class="page-link">{{ i }}</a></li>
             {% else %}
                 <li class="page-item"><a href="?page={{ query_string|urlencode }}{{ i }}" class="page-link">{{ i }}</a></li>
             {% endif %}
@@ -20,11 +20,11 @@
 
         {% if subpages.has_next %}
             <li class="page-item">
-                <a href="?page={{ subpages.next_page_number }}" class="page-link next arrows">next</a>
+                <a href="?page={{ subpages.next_page_number }}" class="page-link">Next</a>
             </li>
         {% else %}
             <li class="page-item disabled">
-                <a class="page-link">next</a>
+                <a class="page-link">Next</a>
             </li>
         {% endif %}
     </ul>

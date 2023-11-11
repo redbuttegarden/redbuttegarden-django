@@ -3,6 +3,7 @@
 
 {% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/index_page.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/pagination.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -52,19 +53,17 @@
         </div>
 
         {% if posts.paginator.num_pages > 1 %}
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        {% include "includes/pagination.html" with subpages=posts %}
-                    </div>
-                </div>
+            <div class="row mt-5">
+                {% include "includes/pagination.html" with subpages=posts %}
             </div>
         {% endif %}
     </div>
 
-    <hr>
+    <div class="row">
+        <hr>
+    </div>
 
-    <div class="row col-sm-12">
+    <div class="row m-3">
         {% for block in page.bottom_button_info %}
             {% include_block block with id=block.id %}
         {% endfor %}
