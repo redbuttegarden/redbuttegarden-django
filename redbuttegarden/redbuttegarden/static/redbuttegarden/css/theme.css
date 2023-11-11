@@ -70,7 +70,7 @@
   --bs-danger-text-emphasis: #82261b;
   --bs-light-text-emphasis: #495057;
   --bs-dark-text-emphasis: #495057;
-  --bs-primary-bg-subtle: #cfe2ff;
+  --bs-primary-bg-subtle: var(--rbg-secondary-green);
   --bs-secondary-bg-subtle: #e2e3e5;
   --bs-success-bg-subtle: #d1e7dd;
   --bs-success-bg-subtle-rgb: 209, 231, 221;  /* Custom */
