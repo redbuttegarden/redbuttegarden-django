@@ -3,86 +3,88 @@
 
 {% block abnormal_content %}
     <div id="journalpostbody" class="container-fluid">
-        {% include 'includes/banner_image.html' %}
+    {% include 'includes/banner_image.html' %}
 
-        <div class="row">
-            {% with gallery_items=post.gallery_images.all %}
-                {% if gallery_items %}
-                    <div class="col-sm-3">
-                {% else %}
-                    <div class="col-sm-2">
-                {% endif %}
-            {% endwith %}
-                {% if post.tags.all.count %}
-                    <div class="tags">
-                        <h3>Tags</h3>
-                        {% for tag in post.tags.all %}
-                            <div>
-                                <a href="{% routablepageurl journal_index_page "post_by_tag" tag.slug %}">
-                                    <span class="label label-info">{{ tag }}</span>
-                                </a>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                {% with categories=post.categories.all %}
-                    {% if categories %}
-                        <div class="tags">
-                            <h3>Categories</h3>
-                            <ul class="nav nav-pills nav-stacked">
-                                {% for category in categories %}
-                                    <li>
-                                        <a href="{% routablepageurl journal_index_page "post_by_category" category.slug %}">
-                                            {{ category.name }}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
-                {% endwith %}
-                <div class="row">
-                    {% with gallery_items=post.gallery_images.all %}
-                        {% if gallery_items %}
-                            {% for item in post.gallery_images.all %}
-                                <figure>
-                                    {% image item.image width-400 class="img-fluid" %}
-                                    <figcaption>{{ item.caption }}</figcaption>
-                                </figure>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
-                </div>
+    <div class="row">
+    {% with gallery_items=post.gallery_images.all %}
+        {% if gallery_items %}
+            <div class="col-sm-3">
+        {% else %}
+            <div class="col-sm-2">
+        {% endif %}
+    {% endwith %}
+{% if post.tags.all.count %}
+    <div class="tags">
+        <h3>Tags</h3>
+        {% for tag in post.tags.all %}
+            <div>
+                <a href="{% routablepageurl journal_index_page "post_by_tag" tag.slug %}">
+                    <span class="label label-info">{{ tag }}</span>
+                </a>
+                {% if not forloop.last %}<span>&nbsp;|&nbsp;</span>{% endif %}
             </div>
-
-            {% with gallery_items=post.gallery_images.all %}
-                {% if gallery_items %}
-                    <div class="col-sm-9">
-                {% else %}
-                    <div class="col-sm-10">
-                {% endif %}
-            {% endwith %}
-                <h2>{{ post.title }}</h2>
-                <h5>Submitted: {{ post.date }}</h5>
-                {% if post.authors.all %}
-                    <div>
-                        <strong>By: </strong>
-                        {% for author in post.authors.all %}
-                            <strong>{{ author.first_name }} {{ author.last_name }},</strong>
-                            <em>{{ author.title }}</em>
-                            {% if not forloop.last %}
-                                <span> and </span>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                <br>
-
-                {% for block in page.body %}
-                    {% include_block block with id=block.id %}
-                {% endfor %}
-            </div>
-        </div>
+        {% endfor %}
     </div>
+{% endif %}
+
+{% with categories=post.categories.all %}
+    {% if categories %}
+        <div class="tags">
+            <h3>Categories</h3>
+            <ul class="nav nav-pills">
+                {% for category in categories %}
+                    <li class="nav-item">
+                        <a href="{% routablepageurl journal_index_page "post_by_category" category.slug %}"
+                           class="nav-link">
+                            {{ category.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endwith %}
+<div class="row">
+    {% with gallery_items=post.gallery_images.all %}
+        {% if gallery_items %}
+            {% for item in post.gallery_images.all %}
+                <figure>
+                    {% image item.image width-400 class="img-fluid" %}
+                    <figcaption>{{ item.caption }}</figcaption>
+                </figure>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+</div>
+
+{% with gallery_items=post.gallery_images.all %}
+    {% if gallery_items %}
+        <div class="col-sm-9">
+    {% else %}
+        <div class="col-sm-10">
+    {% endif %}
+{% endwith %}
+<h2>{{ post.title }}</h2>
+<h5>Submitted: {{ post.date }}</h5>
+{% if post.authors.all %}
+    <div>
+        <strong>By: </strong>
+        {% for author in post.authors.all %}
+            <strong>{{ author.first_name }} {{ author.last_name }},</strong>
+            <em>{{ author.title }}</em>
+            {% if not forloop.last %}
+                <span> and </span>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+<br>
+
+{% for block in page.body %}
+    {% include_block block with id=block.id %}
+{% endfor %}
+</div>
+</div>
+</div>
 {% endblock %}
