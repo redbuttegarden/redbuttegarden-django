@@ -167,8 +167,7 @@ class ConcertBlock(blocks.StructBlock):
         default='https://www.etix.com/ticket/e/1035223/2023-season-salt-lake-city-red-butte-garden')
 
     class Meta:
-        icon = 'music'
-        form_template = 'concerts/block_forms/concert.html'
+        icon = 'pick'
 
 
 class SimpleConcertBlock(blocks.StructBlock):
@@ -183,13 +182,6 @@ class SimpleConcertBlock(blocks.StructBlock):
 
     class Meta:
         template = 'blocks/simple_concert_block.html'
-
-
-class ConcertStreamBlock(blocks.StreamBlock):
-    concerts = ConcertBlock()
-
-    class Meta:
-        required = False
 
 
 class SimpleConcertStreamBlock(blocks.StreamBlock):
@@ -241,7 +233,9 @@ class ConcertPage(AbstractBase):
         on_delete=models.SET_NULL,
         related_name='+',
     )
-    body = StreamField(ConcertStreamBlock(), null=True, blank=True, use_json_field=True)
+    body = StreamField(block_types=[
+        ('concert', ConcertBlock()),
+    ], null=True, blank=True, use_json_field=True)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('banner_link'),
