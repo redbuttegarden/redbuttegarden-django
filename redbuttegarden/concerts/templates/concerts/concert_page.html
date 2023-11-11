@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block body_class %}concert-page{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="col-sm-12">
@@ -13,65 +14,66 @@
                 {% image page.banner original class="img-fluid" %}
             </a>
             <div class="dark-blue-bg text-center white">
-                <div class="row-fluid">
+                <div class="row">
                     {{ page.intro|richtext }}
                 </div>
             </div>
-            <div class="row-fluid">
+            <div class="row">
                 <a href="{% slugurl 'concert-donors' %}">
-                    <div class="concertbanner hover">
+                    <div class="concertbanner d-flex justify-content-center">
                         {% image page.donor_banner original as donor_banner %}
-                        <img src="{{ donor_banner.url }}" alt="Banner of concert donor logos">
+                        <img src="{{ donor_banner.url }}" alt="Banner of concert donor logos" class="img-fluid">
                     </div>
                 </a>
             </div>
-            <div id="concertcontent" class="container-fluid container-fluid-no-padding">
-                <div class="row-fluid" style="max-width: 1280px; float: none; margin: auto;">
-                    {% if page.button_one is not None %}
-                        <a href="{% pageurl page.button_one %}">
-                            <div class="col-xs-6 col-sm-3">
-                                <div class="concertinfo hover dark-blue-bg center">
-                                    {{ page.button_one.title }}
-                                </div>
-                            </div>
-                        </a>
-                    {% endif %}
 
-                    {% if page.button_two is not None %}
-                        <a href="{% pageurl page.button_two %}">
-                            <div class="col-xs-6 col-sm-3">
-                                <div class="concertinfo hover dark-blue-bg center">
-                                    {{ page.button_two.title }}
-                                </div>
-                            </div>
-                        </a>
-                    {% endif %}
+            <div class="row">
+                {% if page.button_one %}
+                    <div class="col-sm-3">
+                        <div class="concertinfo dark-blue-bg center">
+                            <a href="{% pageurl page.button_one %}">
+                                {{ page.button_one.title }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
 
-                    {% if page.button_three is not None %}
-                        <a href="{% pageurl page.button_three %}">
-                            <div class="col-xs-6 col-sm-3">
-                                <div class="concertinfo hover dark-blue-bg center">
-                                    {{ page.button_three.title }}
-                                </div>
-                            </div>
-                        </a>
-                    {% endif %}
+                {% if page.button_two %}
+                    <div class="col-sm-3">
+                        <div class="concertinfo dark-blue-bg center">
+                            <a href="{% pageurl page.button_two %}">
+                                {{ page.button_two.title }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
 
-                    {% if page.button_four is not None %}
-                        <a href="{% pageurl page.button_four %}">
-                            <div class="col-xs-6 col-sm-3">
-                                <div class="concertinfo hover dark-blue-bg center">
-                                    {{ page.button_four.title }}
-                                </div>
-                            </div>
-                        </a>
-                    {% endif %}
-                </div>
+                {% if page.button_three %}
+                    <div class="col-sm-3">
+                        <div class="concertinfo dark-blue-bg center">
+                            <a href="{% pageurl page.button_three %}">
+                                {{ page.button_three.title }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if page.button_four %}
+                    <div class="col-sm-3">
+                        <div class="concertinfo dark-blue-bg center">
+                            <a href="{% pageurl page.button_four %}">
+                                {{ page.button_four.title }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
+
 
             {% if concerts or wave_one_concerts %}
                 <div class="row text-center">
-                    <a href="{% get_media_prefix %}concert_calendar_{{ page.slug }}.ics">Download iCal Event Calendar</a>
+                    <a href="{% get_media_prefix %}concert_calendar_{{ page.slug }}.ics">Download iCal Event
+                        Calendar</a>
                 </div>
 
                 {% if wave_one_concerts %}
