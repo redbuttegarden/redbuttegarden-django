@@ -1,5 +1,6 @@
 import datetime
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -363,3 +364,30 @@ class DonorSchedulePage(AbstractBase):
     search_fields = AbstractBase.search_fields + [
         index.SearchField('body'),
     ]
+
+
+class ConcertDonorClubTicketSalePage(AbstractBase):
+    body = StreamField(block_types=[
+        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph'))
+    ], blank=False, use_json_field=True)
+
+    content_panels = AbstractBase.content_panels + [
+        FieldPanel('body'),
+    ]
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+    ]
+
+    parent_page_types = ['home.GeneralPage']
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, **kwargs)
+
+        context['app_ID'] = settings.COMET_CHAT_APP_ID
+        context['app_region'] = settings.COMET_CHAT_REGION
+        context['auth_key'] = settings.COMET_CHAT_AUTH_KEY
+        context['widget_ID'] = settings.COMET_CHAT_WIDGET_ID
+        context['user_name'] = request.user.get_full_name()
+
+        return context
