@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block extra_css %}
+    <script defer src="https://widget-js.cometchat.io/v3/cometchatwidget.js"></script>
+{% endblock %}
+
+{% block content %}
+    {% include 'includes/banner_image.html' %}
+
+    {% for block in page.body %}
+        {% include_block block with id=block.id %}
+    {% endfor %}
+
+    <div id="cometchat"></div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        const APP_ID = "{{ app_ID }}";
+        const APP_REGION = "{{ app_region }}";
+        const AUTH_KEY = "{{ auth_key }}";
+        const WIDGET_ID = "{{ widget_ID }}";
+        const USER_ID = "{{ request.user.id }}";
+        const USER_NAME = "{{ user_name }}";
+    </script>
+    <script type="text/javascript" src="{% static 'concerts/js/ticket_sale_comet_chat.js' %}"></script>
+{% endblock %}
