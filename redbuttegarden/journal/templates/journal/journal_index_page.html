@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load wagtailcore_tags wagtailimages_tags static %}
 
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/index_page.css' %}">
+{% endblock %}
+
 {% block content %}
     <div id="journal-banner">
         {% include 'includes/banner_image.html' %}
@@ -11,54 +15,54 @@
     {% endfor %}
 
     <hr>
-    <div class="row-fluid col xs-12">
-        {% for post in posts %}
-            <div class="col-sm-4 index-tile">
-                {% with post=post.specific %}
-                    <a class="hover" href="{% pageurl post %}">
-                        <div class="index-thumbnail">
-                            {% comment %}
-                                Added blank alt attribute to image thumbnails since these are primarily to create a
-                                larger surface area for the page links and alt attributes would unnecessarily complicate
-                                page navigation for users using screen readers.
-                            {% endcomment %}
-                            {% image post.thumbnail fill-385x385 alt="" %}
-                            <div class="eventinfo">
-                                <div class="eventname">{{ post.title }}</div>
-                                <div class="eventdate">{{ post.date|date:"F j, Y" }}</div>
+
+    <div class="container-fluid">
+        <div class="row gy-5 justify-content-between">
+            {% for post in posts %}
+                <div class="col-lg-4 index-tile">
+                    {% with post=post.specific %}
+                        <a href="{% pageurl post %}">
+                            <div class="index-thumbnail">
+                                {% comment %}
+                                    Added blank alt attribute to image thumbnails since these are primarily to create a
+                                    larger surface area for the page links and alt attributes would unnecessarily
+                                    complicate
+                                    page navigation for users using screen readers.
+                                {% endcomment %}
+                                {% image post.thumbnail fill-385x385 alt="" %}
+                                <div class="eventinfo text-white">
+                                    <div class="eventname">{{ post.title }}</div>
+                                    <div class="eventdate">{{ post.date|date:"F j, Y" }}</div>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                {% endwith %}
-            </div>
-            {% empty %}
-            <br>
-            <br>
-            <div class="row-fluid">
-                <div class="tan-bg">
-                    <h4 class="text-center green">
-                        There are currently no published journal posts. Please check back soon!
-                    </h4>
+                        </a>
+                    {% endwith %}
+                </div>
+                {% empty %}
+                <div class="row">
+                    <div class="tan-bg">
+                        <h4 class="text-center green">
+                            There are currently no published journal posts. Please check back soon!
+                        </h4>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if posts.paginator.num_pages > 1 %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        {% include "includes/pagination.html" with subpages=posts %}
+                    </div>
                 </div>
             </div>
-        {% endfor %}
+        {% endif %}
     </div>
 
-    {% if posts.paginator.num_pages > 1 %}
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    {% include "includes/pagination.html" with subpages=posts %}
-                </div>
-            </div>
-        </div>
-    {% endif %}
-
-    <br>
     <hr>
-    <br>
 
-    <div class="row-fluid col xs-12">
+    <div class="row col-sm-12">
         {% for block in page.bottom_button_info %}
             {% include_block block with id=block.id %}
         {% endfor %}

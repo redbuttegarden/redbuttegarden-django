@@ -65,6 +65,7 @@ function setSeasonalBanner(calculatedSeason) {
         bannerImage.setAttribute("alt", "Seasonal banner for What's Blooming Now Blog");
         bannerImage.setAttribute("height", "100");
         bannerImage.setAttribute("width", "1280");
+        bannerImage.classList.add("img-fluid");
         bannerDiv.appendChild(bannerImage);
     }
 }
