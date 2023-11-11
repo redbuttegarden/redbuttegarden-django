@@ -2,7 +2,7 @@
 This script automatically sets the seasonal banner image for the What's Blooming Now Blog
  */
 
-const bannerDiv = document.getElementById('journal-banner');
+const bannerDiv = document.getElementById('journal-banner').firstElementChild;
 
 // JS Seasonal determination taken from https://stackoverflow.com/a/54501026
 // Credit to kornieff: https://stackoverflow.com/users/3094153/kornieff

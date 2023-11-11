@@ -2,7 +2,9 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
-    {% include 'includes/banner_image.html' %}
+    <div id="journal-banner">
+        {% include 'includes/banner_image.html' %}
+    </div>
 
     {% for block in page.body %}
         {% include_block block with id=block.id %}
@@ -29,7 +31,7 @@
                     </a>
                 {% endwith %}
             </div>
-        {% empty %}
+            {% empty %}
             <br>
             <br>
             <div class="row-fluid">
