@@ -1,6 +1,8 @@
+import json
 import logging
 from urllib.parse import urlencode
 
+import requests
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -11,6 +13,7 @@ from django.http import JsonResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.middleware.csrf import get_token
 from django.urls import reverse
 from geojson import dumps
+from requests import HTTPError
 from rest_framework import generics, viewsets, status
 from django.shortcuts import render, get_object_or_404, redirect
 from django_tables2 import RequestConfig
@@ -243,24 +246,60 @@ def species_or_collection_feedback(request, species_id=None, collection_id=None)
             sender = form.cleaned_data['sender']
             cc_myself = form.cleaned_data['cc_myself']
 
-            recipients = [user.email for user in get_user_model().objects.filter(
-                groups__name='Plant Collection Curators')]
+            hcaptcha_token = request.POST.get('h-captcha-response', None)
 
-            subject = 'RBG Website Plants Feedback: ' + subject
-            message = style_message(
-                request, species, collection, original_message)
-            email = EmailMessage(subject=subject, body=message,
-                                 from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'admin@redbuttegarden.org'),
-                                 to=recipients, cc=(sender,) if cc_myself else None, reply_to=(sender,))
-            email.send()
-            return HttpResponseRedirect(reverse('plants:feedback-thanks'))
+            # We use this to distinguish between requests error or hCaptcha error when hcaptcha_passed is False
+            json_response = None
+
+            try:
+                # Make sure captcha is valid before we do anything else
+                hcaptcha_response = requests.post('https://api.hcaptcha.com/siteverify',
+                                                  data={'response': hcaptcha_token,
+                                                        'secret': settings.HCAPTCHA_SECRET_KEY,
+                                                        'sitekey': settings.HCAPTCHA_SITE_KEY},
+                                                  headers={'Content-Type': 'application/x-www-form-urlencoded'})
+                hcaptcha_response.raise_for_status()
+                json_response = hcaptcha_response.json()
+                logger.debug(f'hCaptcha Reponse: {json_response}')
+                hcaptcha_passed = json_response['success']
+            except HTTPError as e:
+                logger.error(f'Error while checking hCaptcha response: {e}')
+                messages.error(request, 'Error encountered while processing Captcha check. Please try again later.')
+                hcaptcha_passed = False
+
+            except Exception as e:
+                logger.error(f'General exception occurred while processing hCaptcha response: {e}')
+                messages.error(request, 'Error encountered while processing Captcha check. Please try again later.')
+                hcaptcha_passed = False
+
+            if hcaptcha_passed:
+                recipients = [user.email for user in get_user_model().objects.filter(
+                    groups__name='Plant Collection Curators')]
+
+                subject = 'RBG Website Plants Feedback: ' + subject
+                message = style_message(
+                    request, species, collection, original_message)
+                email = EmailMessage(subject=subject, body=message,
+                                     from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'admin@redbuttegarden.org'),
+                                     to=recipients, cc=(sender,) if cc_myself else None, reply_to=(sender,))
+                email.send()
+                return HttpResponseRedirect(reverse('plants:feedback-thanks'))
+            else:
+                # if json_response exists, must be an hCaptcha error
+                if json_response:
+                    logger.debug(f"Encountered hCaptcha error(s): {json_response['error-codes']}")
+                    # Add non-field error to form
+                    form.add_error(None,
+                                   'We encountered an error while processing your Captcha challenge. Please try again.')
+
     else:
         form = FeedbackReportForm(species_id, collection_id)
 
     context = {
         'form': form,
         'species_id': species_id,
-        'collection_id': collection_id
+        'collection_id': collection_id,
+        'hcaptcha_site_key': settings.HCAPTCHA_SITE_KEY,
     }
     return render(request, 'plants/plant_feedback.html', context)
 
@@ -294,7 +333,8 @@ def collection_search(request):
 
             return redirect(url)
         else:
-            messages.add_message(request, messages.ERROR, "Received invalid form data. Please edit your request and try again")
+            messages.add_message(request, messages.ERROR,
+                                 "Received invalid form data. Please edit your request and try again")
 
     return render(request, 'plants/collection_search.html', context)
 

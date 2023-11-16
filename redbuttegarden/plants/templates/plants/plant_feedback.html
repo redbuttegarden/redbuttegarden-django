@@ -5,6 +5,7 @@
 
 {% block extra_css %}
     <link href="{% static 'plants/css/feedback.css' %}" rel="stylesheet">
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 {% endblock %}
 
 
@@ -15,7 +16,8 @@
             <form action="{% url 'plants:species-feedback' species_id %}" method="post">
                 {% csrf_token %}
                 {{ form }}
-                <br>
+                <div class="h-captcha" data-sitekey="{{ hcaptcha_site_key }}"></div>
+
                 <button type="submit" class="btn btn-primary">Submit</button>
                 <button type="reset" class="btn btn-light">Reset Form</button>
             </form>
@@ -23,7 +25,8 @@
             <form action="{% url 'plants:collection-feedback' collection_id %}" method="post">
                 {% csrf_token %}
                 {{ form }}
-                <br>
+                <div class="h-captcha" data-sitekey="{{ HCAPTCHA_SITE_KEY }}"></div>
+
                 <button type="submit" class="btn btn-primary">Submit</button>
                 <button type="reset" class="btn btn-light">Reset Form</button>
             </form>
