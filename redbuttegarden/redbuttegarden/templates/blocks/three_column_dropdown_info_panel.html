@@ -1,9 +1,9 @@
 {% load wagtailcore_tags %}
 
-<div class="panel-group" id="accordion-{{ id }}">
+<div class="panel-group" id="accordion-{{ block.id }}">
     {% for panel in value.list_items %}
         <div class="panel panel-default">
-            <a data-toggle="collapse" data-parent="#accordion-{{ id }}" href="#{{ id }}-{{ forloop.counter }}" class="collapsed" aria-expanded="false">
+            <a data-toggle="collapse" data-parent="#accordion-{{ block.id }}" href="#{{ block.id }}-{{ forloop.counter }}" class="collapsed" aria-expanded="false">
                 <div class="{{ panel.background_color }}">
                     <div class="panel-title">
                         <div class="row">
@@ -22,7 +22,7 @@
                     </div>
                 </div>
             </a>
-            <div id="{{ id }}-{{ forloop.counter }}" class="panel-collapse collapse" aria-expanded="false">
+            <div id="{{ block.id }}-{{ forloop.counter }}" class="panel-collapse collapse" aria-expanded="false">
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-xs-6 col-sm-4">

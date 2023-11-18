@@ -12,7 +12,7 @@
     </div>
 
     {% for block in page.body %}
-        {% include_block block with id=block.id %}
+        {% include_block block %}
     {% endfor %}
 
     <div class="row">
@@ -65,7 +65,7 @@
 
     <div class="row m-3">
         {% for block in page.bottom_button_info %}
-            {% include_block block with id=block.id %}
+            {% include_block block %}
         {% endfor %}
     </div>
 {% endblock %}

@@ -6,7 +6,7 @@
             <div class="panel-group" id="accordion">
                 <div class="panel panel-default">
 
-                    <a data-toggle="collapse" data-parent="#accordion" href="#{{ id }}-{{ forloop.counter }}">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#block-id-{{ block.id }}-{{ forloop.counter }}">
                         <div class="panel-heading">
                             <div class="panel-title hover">
                                 {% include_block list_item.card_info %}
@@ -14,7 +14,7 @@
                         </div>
                     </a>
 
-                    <div id="{{ id }}-{{ forloop.counter }}" class="panel-collapse collapse">
+                    <div id="block-id-{{ block.id }}-{{ forloop.counter }}" class="panel-collapse collapse">
                         <div class="panel-body">
 
                             {{ list_item.info_text|richtext }}

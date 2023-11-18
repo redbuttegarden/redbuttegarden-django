@@ -15,7 +15,7 @@
         {% if block.block_type == 'image' %}
             {% image block.value original class="img-center img-fluid" %}
         {% else %}
-            {% include_block block with id=block.id %}
+            {% include_block block %}
         {% endif %}
     {% endfor %}
 {% endblock %}

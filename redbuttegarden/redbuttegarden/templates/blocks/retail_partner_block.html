@@ -3,7 +3,7 @@
 <h3 class="green">{{ value.name }}</h3>
 
 {% for address_block in value.addresses %}
-    {% include_block address_block with id=block.id %}
+    {% include_block address_block %}
 {% endfor %}
 
 {% if value.url %}<p><a href="{{ value.url }}">{{ value.url }}</a></p>{% endif %}

@@ -8,7 +8,7 @@
     <br>
 
     {% for block in page.body %}
-        {% include_block block with id=block.id %}
+        {% include_block block %}
     {% endfor %}
 
     <br>
@@ -17,7 +17,7 @@
         <div class="tan-bg row-fluid">
             {% for partner_block in page.retail_partners %}
                 <div class="col-md-4">
-                    {% include_block partner_block with id=block.id %}
+                    {% include_block partner_block %}
                 </div>
 
                 {% if forloop.counter|divisibleby:3 and not forloop.last %}

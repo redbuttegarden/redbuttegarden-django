@@ -4,7 +4,7 @@
     {% for list_item in value.list_items %}
         <div class="col-lg-4 col-md-6">
             <a class="eventwrapsmall collapsed" data-bs-toggle="collapse"
-                 href="#{{ id }}-{{ forloop.counter }}" aria-expanded="false" aria-controls="{{ id }}-{{ forloop.counter }}">
+                 href="#block-id-{{ block.id }}-{{ forloop.counter }}" aria-expanded="false" aria-controls="block-id-{{ block.id }}-{{ forloop.counter }}">
                 {% image list_item.image fill-385x385 alt="" class="image-list-dropdown" %}
                 <div class="eventinfo">
                     <div class="eventname">
@@ -13,7 +13,7 @@
                     </div>
                 </div>
             </a>
-            <div id="{{ id }}-{{ forloop.counter }}" class="collapse" aria-expanded="false">
+            <div id="block-id-{{ block.id }}-{{ forloop.counter }}" class="collapse" aria-expanded="false">
                 <div class="tan-bg">
                     <div class="row">
                         <h4 class="green">{{ list_item.title }}</h4>
