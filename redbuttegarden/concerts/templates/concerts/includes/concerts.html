@@ -1,100 +1,96 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
-<div class="row-fluid">
+<div class="row">
     {% for concert in concerts %}
-        <div {% if not concert.virtual and concert.live_in_the_past or concert.on_demand_expired %}class="past"{% endif %}>
-            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 concertwrapper">
-                <a href="{{ concert.ticket_url }}">
-                    <div class="bandpic hover">
-                        {# Using blank alt attribute since band description will provide the relevant context #}
-                        <picture>
-                            {% image concert.band_img fill-300x300 alt="" %}
+        <div class="col-sm-6 col-md-4 col-lg-3 m-2 gy-3 concertwrapper {% if not concert.virtual and concert.live_in_the_past or concert.on_demand_expired %}past{% endif %}">
+            <a href="{{ concert.ticket_url }}">
+                <div class="bandpic">
+                    {# Using blank alt attribute since band description will provide the relevant context #}
+                    <picture>
+                        {% image concert.band_img fill-300x300 alt="" %}
 
-                            {% if concert.wave %}
-                                <div class="soldout wave-banner">
-                                    {% if concert.wave == '1' and wave_one_concerts %}
-                                        <img class="wave-one-banner" src="{% static 'concerts/img/wave1.png' %}"
-                                             alt="Wave 1 concert">
-                                    {% elif concert.wave == '2' and wave_one_concerts %}
-                                        <img class="wave-two-banner" src="{% static 'concerts/img/wave2.png' %}"
-                                             alt="Wave 2 concert">
-                                    {% endif %}
-                                </div>
-                            {% endif %}
+                        {% if concert.wave %}
+                            <div class="soldout wave-banner">
+                                {% if concert.wave == '1' and wave_one_concerts %}
+                                    <img class="wave-one-banner" src="{% static 'concerts/img/wave1.png' %}"
+                                         alt="Wave 1 concert">
+                                {% elif concert.wave == '2' and wave_one_concerts %}
+                                    <img class="wave-two-banner" src="{% static 'concerts/img/wave2.png' %}"
+                                         alt="Wave 2 concert">
+                                {% endif %}
+                            </div>
+                        {% endif %}
 
-                            {% if concert.canceled %}
-                                <div class="soldout">
-                                    <img src="{% static 'concerts/img/cancelled.png' %}" alt="Concert canceled">
-                                </div>
-                            {% elif concert.postponed %}
-                                <div class="soldout">
-                                    <img src="{% static 'concerts/img/postponed.png' %}" alt="Concert postponed">
-                                </div>
-                            {% elif concert.sold_out %}
-                                <div class="soldout">
-                                    <img src="{% static 'concerts/img/SoldOut.png' %}" alt="Concert sold out">
-                                </div>
-                            {% endif %}
-                        </picture>
-                    </div>
-                </a>
+                        {% if concert.canceled %}
+                            <div class="soldout">
+                                <img src="{% static 'concerts/img/cancelled.png' %}" alt="Concert canceled">
+                            </div>
+                        {% elif concert.postponed %}
+                            <div class="soldout">
+                                <img src="{% static 'concerts/img/postponed.png' %}" alt="Concert postponed">
+                            </div>
+                        {% elif concert.sold_out %}
+                            <div class="soldout">
+                                <img src="{% static 'concerts/img/SoldOut.png' %}" alt="Concert sold out">
+                            </div>
+                        {% endif %}
+                    </picture>
+                </div>
+            </a>
 
-                <div class="textwrapper">
-                    <div class="concerttext">
-                        <div class="con-band-wrap">
-                            {{ concert.band_info|richtext }}
+            <div class="dark-blue-bg text-white text-center">
+                <div>
+                    {{ concert.band_info|richtext }}
+                </div>
+
+                <div>
+                    {% if concert.virtual and concert.available_until and concert.live_in_the_past %}
+                        Available On Demand
+                        <div class="con-date">Until {{ concert.available_until }}</div>
+                    {% else %}
+                        <div class="con-date">
+                                            <span>
+                                                {% for concert_date in concert.concert_dates %}
+                                                    {% if not forloop.last %}
+                                                        {{ concert_date.date|date:"M j" }},&nbsp;
+                                                    {% else %}
+                                                        {{ concert_date.date }}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </span>
                         </div>
-
-                        <div class="con-but-wrap">
-                            {% if concert.virtual and concert.available_until and concert.live_in_the_past %}
-                                Available On Demand
-                                <div class="con-date">Until {{ concert.available_until }}</div>
+                        <div class="con-times">
+                            {% if concert.gate_time or concert.show_time %}
+                                {% if concert.gates_time %}
+                                    Gates at {{ concert.gates_time }} /
+                                {% endif %}
+                                Show at {{ concert.show_time }}
                             {% else %}
-                                <div class="con-date">
-                                                <span>
-                                                    {% for concert_date in concert.concert_dates %}
-                                                        {% if not forloop.last %}
-                                                            {{ concert_date.date|date:"M j" }},&nbsp;
-                                                        {% else %}
-                                                            {{ concert_date.date }}
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </span>
-                                </div>
-                                <div class="con-times">
-                                    {% if concert.gate_time or concert.show_time %}
-                                        {% if concert.gates_time %}
-                                            Gates at {{ concert.gates_time }} /
-                                        {% endif %}
-                                        Show at {{ concert.show_time }}
-                                    {% else %}
-                                        Gate & Show Times TBD
-                                    {% endif %}
-                                </div>
+                                Gate & Show Times TBD
                             {% endif %}
-                            <div class="con-price">
-                                {% if concert.member_price %}
-                                    Garden members: {{ concert.member_price }} / Public: {{ concert.public_price }}
-                                {% else %}
-                                    {{ concert.public_price }}
-                                {% endif %}
-                            </div>
-
-                            <div class="row-fluid">
-                                {% if concert.on_sale %}
-                                    <a href="{{ concert.ticket_url }}">
-                                        <img class="con-button"
-                                             src="{% static 'concerts/img/buy-tickets.png' %}"
-                                             alt="Buy ticket button">
-                                    </a>
-                                {% else %}
-                                    <div class="disable-buy">
-                                        <img class="img-fluid" src="{% static 'concerts/img/buy-tickets.png' %}"
-                                             alt="Ticket purchase disabled">
-                                    </div>
-                                {% endif %}
-                            </div>
                         </div>
+                    {% endif %}
+                    <div class="con-price">
+                        {% if concert.member_price %}
+                            Garden members: {{ concert.member_price }} / Public: {{ concert.public_price }}
+                        {% else %}
+                            {{ concert.public_price }}
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        {% if concert.on_sale %}
+                            <a href="{{ concert.ticket_url }}">
+                                <img class="img-fluid green-bg"
+                                     src="{% static 'concerts/img/buy-tickets.png' %}"
+                                     alt="Buy ticket button">
+                            </a>
+                        {% else %}
+                            <div class="disable-buy">
+                                <img class="img-fluid green-bg" src="{% static 'concerts/img/buy-tickets.png' %}"
+                                     alt="Ticket purchase disabled">
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

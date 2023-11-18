@@ -13,7 +13,7 @@
             <a href="{{ page.banner_link }}">
                 {% image page.banner original class="img-fluid" %}
             </a>
-            <div class="dark-blue-bg text-center white">
+            <div class="dark-blue-bg text-center text-white">
                 <div class="row">
                     {{ page.intro|richtext }}
                 </div>
@@ -78,7 +78,7 @@
 
                 {% if wave_one_concerts %}
                     {% if page.wave_one_info %}
-                        <div class="dark-blue-bg text-center white wave-info">
+                        <div class="dark-blue-bg text-center text-white wave-info">
                             {{ page.wave_one_info|richtext }}
                         </div>
                     {% endif %}
@@ -86,7 +86,7 @@
                     {% include 'concerts/includes/concerts.html' with concerts=wave_one_concerts %}
 
                     {% if wave_two_concerts %}
-                        <div class="dark-blue-bg text-center white wave-info">
+                        <div class="dark-blue-bg text-center text-white wave-info">
                             {{ page.wave_two_info|richtext }}
                         </div>
 

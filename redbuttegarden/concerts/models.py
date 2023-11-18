@@ -270,7 +270,7 @@ class ConcertPage(AbstractBase):
 
     def get_visible_concerts(self):
         return [concert.value for concert in self.body if
-                concert.block_type == 'concerts' and not concert.value['hidden'] and len(
+                concert.block_type == 'concert' and not concert.value['hidden'] and len(
                     concert.value['concert_dates']) > 0]
 
     def sort_concerts(self, concerts):
