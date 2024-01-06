@@ -10,7 +10,8 @@ DEBUG = False
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ['0.0.0.0', 'rbg-web-dev.redbutte.utah.edu', 'dev-shop.redbutte.utah.edu']
+ALLOWED_HOSTS = ['0.0.0.0', 'rbg-web-dev.redbutte.utah.edu', 'dev-shop.redbutte.utah.edu',
+                 'chow-whole-hugely.ngrok-free.app']
 
 BASE_URL = 'https://dev.redbuttegarden.org'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -104,7 +105,8 @@ CSP_IMG_SRC = ("'self'",
 # ]
 
 CORS_ORIGIN_ALLOW_ALL = True
-CSRF_TRUSTED_ORIGINS = ['http://' + domain for domain in ALLOWED_HOSTS] + ['https://' + domain for domain in ALLOWED_HOSTS]
+CSRF_TRUSTED_ORIGINS = ['http://' + domain for domain in ALLOWED_HOSTS] + ['https://' + domain for domain in
+                                                                           ALLOWED_HOSTS]
 
 LOGGING = {
     'version': 1,
