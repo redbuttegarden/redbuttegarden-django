@@ -15,7 +15,7 @@ const mobileHours = document.getElementById("gardenHours2");
 
 let busHours;
 let status;
-let otherNotes;
+let otherNotes = "";
 let buyLink;
 
 // Bootanical Dates
