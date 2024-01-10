@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
         ('wagtailcore', '0083_workflowcontenttype'),
         ('wagtailimages', '0025_alter_image_file_alter_rendition_file'),
         ('wagtaildocs', '0012_uploadeddocument'),
-        ('concerts', '0054_alter_donorpackagepage_body_and_more'),
+        ('concerts', '0053_alter_concertpage_body'),
     ]
 
     operations = [
