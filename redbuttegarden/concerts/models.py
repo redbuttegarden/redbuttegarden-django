@@ -1,6 +1,7 @@
 import datetime
 
 from django.conf import settings
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -391,3 +392,21 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
         context['user_name'] = request.user.get_full_name()
 
         return context
+
+class Concert(models.Model):
+    name = models.CharField(max_length=300)
+    link = models.URLField()
+
+class ConcertDonorClubPackage(models.Model):
+    name = models.CharField(max_length=150)
+    year = models.IntegerField(_('year'), validators=[MinValueValidator(1984), 2099])
+    concerts = models.ManyToManyField(Concert)
+
+class ConcertDonorClubMember(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True, blank=True
+    )
+    phone_number = models.CharField(max_length=150)
+    packages = models.ManyToManyField(ConcertDonorClubPackage)
