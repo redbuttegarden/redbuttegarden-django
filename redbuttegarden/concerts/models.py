@@ -1,7 +1,7 @@
 import datetime
 
 from django.conf import settings
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -393,14 +393,17 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
 
         return context
 
+
 class Concert(models.Model):
     name = models.CharField(max_length=300)
-    link = models.URLField()
+    year = models.IntegerField(_('year'), validators=[MinValueValidator(1984), MaxValueValidator(2099)])
+
 
 class ConcertDonorClubPackage(models.Model):
     name = models.CharField(max_length=150)
-    year = models.IntegerField(_('year'), validators=[MinValueValidator(1984), 2099])
+    year = models.IntegerField(_('year'), validators=[MinValueValidator(1984), MaxValueValidator(2099)])
     concerts = models.ManyToManyField(Concert)
+
 
 class ConcertDonorClubMember(models.Model):
     user = models.OneToOneField(
@@ -410,3 +413,4 @@ class ConcertDonorClubMember(models.Model):
     )
     phone_number = models.CharField(max_length=150)
     packages = models.ManyToManyField(ConcertDonorClubPackage)
+    additional_concerts = models.ManyToManyField(Concert)

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static wagtailimages_tags %}
+
+{% block extra_css %}
+    <link href="{% static 'concerts/css/concert_donor_club_member_detail.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="header">
+                <h1>{{ cdc_member.user.get_full_name() }}</h1>
+                <p><span class="bold">Phone Number:</span> {{ cdc_member.phone_number }}</p>
+                <p><span class="bold">Email:</span> {{ cdc_member.user.email }}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="package-info">
+                <h2>{{ package.name }}</h2>
+                <ul class="concerts">
+                    {% for concert in package.concerts %}
+                        <li>{{ concert.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="additional-concerts">
+            <h3>Other Concerts Purchased</h3>
+            <ul class="concerts">
+                {% for concert in add_concerts %}
+                    <li>{{ concert.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
