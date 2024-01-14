@@ -2,8 +2,10 @@ import datetime
 import logging
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
+from django.http import Http404
+from django.shortcuts import render, redirect
 from rest_framework import viewsets
+from wagtail.admin.viewsets.base import ViewSetGroup
 from wagtail.admin.viewsets.model import ModelViewSet
 
 from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember
@@ -19,7 +21,7 @@ class ConcertDRFViewSet(viewsets.ModelViewSet):
 
 class ConcertViewSet(ModelViewSet):
     model = Concert
-    add_to_admin_menu = True
+    form_fields = ['name', 'year']
     inspect_view_enabled = True
 
 
@@ -30,7 +32,7 @@ class ConcertDonorClubPackageDRFViewSet(viewsets.ModelViewSet):
 
 class ConcertDonorClubPackageViewSet(ModelViewSet):
     model = ConcertDonorClubPackage
-    add_to_admin_menu = True
+    form_fields = ['name', 'year', 'concerts']
     inspect_view_enabled = True
 
 
@@ -41,8 +43,14 @@ class ConcertDonorClubMemberDRFViewSet(viewsets.ModelViewSet):
 
 class ConcertDonorClubMemberViewSet(ModelViewSet):
     model = ConcertDonorClubMember
-    add_to_admin_menu = True
+    form_fields = ['user', 'phone_number', 'packages', 'additional_concerts']
     inspect_view_enabled = True
+
+
+class ConcertDonorClubViewSetGroup(ViewSetGroup):
+    menu_label = 'Concert Donor Club'
+    menu_icon = 'group'
+    items = (ConcertViewSet, ConcertDonorClubPackageViewSet, ConcertDonorClubMemberViewSet)
 
 
 def concert_thank_you(request):
@@ -61,12 +69,20 @@ def concert_donor_club_member_profile(request):
     Concert Donor Club member profile to display CDC package details &
     concert itinerary.
     """
-    concert_donor_club_member = get_object_or_404(ConcertDonorClubMember, pk=request.user.id)
+    try:
+        concert_donor_club_member = ConcertDonorClubMember.objects.get(user=request.user)
+    except ConcertDonorClubMember.DoesNotExist:
+        raise Http404("No matching Concert Donor Membership found.")
 
     current_year = datetime.date.today().year
 
-    current_season_package = concert_donor_club_member.packages.filter(year=current_year)
+    current_season_packages = concert_donor_club_member.packages.filter(year=current_year)
     current_season_additional_concerts = concert_donor_club_member.additional_concerts.filter(year=current_year)
-    return render(request, 'concerts/concert_donor_club_member.html',
-                  {'cdc_member': concert_donor_club_member, 'package': current_season_package,
-                   'add_concerts': current_season_additional_concerts})
+    context = {
+        'user_name': request.user.get_full_name(),
+        'cdc_member': concert_donor_club_member,
+        # I expect there will almost always only be one package per member but may as well support multiple
+        'packages': current_season_packages,
+        'add_concerts': current_season_additional_concerts
+    }
+    return render(request, 'concerts/concert_donor_club_member.html', context)

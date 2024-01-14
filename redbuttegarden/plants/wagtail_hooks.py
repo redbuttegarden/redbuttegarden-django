@@ -73,7 +73,7 @@ class CollectionsAdmin(ModelAdmin):
 
 class PlantGroup(ModelAdminGroup):
     menu_label = 'Plants'
-    menu_icon = 'folder-open-inverse'  # change as required
+    menu_icon = 'snippet'
     menu_order = 200  # will put in 3rd place (000 being 1st, 100 2nd)
     items = (FamilyAdmin, GenusAdmin, SpeciesAdmin, CollectionsAdmin)
 

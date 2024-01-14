@@ -398,11 +398,23 @@ class Concert(models.Model):
     name = models.CharField(max_length=300)
     year = models.IntegerField(_('year'), validators=[MinValueValidator(1984), MaxValueValidator(2099)])
 
+    class Meta:
+        ordering = ['-year', 'name']
+
+    def __str__(self):
+        return f'{self.name} ({self.year})'
+
 
 class ConcertDonorClubPackage(models.Model):
     name = models.CharField(max_length=150)
     year = models.IntegerField(_('year'), validators=[MinValueValidator(1984), MaxValueValidator(2099)])
     concerts = models.ManyToManyField(Concert)
+
+    class Meta:
+        ordering = ['-year', 'name']
+
+    def __str__(self):
+        return f'{self.name} ({self.year})'
 
 
 class ConcertDonorClubMember(models.Model):
@@ -413,4 +425,10 @@ class ConcertDonorClubMember(models.Model):
     )
     phone_number = models.CharField(max_length=150)
     packages = models.ManyToManyField(ConcertDonorClubPackage)
-    additional_concerts = models.ManyToManyField(Concert)
+    additional_concerts = models.ManyToManyField(Concert, blank=True)
+
+    class Meta:
+        ordering = ['user']
+
+    def __str__(self):
+        return str(self.user)
