@@ -8,8 +8,9 @@ from rest_framework import viewsets
 from wagtail.admin.viewsets.base import ViewSetGroup
 from wagtail.admin.viewsets.model import ModelViewSet
 
-from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember
-from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSerializer, ConcertDonorClubMemberSerializer
+from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember, Ticket
+from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSerializer, ConcertDonorClubMemberSerializer, \
+    TicketSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -47,10 +48,20 @@ class ConcertDonorClubMemberViewSet(ModelViewSet):
     inspect_view_enabled = True
 
 
+class TicketDRFViewSet(viewsets.ModelViewSet):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer()
+
+
+class TicketViewSet(ModelViewSet):
+    model = Ticket
+    form_fields = ['owner', 'concert', 'serial']
+
+
 class ConcertDonorClubViewSetGroup(ViewSetGroup):
     menu_label = 'Concert Donor Club'
     menu_icon = 'group'
-    items = (ConcertViewSet, ConcertDonorClubPackageViewSet, ConcertDonorClubMemberViewSet)
+    items = (ConcertViewSet, ConcertDonorClubPackageViewSet, ConcertDonorClubMemberViewSet, TicketViewSet)
 
 
 def concert_thank_you(request):

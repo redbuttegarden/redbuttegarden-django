@@ -432,3 +432,14 @@ class ConcertDonorClubMember(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+class Ticket(models.Model):
+    owner = models.ForeignKey(ConcertDonorClubMember, on_delete=models.CASCADE)
+    concert = models.ForeignKey(Concert, on_delete=models.CASCADE)
+    serial = models.PositiveBigIntegerField()
+
+    class Meta:
+        ordering = ['serial', 'concert__name']
+
+    def __str__(self):
+        return f'{self.serial} ({self.concert})'
