@@ -168,7 +168,6 @@ class ConcertBlock(blocks.StructBlock):
 
     class Meta:
         icon = 'music'
-        form_template = 'concerts/block_forms/concert.html'
 
 
 class SimpleConcertBlock(blocks.StructBlock):
