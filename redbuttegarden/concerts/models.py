@@ -435,10 +435,11 @@ class ConcertDonorClubMember(models.Model):
 class Ticket(models.Model):
     owner = models.ForeignKey(ConcertDonorClubMember, on_delete=models.CASCADE)
     concert = models.ForeignKey(Concert, on_delete=models.CASCADE)
+    barcode = models.PositiveBigIntegerField()
     serial = models.PositiveBigIntegerField()
 
     class Meta:
-        ordering = ['serial', 'concert__name']
+        ordering = ['barcode', 'concert__name']
 
     def __str__(self):
-        return f'{self.serial} ({self.concert})'
+        return f'{self.barcode} ({self.concert})'

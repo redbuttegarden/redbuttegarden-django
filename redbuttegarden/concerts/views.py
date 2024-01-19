@@ -74,6 +74,18 @@ def concert_thank_you(request):
         return redirect('/')
 
 
+@api_view(['POST'])
+def process_ticket_data(request):
+    # Check if user has a valid API Token
+    try:
+        token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
+    except KeyError:
+        return JsonResponse({'status': 'failure'})
+
+    if Token.objects.filter(key=token).exists():
+        data = json.loads(request.data)
+        return JsonResponse({'status': 'success', 'data': data})
+
 @login_required
 def concert_donor_club_member_profile(request):
     """
