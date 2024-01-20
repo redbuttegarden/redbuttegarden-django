@@ -1,10 +1,12 @@
 import datetime
+import json
 import logging
 
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect
 from rest_framework import viewsets
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from wagtail.admin.viewsets.base import ViewSetGroup
 from wagtail.admin.viewsets.model import ModelViewSet
@@ -56,7 +58,7 @@ class TicketDRFViewSet(viewsets.ModelViewSet):
 
 class TicketViewSet(ModelViewSet):
     model = Ticket
-    form_fields = ['owner', 'concert', 'serial']
+    form_fields = ['owner', 'concert', 'serial', 'barcode']
 
 
 class ConcertDonorClubViewSetGroup(ViewSetGroup):
@@ -84,8 +86,17 @@ def process_ticket_data(request):
         return JsonResponse({'status': 'failure'})
 
     if Token.objects.filter(key=token).exists():
-        data = json.loads(request.data)
-        return JsonResponse({'status': 'success', 'data': data})
+        cdc_member = ConcertDonorClubMember.objects.get(user__username=request.data['etix_username'])
+        concert = Concert.objects.get(name=request.data['event_name'])
+        if request.data['ticket_status'] == 'ISSUED':
+            ticket, created = Ticket.objects.get_or_create(owner=cdc_member, concert=concert, barcode=request.data['ticket_barcode'],
+                                  serial=request.data['ticket_serial'])
+
+        if ticket:
+            serialized_ticket = TicketSerializer(ticket).data
+
+        return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'created': created})
+
 
 @login_required
 def concert_donor_club_member_profile(request):
@@ -102,11 +113,20 @@ def concert_donor_club_member_profile(request):
 
     current_season_packages = concert_donor_club_member.packages.filter(year=current_year)
     current_season_additional_concerts = concert_donor_club_member.additional_concerts.filter(year=current_year)
+    member_tickets = Ticket.objects.filter(owner=concert_donor_club_member)
+
+    ticket_info = {}
+    for package in current_season_packages:
+        ticket_info[package.name] = []
+        for concert in package.concerts.all():
+            ticket_info[package.name].append({concert.name: member_tickets.filter(concert=concert).count()})
+
     context = {
         'user_name': request.user.get_full_name(),
         'cdc_member': concert_donor_club_member,
         # I expect there will almost always only be one package per member but may as well support multiple
-        'packages': current_season_packages,
-        'add_concerts': current_season_additional_concerts
+        'ticket_info': ticket_info,
+        'add_concerts': current_season_additional_concerts,
+        'member_tickets': member_tickets,
     }
     return render(request, 'concerts/concert_donor_club_member.html', context)

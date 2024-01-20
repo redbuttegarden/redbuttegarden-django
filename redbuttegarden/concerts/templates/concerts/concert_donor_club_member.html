@@ -18,11 +18,15 @@
 
         <div class="row">
             <div class="package-info">
-                {% for package in packages %}
-                    <h2>{{ package.name }}</h2>
+                {% for package_name, concerts in ticket_info.items %}
+                    <h2>{{ package_name }}</h2>
                     <ul class="concerts">
-                        {% for concert in package.concerts.all %}
-                            <li>{{ concert.name }}</li>
+                        {% for concert in concerts %}
+                            {% for concert_name, ticket_count in concert.items %}
+                                <li>
+                                    {{ concert_name }} (x{{ ticket_count }})
+                                </li>
+                            {% endfor %}
                         {% endfor %}
                     </ul>
                 {% endfor %}
