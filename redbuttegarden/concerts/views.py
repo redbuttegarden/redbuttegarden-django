@@ -92,10 +92,20 @@ def process_ticket_data(request):
             ticket, created = Ticket.objects.get_or_create(owner=cdc_member, concert=concert, barcode=request.data['ticket_barcode'],
                                   serial=request.data['ticket_serial'])
 
-        if ticket:
             serialized_ticket = TicketSerializer(ticket).data
 
-        return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'created': created})
+            return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'created': created})
+
+        if request.data['ticket_status'] == 'VOID':
+            try:
+                ticket = Ticket.objects.get(owner=cdc_member, barcode=request.data['ticket_barcode'])
+            except Ticket.DoesNotExist:
+                return JsonResponse({'status': 'unchanged', 'msg': 'No matching Ticket found for given CDC member.'})
+
+            serialized_ticket = TicketSerializer(ticket).data
+            ticket.delete()
+
+            return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'deleted': True})
 
 
 @login_required
