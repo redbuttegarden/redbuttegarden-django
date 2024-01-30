@@ -36,8 +36,10 @@
         <div class="additional-concerts">
             <h3>Other Concerts Purchased</h3>
             <ul class="concerts">
-                {% for concert in add_concerts %}
-                    <li>{{ concert.name }}</li>
+                {% for concert_name, ticket_count in add_ticket_info.items %}
+                    <li>
+                        {{ concert_name }} (x{{ ticket_count }})
+                    </li>
                 {% endfor %}
             </ul>
         </div>

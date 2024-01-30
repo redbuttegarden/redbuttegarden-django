@@ -21,7 +21,6 @@ class ConcertDonorClubPackageSerializer(serializers.ModelSerializer):
 class ConcertDonorClubMemberSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
     packages = ConcertDonorClubPackageSerializer(many=True, allow_null=True)
-    additional_concerts = ConcertSerializer(many=True, allow_null=True)
 
     class Meta:
         model = ConcertDonorClubMember

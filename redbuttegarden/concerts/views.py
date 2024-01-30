@@ -1,5 +1,4 @@
 import datetime
-import json
 import logging
 
 from django.contrib.auth.decorators import login_required
@@ -47,7 +46,7 @@ class ConcertDonorClubMemberDRFViewSet(viewsets.ModelViewSet):
 
 class ConcertDonorClubMemberViewSet(ModelViewSet):
     model = ConcertDonorClubMember
-    form_fields = ['user', 'phone_number', 'packages', 'additional_concerts']
+    form_fields = ['user', 'phone_number', 'packages']
     inspect_view_enabled = True
 
 
@@ -58,7 +57,7 @@ class TicketDRFViewSet(viewsets.ModelViewSet):
 
 class TicketViewSet(ModelViewSet):
     model = Ticket
-    form_fields = ['owner', 'concert', 'serial', 'barcode']
+    form_fields = ['owner', 'concert', 'package', 'order_id', 'barcode']
 
 
 class ConcertDonorClubViewSetGroup(ViewSetGroup):
@@ -83,20 +82,43 @@ def process_ticket_data(request):
     try:
         token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
     except KeyError:
-        return JsonResponse({'status': 'failure'})
+        return JsonResponse({'status': 'Auth failure'})
 
     if Token.objects.filter(key=token).exists():
-        cdc_member = ConcertDonorClubMember.objects.get(user__username=request.data['etix_username'])
-        concert = Concert.objects.get(name=request.data['event_name'])
+        logger.info(f'Incoming ticket request data: {request.data}')
+
+        try:
+            cdc_member = ConcertDonorClubMember.objects.get(user__username=request.data['etix_username'])
+        except ConcertDonorClubMember.DoesNotExist:
+            # return JsonResponse({'status': 'No matching CDC member found.'})
+            cdc_member = ConcertDonorClubMember.objects.get(user__username='u6000791')
+
+        if not request.data['event_name']:
+            return JsonResponse({'status': 'Failure', 'msg': 'Event name required.'})
+
+        concert, concert_created = Concert.objects.get_or_create(name=request.data['event_name'],
+                                                                 defaults={'year': datetime.datetime.now().year})
+        if concert_created:
+            logger.info(f'Concert Donor Club Concert created: {concert}')
+
+        package = None
+        if request.data['package_name']:
+            package, package_created = ConcertDonorClubPackage.objects.get_or_create(name=request.data['package_name'],
+                                                                                     defaults={
+                                                                                         'year': datetime.datetime.now().year})
+            if package_created:
+                logger.info(f'Concert Donor Club Package created: {package}')
+
         if request.data['ticket_status'] == 'ISSUED':
-            ticket, created = Ticket.objects.get_or_create(owner=cdc_member, concert=concert, barcode=request.data['ticket_barcode'],
-                                  serial=request.data['ticket_serial'])
+            ticket, ticket_created = Ticket.objects.get_or_create(order_id=request.data['order_id'], owner=cdc_member,
+                                                                  package=package, concert=concert,
+                                                                  barcode=request.data['ticket_barcode'])
 
             serialized_ticket = TicketSerializer(ticket).data
 
-            return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'created': created})
+            return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'created': ticket_created})
 
-        if request.data['ticket_status'] == 'VOID':
+        elif request.data['ticket_status'] == 'VOID':
             try:
                 ticket = Ticket.objects.get(owner=cdc_member, barcode=request.data['ticket_barcode'])
             except Ticket.DoesNotExist:
@@ -106,6 +128,11 @@ def process_ticket_data(request):
             ticket.delete()
 
             return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'deleted': True})
+
+        else:
+            return JsonResponse({'status': f'Ticket status {request.data["ticket_status"]} requires no action'})
+
+    return JsonResponse({'status': 'Auth failure'})
 
 
 @login_required
@@ -122,7 +149,8 @@ def concert_donor_club_member_profile(request):
     current_year = datetime.date.today().year
 
     current_season_packages = concert_donor_club_member.packages.filter(year=current_year)
-    current_season_additional_concerts = concert_donor_club_member.additional_concerts.filter(year=current_year)
+    current_season_additional_concert_tickets = Ticket.objects.filter(owner=concert_donor_club_member,
+                                                                      concert__year=current_year)
     member_tickets = Ticket.objects.filter(owner=concert_donor_club_member)
 
     ticket_info = {}
@@ -131,12 +159,17 @@ def concert_donor_club_member_profile(request):
         for concert in package.concerts.all():
             ticket_info[package.name].append({concert.name: member_tickets.filter(concert=concert).count()})
 
+    add_ticket_info = {}
+    for ticket in current_season_additional_concert_tickets:
+        add_ticket_info[ticket.concert.name] = current_season_additional_concert_tickets.filter(
+            concert__name=ticket.concert.name).count()
+
     context = {
         'user_name': request.user.get_full_name(),
         'cdc_member': concert_donor_club_member,
         # I expect there will almost always only be one package per member but may as well support multiple
         'ticket_info': ticket_info,
-        'add_concerts': current_season_additional_concerts,
+        'add_ticket_info': add_ticket_info,
         'member_tickets': member_tickets,
     }
     return render(request, 'concerts/concert_donor_club_member.html', context)

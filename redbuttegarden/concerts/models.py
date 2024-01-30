@@ -424,7 +424,6 @@ class ConcertDonorClubMember(models.Model):
     )
     phone_number = models.CharField(max_length=150)
     packages = models.ManyToManyField(ConcertDonorClubPackage)
-    additional_concerts = models.ManyToManyField(Concert, blank=True)
 
     class Meta:
         ordering = ['user']
@@ -435,8 +434,9 @@ class ConcertDonorClubMember(models.Model):
 class Ticket(models.Model):
     owner = models.ForeignKey(ConcertDonorClubMember, on_delete=models.CASCADE)
     concert = models.ForeignKey(Concert, on_delete=models.CASCADE)
+    package = models.ForeignKey(ConcertDonorClubPackage, on_delete=models.SET_NULL, null=True, blank=True)
+    order_id = models.PositiveBigIntegerField()
     barcode = models.PositiveBigIntegerField(unique=True)
-    serial = models.PositiveBigIntegerField(unique=True)
 
     class Meta:
         ordering = ['barcode', 'concert__name']
