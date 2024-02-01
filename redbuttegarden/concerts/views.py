@@ -24,7 +24,7 @@ class ConcertDRFViewSet(viewsets.ModelViewSet):
 
 class ConcertViewSet(ModelViewSet):
     model = Concert
-    form_fields = ['name', 'year']
+    form_fields = '__all__'
     inspect_view_enabled = True
 
 
@@ -87,19 +87,30 @@ def process_ticket_data(request):
     if Token.objects.filter(key=token).exists():
         logger.info(f'Incoming ticket request data: {request.data}')
 
+        if not request.data['event_name']:
+            return JsonResponse({'status': 'Failure', 'msg': 'Event name required.'})
+
+        concert, concert_created = Concert.objects.get_or_create(etix_id=request.data['event_id'],
+                                                                 defaults={'name': request.data['event_name'],
+                                                                           'begin': datetime.datetime.fromisoformat(
+                                                                               request.data['event_begin'].replace("Z",
+                                                                                                                   "+00:00")),
+                                                                           'end': datetime.datetime.fromisoformat(
+                                                                               request.data['event_end'].replace("Z",
+                                                                                                                 "+00:00")),
+                                                                           'doors_before_event_time_minutes': int(
+                                                                               request.data[
+                                                                                   'event_doors_before_event_time_minutes']),
+                                                                           'image_url': request.data[
+                                                                               'event_image_url']})
+        if concert_created:
+            logger.info(f'Concert Donor Club Concert created: {concert}')
+
         try:
             cdc_member = ConcertDonorClubMember.objects.get(user__username=request.data['etix_username'])
         except ConcertDonorClubMember.DoesNotExist:
             # return JsonResponse({'status': 'No matching CDC member found.'})
             cdc_member = ConcertDonorClubMember.objects.get(user__username='u6000791')
-
-        if not request.data['event_name']:
-            return JsonResponse({'status': 'Failure', 'msg': 'Event name required.'})
-
-        concert, concert_created = Concert.objects.get_or_create(name=request.data['event_name'],
-                                                                 defaults={'year': datetime.datetime.now().year})
-        if concert_created:
-            logger.info(f'Concert Donor Club Concert created: {concert}')
 
         package = None
         if request.data['package_name']:
@@ -150,19 +161,31 @@ def concert_donor_club_member_profile(request):
 
     current_season_packages = concert_donor_club_member.packages.filter(year=current_year)
     current_season_additional_concert_tickets = Ticket.objects.filter(owner=concert_donor_club_member,
-                                                                      concert__year=current_year)
+                                                                      concert__begin__year=2023)  # TODO - change back to current_year after testing
     member_tickets = Ticket.objects.filter(owner=concert_donor_club_member)
 
     ticket_info = {}
     for package in current_season_packages:
         ticket_info[package.name] = []
         for concert in package.concerts.all():
-            ticket_info[package.name].append({concert.name: member_tickets.filter(concert=concert).count()})
+            ticket_info[package.name].append({
+                'name': concert.name,
+                'begin': concert.begin,
+                'doors': concert.begin - datetime.timedelta(
+                    minutes=concert.doors_before_event_time_minutes),
+                'img_url': concert.image_url,
+                'count': member_tickets.filter(concert=concert).count()
+            })
 
     add_ticket_info = {}
     for ticket in current_season_additional_concert_tickets:
-        add_ticket_info[ticket.concert.name] = current_season_additional_concert_tickets.filter(
-            concert__name=ticket.concert.name).count()
+        add_ticket_info[ticket.concert.etix_id] = {
+            'name': ticket.concert.name,
+            'begin': ticket.concert.begin,
+            'doors': ticket.concert.begin - datetime.timedelta(minutes=ticket.concert.doors_before_event_time_minutes),
+            'img_url': ticket.concert.image_url,
+            'count': current_season_additional_concert_tickets.filter(concert=ticket.concert).count()
+        }
 
     context = {
         'user_name': request.user.get_full_name(),

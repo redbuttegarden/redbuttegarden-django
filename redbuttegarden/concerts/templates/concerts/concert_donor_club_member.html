@@ -10,7 +10,8 @@
 
         <div class="row">
             <div class="header">
-                <h1>{{ user_name }}</h1>
+                <h1>Concert Donor Club Member Portal Profile</h1>
+                <p><span class="bold">Name:</span> {{ user_name }}</p>
                 <p><span class="bold">Phone Number:</span> {{ cdc_member.phone_number }}</p>
                 <p><span class="bold">Email:</span> {{ cdc_member.user.email }}</p>
             </div>
@@ -18,30 +19,53 @@
 
         <div class="row">
             <div class="package-info">
+                <h2>Packages</h2>
                 {% for package_name, concerts in ticket_info.items %}
-                    <h2>{{ package_name }}</h2>
-                    <ul class="concerts">
-                        {% for concert in concerts %}
-                            {% for concert_name, ticket_count in concert.items %}
-                                <li>
-                                    {{ concert_name }} (x{{ ticket_count }})
-                                </li>
-                            {% endfor %}
-                        {% endfor %}
-                    </ul>
+                    <h3>{{ package_name }}</h3>
+                    {% for concert_info in concerts %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">{{ concert_info.name }}</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="col-sm-4">
+                                    <img src="{{ concert_info.img_url }}"
+                                         alt="Concert promo art for {{ concert_info.name }}">
+                                </div>
+                                <div class="col-sm-8">
+                                    <p>Begin: {{ concert_info.begin }}</p>
+                                    <p>Doors: {{ concert_info.doors }}</p>
+                                    <p>Tickets: (x{{ concert_info.count }})</p>
+                                    <p><a href="#" class="btn btn-primary" role="button">View Tickets</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 {% endfor %}
             </div>
         </div>
 
-        <div class="additional-concerts">
-            <h3>Other Concerts Purchased</h3>
-            <ul class="concerts">
-                {% for concert_name, ticket_count in add_ticket_info.items %}
-                    <li>
-                        {{ concert_name }} (x{{ ticket_count }})
-                    </li>
+        <div class="row">
+            <div class="additional-concerts">
+                <h2>Other Concerts Purchased</h2>
+                {% for ticket_info in add_ticket_info.values %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ ticket_info.name }}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-4">
+                                <img src="{{ ticket_info.img_url }}" alt="Concert promo art for {{ ticket_info.name }}">
+                            </div>
+                            <div class="col-sm-8">
+                                <p>Begin: {{ ticket_info.begin }}</p>
+                                <p>Doors: {{ ticket_info.doors }}</p>
+                                <p>Tickets: (x{{ ticket_info.count }})</p>
+                            </div>
+                        </div>
+                    </div>
                 {% endfor %}
-            </ul>
+            </div>
         </div>
     </div>
 {% endblock %}

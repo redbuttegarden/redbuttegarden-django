@@ -394,14 +394,18 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
 
 
 class Concert(models.Model):
+    etix_id = models.PositiveBigIntegerField(primary_key=True)
     name = models.CharField(max_length=300)
-    year = models.IntegerField(_('year'), validators=[MinValueValidator(1984), MaxValueValidator(2099)])
+    begin = models.DateTimeField()
+    end = models.DateTimeField()
+    doors_before_event_time_minutes = models.PositiveSmallIntegerField(default=0)
+    image_url = models.CharField(max_length=500, blank=True, null=True)
 
     class Meta:
-        ordering = ['-year', 'name']
+        ordering = ['name']
 
     def __str__(self):
-        return f'{self.name} ({self.year})'
+        return f'{self.name} ({self.begin.year})'
 
 
 class ConcertDonorClubPackage(models.Model):
