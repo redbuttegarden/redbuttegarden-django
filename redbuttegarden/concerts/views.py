@@ -110,8 +110,7 @@ def process_ticket_data(request):
         try:
             cdc_member = ConcertDonorClubMember.objects.get(user__username=request.data['etix_username'])
         except ConcertDonorClubMember.DoesNotExist:
-            # return JsonResponse({'status': 'No matching CDC member found.'})
-            cdc_member = ConcertDonorClubMember.objects.get(user__username='u6000791')
+            return JsonResponse({'status': 'No matching CDC member found.'})
 
         package = None
         if request.data['package_name']:
@@ -167,7 +166,7 @@ def concert_donor_club_member_profile(request):
 
     current_season_packages = concert_donor_club_member.packages.filter(year=current_year)
     current_season_additional_concert_tickets = Ticket.objects.filter(owner=concert_donor_club_member,
-                                                                      concert__begin__year=2023)  # TODO - change back to current_year after testing
+                                                                      concert__begin__year=current_year)
     member_tickets = Ticket.objects.filter(owner=concert_donor_club_member)
 
     ticket_info = {}
@@ -222,7 +221,6 @@ def ticket_detail_view(request, concert_pk):
         'concert': concert,
         'doors': concert.begin - datetime.timedelta(minutes=concert.doors_before_event_time_minutes),
         'tickets': Ticket.objects.filter(owner=concert_donor_club_member, concert=concert),
-        'img': code128.svg('11838644470')
     }
 
     return render(request, 'concerts/concert_donor_club_tickets.html', context)
