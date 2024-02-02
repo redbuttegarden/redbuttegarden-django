@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static wagtailimages_tags %}
+
+{% block extra_css %}
+    <link href="{% static 'concerts/css/concert_donor_club_member_detail.css' %}" rel="stylesheet">
+    <link href="{% static 'concerts/css/concert_donor_club_member_tickets.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ concert.name }}</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="col-sm-4">
+                        <img src="{{ concert.image_url }}" alt="Concert promo art for {{ concert.name }}">
+                    </div>
+                    <div class="col-sm-8">
+                        <p>Begin: {{ concert.begin }}</p>
+                        <p>Doors: {{ doors }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="tickets">
+                {% for ticket in tickets %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Order ID: {{ ticket.order_id }}</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <div>{{ ticket.barcode }}</div>
+                            <img class="barcode" src="{% get_media_prefix %}{{ ticket.barcode_image }}"
+                                 alt="Barcode image">
+                            <p>Status: <span
+                                    class="label {% if ticket.status == 'ISSUED' %}label-success{% else %}label-default{% endif %}">{{ ticket.status }}</span>
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,6 +1,8 @@
 import datetime
 
+import code128
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -440,10 +442,20 @@ class Ticket(models.Model):
     concert = models.ForeignKey(Concert, on_delete=models.CASCADE)
     package = models.ForeignKey(ConcertDonorClubPackage, on_delete=models.SET_NULL, null=True, blank=True)
     order_id = models.PositiveBigIntegerField()
+    # We wouldn't need to store the ticket if it were VOID or RESERVED so those aren't used as valid status options
+    status = models.CharField(max_length=20, choices=[('ISSUED', 'Issued'), ('REDEEMED', 'Redeemed')],
+                              blank=True, null=True)
     barcode = models.PositiveBigIntegerField(unique=True)
+    barcode_image = models.ImageField(upload_to='tickets', blank=True, null=True)
 
     class Meta:
         ordering = ['barcode', 'concert__name']
 
     def __str__(self):
         return f'{self.barcode} ({self.concert})'
+
+    def save(self, **kwargs):
+        if self.barcode and not self.barcode_image:
+            self.barcode_image.save(f'{self.barcode}.svg', ContentFile(code128.svg(self.barcode)), save=True)
+
+        super().save(**kwargs)

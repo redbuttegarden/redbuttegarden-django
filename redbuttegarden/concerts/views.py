@@ -1,6 +1,7 @@
 import datetime
 import logging
 
+import code128
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect
@@ -35,7 +36,7 @@ class ConcertDonorClubPackageDRFViewSet(viewsets.ModelViewSet):
 
 class ConcertDonorClubPackageViewSet(ModelViewSet):
     model = ConcertDonorClubPackage
-    form_fields = ['name', 'year', 'concerts']
+    form_fields = '__all__'
     inspect_view_enabled = True
 
 
@@ -46,7 +47,7 @@ class ConcertDonorClubMemberDRFViewSet(viewsets.ModelViewSet):
 
 class ConcertDonorClubMemberViewSet(ModelViewSet):
     model = ConcertDonorClubMember
-    form_fields = ['user', 'phone_number', 'packages']
+    form_fields = '__all__'
     inspect_view_enabled = True
 
 
@@ -57,7 +58,7 @@ class TicketDRFViewSet(viewsets.ModelViewSet):
 
 class TicketViewSet(ModelViewSet):
     model = Ticket
-    form_fields = ['owner', 'concert', 'package', 'order_id', 'barcode']
+    form_fields = '__all__'
 
 
 class ConcertDonorClubViewSetGroup(ViewSetGroup):
@@ -120,10 +121,15 @@ def process_ticket_data(request):
             if package_created:
                 logger.info(f'Concert Donor Club Package created: {package}')
 
-        if request.data['ticket_status'] == 'ISSUED':
-            ticket, ticket_created = Ticket.objects.get_or_create(order_id=request.data['order_id'], owner=cdc_member,
-                                                                  package=package, concert=concert,
-                                                                  barcode=request.data['ticket_barcode'])
+        if request.data['ticket_status'] in ['ISSUED', 'REDEEMED']:
+            ticket, ticket_created = Ticket.objects.update_or_create(order_id=request.data['order_id'],
+                                                                     owner=cdc_member,
+                                                                     concert=concert,
+                                                                     barcode=request.data['ticket_barcode'],
+                                                                     defaults={
+                                                                         'package': package,
+                                                                         'status': request.data['ticket_status'],
+                                                                     })
 
             serialized_ticket = TicketSerializer(ticket).data
 
@@ -169,6 +175,7 @@ def concert_donor_club_member_profile(request):
         ticket_info[package.name] = []
         for concert in package.concerts.all():
             ticket_info[package.name].append({
+                'concert_pk': concert.pk,
                 'name': concert.name,
                 'begin': concert.begin,
                 'doors': concert.begin - datetime.timedelta(
@@ -180,6 +187,7 @@ def concert_donor_club_member_profile(request):
     add_ticket_info = {}
     for ticket in current_season_additional_concert_tickets:
         add_ticket_info[ticket.concert.etix_id] = {
+            'concert_pk': ticket.concert.pk,
             'name': ticket.concert.name,
             'begin': ticket.concert.begin,
             'doors': ticket.concert.begin - datetime.timedelta(minutes=ticket.concert.doors_before_event_time_minutes),
@@ -196,3 +204,25 @@ def concert_donor_club_member_profile(request):
         'member_tickets': member_tickets,
     }
     return render(request, 'concerts/concert_donor_club_member.html', context)
+
+
+@login_required
+def ticket_detail_view(request, concert_pk):
+    """
+    Display members tickets for given concert
+    """
+    try:
+        concert_donor_club_member = ConcertDonorClubMember.objects.get(user=request.user)
+    except ConcertDonorClubMember.DoesNotExist:
+        raise Http404("No matching Concert Donor Membership found.")
+
+    concert = Concert.objects.get(pk=concert_pk)
+
+    context = {
+        'concert': concert,
+        'doors': concert.begin - datetime.timedelta(minutes=concert.doors_before_event_time_minutes),
+        'tickets': Ticket.objects.filter(owner=concert_donor_club_member, concert=concert),
+        'img': code128.svg('11838644470')
+    }
+
+    return render(request, 'concerts/concert_donor_club_tickets.html', context)

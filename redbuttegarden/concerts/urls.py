@@ -13,6 +13,7 @@ app_name = 'concerts'
 urlpatterns = [
     path('thank-you/', views.concert_thank_you, name='thank-you'),
     path('cdc-member-profile/', views.concert_donor_club_member_profile, name='cdc-profile'),
+    path('cdc-tickets/<int:concert_pk>/', views.ticket_detail_view, name='cdc-tickets'),
     path('api/cdc-etix-data/', views.process_ticket_data, name='api-cdc-etix-data'),
     path('api/', include(router.urls)),
 ]
