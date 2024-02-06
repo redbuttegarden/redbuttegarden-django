@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 import code128
 from django.conf import settings
@@ -80,6 +81,8 @@ info_card_table_options = {
     'renderer': 'text',
     'autoColumnSize': False,
 }
+
+logger = logging.getLogger(__name__)
 
 
 class Sponsors(blocks.StructBlock):
@@ -413,7 +416,7 @@ class Concert(models.Model):
 class ConcertDonorClubPackage(models.Model):
     name = models.CharField(max_length=150)
     year = models.IntegerField(_('year'), validators=[MinValueValidator(1984), MaxValueValidator(2099)])
-    concerts = models.ManyToManyField(Concert)
+    concerts = models.ManyToManyField(Concert, blank=True)
 
     class Meta:
         ordering = ['-year', 'name']
@@ -429,7 +432,7 @@ class ConcertDonorClubMember(models.Model):
         null=True, blank=True
     )
     phone_number = models.CharField(max_length=150)
-    packages = models.ManyToManyField(ConcertDonorClubPackage)
+    packages = models.ManyToManyField(ConcertDonorClubPackage, blank=True)
 
     class Meta:
         ordering = ['user']
@@ -455,7 +458,8 @@ class Ticket(models.Model):
         return f'{self.barcode} ({self.concert})'
 
     def save(self, **kwargs):
+        logger.debug(f'Saving ticket {self}')
         if self.barcode and not self.barcode_image:
-            self.barcode_image.save(f'{self.barcode}.svg', ContentFile(code128.svg(self.barcode)), save=True)
+            self.barcode_image.save(f'{self.barcode}.svg', ContentFile(code128.svg(self.barcode)), save=False)
 
         super().save(**kwargs)

@@ -121,11 +121,12 @@ def process_ticket_data(request):
                 logger.info(f'Concert Donor Club Package created: {package}')
 
         if request.data['ticket_status'] in ['ISSUED', 'REDEEMED']:
-            ticket, ticket_created = Ticket.objects.update_or_create(order_id=request.data['order_id'],
-                                                                     owner=cdc_member,
-                                                                     concert=concert,
-                                                                     barcode=request.data['ticket_barcode'],
+            logger.debug(Ticket.objects.all())
+            ticket, ticket_created = Ticket.objects.update_or_create(barcode=request.data['ticket_barcode'],
                                                                      defaults={
+                                                                         'order_id': request.data['order_id'],
+                                                                         'owner': cdc_member,
+                                                                         'concert': concert,
                                                                          'package': package,
                                                                          'status': request.data['ticket_status'],
                                                                      })
