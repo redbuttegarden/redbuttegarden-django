@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from wagtail.contrib.table_block.blocks import TableBlock
@@ -90,6 +91,7 @@ class CometChatBlock(blocks.StaticBlock):
     Very simple block that simply enables the ability to choose where
     on the page the CometChat javascript will be rendered.
     """
+
     class Meta:
         template = 'blocks/comet_chat_block.html'
         label = 'Comet Chat'
@@ -396,6 +398,13 @@ class ConcertDonorClubPortalPage(AbstractBase):
     search_fields = AbstractBase.search_fields + [
         index.SearchField('body'),
     ]
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, **kwargs)
+
+        context['cdc_member'] = get_object_or_404(ConcertDonorClubMember, user=request.user)
+
+        return context
 
 
 class ConcertDonorClubTicketSalePage(AbstractBase):
