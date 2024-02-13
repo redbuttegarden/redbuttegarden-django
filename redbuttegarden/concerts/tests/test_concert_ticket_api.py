@@ -63,7 +63,7 @@ def drf_client_with_user(create_api_user_and_token):
 
 @pytest.fixture
 def make_ticket_data():
-    def _make_ticket_data(ticket_status, etix_username):
+    def _make_ticket_data(ticket_status, etix_username='test-user'):
         return {
             "order_id": 99999999,
             "etix_username": etix_username,
@@ -91,7 +91,6 @@ def test_process_ticket_data_view_unauthorized(drf_request_factory):
 def test_process_ticket_data_view_no_cdc_member(create_api_user_and_token, drf_client_with_user, make_ticket_data):
     issued_ticket_data = make_ticket_data('ISSUED')
     response = drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
-    print(response.content)
     assert response.status_code == 200
     assert json.loads(response.content.decode())['status'] == 'No matching CDC member found.'
     with pytest.raises(Ticket.DoesNotExist):
@@ -104,6 +103,5 @@ def test_process_ticket_data_view_issued(create_user, create_cdc_member, create_
     create_cdc_member(user=cdc_user)
     issued_ticket_data = make_ticket_data(ticket_status='ISSUED', etix_username=cdc_user.username)
     response = drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
-    print(response.content)
     # assert response.status_code == 200
     assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()

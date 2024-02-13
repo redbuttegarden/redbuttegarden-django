@@ -85,6 +85,18 @@ info_card_table_options = {
 logger = logging.getLogger(__name__)
 
 
+class CometChatBlock(blocks.StaticBlock):
+    """
+    Very simple block that simply enables the ability to choose where
+    on the page the CometChat javascript will be rendered.
+    """
+    class Meta:
+        template = 'blocks/comet_chat_block.html'
+        label = 'Comet Chat'
+        icon = 'comment'
+        admin_text = 'Determines where the chat window will appear on the page.'
+
+
 class Sponsors(blocks.StructBlock):
     sponsor_title = blocks.CharBlock(
         label='Sponsor Title',
@@ -373,6 +385,7 @@ class DonorSchedulePage(AbstractBase):
 
 class ConcertDonorClubTicketSalePage(AbstractBase):
     body = StreamField(block_types=[
+        ('chat', CometChatBlock()),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph'))
     ], blank=False, use_json_field=True)
 
@@ -439,6 +452,7 @@ class ConcertDonorClubMember(models.Model):
 
     def __str__(self):
         return str(self.user)
+
 
 class Ticket(models.Model):
     owner = models.ForeignKey(ConcertDonorClubMember, on_delete=models.CASCADE)

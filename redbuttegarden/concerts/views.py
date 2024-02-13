@@ -163,7 +163,7 @@ def concert_donor_club_member_profile(request):
     except ConcertDonorClubMember.DoesNotExist:
         raise Http404("No matching Concert Donor Membership found.")
 
-    current_year = datetime.date.today().year
+    current_year = 2023  # TODO - Change back to datetime.date.today().year after testing
 
     current_season_packages = concert_donor_club_member.packages.filter(year=current_year)
     current_season_additional_concert_tickets = Ticket.objects.filter(owner=concert_donor_club_member,
