@@ -36,10 +36,6 @@
                                     <p>Begin: {{ concert_info.begin }}</p>
                                     <p>Doors: {{ concert_info.doors }}</p>
                                     <p>Tickets: (x{{ concert_info.count }})</p>
-                                    <p><a href="{% url 'concerts:cdc-tickets' concert_info.concert_pk %}">
-                                        <input class="green-button hover" type="submit"
-                                               value="View Tickets">
-                                    </a></p>
                                 </div>
                             </div>
                         </div>
@@ -64,10 +60,6 @@
                                 <p>Begin: {{ ticket_info.begin }}</p>
                                 <p>Doors: {{ ticket_info.doors }}</p>
                                 <p>Tickets: (x{{ ticket_info.count }})</p>
-                                <p><a href="{% url 'concerts:cdc-tickets' ticket_info.concert_pk %}">
-                                    <input class="green-button hover" type="submit"
-                                           value="View Tickets">
-                                </a></p>
                             </div>
                         </div>
                     </div>
