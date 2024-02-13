@@ -7,7 +7,7 @@
 
 {% block content %}
     <div id="user-info">
-        <p class="name"><span class="bold">Name: </span>{{ request.user.full_name }}</p>
+        <p class="name"><span class="bold">Name: </span>{{ request.user.get_full_name }}</p>
         <p class="username"><span class="bold">Username: </span>{{ request.user.username }}</p>
     </div>
 
