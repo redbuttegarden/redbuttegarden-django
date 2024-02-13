@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.shortcuts import get_object_or_404
+from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
 from wagtail.contrib.table_block.blocks import TableBlock
@@ -402,7 +402,12 @@ class ConcertDonorClubPortalPage(AbstractBase):
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, **kwargs)
 
-        context['cdc_member'] = get_object_or_404(ConcertDonorClubMember, user=request.user)
+        try:
+            concert_donor_club_member = ConcertDonorClubMember.objects.get(user=request.user)
+        except ConcertDonorClubMember.DoesNotExist:
+            raise Http404("No matching Concert Donor Membership found.")
+
+        context['cdc_member'] = concert_donor_club_member
 
         return context
 

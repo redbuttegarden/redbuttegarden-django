@@ -203,7 +203,7 @@ def concert_donor_club_member_profile(request):
         'add_ticket_info': add_ticket_info,
         'member_tickets': member_tickets,
     }
-    return render(request, 'concerts/concert_donor_club_member.html', context)
+    return render(request, 'concerts/concert_donor_club_member_profile.html', context)
 
 
 @login_required

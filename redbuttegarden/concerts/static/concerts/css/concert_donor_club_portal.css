@@ -1,4 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope&display=swap');
+
+#main {
+    background: #1E293F;
+    color: white;
+}
+
+#main #rbgdefaultbody {
+    max-width: 100%;
+}
+
+#main #rbgdefaultbody span {
+    font-family: 'Manrope', Impact, serif;
+}
+
+#main a {
+    color: inherit;
+    text-decoration: none;
+}
+
+#main h2, #main h3 {
+    color: inherit;
+}
+
+#main span {
+    margin: 1em;
+}
+
+#portal-links span {
+    display: block;
+}
+
+#portal-links div {
+    display: inline-block;
+    font-size: larger;
+    margin: 0.5em;
+}
+
+@media (max-width: 1280px) {
+    #portal-links div {
+        display: inherit;
+    }
+}
+
 #user-info {
-    float: right;
-    margin-bottom: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
 }
