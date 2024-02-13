@@ -383,6 +383,21 @@ class DonorSchedulePage(AbstractBase):
     ]
 
 
+class ConcertDonorClubPortalPage(AbstractBase):
+    body = StreamField(block_types=[
+        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
+        ('html', blocks.RawHTMLBlock()),
+    ], blank=False, use_json_field=True)
+
+    content_panels = AbstractBase.content_panels + [
+        FieldPanel('body'),
+    ]
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+    ]
+
+
 class ConcertDonorClubTicketSalePage(AbstractBase):
     body = StreamField(block_types=[
         ('chat', CometChatBlock()),
@@ -397,7 +412,7 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
         index.SearchField('body'),
     ]
 
-    parent_page_types = ['home.GeneralPage']
+    parent_page_types = ['home.GeneralPage', 'concerts.ConcertDonorClubPortalPage']
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, **kwargs)
