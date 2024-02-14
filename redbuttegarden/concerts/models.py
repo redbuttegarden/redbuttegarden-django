@@ -3,6 +3,7 @@ import logging
 
 import code128
 from django.conf import settings
+from django.contrib import messages
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -402,7 +403,12 @@ class ConcertDonorClubPortalPage(AbstractBase):
         context = super().get_context(request, **kwargs)
 
         if request.user.is_authenticated:
-            context['cdc_member'] = ConcertDonorClubMember.objects.get(user=request.user)
+            cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
+
+            if cdc_member:
+                context['cdc_member'] = cdc_member
+            else:
+                messages.add_message(request, messages.WARNING, "No matching Concert Donor Club membership found.")
 
         return context
 
