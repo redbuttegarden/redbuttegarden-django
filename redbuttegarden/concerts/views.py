@@ -120,7 +120,7 @@ def process_ticket_data(request):
             if package_created:
                 logger.info(f'Concert Donor Club Package created: {package}')
 
-        if request.data['ticket_status'] in ['ISSUED', 'REDEEMED']:
+        if request.data['ticket_status'] in ['ISSUED', 'REDEEMED', 'RESERVED']:
             logger.debug(Ticket.objects.all())
             ticket, ticket_created = Ticket.objects.update_or_create(barcode=request.data['ticket_barcode'],
                                                                      defaults={
