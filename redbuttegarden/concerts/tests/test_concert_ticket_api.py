@@ -1,4 +1,3 @@
-import datetime
 import json
 
 import pytest
@@ -6,7 +5,7 @@ from django.urls import reverse
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory, APIClient
 
-from concerts.models import Ticket, ConcertDonorClubMember, ConcertDonorClubPackage, Concert
+from concerts.models import Ticket, ConcertDonorClubMember, ConcertDonorClubPackage
 from concerts.views import process_ticket_data
 
 
@@ -47,6 +46,7 @@ def create_cdc_member():
         return cdc_member
 
     return _create_cdc_member
+
 
 @pytest.fixture
 def drf_request_factory():
@@ -98,10 +98,11 @@ def test_process_ticket_data_view_no_cdc_member(create_api_user_and_token, drf_c
 
 
 @pytest.mark.django_db
-def test_process_ticket_data_view_issued(create_user, create_cdc_member, create_api_user_and_token, drf_client_with_user, make_ticket_data):
+def test_process_ticket_data_view_issued(create_user, create_cdc_member, create_api_user_and_token,
+                                         drf_client_with_user, make_ticket_data):
     cdc_user = create_user()
     create_cdc_member(user=cdc_user)
     issued_ticket_data = make_ticket_data(ticket_status='ISSUED', etix_username=cdc_user.username)
-    response = drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
+    drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
     # assert response.status_code == 200
     assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()

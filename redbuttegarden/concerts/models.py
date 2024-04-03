@@ -504,6 +504,7 @@ class Ticket(models.Model):
     def save(self, **kwargs):
         logger.debug(f'Saving ticket {self}')
         if self.barcode and not self.barcode_image:
-            self.barcode_image.save(f'{self.barcode}.svg', ContentFile(code128.svg(self.barcode)), save=False)
+            self.barcode_image.save(f'{self.barcode}.svg',
+                                    ContentFile(bytes(code128.svg(self.barcode), encoding='utf-8')), save=False)
 
         super().save(**kwargs)
