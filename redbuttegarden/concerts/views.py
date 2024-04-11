@@ -1,7 +1,6 @@
 import datetime
 import logging
 
-import code128
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect
