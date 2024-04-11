@@ -490,7 +490,8 @@ class Ticket(models.Model):
     package = models.ForeignKey(ConcertDonorClubPackage, on_delete=models.SET_NULL, null=True, blank=True)
     order_id = models.PositiveBigIntegerField()
     # We wouldn't need to store the ticket if it were VOID or RESERVED so those aren't used as valid status options
-    status = models.CharField(max_length=20, choices=[('ISSUED', 'Issued'), ('REDEEMED', 'Redeemed')],
+    status = models.CharField(max_length=20,
+                              choices=[('ISSUED', 'Issued'), ('REDEEMED', 'Redeemed'), ('RESERVED', 'Reserved')],
                               blank=True, null=True)
     barcode = models.PositiveBigIntegerField(unique=True)
     barcode_image = models.ImageField(upload_to='tickets', blank=True, null=True)
