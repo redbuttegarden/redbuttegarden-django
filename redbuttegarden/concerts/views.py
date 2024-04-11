@@ -59,6 +59,7 @@ class TicketDRFViewSet(viewsets.ModelViewSet):
 class TicketViewSet(ModelViewSet):
     model = Ticket
     form_fields = '__all__'
+    list_filter = ('owner', 'concert', 'package', 'order_id', 'barcode')
 
 
 class ConcertDonorClubViewSetGroup(ViewSetGroup):
