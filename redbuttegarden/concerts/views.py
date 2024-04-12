@@ -1,7 +1,9 @@
 import datetime
 import logging
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect
 from rest_framework import viewsets
@@ -110,18 +112,26 @@ def process_ticket_data(request):
         try:
             cdc_member = ConcertDonorClubMember.objects.get(user__username=request.data['etix_username'])
         except ConcertDonorClubMember.DoesNotExist:
-            return JsonResponse({'status': 'No matching CDC member found.'})
+            cdc_user, created = get_user_model().objects.get_or_create(username=request.data['etix_username'],
+                                                                       defaults={'email': request.data['owner_email']})
+
+            if created:
+                logger.debug(f'Created user {cdc_user}. Adding them to CDC member group...')
+                cdc_user.groups.add(Group.objects.get(name="Concert Donor Club Member"))
+
+            cdc_member = ConcertDonorClubMember.objects.create(user=cdc_user, phone_number=request.data['phone_number'])
 
         package = None
         if request.data['package_name']:
             package, package_created = ConcertDonorClubPackage.objects.get_or_create(name=request.data['package_name'],
                                                                                      defaults={
                                                                                          'year': datetime.datetime.now().year})
+
+
             if package_created:
-                logger.info(f'Concert Donor Club Package created: {package}')
+                logger.debug(f'Concert Donor Club Package created: {package}')
 
         if request.data['ticket_status'] in ['ISSUED', 'REDEEMED', 'RESERVED']:
-            logger.debug(Ticket.objects.all())
             ticket, ticket_created = Ticket.objects.update_or_create(barcode=request.data['ticket_barcode'],
                                                                      defaults={
                                                                          'order_id': request.data['order_id'],
@@ -130,6 +140,7 @@ def process_ticket_data(request):
                                                                          'package': package,
                                                                          'status': request.data['ticket_status'],
                                                                      })
+            cdc_member.packages.add(package)
 
             serialized_ticket = TicketSerializer(ticket).data
 
@@ -166,9 +177,11 @@ def concert_donor_club_member_profile(request):
     current_year = datetime.date.today().year
 
     current_season_packages = concert_donor_club_member.packages.filter(year=current_year)
+    current_season_member_tickets = Ticket.objects.filter(owner=concert_donor_club_member,
+                                                          concert__begin__year=current_year, package__isnull=False)
     current_season_additional_concert_tickets = Ticket.objects.filter(owner=concert_donor_club_member,
-                                                                      concert__begin__year=current_year)
-    member_tickets = Ticket.objects.filter(owner=concert_donor_club_member)
+                                                                      concert__begin__year=current_year,
+                                                                      package__isnull=True)
 
     ticket_info = {}
     for package in current_season_packages:
@@ -181,7 +194,7 @@ def concert_donor_club_member_profile(request):
                 'doors': concert.begin - datetime.timedelta(
                     minutes=concert.doors_before_event_time_minutes),
                 'img_url': concert.image_url,
-                'count': member_tickets.filter(concert=concert).count()
+                'count': current_season_member_tickets.filter(concert=concert).count()
             })
 
     add_ticket_info = {}
@@ -201,7 +214,7 @@ def concert_donor_club_member_profile(request):
         # I expect there will almost always only be one package per member but may as well support multiple
         'ticket_info': ticket_info,
         'add_ticket_info': add_ticket_info,
-        'member_tickets': member_tickets,
+        'member_tickets': current_season_member_tickets,
     }
     return render(request, 'concerts/concert_donor_club_member_profile.html', context)
 
