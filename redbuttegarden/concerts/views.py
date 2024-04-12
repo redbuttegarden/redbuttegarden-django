@@ -119,7 +119,7 @@ def process_ticket_data(request):
                 logger.debug(f'Created user {cdc_user}. Adding them to CDC member group...')
                 cdc_user.groups.add(Group.objects.get(name="Concert Donor Club Member"))
 
-            cdc_member = ConcertDonorClubMember.objects.create(user=cdc_user, phone_number=request.data['phone_number'])
+            cdc_member = ConcertDonorClubMember.objects.create(user=cdc_user, phone_number=request.data['owner_phone'])
 
         package = None
         if request.data['package_name']:

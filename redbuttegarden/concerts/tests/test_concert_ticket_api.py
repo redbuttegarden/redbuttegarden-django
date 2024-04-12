@@ -1,6 +1,6 @@
-import json
-
 import pytest
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.urls import reverse
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory, APIClient
@@ -24,6 +24,14 @@ def create_cdc_package():
     cdc_package.save()
 
     return cdc_package
+
+
+@pytest.mark.django_db
+@pytest.fixture
+def create_cdc_group():
+    cdc_group = Group.objects.create(name='Concert Donor Club Member')
+
+    return cdc_group
 
 
 @pytest.fixture
@@ -67,6 +75,8 @@ def make_ticket_data():
         return {
             "order_id": 99999999,
             "etix_username": etix_username,
+            "owner_email": "email@email.com",
+            "owner_phone": "123 4569999",
             "package_name": "Opener Placeholder",
             "event_name": "Markéta Irglová and Glen Hansard of The Swell Season",
             "event_id": 12934887,
@@ -88,13 +98,19 @@ def test_process_ticket_data_view_unauthorized(drf_request_factory):
 
 
 @pytest.mark.django_db
-def test_process_ticket_data_view_no_cdc_member(create_api_user_and_token, drf_client_with_user, make_ticket_data):
+def test_process_ticket_data_view_no_cdc_member(create_cdc_group, create_api_user_and_token, drf_client_with_user,
+                                                make_ticket_data):
+    """If no ConcertDonorClubMember exists, one should be created"""
     issued_ticket_data = make_ticket_data('ISSUED')
+    with pytest.raises(get_user_model().DoesNotExist):
+        get_user_model().objects.get(username=issued_ticket_data['etix_username'])
+    with pytest.raises(ConcertDonorClubMember.DoesNotExist):
+        ConcertDonorClubMember.objects.get(user__username=issued_ticket_data['etix_username'])
     response = drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
     assert response.status_code == 200
-    assert json.loads(response.content.decode())['status'] == 'No matching CDC member found.'
-    with pytest.raises(Ticket.DoesNotExist):
-        Ticket.objects.get(barcode=issued_ticket_data['ticket_barcode'])
+    assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
+    assert get_user_model().objects.filter(username=issued_ticket_data['etix_username']).exists()
+    assert ConcertDonorClubMember.objects.filter(user__username=issued_ticket_data['etix_username']).exists()
 
 
 @pytest.mark.django_db
