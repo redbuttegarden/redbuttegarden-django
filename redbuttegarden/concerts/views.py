@@ -93,27 +93,29 @@ def process_ticket_data(request):
         if not request.data['event_name']:
             return JsonResponse({'status': 'Failure', 'msg': 'Event name required.'})
 
-        concert, concert_created = Concert.objects.get_or_create(etix_id=request.data['event_id'],
-                                                                 defaults={'name': request.data['event_name'],
-                                                                           'begin': datetime.datetime.fromisoformat(
-                                                                               request.data['event_begin'].replace("Z",
-                                                                                                                   "+00:00")),
-                                                                           'end': datetime.datetime.fromisoformat(
-                                                                               request.data['event_end'].replace("Z",
-                                                                                                                 "+00:00")),
-                                                                           'doors_before_event_time_minutes': int(
-                                                                               request.data[
-                                                                                   'event_doors_before_event_time_minutes']),
-                                                                           'image_url': request.data[
-                                                                               'event_image_url']})
+        concert, concert_created = Concert.objects.update_or_create(etix_id=request.data['event_id'],
+                                                                    defaults={'name': request.data['event_name'],
+                                                                              'begin': datetime.datetime.fromisoformat(
+                                                                                  request.data['event_begin'].replace(
+                                                                                      "Z",
+                                                                                      "+00:00")),
+                                                                              'end': datetime.datetime.fromisoformat(
+                                                                                  request.data['event_end'].replace("Z",
+                                                                                                                    "+00:00")),
+                                                                              'doors_before_event_time_minutes': int(
+                                                                                  request.data[
+                                                                                      'event_doors_before_event_time_minutes']),
+                                                                              'image_url': request.data[
+                                                                                  'event_image_url']})
         if concert_created:
             logger.info(f'Concert Donor Club Concert created: {concert}')
 
         try:
             cdc_member = ConcertDonorClubMember.objects.get(user__username=request.data['etix_username'])
         except ConcertDonorClubMember.DoesNotExist:
-            cdc_user, created = get_user_model().objects.get_or_create(username=request.data['etix_username'],
-                                                                       defaults={'email': request.data['owner_email']})
+            cdc_user, created = get_user_model().objects.update_or_create(username=request.data['etix_username'],
+                                                                          defaults={
+                                                                              'email': request.data['owner_email']})
 
             if created:
                 logger.debug(f'Created user {cdc_user}. Adding them to CDC member group...')
@@ -126,7 +128,6 @@ def process_ticket_data(request):
             package, package_created = ConcertDonorClubPackage.objects.get_or_create(name=request.data['package_name'],
                                                                                      defaults={
                                                                                          'year': datetime.datetime.now().year})
-
 
             if package_created:
                 logger.debug(f'Concert Donor Club Package created: {package}')
