@@ -71,11 +71,13 @@ def drf_client_with_user(create_api_user_and_token):
 
 @pytest.fixture
 def make_ticket_data():
-    def _make_ticket_data(ticket_status, etix_username='test-user'):
+    def _make_ticket_data(ticket_status, etix_username='test-user', owner_first_name='First'):
         return {
             "order_id": 99999999,
             "etix_username": etix_username,
             "owner_email": "email@email.com",
+            "owner_first_name": owner_first_name,
+            "owner_last_name": "Last",
             "owner_phone": "123 4569999",
             "package_name": "Opener Placeholder",
             "event_name": "Markéta Irglová and Glen Hansard of The Swell Season",
@@ -111,6 +113,21 @@ def test_process_ticket_data_view_no_cdc_member(create_cdc_group, create_api_use
     assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
     assert get_user_model().objects.filter(username=issued_ticket_data['etix_username']).exists()
     assert ConcertDonorClubMember.objects.filter(user__username=issued_ticket_data['etix_username']).exists()
+
+
+@pytest.mark.django_db
+def test_process_ticket_data_view_no_cdc_member_first_name_asterisk(create_cdc_group, create_api_user_and_token,
+                                                                    drf_client_with_user,
+                                                                    make_ticket_data):
+    """
+    Ensure ConcertDonorClubMember can be created with a blank first
+    name if the incoming owner_first_name is set to an asterisk
+    """
+    issued_ticket_data = make_ticket_data('ISSUED', owner_first_name='*')
+    drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
+    assert get_user_model().objects.filter(username=issued_ticket_data['etix_username']).exists()
+    cdc_member = ConcertDonorClubMember.objects.get(user__username=issued_ticket_data['etix_username'])
+    assert cdc_member.user.first_name == ''
 
 
 @pytest.mark.django_db

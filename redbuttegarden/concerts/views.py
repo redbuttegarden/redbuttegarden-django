@@ -115,7 +115,12 @@ def process_ticket_data(request):
         except ConcertDonorClubMember.DoesNotExist:
             cdc_user, created = get_user_model().objects.update_or_create(username=request.data['etix_username'],
                                                                           defaults={
-                                                                              'email': request.data['owner_email']})
+                                                                              'email': request.data['owner_email'],
+                                                                              'first_name': request.data[
+                                                                                  'owner_first_name'] if request.data[
+                                                                                  'owner_first_name'] != '*' else '',
+                                                                              'last_name': request.data[
+                                                                                  'owner_last_name']})
 
             if created:
                 logger.debug(f'Created user {cdc_user}. Adding them to CDC member group...')
