@@ -112,6 +112,15 @@ def process_ticket_data(request):
 
         try:
             cdc_member = ConcertDonorClubMember.objects.get(user__username=request.data['etix_username'])
+
+            # Many users were created without first and last names so this bit aims to populate that missing data
+            # TODO - remove after 2024 season
+            if not cdc_member.user.first_name:
+                cdc_member.user.first_name = request.data['owner_first_name']
+            if not cdc_member.user.last_name:
+                cdc_member.user.last_name = request.data['owner_last_name']
+            cdc_member.user.save()
+
         except ConcertDonorClubMember.DoesNotExist:
             cdc_user, created = get_user_model().objects.update_or_create(username=request.data['etix_username'],
                                                                           defaults={
