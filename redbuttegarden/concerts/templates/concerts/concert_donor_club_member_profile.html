@@ -60,44 +60,45 @@
             </div>
         </div>
 
-        <hr>
-
-        <div class="row">
-            <div class="additional-concerts text-center">
-                <div class="outline hover collapsed" data-target="#other-concerts-{{ forloop.counter }}"
-                     data-toggle="collapse"
-                     href="#other-concerts-{{ forloop.counter }}" aria-expanded="false">
-                    <div id="other-concerts">Other CDC Concerts<span class="glyphicon glyphicon-menu-down"
-                                                                     aria-hidden="true"></span>
+        {% if add_ticket_info %}
+            <hr>
+            <div class="row">
+                <div class="additional-concerts text-center">
+                    <div class="outline hover collapsed" data-target="#other-concerts-{{ forloop.counter }}"
+                         data-toggle="collapse"
+                         href="#other-concerts-{{ forloop.counter }}" aria-expanded="false">
+                        <div id="other-concerts">Other CDC Concerts<span class="glyphicon glyphicon-menu-down"
+                                                                         aria-hidden="true"></span>
+                        </div>
                     </div>
-                </div>
 
-                <div id="other-concerts-{{ forloop.counter }}" class="panel-border collapse" aria-expanded="false"
-                     style="height: 1px;">
-                    <div class="tan-bg">
-                        <div class="row-fluid" style="margin-left: 15px;">
-                            {% for ticket_info in add_ticket_info.values %}
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">{{ ticket_info.name }}</h3>
-                                    </div>
-                                    <div class="panel-body">
-                                        <div class="col-sm-4">
-                                            <img src="{{ ticket_info.img_url }}"
-                                                 alt="Concert promo art for {{ ticket_info.name }}">
+                    <div id="other-concerts-{{ forloop.counter }}" class="panel-border collapse" aria-expanded="false"
+                         style="height: 1px;">
+                        <div class="tan-bg">
+                            <div class="row-fluid" style="margin-left: 15px;">
+                                {% for ticket_info in add_ticket_info.values %}
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">{{ ticket_info.name }}</h3>
                                         </div>
-                                        <div class="col-sm-8">
-                                            <p>Begin: {{ ticket_info.begin }}</p>
-                                            <p>Doors: {{ ticket_info.doors }}</p>
-                                            <p>Tickets: (x{{ ticket_info.count }})</p>
+                                        <div class="panel-body">
+                                            <div class="col-sm-4">
+                                                <img src="{{ ticket_info.img_url }}"
+                                                     alt="Concert promo art for {{ ticket_info.name }}">
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <p>Begin: {{ ticket_info.begin }}</p>
+                                                <p>Doors: {{ ticket_info.doors }}</p>
+                                                <p>Tickets: (x{{ ticket_info.count }})</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 {% endblock %}
