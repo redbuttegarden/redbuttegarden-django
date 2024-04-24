@@ -450,7 +450,7 @@ class Concert(models.Model):
     image_url = models.CharField(max_length=500, blank=True, null=True)
 
     class Meta:
-        ordering = ['name']
+        ordering = ['begin', 'name']
 
     def __str__(self):
         return f'{self.name} ({self.begin.year})'
