@@ -155,7 +155,8 @@ def process_ticket_data(request):
                                                                          'package': package,
                                                                          'status': request.data['ticket_status'],
                                                                      })
-            cdc_member.packages.add(package)
+            if package:
+                cdc_member.packages.add(package)
 
             serialized_ticket = TicketSerializer(ticket).data
 
