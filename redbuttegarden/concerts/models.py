@@ -447,7 +447,7 @@ class Concert(models.Model):
     begin = models.DateTimeField()
     end = models.DateTimeField()
     doors_before_event_time_minutes = models.PositiveSmallIntegerField(default=0)
-    image_url = models.CharField(max_length=500, blank=True, null=True)
+    image_url = models.CharField(max_length=1024, blank=True, null=True)
 
     class Meta:
         ordering = ['begin', 'name']
