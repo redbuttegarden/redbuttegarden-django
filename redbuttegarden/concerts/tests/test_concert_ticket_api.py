@@ -171,10 +171,11 @@ def test_process_ticket_data_updates_user_last_name(create_cdc_group, create_api
     user.refresh_from_db()
     assert user.last_name == 'Updated'
 
+
 @pytest.mark.django_db
 def test_process_ticket_data_updates_user_email(create_cdc_group, create_api_user_and_token,
-                                                    drf_client_with_user,
-                                                    make_ticket_data, create_user):
+                                                drf_client_with_user,
+                                                make_ticket_data, create_user):
     """
     Incoming ticket data should update existing users last name.
     """
