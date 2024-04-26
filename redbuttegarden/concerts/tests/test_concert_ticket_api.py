@@ -177,7 +177,7 @@ def test_process_ticket_data_updates_user_email(create_cdc_group, create_api_use
                                                 drf_client_with_user,
                                                 make_ticket_data, create_user):
     """
-    Incoming ticket data should update existing users last name.
+    Incoming ticket data should update existing users email.
     """
     user = create_user(username='existing-user', email='Initial')
     assert user.email == 'Initial'
