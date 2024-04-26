@@ -36,8 +36,9 @@ def create_cdc_group():
 
 @pytest.fixture
 def create_user(django_user_model):
-    def _create_user(username='cdc_test_user'):
-        return django_user_model.objects.create_user(username=username)
+    def _create_user(username='cdc_test_user', first_name='first', last_name='last', email='test@email.com'):
+        return django_user_model.objects.create_user(username=username, first_name=first_name, last_name=last_name,
+                                                     email=email)
 
     return _create_user
 
@@ -71,13 +72,14 @@ def drf_client_with_user(create_api_user_and_token):
 
 @pytest.fixture
 def make_ticket_data():
-    def _make_ticket_data(ticket_status, etix_username='test-user', owner_first_name='First'):
+    def _make_ticket_data(ticket_status, etix_username='test-user', owner_first_name='First', owner_last_name='Last',
+                          owner_email='email@email.com'):
         return {
             "order_id": 99999999,
             "etix_username": etix_username,
-            "owner_email": "email@email.com",
+            "owner_email": owner_email,
             "owner_first_name": owner_first_name,
-            "owner_last_name": "Last",
+            "owner_last_name": owner_last_name,
             "owner_phone": "123 4569999",
             "package_name": "Opener Placeholder",
             "event_name": "Markéta Irglová and Glen Hansard of The Swell Season",
@@ -138,3 +140,47 @@ def test_process_ticket_data_view_issued(create_user, create_cdc_member, create_
     issued_ticket_data = make_ticket_data(ticket_status='ISSUED', etix_username=cdc_user.username)
     drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
     assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
+
+
+@pytest.mark.django_db
+def test_process_ticket_data_updates_user_first_name(create_cdc_group, create_api_user_and_token,
+                                                     drf_client_with_user,
+                                                     make_ticket_data, create_user):
+    """
+    Incoming ticket data should update existing users first name.
+    """
+    user = create_user(username='existing-user', first_name='Initial')
+    assert user.first_name == 'Initial'
+    issued_ticket_data = make_ticket_data('ISSUED', etix_username='existing-user', owner_first_name='Updated')
+    drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
+    user.refresh_from_db()
+    assert user.first_name == 'Updated'
+
+
+@pytest.mark.django_db
+def test_process_ticket_data_updates_user_last_name(create_cdc_group, create_api_user_and_token,
+                                                    drf_client_with_user,
+                                                    make_ticket_data, create_user):
+    """
+    Incoming ticket data should update existing users last name.
+    """
+    user = create_user(username='existing-user', last_name='Initial')
+    assert user.last_name == 'Initial'
+    issued_ticket_data = make_ticket_data('ISSUED', etix_username='existing-user', owner_last_name='Updated')
+    drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
+    user.refresh_from_db()
+    assert user.last_name == 'Updated'
+
+@pytest.mark.django_db
+def test_process_ticket_data_updates_user_email(create_cdc_group, create_api_user_and_token,
+                                                    drf_client_with_user,
+                                                    make_ticket_data, create_user):
+    """
+    Incoming ticket data should update existing users last name.
+    """
+    user = create_user(username='existing-user', email='Initial')
+    assert user.email == 'Initial'
+    issued_ticket_data = make_ticket_data('ISSUED', etix_username='existing-user', owner_email='Updated')
+    drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
+    user.refresh_from_db()
+    assert user.email == 'Updated'
