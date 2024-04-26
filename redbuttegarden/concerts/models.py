@@ -156,6 +156,7 @@ class TableInfoCardList(blocks.StructBlock):
 class ConcertBlock(blocks.StructBlock):
     band_img = ImageChooserBlock(required=True)
     wave = blocks.ChoiceBlock(choices=[
+        (0, 'Presale'),
         (1, 'Wave 1'),
         (2, 'Wave 2')
     ], required=False)
@@ -184,7 +185,7 @@ class ConcertBlock(blocks.StructBlock):
 
     # Added a ticket URL for concerts that are sold from a non-standard URL
     ticket_url = blocks.URLBlock(
-        default='https://www.etix.com/ticket/e/1035223/2023-season-salt-lake-city-red-butte-garden')
+        default='https://www.etix.com/ticket/e/1041718/2024-red-butte-season-salt-lake-city-red-butte-garden')
 
     class Meta:
         icon = 'music'
@@ -222,8 +223,9 @@ class ConcertPage(AbstractBase):
     banner_link = models.URLField(help_text=_("Where to direct the banner image link"),
                                   blank=True)
     intro = RichTextField(blank=True)
-    wave_one_info = RichTextField(blank=True, help_text=_('Displayed at the top of the list of concerts'))
-    wave_two_info = RichTextField(blank=True, help_text=_('Displayed above any wave 2 concerts (if there are any)'))
+    presale_info = RichTextField(help_text=_('Displayed above any presale concerts'), blank=True)
+    wave_one_info = RichTextField(help_text=_('Displayed above any wave 1 concerts concerts'), blank=True)
+    wave_two_info = RichTextField(help_text=_('Displayed above any wave 2 concerts'), blank=True)
     wave_two_sale_date = models.DateField(default=None, null=True, blank=True)
     donor_banner = models.ForeignKey(
         'wagtailimages.Image',
@@ -270,6 +272,7 @@ class ConcertPage(AbstractBase):
         PageChooserPanel('button_two'),
         PageChooserPanel('button_three'),
         PageChooserPanel('button_four'),
+        FieldPanel('presale_info', classname="full"),
         FieldPanel('wave_one_info', classname="full"),
         FieldPanel('wave_two_info', classname="full"),
         FieldPanel('wave_two_sale_date'),
@@ -278,13 +281,19 @@ class ConcertPage(AbstractBase):
 
     search_fields = AbstractBase.search_fields + [
         index.SearchField('intro'),
+        index.SearchField('presale_info'),
+        index.SearchField('wave_one_info'),
+        index.SearchField('wave_two_info'),
     ]
 
     def get_context(self, request, **kwargs):
         context = super().get_context(request, **kwargs)
 
         concerts = self.get_visible_concerts()
+
         if self.wave_two_sale_date and datetime.date.today() < self.wave_two_sale_date:
+            context['presale_concerts'] = self.sort_concerts(
+                [concert for concert in concerts if concert['wave'] and concert['wave'] == '0'])
             context['wave_one_concerts'] = self.sort_concerts(
                 [concert for concert in concerts if concert['wave'] and concert['wave'] == '1'])
             context['wave_two_concerts'] = self.sort_concerts(
