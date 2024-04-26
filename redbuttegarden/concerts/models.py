@@ -156,6 +156,7 @@ class TableInfoCardList(blocks.StructBlock):
 class ConcertBlock(blocks.StructBlock):
     band_img = ImageChooserBlock(required=True)
     wave = blocks.ChoiceBlock(choices=[
+        (0, 'Presale'),
         (1, 'Wave 1'),
         (2, 'Wave 2')
     ], required=False)
