@@ -110,32 +110,24 @@ def process_ticket_data(request):
         if concert_created:
             logger.info(f'Concert Donor Club Concert created: {concert}')
 
-        try:
-            cdc_member = ConcertDonorClubMember.objects.get(user__username=request.data['etix_username'])
+        cdc_user, created = get_user_model().objects.update_or_create(username=request.data['etix_username'],
+                                                                      defaults={
+                                                                          'email': request.data['owner_email'],
+                                                                          'first_name': request.data[
+                                                                              'owner_first_name'] if request.data[
+                                                                                                         'owner_first_name'] != '*' else '',
+                                                                          'last_name': request.data[
+                                                                              'owner_last_name']})
 
-            # Many users were created without first and last names so this bit aims to populate that missing data
-            # TODO - remove after 2024 season
-            if not cdc_member.user.first_name:
-                cdc_member.user.first_name = request.data['owner_first_name']
-            if not cdc_member.user.last_name:
-                cdc_member.user.last_name = request.data['owner_last_name']
-            cdc_member.user.save()
+        if created:
+            logger.debug(f'Created user {cdc_user}. Adding them to CDC member group...')
+            cdc_user.groups.add(Group.objects.get(name="Concert Donor Club Member"))
 
-        except ConcertDonorClubMember.DoesNotExist:
-            cdc_user, created = get_user_model().objects.update_or_create(username=request.data['etix_username'],
-                                                                          defaults={
-                                                                              'email': request.data['owner_email'],
-                                                                              'first_name': request.data[
-                                                                                  'owner_first_name'] if request.data[
-                                                                                  'owner_first_name'] != '*' else '',
-                                                                              'last_name': request.data[
-                                                                                  'owner_last_name']})
+        cdc_member, created = ConcertDonorClubMember.objects.update_or_create(user=cdc_user, defaults={
+            'phone_number': request.data['owner_phone']})
 
-            if created:
-                logger.debug(f'Created user {cdc_user}. Adding them to CDC member group...')
-                cdc_user.groups.add(Group.objects.get(name="Concert Donor Club Member"))
-
-            cdc_member = ConcertDonorClubMember.objects.create(user=cdc_user, phone_number=request.data['owner_phone'])
+        if created:
+            logger.debug(f'Created ConcertDonorClubMember {cdc_member}')
 
         package = None
         if request.data['package_name']:
