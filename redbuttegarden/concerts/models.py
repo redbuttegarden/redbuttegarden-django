@@ -185,7 +185,7 @@ class ConcertBlock(blocks.StructBlock):
 
     # Added a ticket URL for concerts that are sold from a non-standard URL
     ticket_url = blocks.URLBlock(
-        default='https://www.etix.com/ticket/e/1035223/2023-season-salt-lake-city-red-butte-garden')
+        default='https://www.etix.com/ticket/e/1041718/2024-red-butte-season-salt-lake-city-red-butte-garden')
 
     class Meta:
         icon = 'music'
