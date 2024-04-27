@@ -195,26 +195,32 @@ def concert_donor_club_member_profile(request):
     for package in current_season_packages:
         ticket_info[package.name] = []
         for concert in package.concerts.all():
-            ticket_info[package.name].append({
-                'concert_pk': concert.pk,
-                'name': concert.name,
-                'begin': concert.begin,
-                'doors': concert.begin - datetime.timedelta(
-                    minutes=concert.doors_before_event_time_minutes),
-                'img_url': concert.image_url,
-                'count': current_season_member_tickets.filter(concert=concert).count()
-            })
+            ticket_count = current_season_member_tickets.filter(concert=concert).count()
+
+            if ticket_count > 0:
+                ticket_info[package.name].append({
+                    'concert_pk': concert.pk,
+                    'name': concert.name,
+                    'begin': concert.begin,
+                    'doors': concert.begin - datetime.timedelta(
+                        minutes=concert.doors_before_event_time_minutes),
+                    'img_url': concert.image_url,
+                    'count': ticket_count
+                })
 
     add_ticket_info = {}
     for ticket in current_season_additional_concert_tickets:
-        add_ticket_info[ticket.concert.etix_id] = {
-            'concert_pk': ticket.concert.pk,
-            'name': ticket.concert.name,
-            'begin': ticket.concert.begin,
-            'doors': ticket.concert.begin - datetime.timedelta(minutes=ticket.concert.doors_before_event_time_minutes),
-            'img_url': ticket.concert.image_url,
-            'count': current_season_additional_concert_tickets.filter(concert=ticket.concert).count()
-        }
+        ticket_count = current_season_additional_concert_tickets.filter(concert=ticket.concert).count()
+
+        if ticket_count > 0:
+            add_ticket_info[ticket.concert.etix_id] = {
+                'concert_pk': ticket.concert.pk,
+                'name': ticket.concert.name,
+                'begin': ticket.concert.begin,
+                'doors': ticket.concert.begin - datetime.timedelta(minutes=ticket.concert.doors_before_event_time_minutes),
+                'img_url': ticket.concert.image_url,
+                'count': ticket_count
+            }
 
     context = {
         'user_name': request.user.get_full_name(),
