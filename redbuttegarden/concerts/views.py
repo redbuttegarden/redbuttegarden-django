@@ -93,21 +93,35 @@ def process_ticket_data(request):
         if not request.data['event_name']:
             return JsonResponse({'status': 'Failure', 'msg': 'Event name required.'})
 
-        concert, concert_created = Concert.objects.update_or_create(etix_id=request.data['event_id'],
-                                                                    defaults={'name': request.data['event_name'],
-                                                                              'begin': datetime.datetime.fromisoformat(
-                                                                                  request.data['event_begin'].replace(
-                                                                                      "Z",
-                                                                                      "+00:00")),
-                                                                              'end': datetime.datetime.fromisoformat(
-                                                                                  request.data['event_end'].replace("Z",
-                                                                                                                    "+00:00")),
-                                                                              'doors_before_event_time_minutes': int(
-                                                                                  request.data[
-                                                                                      'event_doors_before_event_time_minutes']),
-                                                                              'image_url': request.data[
-                                                                                  'event_image_url']})
-        if concert_created:
+        """
+        We can't use update_or_create for Concerts because some incoming data may be less complete than others
+        and we don't want to overwrite existing data with null values. This issue seems most prevalent for the image_url
+        """
+        concert_defaults = {
+            'etix_id': request.data['event_id'],
+            'name': request.data['event_name'],
+            'begin': datetime.datetime.fromisoformat(request.data['event_begin'].replace("Z", "+00:00")),
+            'end': datetime.datetime.fromisoformat(request.data['event_end'].replace("Z", "+00:00")),
+            'doors_before_event_time_minutes': int(request.data['event_doors_before_event_time_minutes']),
+            'image_url': request.data['event_image_url'],
+        }
+        try:
+            concert = Concert.objects.get(etix_id=request.data['event_id'])
+            for key, value in concert_defaults.items():
+                if value:
+                    setattr(concert, key, value)
+                concert.save()
+        except Concert.DoesNotExist:
+            concert = Concert.objects.create(etix_id=request.data['event_id'],
+                                             name=request.data['event_name'],
+                                             begin=datetime.datetime.fromisoformat(
+                                                 request.data['event_begin'].replace("Z", "+00:00")),
+                                             end=datetime.datetime.fromisoformat(
+                                                 request.data['event_end'].replace("Z", "+00:00")),
+                                             doors_before_event_time_minutes=int(
+                                                 request.data['event_doors_before_event_time_minutes']),
+                                             image_url=request.data['event_image_url'])
+
             logger.info(f'Concert Donor Club Concert created: {concert}')
 
         cdc_user, created = get_user_model().objects.update_or_create(username=request.data['etix_username'],
@@ -217,7 +231,8 @@ def concert_donor_club_member_profile(request):
                 'concert_pk': ticket.concert.pk,
                 'name': ticket.concert.name,
                 'begin': ticket.concert.begin,
-                'doors': ticket.concert.begin - datetime.timedelta(minutes=ticket.concert.doors_before_event_time_minutes),
+                'doors': ticket.concert.begin - datetime.timedelta(
+                    minutes=ticket.concert.doors_before_event_time_minutes),
                 'img_url': ticket.concert.image_url,
                 'count': ticket_count
             }
