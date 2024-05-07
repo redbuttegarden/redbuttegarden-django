@@ -20,10 +20,13 @@ def create_api_user_and_token(django_user_model):
 @pytest.mark.django_db
 @pytest.fixture
 def create_cdc_package():
-    cdc_package = ConcertDonorClubPackage(name='Test Package', year=2024)
-    cdc_package.save()
+    def _create_cdc_package(name='Test Package'):
+        cdc_package = ConcertDonorClubPackage(name=name, year=2024)
+        cdc_package.save()
 
-    return cdc_package
+        return cdc_package
+
+    return _create_cdc_package
 
 
 @pytest.mark.django_db
@@ -73,7 +76,7 @@ def drf_client_with_user(create_api_user_and_token):
 @pytest.fixture
 def make_ticket_data():
     def _make_ticket_data(ticket_status, etix_username='test-user', owner_first_name='First', owner_last_name='Last',
-                          owner_email='email@email.com'):
+                          owner_email='email@email.com', package_name='Opener Placeholder'):
         return {
             "order_id": 99999999,
             "etix_username": etix_username,
@@ -81,7 +84,7 @@ def make_ticket_data():
             "owner_first_name": owner_first_name,
             "owner_last_name": owner_last_name,
             "owner_phone": "123 4569999",
-            "package_name": "Opener Placeholder",
+            "package_name": package_name,
             "event_name": "Markéta Irglová and Glen Hansard of The Swell Season",
             "event_id": 12934887,
             "event_begin": "2024-01-30T19:31:45.261Z",
@@ -140,6 +143,20 @@ def test_process_ticket_data_view_issued(create_user, create_cdc_member, create_
     issued_ticket_data = make_ticket_data(ticket_status='ISSUED', etix_username=cdc_user.username)
     drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
     assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
+
+
+@pytest.mark.django_db
+def test_process_ticket_data_view_blank_package_name(create_user, create_cdc_member, create_api_user_and_token,
+                                         drf_client_with_user, make_ticket_data):
+    """
+    ConcertDonorClubPackages should not be created with empty string names
+    """
+    cdc_user = create_user()
+    create_cdc_member(user=cdc_user)
+    issued_ticket_data = make_ticket_data(ticket_status='ISSUED', etix_username=cdc_user.username, package_name=' ')
+    drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
+    assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
+    assert not ConcertDonorClubPackage.objects.filter(name=' ').exists()
 
 
 @pytest.mark.django_db

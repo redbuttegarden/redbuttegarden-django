@@ -144,7 +144,7 @@ def process_ticket_data(request):
             logger.debug(f'Created ConcertDonorClubMember {cdc_member}')
 
         package = None
-        if request.data['package_name']:
+        if request.data['package_name'].strip():
             package, package_created = ConcertDonorClubPackage.objects.get_or_create(name=request.data['package_name'],
                                                                                      defaults={
                                                                                          'year': datetime.datetime.now().year})
