@@ -108,6 +108,9 @@ CORS_ORIGIN_ALLOW_ALL = True
 CSRF_TRUSTED_ORIGINS = ['http://' + domain for domain in ALLOWED_HOSTS] + ['https://' + domain for domain in
                                                                            ALLOWED_HOSTS]
 
+# Only the dev version uses a proxy so this setting isn't required for prod
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

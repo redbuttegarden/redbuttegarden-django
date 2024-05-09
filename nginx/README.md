@@ -1,0 +1,1 @@
+Nginx is only used in this project to provide an HTTPS connection for local development
