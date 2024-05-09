@@ -17,3 +17,4 @@
 /.vscode/
 **/.coverage
 *.pyc
+/nginx/certs/

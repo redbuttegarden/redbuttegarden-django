@@ -31,6 +31,7 @@ urlpatterns += [
     # May need to temporarily comment out plants app urls to migrate fresh database
     path('plants/', include('plants.urls', namespace='plants')),
     path('accounts/', include('custom_user.urls', namespace='custom-user')),
+    path('altru/', include('altru.urls', namespace='altru')),
     path('concerts/', include('concerts.urls', namespace='concerts')),
     path('shop/', include('shop.urls', namespace='shop')),
 

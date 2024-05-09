@@ -26,6 +26,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
+    'altru',
     'axe',
     'concerts',
     'custom_user',
@@ -248,3 +249,12 @@ COMET_CHAT_APP_ID = os.environ.get('COMET_CHAT_APP_ID')
 COMET_CHAT_REGION = 'US'
 COMET_CHAT_AUTH_KEY = os.environ.get('COMET_CHAT_AUTH_KEY')
 COMET_CHAT_WIDGET_ID = os.environ.get('COMET_CHAT_WIDGET_ID')
+
+# Altru
+ALTRU_AUTHORIZATION_BASE_URL = 'https://app.blackbaud.com/oauth/authorize'
+ALTRU_TOKEN_URL = 'https://oauth2.sky.blackbaud.com/token'
+ALTRU_API_BASE = 'https://api.sky.blackbaud.com'
+ALTRU_API_CLIENT_ID = os.environ.get('ALTRU_API_CLIENT_ID')
+ALTRU_API_CLIENT_SECRET = os.environ.get('ALTRU_API_CLIENT_SECRET')
+ALTRU_API_SUBSCRIPTION_KEY = os.environ.get('ALTRU_API_SUBSCRIPTION_KEY')
+ALTRU_DATABASE_NAME = os.environ.get('ALTRU_DATABASE_NAME')

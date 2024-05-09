@@ -8,6 +8,8 @@ services:
     build: redbuttegarden/
     volumes:
       - ./redbuttegarden:/code
+      - static_volume:/code/static
+      - media_volume:/code/media
     ports:
       - '8000:8000'
     depends_on:
@@ -22,6 +24,22 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     ports:
     - '5432:5432'
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    restart:
+      unless-stopped
+    depends_on:
+      - web
+    volumes:
+      - static_volume:/home/static
+      - media_volume:/home/media
+      - ./nginx/certs:/etc/ssl/certs
+
 
 volumes:
   postgres_data:
+  static_volume:
+  media_volume:
