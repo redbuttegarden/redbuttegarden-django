@@ -13,7 +13,7 @@ from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
-from wagtail.admin.panels import FieldPanel, PageChooserPanel
+from wagtail.admin.panels import FieldPanel, PageChooserPanel, TabbedInterface, ObjectList
 from wagtail.fields import RichTextField, StreamField
 from wagtail.search import index
 
@@ -285,6 +285,13 @@ class ConcertPage(AbstractBase):
         index.SearchField('wave_one_info'),
         index.SearchField('wave_two_info'),
     ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(AbstractBase.dialog_box_panels, heading='Dialog'),
+        ObjectList(AbstractBase.promote_panels, heading='Promote'),
+        ObjectList(AbstractBase.settings_panels, heading='Settings'),
+    ])
 
     def get_context(self, request, **kwargs):
         context = super().get_context(request, **kwargs)
