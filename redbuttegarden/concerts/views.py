@@ -4,6 +4,7 @@ import logging
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.db.models import Count
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect
 from rest_framework import viewsets
@@ -198,7 +199,8 @@ def concert_donor_club_member_profile(request):
 
     current_year = datetime.date.today().year
 
-    current_season_packages = concert_donor_club_member.packages.filter(year=current_year)
+    current_season_packages = concert_donor_club_member.packages.annotate(num_concerts=Count("concerts")).filter(
+        num_concerts__gt=0, year=current_year)
     current_season_member_tickets = Ticket.objects.filter(owner=concert_donor_club_member,
                                                           concert__begin__year=current_year, package__isnull=False)
     current_season_additional_concert_tickets = Ticket.objects.filter(owner=concert_donor_club_member,
