@@ -55,7 +55,7 @@ class ConcertDonorClubMemberViewSet(ModelViewSet):
 
 class TicketDRFViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
-    serializer_class = TicketSerializer()
+    serializer_class = TicketSerializer
 
 
 class TicketViewSet(ModelViewSet):
