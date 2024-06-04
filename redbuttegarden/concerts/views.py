@@ -10,6 +10,7 @@ from django.shortcuts import render, redirect
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
+from rest_framework.pagination import PageNumberPagination
 from wagtail.admin.viewsets.base import ViewSetGroup
 from wagtail.admin.viewsets.model import ModelViewSet
 
@@ -18,6 +19,12 @@ from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSeria
     TicketSerializer
 
 logger = logging.getLogger(__name__)
+
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 1000
+    page_size_query_param = 'page_size'
+    max_page_size = 10000
 
 
 class ConcertDRFViewSet(viewsets.ModelViewSet):
@@ -56,6 +63,7 @@ class ConcertDonorClubMemberViewSet(ModelViewSet):
 class TicketDRFViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
+    pagination_class = LargeResultsSetPagination
 
 
 class TicketViewSet(ModelViewSet):
