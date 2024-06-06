@@ -161,35 +161,20 @@ def process_ticket_data(request):
             if package_created:
                 logger.debug(f'Concert Donor Club Package created: {package}')
 
-        if request.data['ticket_status'] in ['ISSUED', 'REDEEMED', 'RESERVED']:
-            ticket, ticket_created = Ticket.objects.update_or_create(barcode=request.data['ticket_barcode'],
-                                                                     defaults={
-                                                                         'order_id': request.data['order_id'],
-                                                                         'owner': cdc_member,
-                                                                         'concert': concert,
-                                                                         'package': package,
-                                                                         'status': request.data['ticket_status'],
-                                                                     })
-            if package:
-                cdc_member.packages.add(package)
 
-            serialized_ticket = TicketSerializer(ticket).data
+        ticket, ticket_created = Ticket.objects.update_or_create(barcode=request.data['ticket_barcode'],
+                                                                 defaults={
+                                                                     'order_id': request.data['order_id'],
+                                                                     'owner': cdc_member,
+                                                                     'concert': concert,
+                                                                     'package': package,
+                                                                 })
+        if package:
+            cdc_member.packages.add(package)
 
-            return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'created': ticket_created})
+        serialized_ticket = TicketSerializer(ticket).data
 
-        elif request.data['ticket_status'] == 'VOID':
-            try:
-                ticket = Ticket.objects.get(owner=cdc_member, barcode=request.data['ticket_barcode'])
-            except Ticket.DoesNotExist:
-                return JsonResponse({'status': 'unchanged', 'msg': 'No matching Ticket found for given CDC member.'})
-
-            serialized_ticket = TicketSerializer(ticket).data
-            ticket.delete()
-
-            return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'deleted': True})
-
-        else:
-            return JsonResponse({'status': f'Ticket status {request.data["ticket_status"]} requires no action'})
+        return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'created': ticket_created})
 
     return JsonResponse({'status': 'Auth failure'})
 
