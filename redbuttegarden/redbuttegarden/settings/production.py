@@ -18,6 +18,9 @@ ALLOWED_HOSTS = ['0.0.0.0',
 
 BASE_URL = 'https://redbuttegarden.org'
 
+# Needed to increase from default of 1000 for bulk deleting models from Django admin
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
