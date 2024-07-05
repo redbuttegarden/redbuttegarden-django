@@ -63,7 +63,6 @@ INSTALLED_APPS = [
     'storages',
     'taggit',
     'wagtailaccessibility',
-    'wagtailset.draftail_anchors',
 
     'django.contrib.admin',
     'django.contrib.auth',
