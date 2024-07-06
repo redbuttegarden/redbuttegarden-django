@@ -1645,7 +1645,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     color: #196143;
 }
 
-.green-button, .tan-button, .dk-tn-button, .red-button, .org-button {
+.green-button, .tan-button, .dk-tn-button, .red-button, .orange-button {
     color: #FFF;
     font-weight: bold;
     font-size: 16px;
@@ -1672,7 +1672,7 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     background-color: red;
 }
 
-.org-button {
+.orange-button {
     background-color: #FF7744;
 }
 

@@ -1,0 +1,56 @@
+/* structblock form root */
+/* use flex to display child elements inline and wrap where needed */
+div.heading-block {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1rem;
+}
+/* set title to full width */
+div.heading-block div[data-contentpath="title"] {
+    flex-basis: 100%;
+}
+/* heading select */
+div.heading-block div[data-contentpath="heading_size"] {
+    flex-basis: 120px;
+}
+/* alignment select */
+div.heading-block div[data-contentpath="alignment"] {
+    flex-basis: 170px;
+}
+/* move comment button closer on select fields */
+div.heading-block div[data-contentpath="heading_size"] button.w-field__comment-button,
+div.heading-block div[data-contentpath="alignment"] button.w-field__comment-button {
+    inset-inline-end: -0.5rem;
+}
+/* anchor identifier - uses remaining space on row, wraps when space is less than 50% */
+div.heading-block div[data-contentpath="anchor_id"] {
+    flex-grow: 1;
+    flex-basis: 50%;
+}
+
+/* anchor identifier modifications */
+/* move error and help text after input */
+div.heading-block div[data-contentpath="anchor_id"] div.w-field {
+    display: flex;
+    flex-wrap: wrap;
+}
+div.heading-block div[data-contentpath="anchor_id"] div.w-field div.w-field__help {
+    order: 1;
+    margin: 0.5em 0.5em 0 0.5em;
+}
+div.heading-block div[data-contentpath="anchor_id"] div.w-field div.w-field__errors {
+    order: 2;
+    display: flex;
+}
+/* keep error message on same line as warning icon */
+div.heading-block div[data-contentpath="anchor_id"] div.w-field p.error-message {
+    display: inline;
+}
+/* allow extra width due to flex display */
+div.heading-block div[data-contentpath="anchor_id"] div.w-field svg.w-field__errors-icon {
+    width: 1.5em;
+}
+/* let input element grow to available space */
+div.heading-block div[data-contentpath="anchor_id"] div.w-field div.w-field__input {
+    width: 100%;
+}

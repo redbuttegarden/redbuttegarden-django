@@ -1,13 +1,21 @@
 import json
 import logging
 
+import unidecode
+import validators
+from django import forms
 from django.core.paginator import Paginator
 from django.core.validators import ValidationError, RegexValidator
 from django.db import models
+from django.forms.utils import ErrorList
+from django.utils.functional import cached_property
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 
 from wagtail import blocks
+from wagtail.blocks import StructBlockValidationError
+from wagtail.blocks.struct_block import StructBlockAdapter
 from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.models import Page, Orderable, DraftStateMixin, RevisionMixin, PreviewableMixin, TranslatableMixin
@@ -20,6 +28,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
+from wagtail.telepath import register
 
 from home.abstract_models import AbstractBase
 
@@ -258,6 +267,77 @@ class CardListDropdownInfo(blocks.StructBlock):
         template = 'blocks/card_list_dropdown_info.html'
 
 
+class TextAlignmentChoiceBlock(blocks.ChoiceBlock):
+    choices = [
+        ('center', 'Center'),
+        ('justify', 'Justified'),
+        ('left', 'Left'),
+        ('right', 'Right')
+    ]
+
+
+class ColorChoiceBlock(blocks.ChoiceBlock):
+    GREEN = 'green'
+    TAN = 'tan'
+    DARK_TAN = 'dk-tn'
+    RED = 'red'
+    ORANGE = 'orange'
+
+    choices = [
+        (DARK_TAN, 'Dark Tan'),
+        (GREEN, 'Green'),
+        (ORANGE, 'Orange'),
+        (RED, 'Red'),
+        (TAN, 'Tan'),
+    ]
+
+
+class HeadingBlock(blocks.StructBlock):
+    """
+    Block for choosing headings that allow a choice of alignment, color, and anchor ID.
+
+    Intended to replace the "Heading" block.
+    """
+    title = blocks.CharBlock(label=_('Title'), required=True)
+    heading_size = blocks.ChoiceBlock([
+        ('h2', 'H2'),
+        ('h3', 'H3'),
+        ('h4', 'H4'),
+        ('h5', 'H5'),
+        ('h6', 'H6'),
+    ], default='h2', label=_('Size'))
+    alignment = TextAlignmentChoiceBlock(label=_('Alignment'), default='center')
+    color = ColorChoiceBlock(label=_('Color'), default='green')
+    anchor_id = blocks.CharBlock(label=_('Optional Anchor Identifier'), required=False)
+
+    class Meta:
+        template = 'blocks/heading_block.html'
+        icon = 'title'
+        form_classname = 'struct-block heading-block'
+        label = _('Heading')
+
+    def clean(self, value):
+        errors = {}
+        anchor_id = value.get('anchor_id')
+        if anchor_id:
+            if not validators.slug(anchor_id):
+                slug = slugify(unidecode.unidecode(anchor_id)) or slugify(
+                    unidecode.unidecode(value.get('title')))
+                errors['anchor_id'] = ErrorList([_(f"\
+                    '{anchor_id}' is not a valid slug for the anchor identifier. \
+                    '{slug}' is the suggested value for this.")])
+                raise StructBlockValidationError(block_errors=errors)
+        return super().clean(value)
+
+
+class HeadingBlockAdapter(StructBlockAdapter):
+    @cached_property
+    def media(self):
+        return forms.Media(
+            css={"all": ("admin/css/heading-block.css",)},
+        )
+
+
 class Heading(blocks.CharBlock):
     """Green centered h2 element"""
 
@@ -277,27 +357,10 @@ class EmphaticText(blocks.CharBlock):
 
 
 class ButtonBlock(blocks.StructBlock):
-    GREEN = 'green'
-    TAN = 'tan'
-    DARK_TAN = 'dk-tn'
-    RED = 'red'
-    ORANGE = 'org'
-    COLOR_CHOICES = [
-        (DARK_TAN, 'Dark Tan'),
-        (GREEN, 'Green'),
-        (ORANGE, 'Orange'),
-        (RED, 'Red'),
-        (TAN, 'Tan'),
-    ]
     text = blocks.CharBlock(max_length=100)
     url = blocks.URLBlock()
-    color = blocks.ChoiceBlock(choices=COLOR_CHOICES)
-    alignment = blocks.ChoiceBlock(choices=[
-        ('center', 'Center'),
-        ('justify', 'Justified'),
-        ('left', 'Left'),
-        ('right', 'Right')
-    ])
+    color = ColorChoiceBlock()
+    alignment = TextAlignmentChoiceBlock()
 
     class Meta:
         template = 'blocks/button_block.html'
@@ -412,6 +475,7 @@ class TwoColumnBlock(blocks.StructBlock):
 class GeneralPage(AbstractBase):
     body = StreamField(block_types=[
         ('button', ButtonBlock()),
+        ('custom_heading', HeadingBlock()),
         ('heading', Heading(classname='full title',
                             help_text=_('Text will be green and centered'))),
         ('emphatic_text', EmphaticText(classname='full title',
@@ -825,3 +889,5 @@ class SiteSettings(BaseSiteSetting):
     panels = [
         FieldPanel("title_suffix"),
     ]
+
+register(HeadingBlockAdapter(), HeadingBlock)
