@@ -12,20 +12,19 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
-
 from wagtail import blocks
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel, TabbedInterface, \
+    ObjectList, PublishingPanel
 from wagtail.blocks import StructBlockValidationError
 from wagtail.blocks.struct_block import StructBlockAdapter
 from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.contrib.settings.registry import register_setting
-from wagtail.models import Page, Orderable, DraftStateMixin, RevisionMixin, PreviewableMixin, TranslatableMixin
-from wagtail.fields import RichTextField, StreamField
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel, TabbedInterface, \
-    ObjectList, PublishingPanel
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
+from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.models import Image
+from wagtail.models import Page, Orderable, DraftStateMixin, RevisionMixin, PreviewableMixin, TranslatableMixin
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 from wagtail.telepath import register
@@ -282,6 +281,8 @@ class ColorChoiceBlock(blocks.ChoiceBlock):
     DARK_TAN = 'dk-tn'
     RED = 'red'
     ORANGE = 'orange'
+    BLACK = 'black'
+    WHITE = 'white'
 
     choices = [
         (DARK_TAN, 'Dark Tan'),
@@ -289,6 +290,8 @@ class ColorChoiceBlock(blocks.ChoiceBlock):
         (ORANGE, 'Orange'),
         (RED, 'Red'),
         (TAN, 'Tan'),
+        (BLACK, 'Black'),
+        (WHITE, 'White'),
     ]
 
 
@@ -308,6 +311,9 @@ class HeadingBlock(blocks.StructBlock):
     ], default='h2', label=_('Size'))
     alignment = TextAlignmentChoiceBlock(label=_('Alignment'), default='center')
     color = ColorChoiceBlock(label=_('Color'), default='green')
+    background_color = blocks.ChoiceBlock([('default', 'Default'), ('tan-bg', 'Tan'), ('green-bg', 'Green'),
+                                           ('dark-tan-bg', 'Dark Tan'), ('white-bg', 'White'), ('red-bg', 'Red'),
+                                           ('orange-bg', 'Orange')], default='default')
     anchor_id = blocks.CharBlock(label=_('Optional Anchor Identifier'), required=False)
 
     class Meta:
@@ -889,5 +895,6 @@ class SiteSettings(BaseSiteSetting):
     panels = [
         FieldPanel("title_suffix"),
     ]
+
 
 register(HeadingBlockAdapter(), HeadingBlock)

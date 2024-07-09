@@ -1601,6 +1601,11 @@ nav > div.container-fluid > div.navbar-header > #mobile-search {
     color: #FF7744;
 }
 
+.black {
+    font-weight: bold;
+    color: #000;
+}
+
 .white {
     font-weight: bold;
     color: #FFF;

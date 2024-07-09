@@ -17,9 +17,19 @@ div.heading-block div[data-contentpath="heading_size"] {
 div.heading-block div[data-contentpath="alignment"] {
     flex-basis: 170px;
 }
+/* color select */
+div.heading-block div[data-contentpath="color"] {
+    flex-basis: 170px;
+}
+/* background color select */
+div.heading-block div[data-contentpath="background_color"] {
+    flex-basis: 170px;
+}
 /* move comment button closer on select fields */
 div.heading-block div[data-contentpath="heading_size"] button.w-field__comment-button,
-div.heading-block div[data-contentpath="alignment"] button.w-field__comment-button {
+div.heading-block div[data-contentpath="alignment"] button.w-field__comment-button,
+div.heading-block div[data-contentpath="color"] button.w-field__comment-button,
+div.heading-block div[data-contentpath="background_color"] button.w-field__comment-button {
     inset-inline-end: -0.5rem;
 }
 /* anchor identifier - uses remaining space on row, wraps when space is less than 50% */
