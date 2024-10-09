@@ -3,8 +3,8 @@ FROM python:3.8
 LABEL maintainer="avery.uslaner@redbutte.utah.edu"
 
 # Set environment varibles
-ENV PYTHONUNBUFFERED 1
-ENV DJANGO_ENV dev
+ENV PYTHONUNBUFFERED=1
+ENV DJANGO_ENV=dev
 
 COPY ./requirements.txt /code/requirements.txt
 RUN pip install --upgrade pip

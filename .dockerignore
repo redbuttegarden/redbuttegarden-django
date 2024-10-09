@@ -22,6 +22,9 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+**/.coverage
 ve/
+ve3.8/
 ve3.9/
 README.md
+

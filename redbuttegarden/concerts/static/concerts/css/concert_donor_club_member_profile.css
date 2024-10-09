@@ -1,0 +1,22 @@
+#package-title {
+    font-size: 24px;
+}
+
+#other-concerts {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.panel img {
+    width: 300px;
+    max-width: 100%;
+    height: auto;
+}
+
+.outline {
+    margin: 1rem;
+}
+
+.glyphicon {
+    padding: 10px;
+}

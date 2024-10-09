@@ -142,8 +142,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-USE_THOUSAND_SEPARATOR = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -250,3 +248,9 @@ COMET_CHAT_WIDGET_ID = os.environ.get('COMET_CHAT_WIDGET_ID')
 # hCaptcha
 HCAPTCHA_SITE_KEY = os.environ.get('HCAPTCHA_SITE_KEY')
 HCAPTCHA_SECRET_KEY = os.environ.get('HCAPTCHA_SECRET_KEY')
+
+# Comet Chat
+COMET_CHAT_APP_ID = os.environ.get('COMET_CHAT_APP_ID')
+COMET_CHAT_REGION = 'US'
+COMET_CHAT_AUTH_KEY = os.environ.get('COMET_CHAT_AUTH_KEY')
+COMET_CHAT_WIDGET_ID = os.environ.get('COMET_CHAT_WIDGET_ID')

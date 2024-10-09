@@ -6,7 +6,6 @@
 {% endblock %}
 
 {% block body_class %}concert-page{% endblock %}
-
 {% block content %}
     <div class="row">
         <div class="col-sm-12">
@@ -70,11 +69,21 @@
             </div>
 
 
-            {% if concerts or wave_one_concerts %}
+            {% if presale_concerts or wave_one_concerts or concerts %}
                 <div class="row text-center">
                     <a href="{% get_media_prefix %}concert_calendar_{{ page.slug }}.ics">Download iCal Event
                         Calendar</a>
                 </div>
+
+                {% if presale_concerts %}
+                    {% if page.presale_info %}
+                        <div class="dark-blue-bg text-center white wave-info">
+                            {{ page.presale_info|richtext }}
+                        </div>
+                    {% endif %}
+
+                    {% include 'concerts/includes/concerts.html' with concerts=presale_concerts %}
+                {% endif %}
 
                 {% if wave_one_concerts %}
                     {% if page.wave_one_info %}

@@ -8,17 +8,22 @@ from django.utils import timezone
 HTML Stripping Credit:
 https://stackoverflow.com/a/925630
 """
+
+
 class MLStripper(HTMLParser, ABC):
     def __init__(self):
         super().__init__()
         self.reset()
         self.strict = False
-        self.convert_charrefs= True
+        self.convert_charrefs = True
         self.text = StringIO()
+
     def handle_data(self, d):
         self.text.write(d)
+
     def get_data(self):
         return self.text.getvalue()
+
 
 def strip_tags(html):
     s = MLStripper()

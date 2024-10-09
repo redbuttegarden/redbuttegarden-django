@@ -1,6 +1,11 @@
 import datetime
+import logging
 
+import code128
 from django.conf import settings
+from django.contrib import messages
+from django.core.files.base import ContentFile
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -8,7 +13,7 @@ from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
-from wagtail.admin.panels import FieldPanel, PageChooserPanel
+from wagtail.admin.panels import FieldPanel, PageChooserPanel, TabbedInterface, ObjectList
 from wagtail.fields import RichTextField, StreamField
 from wagtail.search import index
 
@@ -78,6 +83,21 @@ info_card_table_options = {
     'autoColumnSize': False,
 }
 
+logger = logging.getLogger(__name__)
+
+
+class CometChatBlock(blocks.StaticBlock):
+    """
+    Very simple block that simply enables the ability to choose where
+    on the page the CometChat javascript will be rendered.
+    """
+
+    class Meta:
+        template = 'blocks/comet_chat_block.html'
+        label = 'Comet Chat'
+        icon = 'comment'
+        admin_text = 'Determines where the chat window will appear on the page.'
+
 
 class Sponsors(blocks.StructBlock):
     sponsor_title = blocks.CharBlock(
@@ -136,6 +156,7 @@ class TableInfoCardList(blocks.StructBlock):
 class ConcertBlock(blocks.StructBlock):
     band_img = ImageChooserBlock(required=True)
     wave = blocks.ChoiceBlock(choices=[
+        (0, 'Presale'),
         (1, 'Wave 1'),
         (2, 'Wave 2')
     ], required=False)
@@ -164,10 +185,10 @@ class ConcertBlock(blocks.StructBlock):
 
     # Added a ticket URL for concerts that are sold from a non-standard URL
     ticket_url = blocks.URLBlock(
-        default='https://www.etix.com/ticket/e/1035223/2023-season-salt-lake-city-red-butte-garden')
+        default='https://www.etix.com/ticket/e/1041718/2024-red-butte-season-salt-lake-city-red-butte-garden')
 
     class Meta:
-        icon = 'pick'
+        icon = 'music'
 
 
 class SimpleConcertBlock(blocks.StructBlock):
@@ -195,8 +216,9 @@ class ConcertPage(AbstractBase):
     banner_link = models.URLField(help_text=_("Where to direct the banner image link"),
                                   blank=True)
     intro = RichTextField(blank=True)
-    wave_one_info = RichTextField(blank=True, help_text=_('Displayed at the top of the list of concerts'))
-    wave_two_info = RichTextField(blank=True, help_text=_('Displayed above any wave 2 concerts (if there are any)'))
+    presale_info = RichTextField(help_text=_('Displayed above any presale concerts'), blank=True)
+    wave_one_info = RichTextField(help_text=_('Displayed above any wave 1 concerts concerts'), blank=True)
+    wave_two_info = RichTextField(help_text=_('Displayed above any wave 2 concerts'), blank=True)
     wave_two_sale_date = models.DateField(default=None, null=True, blank=True)
     donor_banner = models.ForeignKey(
         'wagtailimages.Image',
@@ -245,6 +267,7 @@ class ConcertPage(AbstractBase):
         PageChooserPanel('button_two'),
         PageChooserPanel('button_three'),
         PageChooserPanel('button_four'),
+        FieldPanel('presale_info', classname="full"),
         FieldPanel('wave_one_info', classname="full"),
         FieldPanel('wave_two_info', classname="full"),
         FieldPanel('wave_two_sale_date'),
@@ -253,13 +276,26 @@ class ConcertPage(AbstractBase):
 
     search_fields = AbstractBase.search_fields + [
         index.SearchField('intro'),
+        index.SearchField('presale_info'),
+        index.SearchField('wave_one_info'),
+        index.SearchField('wave_two_info'),
     ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(AbstractBase.dialog_box_panels, heading='Dialog'),
+        ObjectList(AbstractBase.promote_panels, heading='Promote'),
+        ObjectList(AbstractBase.settings_panels, heading='Settings'),
+    ])
 
     def get_context(self, request, **kwargs):
         context = super().get_context(request, **kwargs)
 
         concerts = self.get_visible_concerts()
+
         if self.wave_two_sale_date and datetime.date.today() < self.wave_two_sale_date:
+            context['presale_concerts'] = self.sort_concerts(
+                [concert for concert in concerts if concert['wave'] and concert['wave'] == '0'])
             context['wave_one_concerts'] = self.sort_concerts(
                 [concert for concert in concerts if concert['wave'] and concert['wave'] == '1'])
             context['wave_two_concerts'] = self.sort_concerts(
@@ -360,8 +396,37 @@ class DonorSchedulePage(AbstractBase):
     ]
 
 
+class ConcertDonorClubPortalPage(AbstractBase):
+    body = StreamField(block_types=[
+        ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
+        ('html', blocks.RawHTMLBlock()),
+    ], blank=False, use_json_field=True)
+
+    content_panels = AbstractBase.content_panels + [
+        FieldPanel('body'),
+    ]
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('body'),
+    ]
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, **kwargs)
+
+        if request.user.is_authenticated:
+            cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
+
+            if cdc_member:
+                context['cdc_member'] = cdc_member
+            else:
+                messages.add_message(request, messages.WARNING, "No matching Concert Donor Club membership found.")
+
+        return context
+
+
 class ConcertDonorClubTicketSalePage(AbstractBase):
     body = StreamField(block_types=[
+        ('chat', CometChatBlock()),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph'))
     ], blank=False, use_json_field=True)
 
@@ -373,7 +438,7 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
         index.SearchField('body'),
     ]
 
-    parent_page_types = ['home.GeneralPage']
+    parent_page_types = ['home.GeneralPage', 'concerts.ConcertDonorClubPortalPage']
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, **kwargs)
@@ -385,3 +450,69 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
         context['user_name'] = request.user.get_full_name()
 
         return context
+
+
+class Concert(models.Model):
+    etix_id = models.PositiveBigIntegerField(primary_key=True)
+    name = models.CharField(max_length=300)
+    begin = models.DateTimeField()
+    end = models.DateTimeField()
+    doors_before_event_time_minutes = models.PositiveSmallIntegerField(default=0)
+    image_url = models.CharField(max_length=1024, blank=True, null=True)
+
+    class Meta:
+        ordering = ['begin', 'name']
+
+    def __str__(self):
+        return f'{self.name} ({self.begin.year})'
+
+
+class ConcertDonorClubPackage(models.Model):
+    name = models.CharField(max_length=150)
+    year = models.IntegerField(_('year'), validators=[MinValueValidator(1984), MaxValueValidator(2099)])
+    concerts = models.ManyToManyField(Concert, blank=True)
+
+    class Meta:
+        ordering = ['-year', 'name']
+
+    def __str__(self):
+        return f'{self.name} ({self.year})'
+
+
+class ConcertDonorClubMember(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True, blank=True
+    )
+    phone_number = models.CharField(max_length=150)
+    packages = models.ManyToManyField(ConcertDonorClubPackage, blank=True)
+
+    class Meta:
+        ordering = ['user']
+
+    def __str__(self):
+        return str(self.user)
+
+
+class Ticket(models.Model):
+    owner = models.ForeignKey(ConcertDonorClubMember, on_delete=models.CASCADE)
+    concert = models.ForeignKey(Concert, on_delete=models.CASCADE)
+    package = models.ForeignKey(ConcertDonorClubPackage, on_delete=models.SET_NULL, null=True, blank=True)
+    order_id = models.PositiveBigIntegerField()
+    barcode = models.PositiveBigIntegerField(unique=True)
+    barcode_image = models.ImageField(upload_to='tickets', blank=True, null=True)
+
+    class Meta:
+        ordering = ['barcode', 'concert__name']
+
+    def __str__(self):
+        return f'{self.barcode} ({self.concert})'
+
+    def save(self, **kwargs):
+        logger.debug(f'Saving ticket {self}')
+        if self.barcode and not self.barcode_image:
+            self.barcode_image.save(f'{self.barcode}.svg',
+                                    ContentFile(bytes(code128.svg(self.barcode), encoding='utf-8')), save=False)
+
+        super().save(**kwargs)

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static wagtailimages_tags %}
+
+{% block extra_css %}
+    <link href="{% static 'concerts/css/concert_donor_club_member_profile.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="header">
+                <h1>Concert Donor Club Member Portal Profile</h1>
+                <p><span class="bold">Name:</span> {{ user_name }}</p>
+                <p><span class="bold">Phone Number:</span> {{ cdc_member.phone_number }}</p>
+                <p><span class="bold">Email:</span> {{ cdc_member.user.email }}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="package-info text-center">
+                <h2>Packages</h2>
+
+                {% for package_name, concerts in ticket_info.items %}
+                    <div class="outline hover collapsed" data-target="#{{ package_name|cut:" " }}-{{ forloop.counter }}"
+                         data-toggle="collapse"
+                         href="#{{ package_name|cut:" " }}-{{ forloop.counter }}" aria-expanded="false">
+                        <div id="package-title">{{ package_name }}<span class="glyphicon glyphicon-menu-down"
+                                                                        aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div id="{{ package_name|cut:" " }}-{{ forloop.counter }}" class="panel-border collapse"
+                         aria-expanded="false"
+                         style="height: 1px;">
+                        <div class="tan-bg">
+                            <div class="row-fluid" style="margin-left: 15px;">
+                                {% for concert_info in concerts %}
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">{{ concert_info.name }}</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="col-sm-4">
+                                                <img src="{{ concert_info.img_url }}"
+                                                     alt="Concert promo art for {{ concert_info.name }}">
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <p>Begin: {{ concert_info.begin }}</p>
+                                                <p>Doors: {{ concert_info.doors }}</p>
+                                                <p>Tickets: (x{{ concert_info.count }})</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if add_ticket_info %}
+            <hr>
+            <div class="row">
+                <div class="additional-concerts text-center">
+                    <div class="outline hover collapsed" data-target="#other-concerts-{{ forloop.counter }}"
+                         data-toggle="collapse"
+                         href="#other-concerts-{{ forloop.counter }}" aria-expanded="false">
+                        <div id="other-concerts">Other CDC Concerts<span class="glyphicon glyphicon-menu-down"
+                                                                         aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div id="other-concerts-{{ forloop.counter }}" class="panel-border collapse" aria-expanded="false"
+                         style="height: 1px;">
+                        <div class="tan-bg">
+                            <div class="row-fluid" style="margin-left: 15px;">
+                                {% for ticket_info in add_ticket_info.values %}
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">{{ ticket_info.name }}</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="col-sm-4">
+                                                <img src="{{ ticket_info.img_url }}"
+                                                     alt="Concert promo art for {{ ticket_info.name }}">
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <p>Begin: {{ ticket_info.begin }}</p>
+                                                <p>Doors: {{ ticket_info.doors }}</p>
+                                                <p>Tickets: (x{{ ticket_info.count }})</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

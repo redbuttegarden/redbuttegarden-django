@@ -15,4 +15,5 @@
 /redbuttegarden/redbuttegarden/fixtures/
 /redbuttegarden/collections.geojson
 /.vscode/
+**/.coverage
 *.pyc

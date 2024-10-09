@@ -14,7 +14,7 @@ const gardenHours = document.getElementById("gardenHours");
 
 let busHours;
 let status;
-let otherNotes;
+let otherNotes = "";
 let buyLink;
 
 // Bootanical Dates
