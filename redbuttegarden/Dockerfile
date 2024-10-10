@@ -14,7 +14,8 @@ RUN pip install gunicorn
 RUN pip install django-debug-toolbar
 
 # Copy the current directory contents into the container at /code/
-COPY . /code/
+# TODO - uncomment copy
+#COPY . /code/
 # Set the working directory to /code/
 WORKDIR /code/
 

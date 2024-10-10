@@ -22,7 +22,7 @@
 #homePageCarousel .carousel-item img {
     object-fit: cover;
     position: absolute;
-    bottom: 0;
+    height: 100%;
 }
 
 #homePageCarousel.carousel .carousel-control-next,
@@ -52,10 +52,10 @@
     right: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #fff;
+    color: #000;
     text-align: center;
-    background: 0 0;
-    border: 0;
+    background: #fff 50%;
+    width: fit-content;
     opacity: 0.7;
 }
 
