@@ -17,3 +17,5 @@
 /.vscode/
 **/.coverage
 *.pyc
+/nginx/certs/nginx-selfsigned.crt
+/nginx/certs/nginx-selfsigned.key
