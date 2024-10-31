@@ -1,7 +1,7 @@
 $("table").addClass("table");
 
 const donor_seating_map = document.createElement("a");
-donor_seating_map.setAttribute("href", "/media/original_images/donor-seating-map-2018.jpg");
+donor_seating_map.setAttribute("href", "/media/images/CDC-VenueMap-2025.original.jpg");
 donor_seating_map.classList.add("red");
 
 const donor_parking_map = document.createElement("a");
