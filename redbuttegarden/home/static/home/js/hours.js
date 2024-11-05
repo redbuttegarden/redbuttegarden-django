@@ -39,10 +39,10 @@ bootanicalDates.push(new Date(2023, 10, 30))
 //#region Constant Garden status variables and messages
 const manualOverrideTrue = (document.getElementById('hours_override').textContent === 'True')
 
-const daylightEndDay = 5;  // Day that Daylight Savings Time Ends in November of the current year
-const daylightStartDay = 10;  // Day that Daylight Savings Time Begins in March of the next year
+const daylightEndDay = 3;  // Day that Daylight Savings Time Ends in November of the current year
+const daylightStartDay = 9;  // Day that Daylight Savings Time Begins in March of the next year
 
-const thanksgivingDay = 23;  // Day of Month of Thanksgiving Holiday in November
+const thanksgivingDay = 28;  // Day of Month of Thanksgiving Holiday in November
 
 const holidayPartyDay = parseInt(document.getElementById('hours_holiday_day').textContent);  // Day of Month we close for Holiday Party in December
 const holidayPartyClosingHour = parseInt(document.getElementById('hours_holiday_hour').textContent);  // Hour we close on day of Holiday Party (military time)
