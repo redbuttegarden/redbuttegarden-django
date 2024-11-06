@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.8
+FROM public.ecr.aws/lambda/python:3.12
 
 LABEL maintainer="avery.uslaner@redbutte.utah.edu"
 
@@ -6,7 +6,7 @@ LABEL maintainer="avery.uslaner@redbutte.utah.edu"
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_ENV=production
 
-RUN yum install -y gcc postgresql-devel python3.8-distutils
+RUN dnf install -y gcc postgresql-devel
 
 COPY redbuttegarden/requirements.txt ${LAMBDA_TASK_ROOT}
 
