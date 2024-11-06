@@ -56,7 +56,7 @@ pillow_heif==0.16.0
 pip-tools==6.4.0
 placebo==0.8.1
 pluggy==0.13.1
-psycopg2-binary==2.9.1
+psycopg2-binary==2.9.10
 py==1.11.0
 pyparsing==2.4.7
 pytest==6.2.5
