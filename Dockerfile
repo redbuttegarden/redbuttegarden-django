@@ -1,14 +1,16 @@
-FROM lambci/lambda:build-python3.8
+FROM public.ecr.aws/lambda/python:3.8
 
-LABEL maintainer="avery.uslaner@redbuttegarden.org"
+LABEL maintainer="avery.uslaner@redbutte.utah.edu"
 
-WORKDIR /var/task
+# Set environment varibles
+ENV PYTHONUNBUFFERED=1
+ENV DJANGO_ENV=production
 
-# Fancy prompt to remind you are in zappashell
-RUN echo 'export PS1="\[\e[36m\]zappashell>\[\e[m\] "' >> /root/.bashrc
+RUN yum install -y gcc postgresql-devel python3.8-distutils
 
-# Additional RUN commands here
-# RUN yum clean all && \
-#    yum -y install <stuff>
+COPY redbuttegarden/requirements.txt ${LAMBDA_TASK_ROOT}
 
-CMD ["bash"]
+RUN pip install --upgrade pip setuptools
+RUN pip install -r requirements.txt
+
+COPY redbuttegarden ${LAMBDA_TASK_ROOT}

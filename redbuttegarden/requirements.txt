@@ -3,7 +3,6 @@ argcomplete==1.12.3
 arrow==0.14.7
 asgiref==3.6.0
 attrs==21.2.0
-backports.zoneinfo==0.2.1
 beautifulsoup4==4.9.3
 boto3==1.26.94
 botocore==1.29.94
@@ -66,7 +65,7 @@ pytest-django==4.4.0
 python-dateutil==2.8.2
 python-slugify==5.0.2
 pytz==2023.3
-PyYAML==6.0
+PyYAML==6.0.2
 requests==2.32.3
 s3transfer==0.6.0
 simplejson==3.17.5

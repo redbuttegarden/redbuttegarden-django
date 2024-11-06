@@ -6,9 +6,9 @@ INSTALLED_APPS.insert(0, 'debug_toolbar')
 
 MIDDLEWARE.insert(8, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
-ALLOWED_HOSTS += ['train.localhost', 'localhost', 'testserver', '127.0.0.1']
+ALLOWED_HOSTS += ['train.localhost', 'localhost', 'testserver', '127.0.0.1', 'rbg-it-web-dev.redbutte.utah.edu']
 
-BASE_URL = 'http://localhost:8000'
+BASE_URL = 'http://rbg-it-web-dev.redbutte.utah.edu:8000'
 
 # Use local static file storage when running locally
 AWS_STORAGE_BUCKET_NAME = ''
