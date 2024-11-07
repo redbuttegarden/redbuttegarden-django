@@ -21,12 +21,12 @@ django-csp==3.7
 django-debug-toolbar==4.2.0
 django-environ==0.8.1
 django-filter==23.3
-django-modelcluster==6.1
+django-modelcluster==6.2.1
 django-permissionedforms==0.1
 django-ses==3.5.0
 django-storages==1.13.2
 django-tables2==2.4.1
-django-taggit==3.1.0
+django-taggit==4.0.0
 django-treebeard==4.5.1
 djangorestframework==3.14.0
 docutils==0.18
@@ -83,7 +83,7 @@ troposphere==3.1.1
 Unidecode==1.3.2
 urllib3==1.26.18
 validators==0.30.0
-wagtail==5.2.5
+wagtail==6.0.6
 wagtail-accessibility==2.0.0
 webencodings==0.5.1
 Werkzeug==3.0.3
