@@ -141,7 +141,7 @@ BLOCK_TYPES = [
 
 class EventIndexPage(RoutablePageMixin, AbstractBase):
     intro = RichTextField(blank=True)
-    body = StreamField(BLOCK_TYPES + [('page_link', PageChooserBlock())], blank=True, use_json_field=True)
+    body = StreamField(BLOCK_TYPES + [('page_link', PageChooserBlock())], blank=True)
     order_date = models.DateTimeField(default=timezone.now)  # Allow editors to control displayed order of pages
 
     content_panels = AbstractBase.content_panels + [
@@ -228,7 +228,7 @@ class EventPage(AbstractBase):
     event_categories = ParentalManyToManyField(EventCategory, blank=True)
     notes = RichTextField(blank=True,
                           help_text="Notes will appear on the thumbnail image of the event on the event index page")
-    body = StreamField(BLOCK_TYPES, use_json_field=True)
+    body = StreamField(BLOCK_TYPES)
     policy = models.ForeignKey(
         'events.PolicyLink',
         null=True,

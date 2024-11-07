@@ -499,7 +499,7 @@ class GeneralPage(AbstractBase):
         ('image_link_list', ImageLinkList()),
         ('three_column_dropdown_info_panel', ThreeColumnDropdownInfoPanel()),
         ('newsletters', NewsletterListBlock()),
-    ], blank=False, use_json_field=True)
+    ], blank=False)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('body'),
@@ -531,7 +531,7 @@ class TwoColumnGeneralPage(AbstractBase):
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
-    ]), null=True, blank=True, use_json_field=True)
+    ]), null=True, blank=True)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('body'),
@@ -610,7 +610,7 @@ class GeneralIndexPage(AbstractBase):
         ('image_link_list', ImageLinkList()),
         ('button', ButtonBlock()),
         ('button_row', ButtonRow()),
-    ], blank=True, use_json_field=True)
+    ], blank=True)
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('body'),
@@ -652,7 +652,7 @@ class FAQPage(AbstractBase):
         ('image', ImageChooserBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('FAQ_list', FAQList()),
-    ], use_json_field=True)
+    ])
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('body'),
@@ -704,7 +704,7 @@ class RBGHours(models.Model):
     gad_dates = StreamField(block_types=[
         ('date', blocks.DateBlock(verbose_name="Garden After Dark date", help_text=_("Date that GAD takes place")))
     ], help_text=_("Choose the dates of GAD. If there are many, using the manual override might be easier"),
-        blank=True, null=True, use_json_field=True)
+        blank=True, null=True)
 
     panels = [
         FieldPanel('name'),
@@ -824,10 +824,10 @@ class RetailPartnerPage(AbstractBase):
         ('button', ButtonBlock()),
         ('green_heading', Heading()),
         ('paragraph', AlignedParagraphBlock()),
-    ], use_json_field=True)
+    ])
     retail_partners = StreamField(block_types=[
         ('retail_partner', RetailPartnerBlock())
-    ], use_json_field=True)
+    ])
 
     content_panels = AbstractBase.content_panels + [
         FieldPanel('body'),
