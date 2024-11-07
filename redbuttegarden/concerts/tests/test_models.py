@@ -47,6 +47,6 @@ class ConcertPageInstanceTests(WagtailPageTests):
                                  {'title': 'Donor Schedule Test Page',
                                   'body': streamfield([
                                       ('table',
-                                       '{\"data\": [[\"ARTIST\", \"FULL PACKAGE\", \"OPENER A\", \"OPENER B\"], [\"BELA FLECK AND THE FLECKTONES WITH BILLY STRINGS\", \"YES\", \"NO\", \"YES\"], [\"LITTLE FEAT\", \"YES\", \"YES\", \"NO\"]], \"cell\": [], \"first_row_is_table_header\": true, \"first_col_is_header\": false, \"table_caption\": \"2019 Donor Season Ticket Packages\"}'),
+                                       '{\"cell\": [], \"data\": [[\"Test\", \"Test\", \"Test\", \"Test\"], [\"Test\", \"Test\", \"Test\", \"Test\"]], \"mergeCells\": [], \"table_caption\": \"Test\", \"first_col_is_header\": false, \"table_header_choice\": \"row\", \"first_row_is_table_header\": true}'),
                                   ])}
                              ))
