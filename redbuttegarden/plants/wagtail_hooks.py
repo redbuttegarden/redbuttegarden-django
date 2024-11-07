@@ -1,9 +1,9 @@
-from wagtail.contrib.modeladmin.options import (
-    ModelAdmin, modeladmin_register, ModelAdminGroup)
+from wagtail.snippets.models import register_snippet
+from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
 from .models import Collection, Species, Genus, Family
 
-class FamilyAdmin(ModelAdmin):
+class FamilyAdmin(SnippetViewSet):
     model = Family
     menu_label = 'Family'  # ditch this to use verbose_name_plural from model
     menu_icon = 'pilcrow'  # change as required
@@ -11,7 +11,7 @@ class FamilyAdmin(ModelAdmin):
     search_fields = ('name', 'vernacular_name')
 
 
-class GenusAdmin(ModelAdmin):
+class GenusAdmin(SnippetViewSet):
     model = Genus
     menu_label = 'Genus'  # ditch this to use verbose_name_plural from model
     menu_icon = 'pilcrow'  # change as required
@@ -24,14 +24,11 @@ class GenusAdmin(ModelAdmin):
         qs = self.model._default_manager.select_related(
             'family'
         )
-        ordering = self.get_ordering(request)
-        if ordering:
-            qs = qs.order_by(*ordering)
 
         return qs
 
 
-class SpeciesAdmin(ModelAdmin):
+class SpeciesAdmin(SnippetViewSet):
     model = Species
     menu_label = 'Species'  # ditch this to use verbose_name_plural from model
     menu_icon = 'pilcrow'  # change as required
@@ -44,14 +41,11 @@ class SpeciesAdmin(ModelAdmin):
         qs = self.model._default_manager.select_related(
             'genus__family'
         )
-        ordering = self.get_ordering(request)
-        if ordering:
-            qs = qs.order_by(*ordering)
 
         return qs
 
 
-class CollectionsAdmin(ModelAdmin):
+class CollectionsAdmin(SnippetViewSet):
     model = Collection
     menu_label = 'Collections'
     menu_icon = 'pilcrow'
@@ -64,18 +58,15 @@ class CollectionsAdmin(ModelAdmin):
         qs = self.model._default_manager.select_related(
             'species__genus__family'
         )
-        ordering = self.get_ordering(request)
-        if ordering:
-            qs = qs.order_by(*ordering)
 
         return qs
 
 
-class PlantGroup(ModelAdminGroup):
+class PlantGroup(SnippetViewSetGroup):
     menu_label = 'Plants'
     menu_icon = 'snippet'
     menu_order = 200  # will put in 3rd place (000 being 1st, 100 2nd)
     items = (FamilyAdmin, GenusAdmin, SpeciesAdmin, CollectionsAdmin)
 
 # Now you just need to register your customised ModelAdmin class with Wagtail
-modeladmin_register(PlantGroup)
+register_snippet(PlantGroup)
