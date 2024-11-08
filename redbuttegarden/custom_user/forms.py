@@ -12,9 +12,17 @@ from wagtail.users.forms import UserEditForm, UserCreationForm
 class CustomUserEditForm(UserEditForm):
     title = forms.CharField(required=True, label=_('Title'))
 
+    # This replaces the `WAGTAIL_USER_CUSTOM_FIELDS` setting.
+    class Meta(UserEditForm.Meta):
+        fields = UserEditForm.Meta.fields | {"title"}
+
 
 class CustomUserCreationForm(UserCreationForm):
     title = forms.CharField(required=True, label=_('Title'))
+
+    # This replaces the `WAGTAIL_USER_CUSTOM_FIELDS` setting.
+    class Meta(UserEditForm.Meta):
+        fields = UserEditForm.Meta.fields | {"title"}
 
 
 class NoStaffLoginForm(AuthenticationForm):
