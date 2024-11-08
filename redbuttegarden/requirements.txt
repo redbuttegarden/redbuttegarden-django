@@ -28,7 +28,7 @@ django-storages==1.13.2
 django-tables2==2.4.1
 django-taggit==4.0.0
 django-treebeard==4.5.1
-djangorestframework==3.14.0
+djangorestframework==3.15.1
 docutils==0.18
 draftjs-exporter==2.1.7
 durationpy==0.5
@@ -38,7 +38,6 @@ future==0.18.3
 geojson==2.5.0
 gunicorn==22.0.0
 hjson==3.0.2
-html5lib==1.1
 ics==0.7
 idna==3.7
 importlib-metadata==4.8.2
@@ -83,11 +82,11 @@ troposphere==3.1.1
 Unidecode==1.3.2
 urllib3==1.26.18
 validators==0.30.0
-wagtail==6.0.6
+wagtail==6.1.3
 wagtail-accessibility==2.0.0
 webencodings==0.5.1
 Werkzeug==3.0.3
-Willow==1.6.2
+Willow==1.8.0
 wsgi-request-logger==0.4.6
 xlrd==2.0.1
 XlsxWriter==3.0.2
