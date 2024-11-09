@@ -2,10 +2,9 @@ import json
 import logging
 
 import unidecode
-import validators
 from django import forms
 from django.core.paginator import Paginator
-from django.core.validators import ValidationError, RegexValidator
+from django.core.validators import ValidationError, RegexValidator, validate_slug
 from django.db import models
 from django.forms.utils import ErrorList
 from django.utils.functional import cached_property
@@ -15,14 +14,13 @@ from modelcluster.fields import ParentalKey
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel, TabbedInterface, \
     ObjectList, PublishingPanel
-from wagtail.blocks import StructBlockValidationError
 from wagtail.blocks.struct_block import StructBlockAdapter
 from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.fields import RichTextField, StreamField
-from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.blocks import ImageBlock
 from wagtail.images.models import Image
 from wagtail.models import Page, Orderable, DraftStateMixin, RevisionMixin, PreviewableMixin, TranslatableMixin
 from wagtail.search import index
@@ -35,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 
 class ImageInfo(blocks.StructBlock):
-    image = ImageChooserBlock()
+    image = ImageBlock()
     title = blocks.CharBlock(
         label='Image Title',
         help_text=_("Overlayed on image"),
@@ -91,7 +89,7 @@ class ImageInfoList(blocks.StructBlock):
 
 class ImageCarousel(blocks.StructBlock):
     images = blocks.ListBlock(
-        ImageChooserBlock(),
+        ImageBlock(),
     )
 
     class Meta:
@@ -107,7 +105,7 @@ class ImageLink(blocks.StructBlock):
     url = blocks.URLBlock(
         label="URL"
     )
-    image = ImageChooserBlock()
+    image = ImageBlock()
 
 
 class ImageLinkList(blocks.StructBlock):
@@ -164,7 +162,7 @@ class FAQList(blocks.StructBlock):
 
 
 class SingleListImageDropdownInfo(blocks.StructBlock):
-    image = ImageChooserBlock(
+    image = ImageBlock(
         label='Image'
     )
     title = blocks.CharBlock(
@@ -187,7 +185,7 @@ class ImageListDropdownInfo(blocks.StructBlock):
 
 
 class SingleListImageCardInfo(blocks.StructBlock):
-    image = ImageChooserBlock(
+    image = ImageBlock(
         label='Image',
         required=False,
     )
@@ -314,26 +312,13 @@ class HeadingBlock(blocks.StructBlock):
     background_color = blocks.ChoiceBlock([('default', 'Default'), ('tan-bg', 'Tan'), ('green-bg', 'Green'),
                                            ('dark-tan-bg', 'Dark Tan'), ('white-bg', 'White'), ('red-bg', 'Red'),
                                            ('orange-bg', 'Orange')], default='default')
-    anchor_id = blocks.CharBlock(label=_('Optional Anchor Identifier'), required=False)
+    anchor_id = blocks.CharBlock(label=_('Optional Anchor Identifier'), validators=[validate_slug], required=False)
 
     class Meta:
         template = 'blocks/heading_block.html'
         icon = 'title'
         form_classname = 'struct-block heading-block'
         label = _('Heading')
-
-    def clean(self, value):
-        errors = {}
-        anchor_id = value.get('anchor_id')
-        if anchor_id:
-            if not validators.slug(anchor_id):
-                slug = slugify(unidecode.unidecode(anchor_id)) or slugify(
-                    unidecode.unidecode(value.get('title')))
-                errors['anchor_id'] = ErrorList([_(f"\
-                    '{anchor_id}' is not a valid slug for the anchor identifier. \
-                    '{slug}' is the suggested value for this.")])
-                raise StructBlockValidationError(block_errors=errors)
-        return super().clean(value)
 
 
 class HeadingBlockAdapter(StructBlockAdapter):
@@ -459,7 +444,7 @@ class ColumnBlock(blocks.StreamBlock):
                                  help_text=_('Text will be red, italic and centered'))
     aligned_paragraph = AlignedParagraphBlock()
     paragraph = blocks.RichTextBlock()
-    image = ImageChooserBlock()
+    image = ImageBlock()
     document = DocumentChooserBlock()
     button = ButtonBlock()
     html = blocks.RawHTMLBlock()
@@ -488,7 +473,7 @@ class GeneralPage(AbstractBase):
                                        help_text=_('Text will be red, italic and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
         ('multi_column_paragraph', MultiColumnAlignedParagraphBlock()),
-        ('image', ImageChooserBlock(help_text=_('Centered image'))),
+        ('image', ImageBlock(help_text=_('Centered image'))),
         ('image_carousel', ImageCarousel()),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
@@ -524,7 +509,7 @@ class TwoColumnGeneralPage(AbstractBase):
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
         ('paragraph', AlignedParagraphBlock()),
-        ('image', ImageChooserBlock()),
+        ('image', ImageBlock()),
         ('document', DocumentChooserBlock()),
         ('two_columns', TwoColumnBlock()),
         ('embedded_video', EmbedBlock(icon='media')),
@@ -603,7 +588,7 @@ class GeneralIndexPage(AbstractBase):
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
-        ('image', ImageChooserBlock()),
+        ('image', ImageBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
@@ -649,7 +634,7 @@ class FAQPage(AbstractBase):
                             help_text=_('Text will be green and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
         ('dropdown_button_list', ButtonListDropdownInfo()),
-        ('image', ImageChooserBlock()),
+        ('image', ImageBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('FAQ_list', FAQList()),
     ])

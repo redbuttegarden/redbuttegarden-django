@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail import blocks
-from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.blocks import ImageBlock
 
 from wagtail.admin.panels import FieldPanel, PageChooserPanel, TabbedInterface, ObjectList
 from wagtail.fields import RichTextField, StreamField
@@ -108,7 +108,7 @@ class Sponsors(blocks.StructBlock):
     sponsor_url = blocks.URLBlock(
         label="URL to sponsor website"
     )
-    sponsor_logo = ImageChooserBlock()
+    sponsor_logo = ImageBlock()
 
 
 class SponsorList(blocks.StructBlock):
@@ -154,7 +154,7 @@ class TableInfoCardList(blocks.StructBlock):
 
 
 class ConcertBlock(blocks.StructBlock):
-    band_img = ImageChooserBlock(required=True)
+    band_img = ImageBlock(required=True)
     wave = blocks.ChoiceBlock(choices=[
         (0, 'Presale'),
         (1, 'Wave 1'),
@@ -195,7 +195,7 @@ class SimpleConcertBlock(blocks.StructBlock):
     """
     Simplified concert info designed for Concert Donor Schedule page.
     """
-    band_img = ImageChooserBlock(required=True)
+    band_img = ImageBlock(required=True)
     concert_dates = blocks.ListBlock(blocks.DateTimeBlock())
     band_info = blocks.RichTextBlock(
         help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
@@ -329,7 +329,7 @@ class ConcertPage(AbstractBase):
 
 class LineupBlock(blocks.StructBlock):
     year = blocks.IntegerBlock(min_value=1980, required=True)
-    poster = ImageChooserBlock(required=True)
+    poster = ImageBlock(required=True)
     artists = blocks.RichTextBlock(required=True)
 
     class Meta:
@@ -364,7 +364,7 @@ class DonorPackagePage(AbstractBase):
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
-        ('image', ImageChooserBlock()),
+        ('image', ImageBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('sponsor_list', SponsorList()),
         ('button_table', ButtonTable()),
@@ -385,7 +385,7 @@ class DonorSchedulePage(AbstractBase):
         ('emphatic_text', EmphaticText(classname='full title',
                                        help_text=_('Text will be red, italic and centered'))),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
-        ('image', ImageChooserBlock()),
+        ('image', ImageBlock()),
         ('html', blocks.RawHTMLBlock()),
         ('table', TableBlock(table_options=donor_schedule_table_options,
                              help_text=_("Right-click to add/remove rows/columns"))),

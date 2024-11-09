@@ -11,7 +11,7 @@ from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail import blocks
 from wagtail.blocks import PageChooserBlock
 from wagtail.fields import RichTextField, StreamField
-from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.blocks import ImageBlock
 from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
@@ -79,7 +79,7 @@ class PolicyLink(models.Model):
 
 
 class SingleListImage(blocks.StructBlock):
-    image = ImageChooserBlock(
+    image = ImageBlock(
         label='Image',
     )
     title = blocks.CharBlock(
@@ -118,7 +118,7 @@ class ListWithImagesBlock(blocks.StructBlock):
 
 
 class ImageRow(blocks.StructBlock):
-    images = blocks.ListBlock(ImageChooserBlock())
+    images = blocks.ListBlock(ImageBlock())
 
     class Meta:
         template = 'blocks/image_row.html'
@@ -131,7 +131,7 @@ BLOCK_TYPES = [
     ('emphatic_text', EmphaticText(required=False, help_text="Red italic text")),
     ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
     ('multi_column_paragraph', MultiColumnAlignedParagraphBlock()),
-    ('image', ImageChooserBlock()),
+    ('image', ImageBlock()),
     ('image_link_list', ImageLinkList()),
     ('html', blocks.RawHTMLBlock(required=False)),
     ('image_list', ListWithImagesBlock(required=False)),
