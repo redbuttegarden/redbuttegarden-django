@@ -61,7 +61,7 @@ WAGTAILFRONTENDCACHE = {
     'mainsite': {
         'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
         'DISTRIBUTION_ID': 'E3VPUBUC4O7PM0',
-        'HOSTNAMES': ['redbuttegarden.org'],
+        'HOSTNAMES': ['redbuttegarden.org']
     },
     'wwwsite': {
         'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
