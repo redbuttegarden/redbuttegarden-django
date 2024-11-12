@@ -59,17 +59,17 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('STATIC_SECRET_ACCESS_KEY')
 
 WAGTAILFRONTENDCACHE = {
     'mainsite': {
-        'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
+        'BACKEND': 'home.custom_cache_backend.CustomCloudfrontBackend',
         'DISTRIBUTION_ID': 'E3VPUBUC4O7PM0',
         'HOSTNAMES': ['redbuttegarden.org']
     },
     'wwwsite': {
-        'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
+        'BACKEND': 'home.custom_cache_backend.CustomCloudfrontBackend',
         'DISTRIBUTION_ID': 'E3VPUBUC4O7PM0',
         'HOSTNAMES': ['www.redbuttegarden.org']
     },
     'training': {
-        'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
+        'BACKEND': 'home.custom_cache_backend.CustomCloudfrontBackend',
         'DISTRIBUTION_ID': 'ESBVN4MRCUVZJ',
         'HOSTNAMES': ['train.redbuttegarden.org']
     },
