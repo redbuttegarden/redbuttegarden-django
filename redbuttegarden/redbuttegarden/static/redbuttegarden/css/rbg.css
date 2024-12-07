@@ -295,6 +295,20 @@ a:hover {
 /************** Begin Nav Bar **************/
 /*******************************************/
 
+/** Hide Bootstrap's default dropdown caret **/
+#rbgNav .dropdown-toggle::after {
+    display: none;
+}
+
+#rbgNav .bi {
+    opacity: 50%;
+}
+
+#rbgNav .show > .bi {
+    transform: rotate(45deg);
+    transition: transform 2s;
+}
+
 nav a, nav a:link, nav a:visited, nav a:active,
 #myNavbar a, #myNavbar a:link, #myNavbar a:visited, #myNavbar a:active {
     color: black;
