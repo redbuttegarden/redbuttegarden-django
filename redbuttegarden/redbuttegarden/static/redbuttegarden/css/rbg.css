@@ -373,6 +373,17 @@ nav.navbar {
     background-color: whitesmoke;
 }
 
+#navSearch .form-control {
+    border: none;
+    border-bottom: 2px solid gray;
+    border-radius: 0;
+    background-color: inherit;
+    background-image: url("../img/search.svg");
+    background-repeat: no-repeat;
+    background-position: 10px 14px;
+    padding: 12px 20px 4px 40px;
+}
+
 #logo img {
     max-height: 50px;
     width: auto;
