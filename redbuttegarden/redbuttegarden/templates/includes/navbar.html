@@ -30,29 +30,27 @@
                     Visit
                     <i class="bi bi-plus float-end"></i>
                 </a>
-                <ul class="dropdown-menu text-center">
+                <ul class="dropdown-menu">
                     <li><a class="dropdown-item"
                            title="Link to info page for visiting the garden while following COVID-19 guidelines"
-                           href="{% slugurl 'plan-your-garden-visit' %}">PLAN YOUR VISIT</a></li>
+                           href="{% slugurl 'plan-your-garden-visit' %}">Plan Your Visit</a></li>
                     <li><a class="dropdown-item"
                            title="Link to general information page with prices, hours, directions, etcetera"
-                           href="{% slugurl 'general-info' %}">GENERAL INFO</a></li>
+                           href="{% slugurl 'general-info' %}">General Info</a></li>
                     <li><a class="dropdown-item"
                            title="Link to page about Red Butte Garden including mission statement and brief history"
-                           href="{% slugurl 'about-us' %}">ABOUT US</a></li>
+                           href="{% slugurl 'about-us' %}">About Us</a></li>
                     <li><a class="dropdown-item" title="Link to page with maps of the garden"
-                           href="{% slugurl 'garden-maps' %}">GARDEN
-                        MAPS</a></li>
+                           href="{% slugurl 'garden-maps' %}">Garden Maps</a></li>
                     <li><a class="dropdown-item" title="Link to page discribing our garden gift shop"
-                           href="{% slugurl 'gift-shop' %}">GIFT
-                        SHOP</a></li>
+                           href="{% slugurl 'gift-shop' %}">Gift Shop</a></li>
                     <li><a class="dropdown-item" title="Link to page listing free admission days and free events"
-                           href="{% slugurl 'free-garden-events' %}">FREE DAYS<br/>&amp; EVENTS</a></li>
+                           href="{% slugurl 'free-garden-events' %}">Free Days &amp; Events</a></li>
                     <li><a class="dropdown-item"
                            title="Link to page descriping how to schedule private garden tours"
-                           href="{% slugurl 'garden-tours' %}">GARDEN TOURS</a></li>
+                           href="{% slugurl 'garden-tours' %}">Garden Tours</a></li>
                     <li><a class="dropdown-item" title="Link to our poetry box map, poetry walk info, and contest"
-                           href="{% slugurl 'poetry' %}">POETRY IN <br/>THE GARDEN</a></li>
+                           href="{% slugurl 'poetry' %}">Poetry in the Garden</a></li>
                 </ul>
             </li>
 
@@ -62,25 +60,25 @@
                     Plants &amp; Gardens
                     <i class="bi bi-plus float-end"></i>
                 </a>
-                <ul class="dropdown-menu text-center">
+                <ul class="dropdown-menu">
                     <li><a class="dropdown-item" title="Link to map displaying plant location in the garden"
-                           href="{% url 'plants:plant-map' %}">INTERACTIVE<br/>PLANT MAP</a></li>
+                           href="{% url 'plants:plant-map' %}">Interactive Plant Map</a></li>
                     <li>
                         <a class="dropdown-item"
                            title="Filter our plant collections to be displayed on the plant map based on given search criteria"
-                           href="{% url 'plants:collection-search' %}">SEARCH OUR PLANT<br>COLLECTIONS</a></li>
+                           href="{% url 'plants:collection-search' %}">Search Our Plant Collections</a></li>
                     <li><a class="dropdown-item" title="Link to page with info about our themed gardens"
-                           href="{% slugurl 'themed-gardens' %}">THEMED GARDENS</a></li>
+                           href="{% slugurl 'themed-gardens' %}">Themed Gardens</a></li>
                     <li><a class="dropdown-item"
                            title="Link to slideshows and descriptions of our various plant collections"
-                           href="{% slugurl 'plant-collections' %}">PLANT COLLECTIONS<br>INFORMATION</a></li>
+                           href="{% slugurl 'plant-collections' %}">Plant Collections Information</a></li>
                     <li><a class="dropdown-item" title="Tips and tricks for doing your own gardening"
-                           href="{% slugurl 'gardening-information' %}">GARDENING INFORMATION</a></li>
+                           href="{% slugurl 'gardening-information' %}">Gardening Information</a></li>
                     <li><a class="dropdown-item"
                            title="Desciptions of what's going on in our Conservation Department"
-                           href="{% slugurl 'conservation-research' %}">PLANT CONSERVATION<br/>RESEARCH</a></li>
+                           href="{% slugurl 'conservation-research' %}">Plant Conservation Research</a></li>
                     <li><a class="dropdown-item" title="A blog for keeping up with blooms at the garden"
-                           href="{% slugurl 'whats-blooming-now' %}">WHAT'S BLOOMING<br/> NOW BLOG</a></li>
+                           href="{% slugurl 'whats-blooming-now' %}">What's Blooming Now Blog</a></li>
                 </ul>
             </li>
 
@@ -90,60 +88,60 @@
                     Events
                     <i class="bi bi-plus float-end"></i>
                 </a>
-                <ul class="dropdown-menu text-center">
+                <ul class="dropdown-menu">
                     <li><a class="dropdown-item" title="Event Calendar" href="{% slugurl 'calendar' %}">
-                        EVENT CALENDAR
+                        Event Calendar
                     </a></li>
                     <li><a class="dropdown-item"
                            title="Link to page listing concert schedules and general information"
                            href="{% slugurl 'concerts' %}">
-                        OUTDOOR CONCERT SERIES
+                        Outdoor Concert Series
                     </a></li>
                     {#  main_event_page set in get_context method of abstract base page #}
                     {% if main_event_page %}
                         <li><a class="dropdown-item"
                                title="Info for current and upcoming art displays at the garden"
                                href="{% routablepageurl main_event_page 'event_by_category' 'art-exhibits' %}">
-                            ART EXHIBITS
+                            Art Exhibits
                         </a></li>
                         <li><a class="dropdown-item" title="Links to events going on during the Spring season"
                                href="{% routablepageurl main_event_page 'event_by_category' 'spring-events' %}">
-                            SPRING EVENTS
+                            Spring Events
                         </a></li>
                         <li><a class="dropdown-item" title="Links to events going on during the Summer season"
                                href="{% routablepageurl main_event_page 'event_by_category' 'summer-events' %}">
-                            SUMMER EVENTS
+                            Summer Events
                         </a></li>
                         <li><a class="dropdown-item" title="Links to events going on during the Fall season"
                                href="{% routablepageurl main_event_page 'event_by_category' 'fall-events' %}">
-                            FALL EVENTS
+                            Fall Events
                         </a></li>
                         <li><a class="dropdown-item" title="Links to events going on during the Winter season"
                                href="{% routablepageurl main_event_page 'event_by_category' 'winter-events' %}">
-                            WINTER EVENTS
+                            Winter Events
                         </a></li>
                         {# main_event_page won't be set for non-wagtail pages (e.g. social-media) so we hardcode the URLs #}
                     {% else %}
                         <li><a class="dropdown-item"
                                title="Info for current and upcoming art displays at the garden"
                                href="/events/e-cat/art-exhibits/">
-                            ART EXHIBITS
+                            Art Exhibits
                         </a></li>
                         <li><a class="dropdown-item" title="Links to events going on during the Spring season"
                                href="/events/e-cat/spring-events/">
-                            SPRING EVENTS
+                            Spring Events
                         </a></li>
                         <li><a class="dropdown-item" title="Links to events going on during the Summer season"
                                href="/events/e-cat/summer-events/">
-                            SUMMER EVENTS
+                            Summer Events
                         </a></li>
                         <li><a class="dropdown-item" title="Links to events going on during the Fall season"
                                href="/events/e-cat/fall-events/">
-                            FALL EVENTS
+                            Fall Events
                         </a></li>
                         <li><a class="dropdown-item" title="Links to events going on during the Winter season"
                                href="/events/e-cat/winter-events/">
-                            WINTER EVENTS
+                            Winter Events
                         </a></li>
                     {% endif %}
                 </ul>
@@ -155,32 +153,32 @@
                     Education
                     <i class="bi bi-plus float-end"></i>
                 </a>
-                <ul class="dropdown-menu text-center">
+                <ul class="dropdown-menu">
                     <li><a class="dropdown-item" title="List of activities to bust that boredom"
                            href="{% slugurl 'boredom-busters' %}">
-                        BOREDOM BUSTERS
+                        Boredom Busters
                     </a></li>
                     <li><a class="dropdown-item" title="Virtual educational resources and activities"
                            href="{% slugurl 'online-classes-virtual-resources' %}">
-                        VIRTUAL RESOURCES
+                        Virtual Resources
                     </a></li>
                     <li><a class="dropdown-item" title="Educational activities for adults"
                            href="{% slugurl 'adult-education' %}">
-                        CLASSES &amp; WORKSHOPS<br/>FOR ADULTS
+                        Classes &amp; Workshops For Adults
                     </a></li>
                     <li><a class="dropdown-item" title="Classes for kids" href="{% slugurl 'kids-classes' %}">
-                        SUMMER CAMP<br/> &amp; CLASSES FOR KIDS
+                        Summer Camp &amp; Classes For Kids
                     </a></li>
                     <li><a class="dropdown-item" title="Lecture Series" href="{% slugurl 'lecture-series' %}">
-                        LECTURE SERIES
+                        Lecture Series
                     </a></li>
                     <li><a class="dropdown-item" title="Play the Taleblazer mobile application"
                            href="{% slugurl 'taleblazer-mobile-game' %}">
-                        PLAY TALEBLAZER
+                        Play Taleblazer
                     </a></li>
                     <li><a class="dropdown-item" title="Info for teachers and students"
                            href="{% slugurl 'teachers-and-students' %}">
-                        TEACHERS &amp; STUDENTS
+                        Teachers &amp; Students
                     </a></li>
                 </ul>
             </li>
@@ -191,38 +189,38 @@
                     Get Involved
                     <i class="bi bi-plus float-end"></i>
                 </a>
-                <ul class="dropdown-menu text-center">
+                <ul class="dropdown-menu">
                     <li><a class="dropdown-item" title="Various volunteer opportunities at the garden"
                            href="{% slugurl 'volunteer-at-red-butte-garden' %}">
-                        VOLUNTEER
+                        Volunteer
                     </a></li>
                     <li><a class="dropdown-item" title="Link to donate to Red Butte Garden"
                            href="{% include 'includes/give-link.html' %}">
-                        GIVE
+                        Give
                     </a></li>
                     <li><a class="dropdown-item" title="Become a Red Butte Garden member today!"
                            href="{% slugurl 'memberships' %}">
-                        MEMBERSHIP
+                        Membership
                     </a></li>
                     <li><a class="dropdown-item" title="Learn about supporting the Garden as a Cottam Club member"
                            href="{% slugurl 'cottam-club' %}">
-                        JOIN COTTAM CLUB
+                        Join Cottam Club
                     </a></li>
                     <li><a class="dropdown-item" title="Options for giving in memoriam"
                            href="{% slugurl 'memorials-and-tributes' %}">
-                        MEMORIALS &amp;<br/>TRIBUTES
+                        Memorials &amp; Tributes
                     </a></li>
                     <li><a class="dropdown-item" title="Legacy giving as a way to donate to the garden"
                            href="{% slugurl 'legacy-giving' %}">
-                        LEGACY GIVING
+                        Legacy Giving
                     </a></li>
                     <li><a class="dropdown-item" title="Become a corporate sponsor"
                            href="{% slugurl 'corporate-sponsors' %}">
-                        CORPORATE<br/>SPONSORSHIP
+                        Corporate Sponsorship
                     </a></li>
                     <li><a class="dropdown-item" title="Join the Red Butte Garden team"
                            href="{% slugurl 'employment' %}">
-                        EMPLOYMENT
+                        Employment
                     </a></li>
                 </ul>
             </li>
@@ -233,30 +231,30 @@
                     Private Events
                     <i class="bi bi-plus float-end"></i>
                 </a>
-                <ul class="dropdown-menu text-center">
+                <ul class="dropdown-menu">
                     <li><a class="dropdown-item" title="Hold your wedding or reception at the garden"
                            href="{% slugurl 'weddings-receptions' %}">
-                        WEDDINGS<br/>&amp; RECEPTIONS
+                        Weddings &amp; Receptions
                     </a></li>
                     <li><a class="dropdown-item" title="Event space for corporate events and private parties"
                            href="{% slugurl 'corporate-events-private-parties' %}">
-                        CORPORATE EVENTS <br/>&amp; PRIVATE PARTIES
+                        Corporate Events &amp; Private Parties
                     </a></li>
                     <li><a class="dropdown-item" title="Descriptions of the various areas available for rental"
                            href="{% slugurl 'rental-sites' %}">
-                        RENTAL SITES
+                        Rental Sites
                     </a></li>
                     <li><a class="dropdown-item" title="Calendar displaying rental availability"
                            href="{% slugurl 'rental-availability' %}">
-                        RENTAL AVAILABILITY
+                        Rental Availability
                     </a></li>
                     <li><a class="dropdown-item" title="Cost information for renting and catering"
                            href="{% slugurl 'rental-rates-catering' %}">
-                        RENTAL PRICING<br/>&amp; CATERING
+                        Rental Pricing &amp; Catering
                     </a></li>
                     <li><a class="dropdown-item" title="Our policy for photography at the garden"
                            href="{% slugurl 'photo-policy' %}">
-                        PHOTO POLICY
+                        Photo Policy
                     </a></li>
                 </ul>
             </li>
