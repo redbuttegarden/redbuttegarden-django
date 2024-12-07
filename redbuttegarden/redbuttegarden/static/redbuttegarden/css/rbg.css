@@ -295,7 +295,8 @@ a:hover {
 /************** Begin Nav Bar **************/
 /*******************************************/
 
-nav a, nav a:link, nav a:visited, nav a:active {
+nav a, nav a:link, nav a:visited, nav a:active,
+#myNavbar a, #myNavbar a:link, #myNavbar a:visited, #myNavbar a:active {
     color: black;
     text-decoration: none;
 }
