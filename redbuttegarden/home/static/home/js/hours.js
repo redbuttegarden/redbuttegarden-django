@@ -285,10 +285,10 @@ function gardenYearlyHours() {
         }
 
         if (currentMonth === 12 && currentDay === (holidayPartyDay - 1)) {
-            otherNotes = "The Garden Will Close Early Tomorrow at 2PM";
+            otherNotes = "The Garden Will Close Early Tomorrow at 12PM";
         } else if (currentMonth === 12 && currentDay === holidayPartyDay) {
             status = gardenClosedMessage;
-            busHours = "9AM-2PM";
+            busHours = "9AM-12PM";
             otherNotes = "The Garden Will Close Early for our Annual Staff Holiday Party";
 
             if ((currentHour >= 9) && (currentHour < holidayPartyClosingHour)) {

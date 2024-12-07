@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+    --rbg-primary-green: #0b412d;
+    --rbg-primary-green-rgb: 11, 65, 45;
+    --rbg-secondary-green: #5c873b;
+    --rbg-secondary-green-rgb: 92, 135, 59;
+    --rbg-highlight-bg: #F2EDE4;
+    --rbg-teal: #005a65;
+    --rbg-teal-rgb: 0, 90, 101;
+    --rbg-dark-blue: #1a2d44;
+    --rbg-dark-blue-rgb: 26, 45, 68;
+    --rbg-red: #82261b;
+    --rbg-purple: #432f71;
+    --rbg-orange: #FF7744;
+    --rbg-orange-rgb: 255, 119, 68;
+
+    --rbg-font-family: 'Open Sans', Imapact, sans-serif;
+}
