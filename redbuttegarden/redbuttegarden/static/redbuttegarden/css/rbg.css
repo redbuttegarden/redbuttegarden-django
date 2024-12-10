@@ -35,12 +35,12 @@ hr {
 
 /* Used for categories in journal_page.html */
 .tags ul li {
-    border: 1px solid rgba(25,97,67,.7);
+    border: 1px solid rgba(25, 97, 67, .7);
     border-radius: 10px;
 }
 
 #journalpostbody .col-sm-3 {
-    border-right: 1px solid rgba(25,97,67,.7);
+    border-right: 1px solid rgba(25, 97, 67, .7);
 }
 
 #sponsor-list, #table-info-card-list {
@@ -185,7 +185,7 @@ footer {
 
 /* Backgrounds */
 .green-bg {
-    color: white;  /* Black text is too difficult to read with green background */
+    color: white; /* Black text is too difficult to read with green background */
     padding: 10px;
     background-color: #196143;
 }
@@ -197,7 +197,7 @@ footer {
 
 .dark-tan-bg {
     padding: 10px;
-    background-color:#C4B59E;
+    background-color: #C4B59E;
 }
 
 .white-bg {
@@ -206,13 +206,13 @@ footer {
 }
 
 .red-bg {
-    color: white;  /* Better color contrast makes it easier to read with white text */
+    color: white; /* Better color contrast makes it easier to read with white text */
     padding: 10px;
     background-color: red;
 }
 
 .orange-bg {
-    font-weight: bold;  /* Again, makes text easier to read this way */
+    font-weight: bold; /* Again, makes text easier to read this way */
     padding: 10px;
     background-color: #FF7744;
 }
@@ -221,12 +221,13 @@ footer {
     padding: 10px;
     background-color: #1b2940;
 }
+
 /* End backgrounds */
 
 .equal {
-  display: flex;
-  display: -webkit-flex;
-  flex-wrap: wrap;
+    display: flex;
+    display: -webkit-flex;
+    flex-wrap: wrap;
 }
 
 .image-list-card {
@@ -282,13 +283,13 @@ hr {
 }
 
 a, a:link, a:visited, a:active {
-	color: #65563E;		/* hyperlink color for default pages */
-	font-weight: bold;
-	text-decoration: underline;
+    color: #65563E; /* hyperlink color for default pages */
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 a:hover {
-    color: #C4B59E;     /* color when hyperlinks hovered over on default pages*/
+    color: #C4B59E; /* color when hyperlinks hovered over on default pages*/
 }
 
 /*******************************************/
@@ -352,7 +353,6 @@ nav.navbar {
 
 nav .form-control {
     border: none;
-    border-bottom: 2px solid gray;
     border-radius: 0;
     background-color: inherit;
     background-image: url("../img/search.svg");
@@ -367,12 +367,20 @@ nav .form-control {
     padding: 3px 0 3px 0;
 }
 
+nav #navSearch {
+    order: 1;
+}
+
 @media (max-width: 1320px) {
     #logo img {
         padding-right: 0;
         padding-left: 0;
         max-width: 10em;
         height: auto;
+    }
+
+    nav .form-control {
+        border-bottom: 2px solid gray;
     }
 }
 
@@ -382,7 +390,7 @@ nav .form-control {
 /*****************************************/
 
 #rbgdefaultbody {
-    max-width:1280px;
+    max-width: 1280px;
     min-height: 600px;
     clear: both;
     position: relative;
@@ -393,8 +401,8 @@ nav .form-control {
 /* Begin Footer Sprite CSS */
 
 .yelp {
-    width:39px;
-    height:39px;
+    width: 39px;
+    height: 39px;
 }
 
 .no-webp .yelp {
@@ -414,7 +422,7 @@ nav .form-control {
 }
 
 .tripadvisor {
-    width:39px;
+    width: 39px;
     height: 39px;
 }
 
@@ -435,12 +443,12 @@ nav .form-control {
 }
 
 .googleplus {
-    width:39px;
+    width: 39px;
     height: 39px;
 }
 
 .facebook {
-    width:39px;
+    width: 39px;
     height: 39px;
 }
 
@@ -461,7 +469,7 @@ nav .form-control {
 }
 
 .instagram {
-    width:39px;
+    width: 39px;
     height: 39px;
 }
 
@@ -482,7 +490,7 @@ nav .form-control {
 }
 
 .twitter {
-    width:39px;
+    width: 39px;
     height: 39px;
 }
 
@@ -503,7 +511,7 @@ nav .form-control {
 }
 
 .youtube {
-    width:39px;
+    width: 39px;
     height: 39px;
 }
 
@@ -524,7 +532,7 @@ nav .form-control {
 }
 
 .snapchat {
-    width:39px;
+    width: 39px;
     height: 39px;
 }
 
@@ -545,7 +553,7 @@ nav .form-control {
 }
 
 .pinterest {
-    width:39px;
+    width: 39px;
     height: 39px;
 }
 
@@ -621,7 +629,7 @@ nav .form-control {
 /* Added to make Bootstrap row divs with pictures the same height  */
 
 .row, .row-fluid {
-	overflow: hidden;
+    overflow: hidden;
 }
 
 /*** End Bootstrap Change ***/
@@ -694,11 +702,11 @@ nav .form-control {
     margin-right: auto;
     margin-top: 10px;
     margin-bottom: 10px;
-    width:100%;
+    width: 100%;
     border-radius: 2px;
 }
 
-.membenefits  {
+.membenefits {
     max-width: 630px;
     text-align: center;
     background-color: #196143;
@@ -717,7 +725,7 @@ nav .form-control {
     opacity: .9;
 }
 
-.membenefits:before, .memfaq:before, .volbutton:before {      /* create a full-height inline block pseudo-element */
+.membenefits:before, .memfaq:before, .volbutton:before { /* create a full-height inline block pseudo-element */
     content: ' ';
     display: inline-block;
     vertical-align: middle; /* vertical alignment of the inline element */
@@ -799,7 +807,7 @@ nav .form-control {
 /* Being CSS for RBG Banner Images */
 
 .concertbanner {
-    max-height: 175px;          /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner img max-height value */
+    max-height: 175px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner img max-height value */
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -811,12 +819,12 @@ nav .form-control {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    max-height: 175px;          /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner max-height value */
+    max-height: 175px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner max-height value */
     max-width: 100%;
 }
 
 .concertdonorbanner {
-    max-height: 150px;          /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner img max-height value */
+    max-height: 150px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner img max-height value */
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -828,7 +836,7 @@ nav .form-control {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    max-height: 150px;          /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner max-height value */
+    max-height: 150px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner max-height value */
     max-width: 100%;
 }
 
@@ -842,9 +850,11 @@ nav .form-control {
 .panel:nth-child(odd) .purple-panel {
     background-color: #92278f;
 }
+
 .panel:nth-child(even) .purple-panel {
     background-color: #efc3ed;
 }
+
 .purple-panel h2, .purple-panel h3, .purple-panel h4, .purple-panel .panel-title {
     color: white;
 }
@@ -852,9 +862,11 @@ nav .form-control {
 .panel:nth-child(odd) .orange-panel {
     background-color: #fbaf40;
 }
+
 .panel:nth-child(even) .orange-panel {
     background-color: #fdc778;
 }
+
 .orange-panel h2, .orange-panel h3, .orange-panel h4, .orange-panel .panel-title {
     color: white;
 }
@@ -862,9 +874,11 @@ nav .form-control {
 .panel:nth-child(odd) .blue-panel {
     background-color: #64b7e5;
 }
+
 .panel:nth-child(even) .blue-panel {
     background-color: #91cced;
 }
+
 .blue-panel h2, .blue-panel h3, .blue-panel h4, .blue-panel .panel-title {
     color: white;
 }
@@ -872,9 +886,11 @@ nav .form-control {
 .panel:nth-child(odd) .green-panel {
     background-color: #b9d64f;
 }
+
 .panel:nth-child(even) .green-panel {
     background-color: #cce282;
 }
+
 .green-panel h2, .green-panel h3, .green-panel h4, .green-panel .panel-title {
     color: white;
 }
@@ -885,7 +901,7 @@ nav .form-control {
 }
 
 #rbgdefaultbody .panel-body a, #rbgdefaultbody .panel-body a:link, #rbgdefaultbody .panel-body a:visited, #rbgdefaultbody .panel-body a:active { /* sets link colors inside panels back to site defaults */
-    color: #A7916E;     /* hyperlink color for default pages */
+    color: #A7916E; /* hyperlink color for default pages */
     text-decoration: underline;
 }
 
@@ -893,12 +909,12 @@ nav .form-control {
 #rbgdefaultbody .panel-body .apply-button a:link,
 #rbgdefaultbody .panel-body .apply-button a:visited,
 #rbgdefaultbody .panel-body .apply-button a:active {
-    color: #A7916E;     /* hyperlink color for default pages */
+    color: #A7916E; /* hyperlink color for default pages */
     text-decoration: none;
 }
 
 #rbgdefaultbody .panel-body a:hover {
-    color: #C4B59E;     /* sets color when hyperlinks hovered over on pages within panel back to site defaults */
+    color: #C4B59E; /* sets color when hyperlinks hovered over on pages within panel back to site defaults */
 }
 
 .panel-title {
@@ -916,7 +932,7 @@ nav .form-control {
 /**********************************************************/
 
 .sponinfo {
-    max-width:620px;
+    max-width: 620px;
     width: 100%;
     background-color: #f2ede4;
     min-height: 340px;
@@ -933,7 +949,7 @@ nav .form-control {
     border: 1px solid black !important;
 }
 
-@media (max-width:1280px) {
+@media (max-width: 1280px) {
 
     .sponinfo {
         max-width: 1200px;
@@ -942,7 +958,7 @@ nav .form-control {
 
 }
 
-.spon-table  {
+.spon-table {
     max-width: 1280px;
     text-align: center;
     max-height: 100px;
@@ -958,10 +974,10 @@ nav .form-control {
     background-color: #196143
 }
 
-.spon-table:before {            /* create a full-height inline block pseudo-element */
+.spon-table:before { /* create a full-height inline block pseudo-element */
     content: ' ';
     display: inline-block;
-    vertical-align: middle;     /* vertical alignment of the inline element */
+    vertical-align: middle; /* vertical alignment of the inline element */
     height: 100%;
 }
 
@@ -975,7 +991,7 @@ nav .form-control {
 }
 
 #sponcontain th {
-    background-color:#F5F5DC;
+    background-color: #F5F5DC;
 }
 
 /**********************************************************/
@@ -1046,15 +1062,15 @@ nav .form-control {
     display: none;
 }
 
-@media (max-width:768px) {
+@media (max-width: 768px) {
     .hide-mobile {
-        display:none;
+        display: none;
     }
 }
 
-@media (min-width:769px) {
+@media (min-width: 769px) {
     .hide-desktop {
-        display:none;
+        display: none;
     }
 }
 
@@ -1082,7 +1098,7 @@ nav .form-control {
 }
 
 .dk-tn-button {
-    background-color:#C4B59E;
+    background-color: #C4B59E;
 }
 
 .red-button {
@@ -1266,7 +1282,7 @@ nav .form-control {
     max-width: 1280px;
 }
 
-.eventwrapsmall img, .collectionswrap img{
+.eventwrapsmall img, .collectionswrap img {
     width: 100%;
     height: auto;
 }
@@ -1305,7 +1321,7 @@ nav .form-control {
     font-weight: normal;
 }
 
-@media (max-width:768px) {
+@media (max-width: 768px) {
 
     .eventname {
         font-size: 16px;
@@ -1340,7 +1356,7 @@ nav .form-control {
     height: 3px;
 }
 
-@media (max-width:768px) {
+@media (max-width: 768px) {
     .grid-header {
         font-size: 22px;
     }
@@ -1355,7 +1371,7 @@ nav .form-control {
 }
 
 .test {
-    background-color: rgba(29,108,182, 0.3);
+    background-color: rgba(29, 108, 182, 0.3);
 }
 
 /* Volunteer Panel Code */
@@ -1364,12 +1380,12 @@ nav .form-control {
     min-width: 100px;
     max-width: 1280px;
     width: 100%;
-    background-color:#65563E;
+    background-color: #65563E;
     cursor: pointer; /* Adding this makes collapse panels with this class work on Safari on iOS devices */
 }
 
 #volunteer-apps {
-    background-color:#f2ede4;
+    background-color: #f2ede4;
     margin-top: -4px;
 }
 
@@ -1401,7 +1417,7 @@ nav .form-control {
 }
 
 /* Hides <br /> on mobile devices */
-@media (max-width:768px) {
+@media (max-width: 768px) {
 
     .br-hide {
         display: none;
@@ -1410,7 +1426,7 @@ nav .form-control {
 }
 
 /* Hides <br /> on large devices */
-@media (min-width:769px) {
+@media (min-width: 769px) {
 
     .br-hide-lg {
         display: none;
@@ -1419,14 +1435,31 @@ nav .form-control {
 }
 
 /* Reduces size of headers on small screens and devices */
-@media (max-width: 768px){
+@media (max-width: 768px) {
 
-    h1{font-size: 2em;}
-    h2{font-size: 1.5em;}
-    h3{font-size: 1.17em;}
-    h4{font-size: 1em;}
-    h5{font-size: .83em;}
-    h6{font-size: .75em;}
+    h1 {
+        font-size: 2em;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    h3 {
+        font-size: 1.17em;
+    }
+
+    h4 {
+        font-size: 1em;
+    }
+
+    h5 {
+        font-size: .83em;
+    }
+
+    h6 {
+        font-size: .75em;
+    }
 
 }
 
@@ -1564,7 +1597,7 @@ nav .form-control {
     font-size: 3em;
     position: relative;
     margin: -35px auto 0 auto;
-    text-align:center;
+    text-align: center;
     width: 28%;
 }
 
@@ -1701,7 +1734,7 @@ nav .form-control {
 }
 
 /* Hides image on mobile devices */
-@media (max-width:500px) {
+@media (max-width: 500px) {
 
     .img-hide-mobile {
         display: none;
@@ -1756,8 +1789,8 @@ nav .form-control {
 
 .green-subheader {
     color: #ffffff;
-    padding:12px;
-    background-color:#196143;
+    padding: 12px;
+    background-color: #196143;
 }
 
 .taleblazer-dropdown {
@@ -1800,6 +1833,7 @@ nav .form-control {
     margin-right: auto;
     width: 100%;
 }
+
 .rental-info {
     position: absolute !important;
     width: 80%;
