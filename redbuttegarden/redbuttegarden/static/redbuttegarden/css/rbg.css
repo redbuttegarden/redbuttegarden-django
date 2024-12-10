@@ -314,6 +314,10 @@ nav a, nav a:link, nav a:visited, nav a:active {
     text-decoration: none;
 }
 
+nav .dropdown-menu {
+    border: none;
+}
+
 .dropdown-menu li:hover {
     background-color: #F2EDE4;
     color: #000;
