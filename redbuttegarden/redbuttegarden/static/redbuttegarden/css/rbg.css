@@ -319,6 +319,10 @@ nav .dropdown-menu {
     border: none;
 }
 
+nav #topLinks .nav-link {
+    padding: 0;
+}
+
 .dropdown-menu li:hover {
     background-color: #F2EDE4;
     color: #000;
