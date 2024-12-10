@@ -320,8 +320,31 @@ nav .dropdown-menu {
     border: none;
 }
 
+nav #topLinks {
+    order: -1;
+    margin-left: auto;
+    margin-right: 10em;
+}
+
 nav #topLinks .nav-link {
-    padding: 0;
+    padding: 0 1em;
+}
+
+nav #topLinks li {
+    border-right: 2px solid white;
+}
+
+nav #topLinks li:last-child {
+    border-right: none;
+}
+
+#myNavbar {
+    flex-flow: wrap;
+}
+
+nav #navLinks {
+    display: flex;
+    flex-basis: 100%;
 }
 
 .dropdown-menu li:hover {
