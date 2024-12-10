@@ -386,7 +386,7 @@ nav .form-control {
 }
 
 nav .form-control::placeholder {
-    color: black;  /* Filter rule above will make this appear white */
+    color: black; /* Filter rule above will make this appear white */
 }
 
 #logo img {
@@ -400,6 +400,10 @@ nav #navSearch {
 }
 
 @media (max-width: 1320px) {
+    nav #navLinks {
+        display: inherit;
+    }
+
     nav a, nav a:link, nav a:visited, nav a:active {
         color: black;
     }
