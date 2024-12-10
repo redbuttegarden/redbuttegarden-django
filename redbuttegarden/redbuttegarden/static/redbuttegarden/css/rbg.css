@@ -347,7 +347,7 @@ nav #topLinks .nav-link {
 }
 
 nav.navbar {
-    background: linear-gradient(180deg, var(--rbg-primary-green) 55px, white 0);
+    background: linear-gradient(180deg, var(--rbg-primary-green) 70px, white 0);
 }
 
 nav .form-control {
