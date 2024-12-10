@@ -296,21 +296,20 @@ a:hover {
 /*******************************************/
 
 /** Hide Bootstrap's default dropdown caret **/
-#rbgNav .dropdown-toggle::after {
+nav .dropdown-toggle::after {
     display: none;
 }
 
-#rbgNav .bi {
+nav .bi {
     opacity: 50%;
 }
 
-#rbgNav .show > .bi {
+nav .show > .bi {
     transform: rotate(45deg);
     transition: transform 2s;
 }
 
-nav a, nav a:link, nav a:visited, nav a:active,
-#myNavbar a, #myNavbar a:link, #myNavbar a:visited, #myNavbar a:active {
+nav a, nav a:link, nav a:visited, nav a:active {
     color: black;
     text-decoration: none;
 }
@@ -339,14 +338,10 @@ nav a, nav a:link, nav a:visited, nav a:active,
 }
 
 nav.navbar {
-    background-color: var(--rbg-primary-green);
+    background: linear-gradient(180deg, var(--rbg-primary-green) 55px, white 0);
 }
 
-#myNavbar {
-    background-color: whitesmoke;
-}
-
-#navSearch .form-control {
+nav .form-control {
     border: none;
     border-bottom: 2px solid gray;
     border-radius: 0;
