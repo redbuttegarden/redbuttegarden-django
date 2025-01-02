@@ -179,11 +179,31 @@ function gardenYearlyHours() {
         document.getElementById("staff-half").innerHTML = "&nbsp;&nbsp;$" + staffHalf;
     }
 
-    // Jan 1 - Mar 31 General Hours
+    // Jan 1 - Feb 28 General Hours
 
-    if (currentMonth === 1 || currentMonth === 2 || currentMonth === 3) {
+    if (currentMonth === 1 || currentMonth === 2) {
 
-        busHours = "Jan 2 - Mar 31: 9AM-5PM";
+        busHours = "Jan 2 - Feb 28: 10AM-5PM";
+
+        document.getElementById("admissionDiscount").innerHTML = halfOffAdmission;
+
+        if (currentMonth === 1 && currentDay === 1) {
+            status = gardenClosedMessage;
+            otherNotes = "The Garden is Closed Dec 24-Jan 1";
+        } else if (currentHour >= 9 && currentHour < 16) {
+            status = gardenOpenMessage;
+        } else if (currentHour === 16) {
+            status = gardenWillCloseMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
+        } else {
+            status = gardenClosedMessage;
+        }
+    }
+
+    // March General Hours
+
+    if (currentMonth === 3) {
+
+        busHours = "March hours: 9AM-5PM";
 
         if (currentMonth === 1 || currentMonth === 2) {
             document.getElementById("admissionDiscount").innerHTML = halfOffAdmission;
@@ -204,7 +224,7 @@ function gardenYearlyHours() {
     // April 1-30 General Hours
     else if (currentMonth === 4) {
 
-        busHours = "Apr 1-30: 9AM-7:30PM";
+        busHours = "April hours: 9AM-7:30PM";
 
         if ((currentHour >= 9 && currentHour < 18) || (currentHour === 19 && currentMinute < 30)) {
             status = gardenOpenMessage;
