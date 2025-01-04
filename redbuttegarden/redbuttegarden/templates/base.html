@@ -25,12 +25,13 @@
 
     <title>
         {% block title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}{% endblock %}
-                {% block title_suffix %}{% with self.get_site.site_name as site_name %}{% if site_name %}-
-                    {{ site_name }}{% endif %}{% endwith %}{% endblock %}</title>
+        {% block title_suffix %}{% with self.get_site.site_name as site_name %}{% if site_name %}-
+            {{ site_name }}{% endif %}{% endwith %}{% endblock %}</title>
 
     {% include "includes/favicon.html" %}
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
     <!-- Font 'Open Sans' Hosted by Google -->
     <script>
         WebFontConfig = {
@@ -47,8 +48,13 @@
             s.parentNode.insertBefore(wf, s);
         })(document);
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"
+            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+            crossorigin="anonymous"></script>
     <script src="{% static 'redbuttegarden/js/modernizr-webp.min.js' %}"></script>
 
 
