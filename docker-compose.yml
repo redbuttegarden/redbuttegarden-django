@@ -6,11 +6,12 @@ services:
     build: redbuttegarden/
     volumes:
       - ./redbuttegarden:/code
-    ports:
-      - '8000:8000'
+      - static_volume:/code/static
+      - media_volume:/code/media
     depends_on:
       - db
     command: python manage.py runserver 0.0.0.0:8000
+
   db:
     container_name: rbg-db
     image: "postgres:16.3"
@@ -18,8 +19,28 @@ services:
       - redbuttegarden/.env.dev
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    restart:
+      unless-stopped
     ports:
-    - '5432:5432'
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+    volumes:
+      - static_volume:/home/static
+      - media_volume:/home/media
+      - ./nginx/templates:/etc/nginx/templates
+      - ./nginx/certs:/etc/ssl/certs
+    environment:
+      - NGINX_HOST=rbg-it-web-dev.redbutte.utah.edu
+      - APP_PORT=8000
+      - DEBUG=#debugging_on
 
 volumes:
   postgres_data:
+  static_volume:
+  media_volume:
