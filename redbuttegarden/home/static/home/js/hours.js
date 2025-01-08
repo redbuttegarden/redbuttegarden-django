@@ -190,7 +190,7 @@ function gardenYearlyHours() {
         if (currentMonth === 1 && currentDay === 1) {
             status = gardenClosedMessage;
             otherNotes = "The Garden is Closed Dec 24-Jan 1";
-        } else if (currentHour >= 9 && currentHour < 16) {
+        } else if (currentHour >= 10 && currentHour < 16) {
             status = gardenOpenMessage;
         } else if (currentHour === 16) {
             status = gardenWillCloseMessageStart + minutesBeforeOpeningOrClosing + gardenMessageEnd;
