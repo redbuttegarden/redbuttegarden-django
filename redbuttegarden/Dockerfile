@@ -18,10 +18,3 @@ RUN pip install django-debug-toolbar
 COPY . /code/
 # Set the working directory to /code/
 WORKDIR /code/
-
-RUN useradd wagtail
-RUN chown -R wagtail /code
-USER wagtail
-
-EXPOSE 8000
-
