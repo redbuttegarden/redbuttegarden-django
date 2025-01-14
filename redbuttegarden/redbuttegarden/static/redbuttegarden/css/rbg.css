@@ -301,6 +301,10 @@ nav .dropdown-toggle::after {
     display: none;
 }
 
+.navbar {
+    --bs-navbar-padding-y: 0;
+}
+
 nav .bi {
     opacity: 50%;
 }

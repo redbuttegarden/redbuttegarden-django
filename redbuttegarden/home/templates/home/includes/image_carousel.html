@@ -1,0 +1,36 @@
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+<div id="homeImageCarousel" class="carousel slide">
+    <div class="carousel-indicators">
+        {% for slide in slides %}
+            <button type="button" data-bs-target="#homeImageCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                    class="{% if forloop.first %}active{% endif %}"
+                    aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
+        {% endfor %}
+    </div>
+    <div class="carousel-inner">
+        {% for slide in slides %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="d-flex align-items-center justify-content-center vh-100">
+                    <a href="
+                            {% if slide.link.url %}{{ slide.link.url }}{% else %}{{ slide.alternate_link }}{% endif %}">
+                        {% picture slide.image format-{avif,webp,jpeg} original %}
+                        {% if slide.text %}
+                            <div class="carousel-caption d-none d-md-block">
+                                <p>{{ slide.text|richtext }}</p>
+                            </div>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>

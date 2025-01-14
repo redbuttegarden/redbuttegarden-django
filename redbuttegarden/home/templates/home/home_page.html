@@ -1,10 +1,18 @@
 {% extends "base.html" %}
 {% load static wagtailcore_tags wagtailimages_tags %}
 
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'home/css/home_page.css' %}">
+{% endblock %}
+
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_includes %}
+    <div class="container-fluid px-0">
+        {% include 'home/includes/image_carousel.html' with slides=page.event_slides.all %}
+    </div>
 {% endblock %}
 
 {% block content %}
+
 {% endblock %}

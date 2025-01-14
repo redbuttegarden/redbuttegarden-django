@@ -10,7 +10,7 @@ DEBUG = False
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ['dev-shop.redbutte.utah.edu']
+ALLOWED_HOSTS = ['dev-shop.redbutte.utah.edu', 'rbg-it-web-dev.redbutte.utah.edu']
 
 BASE_URL = 'https://dev.redbuttegarden.org'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

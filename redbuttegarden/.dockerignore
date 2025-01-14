@@ -22,5 +22,4 @@ logs
 Dockerfile
 .env.dev
 .coverage
-media
 collections.geojson
