@@ -1,7 +1,3 @@
-#visitContainer {
-    max-width: 100em;
-}
-
 #visitImage {
     max-height: 50em;
     width: 100%;
@@ -18,3 +14,21 @@
     }
 }
 
+#iconLinkContainer {
+    overflow: hidden;
+    color: #0b412d;
+
+    a, a:link, a:visited, a:active {
+        color: inherit;
+        font-weight: inherit;
+        text-decoration: none;
+    }
+
+    .col {
+        background-color: #f7f7f7;
+    }
+
+    img {
+        height: 7em;
+    }
+}
