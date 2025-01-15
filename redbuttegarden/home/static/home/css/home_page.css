@@ -1,0 +1,20 @@
+#visitContainer {
+    max-width: 100em;
+}
+
+#visitImage {
+    max-height: 50em;
+    width: 100%;
+}
+
+#visitInfo {
+    height: 100%;
+    background-color: #d0e8e5;
+
+    a, a:link, a:visited, a:active {
+        color: inherit;
+        font-weight: inherit;
+        text-decoration: underline;
+    }
+}
+

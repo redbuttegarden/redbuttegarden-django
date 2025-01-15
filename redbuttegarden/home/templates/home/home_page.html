@@ -11,13 +11,22 @@
     <div class="container-fluid px-0">
         {% include 'home/includes/image_carousel.html' with slides=page.event_slides.all %}
     </div>
-    <div class="container-fluid">
+    <div id="visitContainer" class="container-fluid mt-5 mb-3 mx-5">
         <div class="row">
-            <div class="col">
-
+            <div class="col pe-0">
+                <picture>
+                    <source srcset="{% static 'home/img/wcg_placeholder.webp' %}">
+                    <img id="visitImage" src="{% static 'home/img/wcg_placeholder.png' %}" alt="Photo of the water conservation garden">
+                </picture>
             </div>
-            <div class="col">
-
+            <div class="col ps-0">
+                <div id="visitInfo" class="d-flex flex-column justify-content-center p-5">
+                    <h1>Visit the Garden</h1>
+                    <p id="hours">10 AM-5 PM</p>
+                    <p id="hoursInfo1"></p>
+                    <p id="hoursInfo2">Closed Thanksgiving Day & Dec 24–Jan 1</p>
+                    <a id="scheduleLink" href="{% slugurl 'general-info' %}">View full schedule</a>
+                </div>
             </div>
         </div>
     </div>
