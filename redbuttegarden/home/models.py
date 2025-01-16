@@ -868,6 +868,21 @@ class FooterText(
         verbose_name_plural = "Footer Text"
 
 
+class CurrentWeather(models.Model):
+    """
+    Singleton model for storing the current weather data for the homepage.
+
+    Single row is overwritten with each new weather update. This prevents
+    the database and backups from growing too large.
+    """
+    condition = models.CharField(max_length=50)
+    temperature = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+
 @register_setting
 class SiteSettings(BaseSiteSetting):
     title_suffix = models.CharField(
