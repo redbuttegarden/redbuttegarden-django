@@ -1,0 +1,29 @@
+FROM node:lts-alpine as front
+WORKDIR /usr/src/app
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm install
+COPY ./frontend ./
+RUN npm run build
+
+FROM python:3.12
+LABEL maintainer="avery.uslaner@redbutte.utah.edu"
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV DJANGO_ENV=dev
+
+RUN apt update && apt install -y libpq-dev  # Dependency for psycopg2
+
+COPY ./redbuttegarden/requirements.txt /code/requirements.txt
+RUN pip install --upgrade pip
+# Install any needed packages specified in requirements.txt
+RUN pip install -r /code/requirements.txt
+RUN pip install django-debug-toolbar django-webpack-loader
+
+# Copy the current directory contents into the container at /code/
+COPY . /code/
+COPY --from=front /usr/src/app/build /frontend/build
+COPY --from=front /usr/src/app/webpack/webpack-stats.json /frontend/webpack-stats.json
+
+# Set the working directory to /code/
+WORKDIR /code/

@@ -23,9 +23,13 @@
 **/secrets.dev.yaml
 **/values.dev.yaml
 **/.coverage
+**/scss/
+*.scss
+**/.env.dev
 ve/
-ve3.8/
-ve3.9/
 ve3.12/
+Dockerfile
 README.md
-
+collections.geojson
+redbuttegarden/static
+redbuttegarden/media

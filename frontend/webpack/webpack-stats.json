@@ -1,0 +1,33 @@
+{
+  "status": "done",
+  "assets": {
+    "app-af4309b571f3a3ffc36e.js": {
+      "name": "app-af4309b571f3a3ffc36e.js",
+      "path": "/home/dev/redbuttegarden.org/frontend/webpack/assets/webpack_bundles/app-af4309b571f3a3ffc36e.js",
+      "publicPath": "auto"
+    },
+    "css/app.css": {
+      "name": "css/app.css",
+      "path": "/home/dev/redbuttegarden.org/frontend/webpack/assets/webpack_bundles/css/app.css",
+      "publicPath": "auto"
+    },
+    "index.html": {
+      "name": "index.html",
+      "path": "/home/dev/redbuttegarden.org/frontend/webpack/assets/webpack_bundles/index.html",
+      "publicPath": "auto"
+    },
+    "vendors-5fefbb6e832131363da5.js": {
+      "name": "vendors-5fefbb6e832131363da5.js",
+      "path": "/home/dev/redbuttegarden.org/frontend/webpack/assets/webpack_bundles/vendors-5fefbb6e832131363da5.js",
+      "publicPath": "auto"
+    }
+  },
+  "chunks": {
+    "app": [
+      "vendors-5fefbb6e832131363da5.js",
+      "css/app.css",
+      "app-af4309b571f3a3ffc36e.js"
+    ]
+  },
+  "publicPath": "auto"
+}

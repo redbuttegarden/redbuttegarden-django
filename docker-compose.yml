@@ -3,7 +3,9 @@ services:
     container_name: rbg-web
     env_file:
       - redbuttegarden/.env.dev
-    build: redbuttegarden/
+    build:
+      context: .
+      dockerfile: WebBundleDockerfile
     volumes:
       - ./redbuttegarden:/code
       - static_volume:/code/static
@@ -11,6 +13,16 @@ services:
     depends_on:
       - db
     command: python manage.py runserver 0.0.0.0:8000
+
+  front:
+    build:
+      context: .
+      dockerfile: WebBundleDockerfile
+      target: front
+    ports:
+      - "3000:3000"
+    tty: true
+    command: sh -c "yarn --cwd /srv/frontend start"
 
   db:
     container_name: rbg-db
