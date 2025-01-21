@@ -43,7 +43,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Webpack Loader - https://github.com/django-webpack/django-webpack-loader
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'build/',
+        'BUNDLE_DIR_NAME': 'webpack_bundles/',
         'CACHE': not DEBUG,
         'STATS_FILE': os.path.join(BASE_DIR, '..', 'frontend', 'webpack-stats.json'),
         'POLL_INTERVAL': 0.1,

@@ -1,42 +1,32 @@
 const Path = require('path');
-const Webpack = require('webpack');
 const BundleTracker = require("webpack-bundle-tracker");
-const {merge} = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
-const common = require('./webpack.common.js');
-
-module.exports = merge(common, {
-    target: 'web',
-    mode: 'development',
-    devtool: 'eval-cheap-source-map',
+module.exports = {
+    context: __dirname,
+    devtool: "source-map",
+    mode: 'production',
+    entry: './assets/js/index',
     output: {
-        publicPath: "auto", // necessary for CDNs/S3/blob storages
-        filename: "[name]-[contenthash].js",
-    },
-    devServer: {
-        client: {
-            logging: 'error',
-        },
-        hot: true,
+        path: Path.resolve('./assets/webpack_bundles/'),
+        filename: "[name]-[hash].js"
     },
     plugins: [
-        new Webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('development'),
+        new CleanWebpackPlugin(),
+        new BundleTracker({relativePath: true, path: __dirname, filename: "webpack-stats.json"}),
+        new MiniCssExtractPlugin({
+            filename: "[name]-[contenthash].css",
         }),
-        new MiniCssExtractPlugin({filename: 'css/app.css',}),
-        new BundleTracker({ path: __dirname, filename: "webpack-stats.json" })
     ],
     module: {
         rules: [
             {
-                test: /\.html$/i,
-                loader: 'html-loader',
-            },
-            {
-                test: /\.js$/,
-                include: Path.resolve(__dirname, '../src'),
-                loader: 'babel-loader',
+                test: /\.jsx?$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                },
             },
             {
                 test: /\.s?css$/i,
@@ -64,4 +54,7 @@ module.exports = merge(common, {
             },
         ],
     },
-});
+    resolve: {
+        extensions: ['', '.js', '.jsx']
+    },
+};

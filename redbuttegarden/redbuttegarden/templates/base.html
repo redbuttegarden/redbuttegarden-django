@@ -1,7 +1,7 @@
+<!DOCTYPE html>
 {% load static wagtailcore_tags wagtailuserbar wagtailaccessibility_tags %}
 {% load render_bundle from webpack_loader %}
 
-<!DOCTYPE html>
 <html class="no-js" lang="en">
 <head>
     <!-- Various Tracking Code Snippets -->
@@ -31,7 +31,7 @@
 
     {% include "includes/favicon.html" %}
 
-    {% render_bundle 'app' %}
+    {% render_bundle 'main' 'css' %}
 
     {% if page.dialog_display %}
         <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/hot-sneaks/jquery-ui.css">
@@ -40,12 +40,9 @@
                 crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     {% endif %}
 
-    {% include "includes/searchbar-toggle.html" %}
-
     {# Global stylesheets #}
     <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/accessibility.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/rbg.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/theme.css' %}">
 
     {# User uploaded CSS #}
     {% if page.custom_css %}
@@ -95,8 +92,7 @@
     <script src="{% static 'redbuttegarden/js/dialog-display.js' %}"></script>
 {% endif %}
 
-<script src="{% static 'js/vendors.js' %}"></script>
-<script src="{% static 'js/app.js' %}"></script>
+{% render_bundle 'main' 'js' %}
 
 {% block extra_js %}
     {# Override this in templates to add extra javascript #}

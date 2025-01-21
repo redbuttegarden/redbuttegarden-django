@@ -7,22 +7,12 @@ services:
       context: .
       dockerfile: WebBundleDockerfile
     volumes:
-      - ./redbuttegarden:/code
-      - static_volume:/code/static
-      - media_volume:/code/media
+      - ./redbuttegarden:/backend
+      - static_volume:/backend/static
+      - media_volume:/backend/media
     depends_on:
       - db
-    command: python manage.py runserver 0.0.0.0:8000
-
-  front:
-    build:
-      context: .
-      dockerfile: WebBundleDockerfile
-      target: front
-    ports:
-      - "3000:3000"
-    tty: true
-    command: sh -c "yarn --cwd /srv/frontend start"
+    command: sh -c "python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
 
   db:
     container_name: rbg-db
