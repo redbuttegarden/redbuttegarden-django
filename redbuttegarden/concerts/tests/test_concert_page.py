@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -9,6 +10,8 @@ from wagtail.images.tests.utils import Image, get_test_image_file
 
 from concerts.models import ConcertPage
 from concerts.utils import live_in_the_past
+
+logger = logging.getLogger(__name__)
 
 
 class TestConcert(TestCase):
@@ -46,7 +49,8 @@ class TestConcert(TestCase):
     def test_concert_view_without_concerts(self):
         response = self.client.get('/concert-test-page', follow=True)
         html = response.content.decode('utf8')
-        self.assertTrue(html.startswith('\n\n<!DOCTYPE html>'))
+        logger.debug(f'HTML: {html}')
+        self.assertTrue(html.startswith('<!DOCTYPE html>'))
         self.assertIn('<title>\n        Concert Test Page', html)
         self.assertTrue(html.endswith('</html>\n'))
         self.assertEqual(response.status_code, 200)
