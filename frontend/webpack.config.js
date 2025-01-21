@@ -10,6 +10,7 @@ module.exports = {
     entry: './assets/js/index',
     output: {
         path: Path.resolve('./assets/webpack_bundles/'),
+        publicPath: "auto", // necessary for CDNs/S3/blob storages
         filename: "[name]-[hash].js"
     },
     plugins: [
