@@ -20,7 +20,7 @@ RUN pip install --upgrade pip
 RUN pip install -r /backend/requirements.txt
 RUN pip install django-debug-toolbar
 
-COPY --from=front /app/assets/webpack_bundles /frontend/assets/webpack_bundles/
+COPY --from=front /app/assets/webpack_bundles /frontend/assets/webpack_bundles
 COPY --from=front /app/webpack-stats.json /frontend/webpack-stats.json
 
 # Set the working directory to /backend/

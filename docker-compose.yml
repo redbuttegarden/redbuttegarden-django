@@ -7,12 +7,13 @@ services:
       context: .
       dockerfile: WebBundleDockerfile
     volumes:
+      - ./frontend/build:/frontend/build
       - ./redbuttegarden:/backend
       - static_volume:/backend/static
       - media_volume:/backend/media
     depends_on:
       - db
-    command: sh -c "python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "cp -R /frontend/assets/webpack_bundles /frontend/build && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
 
   db:
     container_name: rbg-db

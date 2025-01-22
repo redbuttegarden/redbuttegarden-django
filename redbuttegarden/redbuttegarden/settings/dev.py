@@ -107,6 +107,17 @@ CORS_ORIGIN_ALLOW_ALL = True
 CSRF_TRUSTED_ORIGINS = ['http://' + domain for domain in ALLOWED_HOSTS] + ['https://' + domain for domain in
                                                                            ALLOWED_HOSTS]
 
+# Webpack Loader - https://github.com/django-webpack/django-webpack-loader
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'build/',
+        'CACHE': not DEBUG,
+        'STATS_FILE': os.path.join(BASE_DIR, '..', 'frontend', 'webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+    }
+}
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
