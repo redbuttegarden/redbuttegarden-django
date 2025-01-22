@@ -23,3 +23,5 @@ Dockerfile
 .env.dev
 .coverage
 collections.geojson
+./frontend/node_modules
+./frontend/build
