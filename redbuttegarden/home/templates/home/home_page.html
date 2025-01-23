@@ -14,59 +14,92 @@
 {% endblock %}
 
 {% block abnormal_content %}
-    <div id="visitContainer" class="container-fluid mt-5 mb-3 p-0">
-        <div class="row">
-            <div class="col pe-0">
-                <picture>
-                    <source srcset="{% static 'home/img/wcg_placeholder.webp' %}">
-                    <img id="visitImage" src="{% static 'home/img/wcg_placeholder.png' %}"
-                         alt="Photo of the water conservation garden">
-                </picture>
+    <div class="container-fluid p-5">
+        <div id="visitContainer" class="container-fluid mt-5 mb-3 p-0">
+            <div class="row">
+                <div class="col pe-0">
+                    <picture>
+                        <source srcset="{% static 'home/img/wcg_placeholder.webp' %}">
+                        <img id="visitImage" src="{% static 'home/img/wcg_placeholder.png' %}"
+                             alt="Photo of the water conservation garden">
+                    </picture>
+                </div>
+                <div class="col ps-0">
+                    <div id="visitInfo" class="d-flex flex-column justify-content-center p-5">
+                        <h1>Visit the Garden</h1>
+                        <p id="hours">10 AM-5 PM</p>
+                        <p id="hoursInfo1"></p>
+                        <p id="hoursInfo2">Closed Thanksgiving Day & Dec 24–Jan 1</p>
+                        <a id="scheduleLink" href="{% slugurl 'general-info' %}">View full schedule</a>
+                    </div>
+                </div>
             </div>
-            <div class="col ps-0">
-                <div id="visitInfo" class="d-flex flex-column justify-content-center p-5">
-                    <h1>Visit the Garden</h1>
-                    <p id="hours">10 AM-5 PM</p>
-                    <p id="hoursInfo1"></p>
-                    <p id="hoursInfo2">Closed Thanksgiving Day & Dec 24–Jan 1</p>
-                    <a id="scheduleLink" href="{% slugurl 'general-info' %}">View full schedule</a>
+        </div>
+
+        <div id="iconLinkContainer" class="container-fluid mt-5 p-0">
+            <div class="row text-center">
+                <div class="col ratio ratio-1x1">
+                    <div class="mt-5">
+                        <div id="admissionIcon" class="p-5">
+                            <img src="{% static 'home/img/rbga_icons_tickets green.svg' %}"
+                                 alt="Icon depicting outline of ticket stubs">
+                        </div>
+                        <p class="fw-medium fs-4">ADMISSION RATES</p>
+                        <p><a href="{% slugurl 'general-info' %}">View Here</a></p>
+                    </div>
+                </div>
+                <div class="col ratio ratio-1x1 mx-5 ">
+                    <div class="mt-5">
+                        <div id="locationIcon" class="p-5">
+                            <img src="{% static 'home/img/rbga_icons_location green.svg' %}"
+                                 alt="Icon depicting a map marker">
+                        </div>
+                        <p class="fw-medium fs-4">VISIT</p>
+                        <p>300 Wakara Way Salt Lake City, UT 84108</p>
+                    </div>
+                </div>
+                <div class="col ratio ratio-1x1">
+                    <div class="mt-5">
+                        <div id="sunIcon" class="p-5">
+                            <img src="{% static 'home/img/rbga_icons_sun green.svg' %}"
+                                 alt="Icon depicting a sun">
+                        </div>
+                        <p class="fw-medium fs-4">TODAY’S WEATHER</p>
+                        <p id="weatherConditions"></p>
+                        <p id="weatherTemp"></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="iconLinkContainer" class="container-fluid p-0">
+
+    <div id="whatsBloomingContainer" class="container-fluid my-5 p-0">
+        <div class="row">
+            <div class="col pe-0">
+                <picture>
+                    <source srcset="{% static 'home/img/whats_blooming_placeholder.webp' %}">
+                    <img id="visitImage" src="{% static 'home/img/whats_blooming_placeholder.png' %}"
+                         alt="Photo of a green bee visiting a red flower">
+                </picture>
+            </div>
+            <div class="col ps-0">
+                <div id="visitInfo" class="d-flex flex-column justify-content-center p-5">
+                    <h1>What's Blooming?</h1>
+                    <p>Lorem ipsum dolor sit amet, consectetuer
+                        adipiscing elit, sed diam nonummy nibh euismod
+                        tincidunt ut laoreet dolore magna aliquam erat
+                        volutpat. Ut wisi enim ad minim veniam, quis
+                        nostrud exerci tation ullamcorper suscipit lobortis
+                        nisl ut aliquip ex ea commodo consequat.</p>
+                    <a id="whatsBloomingLink" href="{% slugurl 'whats-blooming-now' %}">See what's blooming now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="upcomingEventsContainer" class="container-fluid mt-5">
         <div class="row text-center">
-            <div class="col ratio ratio-1x1">
-                <div class="mt-5">
-                    <div id="admissionIcon" class="p-5">
-                        <img src="{% static 'home/img/rbga_icons_tickets green.svg' %}"
-                             alt="Icon depicting outline of ticket stubs">
-                    </div>
-                    <p class="fw-medium fs-4">ADMISSION RATES</p>
-                    <p><a href="{% slugurl 'general-info' %}">View Here</a></p>
-                </div>
-            </div>
-            <div class="col ratio ratio-1x1 mx-5 ">
-                <div class="mt-5">
-                    <div id="locationIcon" class="p-5">
-                        <img src="{% static 'home/img/rbga_icons_location green.svg' %}"
-                             alt="Icon depicting a map marker">
-                    </div>
-                    <p class="fw-medium fs-4">VISIT</p>
-                    <p>300 Wakara Way Salt Lake City, UT 84108</p>
-                </div>
-            </div>
-            <div class="col ratio ratio-1x1">
-                <div class="mt-5">
-                    <div id="sunIcon" class="p-5">
-                        <img src="{% static 'home/img/rbga_icons_sun green.svg' %}"
-                             alt="Icon depicting a sun">
-                    </div>
-                    <p class="fw-medium fs-4">TODAY’S WEATHER</p>
-                    <p id="weatherConditions"></p>
-                    <p id="weatherTemp"></p>
-                </div>
-            </div>
+            {% include 'home/includes/upcoming_events.html' with events=upcoming_events %}
         </div>
     </div>
 {% endblock %}

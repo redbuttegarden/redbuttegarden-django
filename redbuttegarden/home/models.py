@@ -1,14 +1,13 @@
 import json
 import logging
 
-import unidecode
 from django import forms
+from django.apps import apps
 from django.core.paginator import Paginator
 from django.core.validators import ValidationError, RegexValidator, validate_slug
 from django.db import models
-from django.forms.utils import ErrorList
+from django.utils import timezone
 from django.utils.functional import cached_property
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from wagtail import blocks
@@ -743,6 +742,12 @@ class HomePage(AbstractBase):
                 {"TicketURL": concert['ticket_url'] if not concert['sold_out'] else None, "Date": concert_date} for
                 concert in concerts for concert_date in concert['concert_dates']]
             context['concert_info'] = json.dumps(concert_info, default=str)
+
+        # Get upcoming events; avoid ciruclar import
+        EventPage = apps.get_model(app_label='events', model_name='EventPage')
+        events = EventPage.objects.live().filter(order_date__gte=timezone.now()).order_by('order_date')[:3]  # Get next 3 events
+        context['upcoming_events'] = events
+        logger.debug(f"Events: {events}")
 
         return context
 
