@@ -745,7 +745,7 @@ class HomePage(AbstractBase):
 
         # Get upcoming events; avoid ciruclar import
         EventPage = apps.get_model(app_label='events', model_name='EventPage')
-        events = EventPage.objects.live().filter(order_date__gte=timezone.now()).order_by('order_date')[:3]  # Get next 3 events
+        events = EventPage.objects.live().public().filter(alias_of=None, order_date__gte=timezone.now()).order_by('order_date')[:3]  # Get next 3 events
         context['upcoming_events'] = events
         logger.debug(f"Events: {events}")
 
