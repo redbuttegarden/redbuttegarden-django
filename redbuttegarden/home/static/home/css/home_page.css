@@ -51,4 +51,9 @@
     .card .card-body {
         min-height: 20rem;
     }
+
+    .btn {
+        background-color: #d0e8e5;
+        color: #0a412d;
+    }
 }
