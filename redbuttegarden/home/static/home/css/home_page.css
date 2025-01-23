@@ -32,3 +32,23 @@
         height: 7em;
     }
 }
+
+#upcomingEventsContainer {
+    a, a:link, a:visited, a:active {
+        color: inherit;
+        font-weight: inherit;
+        text-decoration: none;
+    }
+
+    img {
+        width: 100%;
+    }
+
+    .card {
+        border-radius: 0;
+    }
+
+    .card .card-body {
+        min-height: 20rem;
+    }
+}

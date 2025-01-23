@@ -1,13 +1,15 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
+<h1>Upcoming Events</h1>
+
 {% for event in events %}
     {% with event=event.specific %}
-        <a href="{{ event.url }}" class="col">
-            <div class="card">
-                {% image event.thumbnail fill-385x385 alt="" class="card-img-top" %}
-                <div class="card-body">
-                    <div class="upcoming-event-date">{{ event.event_dates }}</div>
-                    <div class="upcoming-event-title">{{ event.title }}</div>
+        <a href="{{ event.url }}" class="col py-5">
+            <div class="card h-100">
+                {% image event.thumbnail fill-385x385 alt="" %}
+                <div class="card-body p-5">
+                    <div class="upcoming-event-date text-uppercase">{{ event.event_dates }}</div>
+                    <div class="upcoming-event-title fs-3">{{ event.title }}</div>
                     <div class="card-text">{{ event.sub_heading }}</div>
                 </div>
             </div>
