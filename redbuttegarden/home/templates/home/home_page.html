@@ -96,15 +96,22 @@
             </div>
         </div>
     </div>
-    
+
     <div id="upcomingEventsContainer" class="container-fluid mt-5 p-5">
         <div class="row p-5">
             {% include 'home/includes/upcoming_events.html' with events=upcoming_events %}
         </div>
     </div>
+
+    {% if social_media_images_links %}
+        <div id="followUsContainer" class="container-fluid position-relative mt-5 p-5">
+            {% include 'home/includes/follow_us_images.html' with images_and_links=social_media_images_links %}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block extra_js %}
     <script src="{% static 'home/js/weather.js' %}"></script>
     <script src="{% static 'home/js/carousel.js' %}"></script>
+    <script src="{% static 'home/js/follow_us_scroll.js' %}"></script>
 {% endblock %}

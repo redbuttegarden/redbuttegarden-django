@@ -4,7 +4,7 @@ import logging
 from django import forms
 from django.apps import apps
 from django.core.paginator import Paginator
-from django.core.validators import ValidationError, RegexValidator, validate_slug
+from django.core.validators import ValidationError, RegexValidator, validate_slug, URLValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -21,7 +21,8 @@ from wagtail.embeds.blocks import EmbedBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageBlock
 from wagtail.images.models import Image
-from wagtail.models import Page, Orderable, DraftStateMixin, RevisionMixin, PreviewableMixin, TranslatableMixin
+from wagtail.models import Page, Orderable, DraftStateMixin, RevisionMixin, PreviewableMixin, TranslatableMixin, \
+    Collection
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 from wagtail.telepath import register
@@ -748,6 +749,31 @@ class HomePage(AbstractBase):
         events = EventPage.objects.live().public().filter(alias_of=None, order_date__gte=timezone.now()).order_by('order_date')[:3]  # Get next 3 events
         context['upcoming_events'] = events
         logger.debug(f"Events: {events}")
+
+        # Get social media images
+        try:
+            instagram_collection = Collection.objects.get(name='Instagram Data')
+        except Collection.DoesNotExist as e:
+            instagram_collection = None
+
+        if instagram_collection:
+            social_media_images = Image.objects.filter(collection=instagram_collection).order_by('-created_at')[:10]
+
+            images_and_links = []
+            url_validator = URLValidator()
+            for image in social_media_images:
+                # Try to get permalink from image's description
+                permalink = image.description.split(' ')[0]
+                try:
+                    url_validator(permalink)
+                except (ValidationError,) as e:
+                    logger.warning(f"Failed to validate URL: {permalink}")
+                    continue
+
+                images_and_links.append({'image': image, 'url': permalink})
+
+            context['social_media_images_links'] = images_and_links
+            logger.debug(f"Social media images: {images_and_links}")
 
         return context
 

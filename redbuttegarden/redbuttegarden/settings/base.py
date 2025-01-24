@@ -247,3 +247,9 @@ COMET_CHAT_WIDGET_ID = os.environ.get('COMET_CHAT_WIDGET_ID')
 
 # OpenWeather API
 OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY')
+
+# Facebook
+FB_API_TOKEN = os.environ.get('FB_API_TOKEN')
+FB_APP_ID = os.environ.get('FB_APP_ID')
+FB_CLIENT_ID = os.environ.get('FB_CLIENT_ID')
+INSTAGRAM_APP_ID = os.environ.get('INSTAGRAM_APP_ID')
