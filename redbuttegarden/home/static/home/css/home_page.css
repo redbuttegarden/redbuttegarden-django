@@ -1,3 +1,7 @@
+#main {
+    overflow: hidden;
+}
+
 #visitImage {
     max-height: 50em;
     width: 100%;
@@ -71,18 +75,22 @@
         display: inline-block;
     }
     .arrow {
+        display: inline-flex;
         position: absolute;
         top: 70%;
         cursor: pointer;
-        color: white;
+        color: black;
+        background-image: radial-gradient(circle at 50% 50%, rgb(208, 232, 229) 0%, rgba(208, 232, 229, 0.72) 50%, rgba(0, 0, 0, 0) 100%);
+        padding: 0.15rem;
+        border-radius: 1rem;
         z-index: 1;
     }
     .arrow-right {
         right: 10px;
-        transform: scale(2) translateX(-300%);
+        transform: scale(2) translateX(-100%);
     }
     .arrow-left {
         left: 10px;
-        transform: scale(2) translateX(300%);
+        transform: scale(2) translateX(200%);
     }
 }
