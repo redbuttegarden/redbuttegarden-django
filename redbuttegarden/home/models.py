@@ -748,7 +748,6 @@ class HomePage(AbstractBase):
         EventPage = apps.get_model(app_label='events', model_name='EventPage')
         events = EventPage.objects.live().public().filter(alias_of=None, order_date__gte=timezone.now()).order_by('order_date')[:3]  # Get next 3 events
         context['upcoming_events'] = events
-        logger.debug(f"Events: {events}")
 
         # Get social media images
         try:
@@ -773,7 +772,6 @@ class HomePage(AbstractBase):
                 images_and_links.append({'image': image, 'url': permalink})
 
             context['social_media_images_links'] = images_and_links
-            logger.debug(f"Social media images: {images_and_links}")
 
         return context
 

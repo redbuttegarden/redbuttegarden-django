@@ -30,8 +30,6 @@ class Command(BaseCommand):
         response = requests.get(url, params, timeout=TIMEOUT)
         media_json = response.json()
 
-        logger.debug(f'facebook media data: {media_json}')
-
         if response.status_code == 200:
             for media_item in media_json["data"]:
                 media_id = media_item["id"]
@@ -48,7 +46,6 @@ class Command(BaseCommand):
                 img_response.raw.decode_content = True
                 if img_response.status_code == 200:
                     image_data = BytesIO(img_response.raw.read())
-                    logger.debug(f'img_response: {image_data}')
                     img_title = f'Instagram Image {media_id}'
                     try:
                         image, img_created = Image.objects.get_or_create(
