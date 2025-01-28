@@ -1,0 +1,31 @@
+#preFooterButtons {
+    .col {
+        background: #d0e8e5;
+        border: black solid 1px;
+    }
+
+    .btn {
+        width: 20vw;
+        background-color: #5b76b5;
+        display: inline;
+        padding: 1rem;
+    }
+
+    a, a:hover, a:active, a:visited {
+        color: white;
+        text-decoration: none;
+    }
+
+    svg {
+        max-width: 3rem;
+        height: auto;
+
+        path {
+            fill: white;
+        }
+
+        polygon {
+            fill: white;
+        }
+    }
+}

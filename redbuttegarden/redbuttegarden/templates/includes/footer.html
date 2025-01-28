@@ -1,348 +1,47 @@
 {% load static wagtailcore_tags %}
 
-<!-- Begin Footer Code-->
 <footer>
-    <div id="prefooterbg">
-        <div id="prefooter" class="container">
-            <div class="row text-center">
-                <div class="col-xs-4">
-                    <a href="{% slugurl 'memberships' %}">
-                        <div class="hover">
-                            <figure>
-                                <picture>
-                                    <source srcset="{% static 'redbuttegarden/img/footer/become_a_member_icon.webp' %}" type="image/webp">
-                                    <source srcset="{% static 'redbuttegarden/img/footer/become_a_member_icon.png' %}" type="image/png">
-                                    <img src="{% static 'redbuttegarden/img/footer/become_a_member_icon.png' %}" alt="ID card icon">
-                                </picture>
-                                <figcaption>BECOME A MEMBER</figcaption>
-                            </figure>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-xs-4">
-                    <a href="{% include 'includes/give-link.html' %}">
-                        <div class="hover">
-                            <figure>
-                                <picture>
-                                    <source srcset="{% static 'redbuttegarden/img/footer/donate_to_the_garden_icon.webp' %}" type="image/webp">
-                                    <source srcset="{% static 'redbuttegarden/img/footer/donate_to_the_garden_icon.png' %}" type="image/png">
-                                    <img src="{% static 'redbuttegarden/img/footer/donate_to_the_garden_icon.png' %}" alt="Dollar symbol icon">
-                                </picture>
-                                <figcaption>DONATE TO THE GARDEN</figcaption>
-                            </figure>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-xs-4">
-                    <a href="{% slugurl 'volunteer-at-red-butte-garden' %}">
-                        <div class="hover">
-                            <figure>
-                                <picture>
-                                    <source srcset="{% static 'redbuttegarden/img/footer/volunteer_with_us_icon.webp' %}" type="image/webp">
-                                    <source srcset="{% static 'redbuttegarden/img/footer/volunteer_with_us_icon.png' %}" type="image/png">
-                                    <img src="{% static 'redbuttegarden/img/footer/volunteer_with_us_icon.png' %}" alt="Shovel icon">
-                                </picture>
-                                <figcaption>VOLUNTEER WITH US</figcaption>
-                            </figure>
-                        </div>
-                    </a>
-                </div>
+    <div id="preFooterButtons" class="container-fluid text-center">
+        <div class="row">
+            <div class="col p-5">
+                <a href="{% slugurl 'memberships' %}" class="btn text-nowrap">
+                    <svg id="becomeAMemberIcon" xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 82 82">
+                        <path class="cls-1"
+                              d="M41,73.76c-18.06,0-32.76-14.7-32.76-32.76S22.94,8.24,41,8.24s32.76,14.7,32.76,32.76-14.7,32.76-32.76,32.76ZM41,11.24c-16.41,0-29.76,13.35-29.76,29.76s13.35,29.76,29.76,29.76,29.76-13.35,29.76-29.76-13.35-29.76-29.76-29.76Z"/>
+                        <path
+                                class="cls-1"
+                                d="M52.46,60.26c-.56,0-1.12-.17-1.59-.52l-9.87-7.17-9.87,7.17c-.95.69-2.23.69-3.18,0-.95-.69-1.35-1.91-.98-3.03l3.77-11.6-9.87-7.17c-.95-.69-1.35-1.91-.98-3.03.36-1.12,1.4-1.87,2.58-1.87h12.2s3.77-11.6,3.77-11.6c.36-1.12,1.4-1.87,2.58-1.87h0c1.18,0,2.21.75,2.57,1.87l3.77,11.6h12.2c1.18,0,2.21.76,2.58,1.88.36,1.12-.03,2.34-.98,3.03l-9.87,7.17,3.77,11.6c.36,1.12-.03,2.34-.99,3.03-.48.35-1.03.52-1.59.52ZM41,49.5c.56,0,1.12.17,1.59.52l9.31,6.77-3.56-10.95c-.36-1.12.03-2.34.99-3.03l9.32-6.77h-11.52c-1.18,0-2.21-.75-2.58-1.87l-3.56-10.95-3.56,10.95c-.36,1.12-1.4,1.87-2.58,1.87h-11.52s9.31,6.77,9.31,6.77c.95.69,1.35,1.91.98,3.03l-3.56,10.95,9.32-6.77c.48-.35,1.03-.52,1.59-.52ZM34.87,33.04h0,0Z"/>
+                    </svg>
+                    BECOME A MEMBER
+                </a>
+            </div>
+            <div class="col p-5">
+                <a href="{% slugurl 'donate' %}" class="btn text-nowrap">
+                    <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82 82">
+                        <path class="cls-1"
+                              d="M41.43,54.77c-6.61,0-11.78-3.09-11.78-7.04v-1.59h3.18v1.59c0,1.82,3.68,3.86,8.6,3.86s8.6-2.04,8.6-3.86c0-2.64-3.63-3.24-9.17-3.85-5.38-.59-12.07-1.33-12.07-7.07,0-3.95,5.17-7.04,11.78-7.04s11.78,3.09,11.78,7.04v1.59h-3.18v-1.59c0-1.82-3.68-3.86-8.6-3.86s-8.6,2.04-8.6,3.86c0,2.69,3.66,3.3,9.24,3.92,5.63.62,12,1.33,12,7.01,0,3.95-5.17,7.04-11.78,7.04Z"/>
+                        <path class="cls-1"
+                              d="M41,74.77l-1.01-.78c-1.34-1.04-32.71-25.64-34.31-46.36-.42-5.5,1.25-10.29,4.97-14.24,3.75-3.97,8.73-6.16,14.04-6.16s10.3,2.19,14.05,6.16l2.26,2.4,2.26-2.4c3.75-3.97,8.73-6.16,14.04-6.16s10.3,2.19,14.05,6.16h0c3.73,3.95,5.4,8.74,4.97,14.25-1.61,20.77-32.98,45.31-34.32,46.35l-1,.78ZM24.69,10.51c-4.4,0-8.54,1.82-11.66,5.13-3.11,3.29-4.44,7.13-4.09,11.74,1.34,17.32,26.67,38.83,32.06,43.22,5.39-4.39,30.71-25.85,32.06-43.21.36-4.61-.98-8.45-4.09-11.75h0c-3.12-3.31-7.26-5.13-11.66-5.13s-8.54,1.82-11.66,5.13l-4.64,4.92-4.64-4.92c-3.12-3.31-7.26-5.13-11.66-5.13Z"/>
+                        <path class="cls-1"
+                              d="M42.39,53.18c.24,1.42.87,5.13,1.1,6.5h-4.98s.36-2.13.36-2.13c.17-1.01.82-4.82.98-5.76h2.31s.24,1.39.24,1.39h0Z"/>
+                        <path class="cls-1"
+                              d="M39.61,31.35c-.24-1.42-.87-5.13-1.1-6.5h4.98s-.36,2.13-.36,2.13c-.17,1.01-.82,4.82-.98,5.76h-2.31s-.24-1.39-.24-1.39h0Z"/>
+                    </svg>
+                    <span>DONATE</span>
+                </a>
+            </div>
+            <div class="col p-5">
+                <a href="{% slugurl 'volunteer' %}" class="btn text-nowrap">
+                    <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 82 82">
+                        <polygon class="cls-1"
+                                 points="71.28 14.15 26.87 57.25 25.82 58.26 23.78 56.23 24.8 55.18 67.9 10.76 69.57 9.05 72.99 12.48 71.28 14.15 71.28 14.15"/>
+                        <path class="cls-1"
+                              d="M28.58,72.95c-1.43,0-2.88-.15-4.32-.46l-12.19-2.61-2.61-12.19c-1.46-6.81.61-13.83,5.54-18.75l13.61-13.61,28.01,28.01-13.61,13.61c-3.89,3.89-9.07,6-14.44,6ZM24.89,69.56c5.82,1.25,11.8-.52,16-4.73l11.49-11.49-23.77-23.77-11.49,11.49c-4.21,4.21-5.97,10.19-4.73,16l2.2,10.29,10.29,2.2Z"/>
+                    </svg>
+                    <span>VOLUNTEER</span>
+                </a>
             </div>
         </div>
     </div>
-
-    <div id="rbgfooterbg">
-        <div id="rbgfooter" class="container">
-            <br/>
-            <div id="social-media-wrapper">
-                <ul>
-                    <li>
-                        <a href="http://www.yelp.com/biz/red-butte-garden-and-arboretum-salt-lake-city"
-                           aria-label="Red Butte Garden's Yelp page">
-                            <div class="yelp"></div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="http://www.tripadvisor.com/Attraction_Review-g60922-d269627-Reviews-Red_Butte_Garden-Salt_Lake_City_Utah.html"
-                           aria-label="Red Butte Garden's Trip Advisor page">
-                            <div class="tripadvisor"></div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://www.facebook.com/redbutte" aria-label="Red Butte Garden's Facebook page">
-                            <div class="facebook"></div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://instagram.com/redbuttegarden/" aria-label="Red Butte Garden's Instragram page">
-                            <div class="instagram"></div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://twitter.com/redbuttegarden" aria-label="Red Butte Garden's Twitter page">
-                            <div class="twitter"></div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://www.youtube.com/user/RedButteGarden"
-                           aria-label="Red Butte Garden's YouTube page">
-                            <div class="youtube"></div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://www.pinterest.com/redbuttegarden/"
-                           aria-label="Red Butte Garden's Pinterest page">
-                            <div class="pinterest"></div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="space">
-                <hr>
-            </div>
-            <div class="space">
-                <hr>
-            </div>
-            <div class="space">
-                <hr>
-            </div>
-
-            <!-- BEGIN DESKTOP-FRIENDLY FOOTER LINKS -->
-            <div class="rbgfooterlinks hide-mobile">
-                <ul>
-                    <li><a href="{% slugurl 'contact-us' %}">CONTACT US</a><span
-                            class="hide-mobile">|</span>
-                    </li>
-                    <li><a href="{% slugurl 'advisory-board' %}">BOARD</a><span
-                            class="hide-mobile">|</span>
-                    </li>
-                    <li><a href="{% slugurl 'local-retail-partners' %}">LOCAL RETAIL PARTNERS</a><span
-                            class="hide-mobile">|</span>
-                    </li>
-                    <li><a href="{% slugurl 'public-relations' %}">PUBLIC RELATIONS</a><span
-                            class="hide-mobile">|</span>
-                    </li>
-                    <li><a href="{% slugurl 'general-info' %}">INFO &amp; POLICIES</a><span
-                            class="hide-mobile">|</span>
-                    </li>
-                    <li><a href="{% slugurl 'employment' %}">EMPLOYMENT</a><span
-                            class="hide-mobile">|</span>
-                    </li>
-                    <li><a href="https://utah.sjc1.qualtrics.com/jfe/form/SV_9mNKWsQp2J0w3jg" target="_blank">DONATION
-                        REQUEST</a><span class="hide-mobile">|</span>
-                    </li>
-                    <li><a href="https://utah.sjc1.qualtrics.com/jfe/form/SV_6wWxL66XJTEh55A" target="_blank">UPDATE
-                        YOUR INFO</a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hide-mobile">|</span>&nbsp;&nbsp;&nbsp;
-                    </li>
-                    <li><a href="https://55218.blackbaudhosting.com/55218/page.aspx?pid=201" target="_blank">SIGN UP FOR
-                        OUR EVENT EBLASTS</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                    </li>
-                </ul>
-            </div>
-            <!-- END DESKTOP-FRIENDLY FOOTER LINKS -->
-
-            <!-- BEGIN MOBILE-FRIENDLY FOOTER LINKS -->
-            <div class="hide-desktop">
-                <br/>
-                <div class="row-fluid">
-                    <div class="col-xs-6">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover" href="{% slugurl 'contact-us' %}">
-                                <span class="footer-btn-inner center text-center">CONTACT US</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover" href="{% slugurl 'advisory-board' %}">
-                                <span class="footer-btn-inner center text-center">BOARD</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover" href="{% slugurl 'local-retail-partners' %}">
-                                <span class="footer-btn-inner center text-center">LOCAL RETAIL PARTNERS</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover" href="{% slugurl 'public-relations' %}">
-                                <span class="footer-btn-inner center text-center">PUBLIC RELATIONS</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover" href="{% slugurl 'general-info' %}">
-                                <span class="footer-btn-inner center text-center">INFO &amp; POLICIES</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover" href="{% slugurl 'employment' %}">
-                                <span class="footer-btn-inner center text-center">EMPLOYMENT</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover"
-                               href="https://utah.sjc1.qualtrics.com/jfe/form/SV_9mNKWsQp2J0w3jg" target="_blank">
-                                <span class="footer-btn-inner center text-center">DONATION REQUEST</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover"
-                               href="https://utah.sjc1.qualtrics.com/jfe/form/SV_6wWxL66XJTEh55A" target="_blank">
-                                <span class="footer-btn-inner center text-center">UPDATE YOUR INFO</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-xs-12">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover"
-                               href="https://55218.blackbaudhosting.com/55218/page.aspx?pid=201" target="_blank">
-                                <span class="footer-btn-inner center text-center">SIGN UP FOR OUR EVENT EBLASTS</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- END MOBILE-FRIENDLY FOOTER LINKS -->
-
-            <div class="space">
-                <hr>
-            </div>
-
-            <div class="row">
-                <div id="uofu" class="col-xs-4">
-                    <a href="https://www.utah.edu">
-                        <picture>
-                            <source srcset="{% static 'redbuttegarden/img/footer/footer-uofu-logo.webp' %}"
-                                    type="image/webp">
-                            <img alt="University of Utah logo"
-                                 src="{% static 'redbuttegarden/img/footer/footer-uofu-logo.png' %}"
-                                 class="responsive img-center hover" width="298em" height="74em"/>
-                        </picture>
-                    </a>
-                </div>
-                <div id="footerlogo" class="col-xs-4">
-                    <a href="https://www.redbuttegarden.org">
-                        <picture>
-                            <source srcset="{% static 'redbuttegarden/img/footer/rbg-footer-logo-new-stack.webp' %}"
-                                    type="image/webp">
-                            <img alt="Red Butte Garden logo"
-                                 src="{% static 'redbuttegarden/img/footer/rbg-footer-logo-new-stack.png' %}"
-                                 class="responsive img-center hover" width="241em" height="104em"/>
-                        </picture>
-                    </a>
-                </div>
-                <div id="zap" class="col-xs-4">
-                    <a href="http://www.zapisyou.org">
-                        <picture>
-                            <source srcset="{% static 'redbuttegarden/img/footer/footer-zap-logo.webp' %}"
-                                    type="image/webp">
-                            <img alt="Salt Lake County ZAP logo"
-                                 src="{% static 'redbuttegarden/img/footer/footer-zap-logo.png' %}"
-                                 class="responsive img-center hover" width="243em" height="102em"/>
-                        </picture>
-                    </a>
-                </div>
-            </div>
-
-            <div class="space">
-                <hr>
-            </div>
-            <div class="space">
-                <hr>
-            </div>
-
-            <div class="row">
-                <div id="contactinfo1" class="col-sm-12"><a href="tel:8015850556" style="color:white">801.585.0556</a> |
-                    300 WAKARA WAY, SALT LAKE CITY, UT 84108
-                </div>
-                <div id="contactinfo2" class="col-sm-12">Copyright &copy; {% now "Y" %} Red Butte Garden</div>
-            </div>
-
-            <div class="space">
-                <hr>
-            </div>
-
-            <!-- BEGIN DESKTOP-FRIENDLY FOOTER LINKS -->
-            <div class="rbgfooterlinks hide-mobile">
-                <ul>
-                    <li><a href="http://www.utah.edu/nondiscrimination/">NONDISCRIMINATION &amp; ACCESSIBILITY</a>&nbsp;&nbsp;&nbsp;<span
-                            class="hide-mobile">|</span>&nbsp;&nbsp;&nbsp;
-                    </li>
-                    <li><a href="http://www.utah.edu/disclaimer/">DISCLAIMER</a>&nbsp;&nbsp;&nbsp;<span
-                            class="hide-mobile">|</span>&nbsp;&nbsp;&nbsp;
-                    </li>
-                    <li><a href="http://www.utah.edu/privacy/">PRIVACY</a>&nbsp;&nbsp;&nbsp;<span
-                            class="hide-mobile">|</span>&nbsp;&nbsp;&nbsp;
-                    </li>
-                    <li><a href="http://www.utah.edu/credits.php">CREDITS &amp; ATTRIBUTIONS</a>&nbsp;&nbsp;&nbsp;</li>
-                </ul>
-            </div>
-            <!-- END DESKTOP-FRIENDLY FOOTER LINKS -->
-
-            <!-- BEGIN MOBILE-FRIENDLY FOOTER LINKS -->
-            <div class="hide-desktop">
-                <br/>
-                <div class="row-fluid">
-                    <div class="col-xs-12">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover" href="http://www.utah.edu/nondiscrimination/"
-                               target="_blank">
-                                <span class="footer-btn-inner center text-center red-bg">NONDISCRIMINATION &amp; ACCESSIBILITY</span>
-                            </a>
-                        </div>
-                        <br/>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover" href="http://www.utah.edu/disclaimer/" target="_blank">
-                                <span class="footer-btn-inner center text-center red-bg">DISCLAIMER</span>
-                            </a>
-                        </div>
-                        <br/>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover" href="http://www.utah.edu/privacy/" target="_blank">
-                                <span class="footer-btn-inner center text-center red-bg">PRIVACY</span>
-                            </a>
-                        </div>
-                        <br/>
-                    </div>
-
-                    <div class="col-xs-12">
-                        <div class="foot-btn-wrap">
-                            <a class="footer-button hover" href="http://www.utah.edu/credits.php" target="_blank">
-                                <span class="footer-btn-inner center text-center red-bg">CREDITS &amp; ATTRIBUTIONS</span>
-                            </a>
-                        </div>
-                        <br/>
-                    </div>
-                </div>
-            </div>
-            <!-- END MOBILE-FRIENDLY FOOTER LINKS -->
-        </div>
-    </div>
-    <!-- End Footer Code -->
 </footer>
