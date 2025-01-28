@@ -375,7 +375,7 @@ nav #navLinks {
 }
 
 nav.navbar {
-    background: linear-gradient(180deg, var(--rbg-primary-green) 70px, white 0);
+    background: var(--rbg-primary-green);
 }
 
 nav .form-control {
