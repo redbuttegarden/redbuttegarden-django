@@ -44,4 +44,124 @@
             </div>
         </div>
     </div>
+
+    <div id="mainFooter" class="container-fluid p-5">
+        <div class="row">
+            <div class="col my-5">
+                <a id="logo" class="navbar-brand underline" href="/">
+                    <picture>
+                        <source srcset="{% static 'redbuttegarden/img/rbg-logo-new.webp' %}" type="image/webp">
+                        <img src="{% static 'redbuttegarden/img/rbg-logo-new.png' %}"
+                             alt="Red Butte Garden" title="RBG Logo" width="285em" height="50em"/>
+                    </picture>
+                </a>
+            </div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+        </div>
+        <div class="row">
+            <div class="col fw-bold mt-5 mb-3">VISIT</div>
+            <div class="col fw-bold mt-5 mb-3">QUICKLINKS</div>
+            <div class="col"></div>
+            <!-- TODO - Link to CC sign up form-->
+            <div class="col fw-bold mt-5 mb-3">SUBSCRIBE TO OUR NEWSLETTER</div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p>300 Wakara Way</p>
+                <p>Salt Lake City, UT 84108</p>
+
+                <div class="fw-bold mt-5 mb-3">CONTACT US</div>
+
+                <p><a href="tel:8015841700">(801) 584-1700</a></p>
+                <p><a href="mailto:info@redbutte.utah.edu">info@redbutte.utah.edu</a></p>
+            </div>
+            <div class="col">
+                <p><a href="{% slugurl 'contact-us' %}">Contact Us</a></p>
+                <p><a href="{% slugurl 'advisory-board' %}">Board</a></p>
+                <p><a href="{% slugurl 'local-retail-partners' %}">Local Retail Partners</a></p>
+                <p><a href="{% slugurl 'public-relations' %}">Public Relations</a></p>
+            </div>
+            <div class="col">
+                <p><a href="{% slugurl 'employment' %}">Employment</a></p>
+                <p><a href="{% slugurl 'donate' %}">Donate</a></p>
+                <p><a href="https://utah.sjc1.qualtrics.com/jfe/form/SV_6wWxL66XJTEh55A">Update Your Info</a></p>
+                <p><a href="{% slugurl 'general-info' %}">Info & Policies</a></p>
+            </div>
+            <div class="col">
+                <div class="row my-5">
+                    <div class="col d-flex align-items-center">
+                        <a href="https://www.utah.edu" class="footer-logo">
+                            <picture>
+                                <source srcset="{% static 'redbuttegarden/img/footer/footer-uofu-logo.webp' %}"
+                                        type="image/webp">
+                                <img alt="University of Utah logo"
+                                     src="{% static 'redbuttegarden/img/footer/footer-uofu-logo.png' %}"
+                                     class="responsive img-center hover" width="298em" height="74em"/>
+                            </picture>
+                        </a>
+                    </div>
+                    <div class="col d-flex">
+                        <a href="http://www.zapisyou.org" class="footer-logo">
+                            <picture>
+                                <source srcset="{% static 'redbuttegarden/img/footer/footer-zap-logo.webp' %}"
+                                        type="image/webp">
+                                <img alt="Salt Lake County ZAP logo"
+                                     src="{% static 'redbuttegarden/img/footer/footer-zap-logo.png' %}"
+                                     class="responsive img-center hover" width="243em" height="102em"/>
+                            </picture>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <ul class="list-group list-group-horizontal">
+                        <li>
+                            <a href="https://instagram.com/redbuttegarden/"
+                               aria-label="Red Butte Garden's Instragram page">
+                                <div class="instagram"></div>
+                            </a>
+                        </li>
+                        <li class="mx-2">
+                            <a href="https://www.pinterest.com/redbuttegarden/"
+                               aria-label="Red Butte Garden's Pinterest page">
+                                <div class="pinterest"></div>
+                            </a>
+                        </li>
+                        <li class="mx-2">
+                            <a href="https://www.youtube.com/user/RedButteGarden"
+                               aria-label="Red Butte Garden's YouTube page">
+                                <div class="youtube"></div>
+                            </a>
+                        </li>
+                        <li class="mx-2">
+                            <a href="https://www.facebook.com/redbutte" aria-label="Red Butte Garden's Facebook page">
+                                <div class="facebook"></div>
+                            </a>
+                        </li>
+                        <li class="mx-2">
+                            <a href="http://www.yelp.com/biz/red-butte-garden-and-arboretum-salt-lake-city"
+                               aria-label="Red Butte Garden's Yelp page">
+                                <div class="yelp"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <hr class="my-5">
+
+        <div class="row mb-5">
+            <div class="col-3">
+                <div>&copy;{% now "Y" %} Red Butte Garden &amp; Arboretum</div>
+            </div>
+            <div class="col-9">
+                <a class="me-5" href="http://www.utah.edu/nondiscrimination/">NONDISCRIMINATION &amp; ACCESSIBILITY</a>
+                <a class="me-5" href="http://www.utah.edu/disclaimer/">DISCLAIMER</a>
+                <a class="me-5" href="http://www.utah.edu/privacy/">PRIVACY</a>
+                <a class="me-5" href="http://www.utah.edu/credits.php">CREDITS &amp; ATTRIBUTIONS</a>
+            </div>
+        </div>
+    </div>
 </footer>

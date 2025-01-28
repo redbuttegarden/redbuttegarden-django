@@ -7,13 +7,13 @@
     .btn {
         width: 20vw;
         background-color: #5b76b5;
-        display: inline;
         padding: 1rem;
     }
 
-    a, a:hover, a:active, a:visited {
+    a, a:link, a:hover, a:active, a:visited {
         color: white;
         text-decoration: none;
+        font-weight: inherit;
     }
 
     svg {
@@ -27,5 +27,55 @@
         polygon {
             fill: white;
         }
+    }
+}
+
+#mainFooter {
+    color: white;
+    background-color: var(--rbg-primary-green);
+
+    a, a:link, a:hover, a:active, a:visited {
+        color: white;
+        text-decoration: none;
+        font-weight: inherit;
+    }
+
+    .footer-logo {
+        max-width: 8rem;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    li a {
+        width: 39px;
+        height: 39px;
+    }
+
+    .instagram {
+        background: url('../img/sprites.png') -240px -130px;
+    }
+
+    .pinterest {
+        background: url('../img/sprites.png') -80px -130px;
+    }
+
+    .youtube {
+        background: url('../img/sprites.png') -120px -90px;
+    }
+
+    .facebook {
+        background: url('../img/sprites.png') -40px -90px;
+    }
+
+    .yelp {
+        background: url('../img/sprites.png') -200px -90px;
+    }
+
+    hr {
+        opacity: 40%;
+        background-color: white;
+        height: 1px;
     }
 }
