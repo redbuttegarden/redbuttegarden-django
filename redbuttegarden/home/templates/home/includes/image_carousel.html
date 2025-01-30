@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags wagtailimages_tags %}
+{% load static wagtailcore_tags wagtailimages_tags wagtailembeds_tags %}
 
 <div id="imageCarousel" class="carousel slide">
     <div class="carousel-indicators">
@@ -12,15 +12,19 @@
         {% for slide in slides %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
                 <div class="d-flex align-items-center justify-content-center vh-100">
-                    <a href="
-                            {% if slide.link.url %}{{ slide.link.url }}{% else %}{{ slide.alternate_link }}{% endif %}">
-                        {% picture slide.image format-{avif,webp,jpeg} original %}
-                        {% if slide.text %}
-                            <div class="carousel-caption d-none d-md-block">
-                                <p>{{ slide.text|richtext }}</p>
-                            </div>
-                        {% endif %}
-                    </a>
+                    {% if slide.image %}
+                        <a href="
+                                {% if slide.link.url %}{{ slide.link.url }}{% else %}{{ slide.alternate_link }}{% endif %}">
+                            {% picture slide.image format-{avif,webp,jpeg} original %}
+                            {% if slide.text %}
+                                <div class="carousel-caption d-none d-md-block">
+                                    <p>{{ slide.text|richtext }}</p>
+                                </div>
+                            {% endif %}
+                        </a>
+                    {% else %}
+                            {% embed slide.embed %}
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

@@ -1,3 +1,16 @@
+.carousel-caption {
+    font-size: 5em;
+    text-align: left;
+    top: 50%;
+    left: 35%;
+    transform: translate(-50%, -50%);
+}
+
+#imageCarousel iframe {
+    width: 100%;
+    height: 100%;
+}
+
 #main {
     overflow: hidden;
 }

@@ -6,6 +6,7 @@ from django.apps import apps
 from django.core.paginator import Paginator
 from django.core.validators import ValidationError, RegexValidator, validate_slug, URLValidator
 from django.db import models
+from django.db.models import URLField
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -785,6 +786,7 @@ class EventSlides(Orderable):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    embed = models.URLField(blank=True, null=True, help_text=_('Link to external video URL'))
     link = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
@@ -801,12 +803,15 @@ class EventSlides(Orderable):
 
     panels = [
         FieldPanel('image'),
+        FieldPanel('embed'),
         PageChooserPanel('link'),
         FieldPanel('alternate_link'),
         FieldPanel('text'),
     ]
 
     def clean(self):
+        if self.image and self.embed:
+            raise ValidationError("Please choose only an image or embed link, not both")
         if self.link and self.alternate_link:
             raise ValidationError("Please choose only a page link OR an alternate link, not both")
 
