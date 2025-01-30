@@ -12,6 +12,7 @@ from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
+from urllib3 import HTTPResponse
 from wagtail.admin.viewsets.base import ViewSetGroup
 from wagtail.admin.viewsets.model import ModelViewSet
 
@@ -83,8 +84,10 @@ def concert_thank_you(request):
     referer = request.META.get('HTTP_REFERER')
     if referer:
         parsed_url = urlparse(referer)
-        if parsed_url.hostname == 'etix.com':
+        if parsed_url.hostname == 'etix.com' or parsed_url.hostname == 'www.etix.com':
             return render(request, 'concerts/concert_thank_you.html')
+        else:
+            return HTTPResponse(status=204)
     else:
         return redirect('/')
 
