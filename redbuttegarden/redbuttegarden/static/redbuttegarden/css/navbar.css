@@ -1,0 +1,147 @@
+/** Hide Bootstrap's default dropdown caret **/
+nav .dropdown-toggle::after {
+    display: none;
+}
+
+.navbar {
+    --bs-navbar-padding-y: 0;
+}
+
+nav .show > .bi {
+    transform: rotate(45deg);
+    transition: transform 2s;
+}
+
+nav a, nav a:link, nav a:visited, nav a:active {
+    color: white;
+    text-decoration: none;
+    font-weight: inherit;
+}
+
+nav .dropdown-menu {
+    border: none;
+}
+
+nav #topLinks {
+    order: -1;
+    margin-left: auto;
+    margin-right: 10em;
+}
+
+nav #topLinks .nav-link {
+    padding: 0 1em;
+}
+
+nav #topLinks li {
+    border-right: 2px solid white;
+}
+
+nav #topLinks li:last-child {
+    border-right: none;
+}
+
+#myNavbar {
+    flex-flow: wrap;
+}
+
+nav #navLinks {
+    display: flex;
+    flex-basis: 100%;
+}
+
+.dropdown-menu li:hover {
+    background-color: #F2EDE4;
+    color: #000;
+}
+
+.dropdown-menu li {
+    background-color: #FFF;
+}
+
+.dropdown-menu li:hover, .dropdown-menu li:focus {
+    background-color: #F2EDE4;
+}
+
+.dropdown-menu a:hover li, .dropdown-menu a:focus li {
+    background-color: #F2EDE4;
+    text-decoration: none;
+}
+
+/* Changes background color of OUTDOOR CONCERT SERIES link in navbar */
+.dropdown-menu .concert-li li {
+    background-color: #87CEEB;
+}
+
+nav.navbar {
+    background: var(--rbg-primary-green);
+}
+
+nav .form-control {
+    color: white;
+    border: none;
+    border-radius: 0;
+    background-color: var(--rbg-primary-green);
+}
+
+nav .show .form-control, nav .collapsing .form-control {
+    color: black;
+    background-color: #f7f7f7;
+}
+
+.bi-search {
+    position: absolute;
+    color: white;
+}
+
+nav .show .bi-search, nav .collapsing .bi-search {
+    color: black;
+}
+
+#logo img {
+    max-height: 50px;
+    width: auto;
+    padding: 3px 0 3px 0;
+}
+
+nav #navSearch {
+    order: 1;
+}
+
+.navbar-collapse.collapse.show, .navbar-collapse.collapsing {
+    background-color: #f7f7f7;
+}
+
+@media (max-width: 1320px) {
+    nav #navLinks {
+        display: inherit;
+    }
+
+    nav a, nav a:link, nav a:visited, nav a:active {
+        color: black;
+    }
+
+    #logo img {
+        padding-right: 0;
+        padding-left: 0;
+        max-width: 10em;
+        height: auto;
+    }
+
+    nav .form-control {
+        border-bottom: 2px solid gray;
+        filter: none;
+    }
+}
+
+#searchModalPaginationContainer {
+    overflow-x: scroll;
+
+    a {
+        padding: 0 0.5em;
+    }
+
+    a.selected {
+        text-decoration: none;
+        color: inherit;
+    }
+}
