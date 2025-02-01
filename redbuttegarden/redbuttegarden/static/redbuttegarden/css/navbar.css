@@ -12,14 +12,35 @@ nav .show > .bi {
     transition: transform 2s;
 }
 
-nav a, nav a:link, nav a:visited, nav a:active {
+nav a, nav a:link, nav a:visited {
     color: white;
     text-decoration: none;
     font-weight: inherit;
 }
 
+nav .nav-link:focus, nav .nav-link:hover, nav .nav-link:active, nav .navbar-nav .nav-link.show {
+    color: white;
+    text-decoration: underline;
+}
+
+nav .navbar-collapse.collapse.show a, nav .navbar-collapse.collapse.show  .nav-link:hover, nav .navbar-collapse.collapse.show .nav-link:active, nav .navbar-collapse.collapse.show .navbar-nav .nav-link.show,
+nav .navbar-collapse.collapsing .nav-link:hover, nav .navbar-collapse.collapsing  .nav-link:active, nav .navbar-collapse.collapsing .navbar-nav .nav-link.show {
+    color: black;
+    text-decoration: none;
+}
+
 nav .dropdown-menu {
     border: none;
+}
+
+nav .dropdown-item {
+    opacity: 80%;
+}
+
+nav .dropdown-item:hover {
+    color: white;
+    opacity: 100%;
+    background-color: inherit;
 }
 
 nav #topLinks {
@@ -49,20 +70,6 @@ nav #navLinks {
     flex-basis: 100%;
 }
 
-.dropdown-menu li:hover {
-    background-color: #F2EDE4;
-    color: #000;
-}
-
-.dropdown-menu li:hover, .dropdown-menu li:focus {
-    background-color: #F2EDE4;
-}
-
-.dropdown-menu a:hover li, .dropdown-menu a:focus li {
-    background-color: #F2EDE4;
-    text-decoration: none;
-}
-
 /* Changes background color of OUTDOOR CONCERT SERIES link in navbar */
 .dropdown-menu .concert-li li {
     background-color: #87CEEB;
@@ -84,13 +91,32 @@ nav .show .form-control, nav .collapsing .form-control {
     background-color: #f7f7f7;
 }
 
+nav .form-control::placeholder {
+    color: white;
+}
+
+nav .navbar-collapse.collapse.show .form-control::placeholder,
+nav .navbar-collapse.collapsing .form-control::placeholder {
+    color: darkgray;
+}
+
+nav i.bi {
+    opacity: 50%;
+}
+
+nav .navbar-collapse.collapse.show i.bi, nav .navbar-collapse.collapsing i.bi {
+    font-size: 1.5rem;
+}
+
 .bi-search {
     position: absolute;
     color: white;
 }
 
-nav .show .bi-search, nav .collapsing .bi-search {
+nav .navbar-collapse.collapse.show bi.bi-search, nav .navbar-collapse.collapsing bi.bi-search {
     color: black;
+    opacity: 100%;
+    font-size: 1rem;
 }
 
 #logo img {
