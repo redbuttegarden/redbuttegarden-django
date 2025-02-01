@@ -14,17 +14,17 @@
 {% endblock %}
 
 {% block abnormal_content %}
-    <div class="container-fluid p-5">
-        <div id="visitContainer" class="container-fluid mt-5 mb-3 p-0">
+    <div class="container-fluid p-4 p-lg-5">
+        <div id="visitContainer" class="container-fluid mb-3 p-0">
             <div class="row">
-                <div class="col pe-0">
+                <div class="col-12 col-md-6 pe-md-0">
                     <picture>
                         <source srcset="{% static 'home/img/wcg_placeholder.webp' %}">
                         <img id="visitImage" src="{% static 'home/img/wcg_placeholder.png' %}"
                              alt="Photo of the water conservation garden">
                     </picture>
                 </div>
-                <div class="col ps-0">
+                <div class="col-12 col-md-6 ps-md-0">
                     <div id="visitInfo" class="d-flex flex-column justify-content-center p-5">
                         <h1>Visit the Garden</h1>
                         <p id="hours">10 AM-5 PM</p>
