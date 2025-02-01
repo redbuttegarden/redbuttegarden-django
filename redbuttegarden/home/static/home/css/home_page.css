@@ -41,8 +41,9 @@
         text-decoration: none;
     }
 
-    .col {
+    .ratio-1x1 {
         background-color: #f7f7f7;
+        max-width: 35em;
     }
 
     img {
