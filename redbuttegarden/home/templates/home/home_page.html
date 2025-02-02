@@ -38,35 +38,51 @@
 
         <div id="iconLinkContainer" class="container-fluid mt-5 p-0">
             <div class="row text-center">
-                <div class="col-4 col-lg-12 ratio ratio-1x1">
-                    <div class="mt-5">
-                        <div id="admissionIcon" class="p-5">
-                            <img src="{% static 'home/img/rbga_icons_tickets green.svg' %}"
-                                 alt="Icon depicting outline of ticket stubs">
+                <div class="col-12 col-md-4">
+                    <div class="ratio ratio-1x1">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <div id="admissionIcon" class="p-3">
+                                <img src="{% static 'home/img/rbga_icons_tickets green.svg' %}"
+                                     alt="Icon depicting outline of ticket stubs">
+                            </div>
+                            <p class="fw-medium fs-4">ADMISSION RATES</p>
+                            <p>
+                                <a href="{% slugurl 'general-info' %}">View Here</a>
+                                <br />
+                                &nbsp;  <!-- For alignment purposes -->
+                            </p>
                         </div>
-                        <p class="fw-medium fs-4">ADMISSION RATES</p>
-                        <p><a href="{% slugurl 'general-info' %}">View Here</a></p>
                     </div>
                 </div>
-                <div class="col-4 col-lg-12 ratio ratio-1x1 mx-md-5 my-4 my-md-0">
-                    <div class="mt-5">
-                        <div id="locationIcon" class="p-5">
-                            <img src="{% static 'home/img/rbga_icons_location green.svg' %}"
-                                 alt="Icon depicting a map marker">
+                <div class="col-12 col-md-4">
+                    <div class="ratio ratio-1x1">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <div id="locationIcon" class="p-3">
+                                <img src="{% static 'home/img/rbga_icons_location green.svg' %}"
+                                     alt="Icon depicting a map marker">
+                            </div>
+                            <p class="fw-medium fs-4">VISIT</p>
+                            <p>
+                                300 Wakara Way <br />
+                                Salt Lake City, UT 84108
+                            </p>
                         </div>
-                        <p class="fw-medium fs-4">VISIT</p>
-                        <p>300 Wakara Way Salt Lake City, UT 84108</p>
                     </div>
                 </div>
-                <div class="col-4 col-lg-12 ratio ratio-1x1">
-                    <div class="mt-5">
-                        <div id="sunIcon" class="p-5">
-                            <img src="{% static 'home/img/rbga_icons_sun green.svg' %}"
-                                 alt="Icon depicting a sun">
+                <div class="col-12 col-md-4 ">
+                    <div class="ratio ratio-1x1">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <div id="sunIcon" class="p-3">
+                                <img src="{% static 'home/img/rbga_icons_sun green.svg' %}"
+                                     alt="Icon depicting a sun">
+                            </div>
+                            <p class="fw-medium fs-4">TODAY’S WEATHER</p>
+                            <p>
+                                <span id="weatherConditions"></span>
+                                <br />
+                                <span id="weatherTemp"></span>
+                            </p>
                         </div>
-                        <p class="fw-medium fs-4">TODAY’S WEATHER</p>
-                        <p id="weatherConditions"></p>
-                        <p id="weatherTemp"></p>
                     </div>
                 </div>
             </div>
@@ -75,15 +91,15 @@
 
     <div id="whatsBloomingContainer" class="container-fluid my-5 p-0">
         <div class="row">
-            <div class="col pe-0">
+            <div class="col-12 col-md-6 pe-md-0">
                 <picture>
                     <source srcset="{% static 'home/img/whats_blooming_placeholder.webp' %}">
                     <img id="visitImage" src="{% static 'home/img/whats_blooming_placeholder.png' %}"
                          alt="Photo of a green bee visiting a red flower">
                 </picture>
             </div>
-            <div class="col ps-0">
-                <div id="visitInfo" class="d-flex flex-column justify-content-center p-5">
+            <div class="col-12 col-md-6 ps-md-0">
+                <div class="d-flex flex-column justify-content-center p-5">
                     <h1>What's Blooming?</h1>
                     <p>Lorem ipsum dolor sit amet, consectetuer
                         adipiscing elit, sed diam nonummy nibh euismod
