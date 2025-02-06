@@ -33,6 +33,12 @@
 
 #whatsBloomingContainer {
     background-color: #efb544;
+
+    #whatsBloomingLink {
+        color: black;
+        font-weight: normal;
+        text-decoration: underline;
+    }
 }
 
 #iconLinkContainer {
@@ -87,10 +93,12 @@
         white-space: nowrap;
         overflow: hidden;
     }
+
     .image-row img {
         position: relative;
         display: inline-block;
     }
+
     .arrow {
         display: inline-flex;
         position: absolute;
@@ -102,10 +110,12 @@
         border-radius: 1rem;
         z-index: 1;
     }
+
     .arrow-right {
         right: 10px;
         transform: scale(2) translateX(-100%);
     }
+
     .arrow-left {
         left: 10px;
         transform: scale(2) translateX(200%);
