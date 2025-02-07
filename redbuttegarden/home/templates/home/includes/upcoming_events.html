@@ -4,10 +4,10 @@
 
 {% for event in events %}
     {% with event=event.specific %}
-        <a href="{{ event.url }}" class="col py-5">
+        <a href="{{ event.url }}" class="col-12 col-md-4 py-3 py-lg-5">
             <div class="card h-100">
-                {% image event.thumbnail fill-385x385 alt="" %}
-                <div class="card-body p-5">
+                {% picture event.thumbnail format-{avif,webp,jpeg} height-385 class="img-fluid" %}
+                <div class="card-body p-4">
                     <div class="upcoming-event-date text-uppercase">{{ event.event_dates }}</div>
                     <div class="upcoming-event-title fs-3">{{ event.title }}</div>
                     <div class="card-text">{{ event.sub_heading }}</div>

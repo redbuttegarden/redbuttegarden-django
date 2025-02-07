@@ -61,14 +61,15 @@
 }
 
 #upcomingEventsContainer {
+    h1 {
+        font-size: 3rem;
+        font-weight: bold;
+    }
+
     a, a:link, a:visited, a:active {
         color: inherit;
         font-weight: inherit;
         text-decoration: none;
-    }
-
-    img {
-        width: 100%;
     }
 
     .card {
@@ -77,6 +78,10 @@
 
     .card .card-body {
         min-height: 20rem;
+    }
+
+    .upcoming-event-title {
+        font-weight: bold;
     }
 
     .btn {
