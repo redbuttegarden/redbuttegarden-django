@@ -1,3 +1,10 @@
+body.template-homepage {
+    h1 {
+        font-size: 3rem;
+        font-weight: bold;
+    }
+}
+
 .carousel-caption {
     font-size: 5em;
     text-align: left;
@@ -61,10 +68,6 @@
 }
 
 #upcomingEventsContainer {
-    h1 {
-        font-size: 3rem;
-        font-weight: bold;
-    }
 
     a, a:link, a:visited, a:active {
         color: inherit;
