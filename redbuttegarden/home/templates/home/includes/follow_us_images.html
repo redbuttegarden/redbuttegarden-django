@@ -1,11 +1,11 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 <div class="p-2">
-    <h1>Follow Us</h1>
+    <h1 class=pb-5>Follow Us</h1>
     <div class="subtitle d-none d-sm-block">Lorem ipsum</div>
 </div>
 
-<div class="arrow arrow-left d-none" onclick="scrollSocialLeft()">
+<div class="arrow arrow-left d-none">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle"
          viewBox="0 0 16 16">
         <path fill-rule="evenodd"
@@ -15,11 +15,11 @@
 <div class="image-row">
     {% for media_info in images_and_links %}
         <a href="{{ media_info.url }}">
-            {% image media_info.image fill-385x385 alt="" class="p-2" %}
+            {% picture media_info.image format-{avif,webp,jpeg} fill-385x385 alt="" class="img-fluid p-2" %}
         </a>
     {% endfor %}
 </div>
-<div class="arrow arrow-right" onclick="scrollSocialRight()">
+<div class="arrow arrow-right">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle"
          viewBox="0 0 16 16">
         <path fill-rule="evenodd"
