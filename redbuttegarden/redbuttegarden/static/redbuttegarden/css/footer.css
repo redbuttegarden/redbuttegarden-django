@@ -1,11 +1,33 @@
+
 #preFooterButtons {
-    .col {
+    .row {
         background: #d0e8e5;
-        border: black solid 1px;
+    }
+
+    /* Medium devices (tablets, 768px and up) */
+    @media (min-width: 768px) {
+        .col-12, .col-md-4 {
+            border: var(--rbg-primary-green) solid 1px;
+        }
+
+        .col-12:nth-child(3), .col-md-4:nth-child(3) {
+            border-left: none;
+            border-right: none;
+        }
+    }
+
+    hr {
+        width: 75%;
+        margin: auto;
+        background-image: linear-gradient(
+                rgba(0, 0, 0, 0) 0%,
+                rgba(10, 65, 45, 1) 100%,
+                rgba(0, 0, 0, 0) 0%,
+        );
+        opacity: 100%;
     }
 
     .btn {
-        width: 20vw;
         background-color: #5b76b5;
         padding: 1rem;
     }
