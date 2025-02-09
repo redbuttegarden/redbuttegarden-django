@@ -2,18 +2,17 @@
 #preFooterButtons {
     .row {
         background: #d0e8e5;
+        border: var(--rbg-primary-green) solid 1px;
     }
 
     /* Medium devices (tablets, 768px and up) */
     @media (min-width: 768px) {
-        .col-12, .col-md-4 {
-            border: var(--rbg-primary-green) solid 1px;
+        .col-12:nth-child(3), .col-md-4:nth-child(3) {
+            border-left: var(--rbg-primary-green) solid 1px;
+            border-right: var(--rbg-primary-green) solid 1px;
         }
 
-        .col-12:nth-child(3), .col-md-4:nth-child(3) {
-            border-left: none;
-            border-right: none;
-        }
+
     }
 
     hr {
@@ -28,6 +27,7 @@
     }
 
     .btn {
+        max-width: 30vh;
         background-color: #5b76b5;
         padding: 1rem;
     }
@@ -71,6 +71,7 @@
     }
 
     li a {
+        display: grid;
         width: 39px;
         height: 39px;
     }
@@ -99,5 +100,6 @@
         opacity: 40%;
         background-color: white;
         height: 1px;
+        width: 100%;
     }
 }
