@@ -45,12 +45,11 @@
                                 <img src="{% static 'home/img/rbga_icons_tickets green.svg' %}"
                                      alt="Icon depicting outline of ticket stubs">
                             </div>
-                            <p class="fw-medium fs-4">ADMISSION RATES</p>
-                            <p>
-                                <a href="{% slugurl 'general-info' %}">View Here</a>
-                                <br />
-                                &nbsp;  <!-- For alignment purposes -->
-                            </p>
+                            <a href="{% slugurl 'general-info' %}">
+                                <div class="fw-medium fs-4">ADMISSION RATES</div>
+                                <div>View Here</div>
+                                <div>&nbsp;</div>  <!-- For alignment purposes -->
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -61,11 +60,13 @@
                                 <img src="{% static 'home/img/rbga_icons_location green.svg' %}"
                                      alt="Icon depicting a map marker">
                             </div>
-                            <p class="fw-medium fs-4">VISIT</p>
-                            <p>
-                                300 Wakara Way <br />
-                                Salt Lake City, UT 84108
-                            </p>
+                            <a href="{% slugurl 'plan-your-garden-visit' %}">
+                                <div class="fw-medium fs-4">VISIT</div>
+                                <div>
+                                    300 Wakara Way <br/>
+                                    Salt Lake City, UT 84108
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -76,12 +77,11 @@
                                 <img src="{% static 'home/img/rbga_icons_sun green.svg' %}"
                                      alt="Icon depicting a sun">
                             </div>
-                            <p class="fw-medium fs-4">TODAY’S WEATHER</p>
-                            <p>
-                                <span id="weatherConditions"></span>
-                                <br />
-                                <span id="weatherTemp"></span>
-                            </p>
+                            <div class="fw-medium fs-4">TODAY’S WEATHER</div>
+                            <div>
+                                <div id="weatherConditions"></div>
+                                <div id="weatherTemp"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -132,7 +132,7 @@
         const concertInfo = {{ concert_info|safe }};
         // Convert date strings to javascript Date objects
         for (let i = 0; i < concertInfo.length; i++) {
-           concertInfo[i]["Date"] = new Date(concertInfo[i]["Date"]);
+            concertInfo[i]["Date"] = new Date(concertInfo[i]["Date"]);
         }
     </script>
     {{ hours|json_script:"hours-data" }}
