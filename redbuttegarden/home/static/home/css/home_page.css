@@ -32,6 +32,10 @@ body.template-homepage {
         height: 100%;
         background-color: var(--rbg-conifer-green);
 
+        h1 {
+            color: var(--rbg-oak-green);
+        }
+
         a, a:link, a:visited, a:active {
             color: inherit;
             font-weight: inherit;
