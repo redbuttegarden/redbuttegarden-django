@@ -22,14 +22,13 @@ body.template-homepage {
     overflow: hidden;
 }
 
-#visitImage {
-    max-height: 50em;
-    width: 100%;
-}
-
 #visitContainer {
-    #visitInfo {
-        height: 100%;
+    #visitInfoImg {
+        position: relative;
+        overflow: hidden;
+    }
+
+    #visitInfoText {
         background-color: var(--rbg-conifer-green);
 
         h1 {
@@ -43,14 +42,10 @@ body.template-homepage {
         }
     }
 
-    picture {
-        position: relative;
-    }
-
     #openClosedBubble {
         position: absolute;
-        top: -240px;
-        left: 40px;
+        top: 15px;
+        left: 15px;
         font-size: 1.25rem;
         padding: 10px 15px;
         border-style: solid;

@@ -15,17 +15,17 @@
 
 {% block abnormal_content %}
     <div class="container-fluid p-4 p-lg-5">
-        <div id="visitContainer" class="container-fluid mb-3 p-0">
+        <div id="visitContainer" class="container-fluid mb-3 p-4 p-lg-5">
             <div class="row">
-                <div class="col-12 col-lg-6 pe-lg-0">
+                <div id="visitInfoImg" class="col-12 col-lg-6 p-0">
                     <picture>
                         <source srcset="{% static 'home/img/wcg_placeholder.webp' %}">
-                        <img id="visitImage" src="{% static 'home/img/wcg_placeholder.png' %}"
+                        <img id="visitImage" class="img-fluid w-100" src="{% static 'home/img/wcg_placeholder.png' %}"
                              alt="Photo of the water conservation garden">
                     </picture>
                 </div>
-                <div class="col-12 col-lg-6 ps-lg-0">
-                    <div id="visitInfo" class="d-flex flex-column justify-content-center p-5">
+                <div id="visitInfoText" class="col-12 col-lg-6 p-0">
+                    <div class="d-flex flex-column justify-content-center p-4">
                         <h1>Visit the Garden</h1>
                         <div id="hours"></div>
                         <div id="hoursInfo1"></div>
@@ -91,14 +91,14 @@
 
     <div id="whatsBloomingContainer" class="container-fluid my-5 p-0">
         <div class="row">
-            <div class="col-12 col-lg-6 pe-lg-0">
+            <div class="col-12 col-lg-6 p-0">
                 <picture>
                     <source srcset="{% static 'home/img/whats_blooming_placeholder.webp' %}">
-                    <img id="visitImage" src="{% static 'home/img/whats_blooming_placeholder.png' %}"
+                    <img id="visitImage" class="img-fluid w-100" src="{% static 'home/img/whats_blooming_placeholder.png' %}"
                          alt="Photo of a green bee visiting a red flower">
                 </picture>
             </div>
-            <div class="col-12 col-lg-6 ps-lg-0">
+            <div class="col-12 col-lg-6 p-0">
                 <div class="d-flex flex-column justify-content-center p-5">
                     <h1>What's Blooming?</h1>
                     <p>Lorem ipsum dolor sit amet, consectetuer
