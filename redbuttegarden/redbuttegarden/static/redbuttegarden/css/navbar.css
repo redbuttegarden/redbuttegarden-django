@@ -139,7 +139,7 @@ nav #navSearch {
     background-color: #f7f7f7;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: 992px) {
     nav #navLinks {
         display: inherit;
     }
