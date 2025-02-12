@@ -96,8 +96,8 @@ body.template-homepage {
         background-color: #f7f7f7;
     }
 
-    img {
-        height: 7em;
+    #admissionIcon, #locationIcon, #sunIcon {
+        width: 35%;
     }
 }
 
