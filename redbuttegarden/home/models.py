@@ -6,7 +6,6 @@ from django.apps import apps
 from django.core.paginator import Paginator
 from django.core.validators import ValidationError, RegexValidator, validate_slug, URLValidator
 from django.db import models
-from django.db.models import URLField
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -655,61 +654,39 @@ class FAQPage(AbstractBase):
 @register_snippet
 class RBGHours(models.Model):
     """
-    Model for setting variables used by hours.js on the HomePage.
-    # TODO - Write tests to make sure hours display correctly for various times of day/year
+    Model for manually overriding the hours that are displayed by hours.js on the HomePage.
     """
     # Set a name for this hours object
     name = models.CharField(max_length=200, help_text=_("Create a name for this set of hours"))
-
-    # Allow users to manually set hour options independent of hours.js
-    allow_override = models.BooleanField(help_text=_("Override hours.js script and manually set all hours options"),
-                                         default=False)
-    garden_open = models.TimeField(null=True, blank=True,
-                                   help_text=_(
-                                       "When override set to True, this time will be shown as the time the garden opens"))
-    garden_close = models.TimeField(null=True, blank=True,
-                                    help_text=_(
-                                        "When override set to True, this time will be shown as the time the garden closes"))
+    garden_open = models.TimeField(null=True, blank=True, help_text=_("The time the garden opens"))
+    garden_close = models.TimeField(null=True, blank=True, help_text=_("The time the garden closes"))
     additional_message = models.CharField(max_length=200, null=True, blank=True,
                                           help_text=_("Message under the hours; e.g. 'Last entry at 3:30 PM'"))
     additional_emphatic_mesg = models.CharField(max_length=200, null=True, blank=True,
                                                 help_text=_("Message under hours in RED text"))
+    garden_open_message = models.CharField(max_length=200, null=True, blank=True, default=_("The Garden is open"))
+    garden_closed_message = models.CharField(max_length=200, null=True, blank=True, default=_("The Garden is closed now"))
 
-    # Day and time we close for Holiday Party in December
-    holiday_party_close_time = models.DateTimeField(null=True, blank=True,
-                                                    help_text=_("Day and time we close for Holiday Party in December"))
-    """
-    Originally created start and end dates for Garden After Dark but this won't work well
-    when GAD occurs on non-consecutive dates.
-    
-    Changed to a StreamField Model so as many or as few dates could be selected.
-    
-    When GAD occurs over so many days, it would be inconvenient to create them all individually,
-    the user can user the manual override option instead.
-    """
-    gad_dates = StreamField(block_types=[
-        ('date', blocks.DateBlock(verbose_name="Garden After Dark date", help_text=_("Date that GAD takes place")))
-    ], help_text=_("Choose the dates of GAD. If there are many, using the manual override might be easier"),
-        blank=True, null=True)
+    last_modified = models.DateTimeField(auto_now=True)
 
     panels = [
         FieldPanel('name'),
         MultiFieldPanel([
-            FieldPanel('allow_override'),
             FieldPanel('garden_open'),
             FieldPanel('garden_close'),
+        ], heading="Hours", classname="collapsible"),
+        MultiFieldPanel([
             FieldPanel('additional_message'),
             FieldPanel('additional_emphatic_mesg'),
-        ], heading="Manual override settings", classname="collapsible collapsed"),
-        FieldPanel('holiday_party_close_time'),
-        FieldPanel('gad_dates'),
+        ], heading="Messaging", classname="collapsible collapsed"),
     ]
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         verbose_name_plural = "RBG Hours"
+        ordering = ['-last_modified']
+
+    def __str__(self):
+        return self.name
 
 
 class HomePage(AbstractBase):
@@ -745,7 +722,16 @@ class HomePage(AbstractBase):
                 concert in concerts for concert_date in concert['concert_dates']]
             context['concert_info'] = json.dumps(concert_info, default=str)
 
-        # Get upcoming events; avoid ciruclar import
+        # Make hours info easier for JS to consume
+        if self.hours:
+            context['hours'] = {
+                'garden_open': self.hours.garden_open.strftime('%-H:%M'),
+                'garden_close': self.hours.garden_close.strftime('%-H:%M'),
+                'additional_message': self.hours.additional_message,
+                'additional_emphatic_mesg': self.hours.additional_emphatic_mesg,
+            }
+
+        # Get upcoming events; avoid circular import
         EventPage = apps.get_model(app_label='events', model_name='EventPage')
         events = EventPage.objects.live().public().filter(alias_of=None, order_date__gte=timezone.now()).order_by('order_date')[:3]  # Get next 3 events
         context['upcoming_events'] = events

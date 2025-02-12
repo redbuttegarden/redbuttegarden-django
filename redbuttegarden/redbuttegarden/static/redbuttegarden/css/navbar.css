@@ -76,14 +76,14 @@ nav #navLinks {
 }
 
 nav.navbar {
-    background: var(--rbg-primary-green);
+    background: var(--rbg-oak-green);
 }
 
 nav .form-control {
     color: white;
     border: none;
     border-radius: 0;
-    background-color: var(--rbg-primary-green);
+    background-color: var(--rbg-oak-green);
 }
 
 nav .show .form-control, nav .collapsing .form-control {
@@ -130,7 +130,7 @@ nav #navSearch {
 }
 
 .dropdown-menu.show {
-    background-color: var(--rbg-primary-green);
+    background-color: var(--rbg-oak-green);
 }
 
 .navbar-collapse.collapse.show, .navbar-collapse.collapsing,

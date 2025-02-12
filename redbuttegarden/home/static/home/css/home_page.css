@@ -27,19 +27,53 @@ body.template-homepage {
     width: 100%;
 }
 
-#visitInfo {
-    height: 100%;
-    background-color: #d0e8e5;
+#visitContainer {
+    #visitInfo {
+        height: 100%;
+        background-color: var(--rbg-conifer-green);
 
-    a, a:link, a:visited, a:active {
-        color: inherit;
-        font-weight: inherit;
-        text-decoration: underline;
+        a, a:link, a:visited, a:active {
+            color: inherit;
+            font-weight: inherit;
+            text-decoration: underline;
+        }
     }
+
+    picture {
+        position: relative;
+    }
+
+    #openClosedBubble {
+        position: absolute;
+        top: -240px;
+        left: 40px;
+        font-size: 1.25rem;
+        padding: 10px 15px;
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 30px;
+
+        i {
+            padding: 0 10px;
+        }
+    }
+
+    #openClosedBubble.rbg-open {
+        color: var(--rbg-oak-green);
+        background-color: var(--rbg-conifer-green);
+        border-color: var(--rbg-oak-green);
+    }
+
+    #openClosedBubble.rbg-closed {
+        color: white;
+        background-color: #ff3e3e;
+        border-color: maroon;
+    }
+
 }
 
 #whatsBloomingContainer {
-    background-color: #efb544;
+    background-color: var(--rbg-cactus-flower-yellow);
 
     #whatsBloomingLink {
         color: black;
@@ -50,7 +84,7 @@ body.template-homepage {
 
 #iconLinkContainer {
     overflow: hidden;
-    color: #0b412d;
+    color: var(--rbg-oak-green);
 
     a, a:link, a:visited, a:active {
         color: inherit;
@@ -88,8 +122,8 @@ body.template-homepage {
     }
 
     .btn {
-        background-color: #d0e8e5;
-        color: #0a412d;
+        background-color: var(--rbg-conifer-green);
+        color: var(--rbg-oak-green);
     }
 }
 

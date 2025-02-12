@@ -2,14 +2,14 @@
 #preFooterButtons {
     .row {
         background: #d0e8e5;
-        border: var(--rbg-primary-green) solid 1px;
+        border: var(--rbg-oak-green) solid 1px;
     }
 
     /* Medium devices (tablets, 768px and up) */
     @media (min-width: 768px) {
         .col-12:nth-child(3), .col-md-4:nth-child(3) {
-            border-left: var(--rbg-primary-green) solid 1px;
-            border-right: var(--rbg-primary-green) solid 1px;
+            border-left: var(--rbg-oak-green) solid 1px;
+            border-right: var(--rbg-oak-green) solid 1px;
         }
 
 
@@ -54,7 +54,7 @@
 
 #mainFooter {
     color: white;
-    background-color: var(--rbg-primary-green);
+    background-color: var(--rbg-oak-green);
 
     a, a:link, a:hover, a:active, a:visited {
         color: white;
