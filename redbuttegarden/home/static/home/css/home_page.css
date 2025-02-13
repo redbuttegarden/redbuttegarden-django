@@ -134,9 +134,14 @@ body.template-homepage {
         font-weight: bold;
     }
 
-    .btn {
+    a.btn {
         background-color: var(--rbg-conifer-green);
         color: var(--rbg-oak-green);
+    }
+    
+    a.btn:hover {
+        background-color: white;
+        border: 2px solid var(--rbg-oak-green);
     }
 }
 
