@@ -102,8 +102,8 @@
                          alt="Photo of a green bee visiting a red flower">
                 </picture>
             </div>
-            <div class="col-12 col-lg-6 p-0">
-                <div class="d-flex flex-column justify-content-center p-5">
+            <div class="col-12 col-lg-6 d-flex align-items-center p-0">
+                <div class="m-5 p-5">
                     <h1>What's Blooming?</h1>
                     <p>Lorem ipsum dolor sit amet, consectetuer
                         adipiscing elit, sed diam nonummy nibh euismod
@@ -111,7 +111,11 @@
                         volutpat. Ut wisi enim ad minim veniam, quis
                         nostrud exerci tation ullamcorper suscipit lobortis
                         nisl ut aliquip ex ea commodo consequat.</p>
-                    <a id="whatsBloomingLink" href="{% slugurl 'whats-blooming-now' %}">See what's blooming now</a>
+                    <p class="py-5">
+                        <a id="whatsBloomingLink" href="{% slugurl 'whats-blooming-now' %}">
+                            See what's blooming now
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>
