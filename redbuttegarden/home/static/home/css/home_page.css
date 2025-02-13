@@ -95,8 +95,17 @@ body.template-homepage {
         background-color: #f7f7f7;
     }
 
+    .ratio-1x1:hover {
+        background-color: var(--rbg-lilac);
+        color: white;
+    }
+
     #admissionIcon, #locationIcon, #sunIcon {
         width: 35%;
+    }
+
+    .ratio-1x1:hover #admissionIcon, .ratio-1x1:hover #locationIcon, .ratio-1x1:hover #sunIcon {
+        filter: brightness(0) invert(1);  <!-- Change icon to white on hover -->
     }
 }
 
