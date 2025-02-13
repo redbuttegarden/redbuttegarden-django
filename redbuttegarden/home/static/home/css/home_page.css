@@ -8,6 +8,8 @@ body.template-homepage {
 #imageCarousel {
     .carousel-caption {
         font-size: 4rem;
+        top: 30%;
+        text-align: left;
     }
 
     .carousel-indicators button {
