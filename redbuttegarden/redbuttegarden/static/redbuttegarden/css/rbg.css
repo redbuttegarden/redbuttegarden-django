@@ -154,31 +154,6 @@ nav[role=pagination] {
     width: 385px;
 }
 
-footer {
-    position: absolute;
-    width: 100%;
-}
-
-#navhide1, #navhide2, #navhide3, #navhide4 {
-    padding-right: 1px;
-}
-
-/* Changes color of last 3 dropdown menu items to yellow */
-#navhide1 > a, #navhide2 > a, #navhide3 > a, #navhide4 > a {
-    background-color: #2f7055;
-}
-
-@media (max-width: 1280px) {
-    #navhide1 > a, #navhide2 > a, #navhide3 > a, #navhide4 > a {
-        padding-bottom: 5px;
-    }
-}
-
-#navhide1 > a:focus, #navhide2 > a:focus, #navhide3 > a:focus, #navhide4 > a:focus,
-#navhide1 > a:hover, #navhide2 > a:hover, #navhide3 > a:hover, #navhide4 > a:hover {
-    background-color: #FF7744;
-}
-
 .memfaqwrap > a, .memfaqwrap > a:link, .memfaqwrap > a.visited {
     text-decoration: none;
 }

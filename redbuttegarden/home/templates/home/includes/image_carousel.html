@@ -1,6 +1,6 @@
 {% load static wagtailcore_tags wagtailimages_tags wagtailembeds_tags %}
 
-<div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+<div id="imageCarousel" class="carousel slide" data-bs-ride="ride">
     <div class="carousel-indicators">
         {% for slide in slides %}
             <button type="button" data-bs-target="#imageCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
@@ -11,7 +11,7 @@
     <div class="carousel-inner">
         {% for slide in slides %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <div class="d-flex align-items-center justify-content-center vh-100">
+                <div class="d-flex vh-100">
                     {% if slide.image %}
                         <a href="
                                 {% if slide.link.url %}{{ slide.link.url }}{% else %}{{ slide.alternate_link }}{% endif %}">

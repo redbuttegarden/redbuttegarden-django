@@ -7,11 +7,7 @@ body.template-homepage {
 
 #imageCarousel {
     .carousel-caption {
-        font-size: 5em;
-        text-align: left;
-        top: 50%;
-        left: 35%;
-        transform: translate(-50%, -50%);
+        font-size: 4rem;
     }
 
     .carousel-indicators button {
@@ -32,6 +28,13 @@ body.template-homepage {
     iframe {
         width: 100%;
         height: 100%;
+    }
+}
+
+/* For extra large screens and above; make caption text larger */
+@media screen and (min-width: 1200px) {
+    #imageCarousel .carousel-caption {
+        font-size: 5rem
     }
 }
 
@@ -121,14 +124,13 @@ body.template-homepage {
         width: 35%;
     }
 
+    /* Change icon to white on hover */
     .ratio-1x1:hover #admissionIcon, .ratio-1x1:hover #locationIcon, .ratio-1x1:hover #sunIcon {
         filter: brightness(0) invert(1);
-    <!-- Change icon to white on hover -->
     }
 }
 
 #upcomingEventsContainer {
-
     a, a:link, a:visited, a:active {
         color: inherit;
         font-weight: inherit;
