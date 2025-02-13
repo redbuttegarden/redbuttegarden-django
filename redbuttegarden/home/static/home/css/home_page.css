@@ -121,6 +121,11 @@ body.template-homepage {
         border-radius: 0;
     }
 
+    .card:hover {
+        background-color: var(--rbg-lilac);
+        color: white;
+    }
+
     .card .card-body {
         min-height: 20rem;
     }
