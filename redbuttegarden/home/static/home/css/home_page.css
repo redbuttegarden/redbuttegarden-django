@@ -7,7 +7,7 @@ body.template-homepage {
 
 #imageCarousel {
     .carousel-caption {
-        font-size: 4rem;
+        font-size: 3rem;
         top: 30%;
         text-align: left;
     }
@@ -33,7 +33,14 @@ body.template-homepage {
     }
 }
 
-/* For extra large screens and above; make caption text larger */
+/* For medium screens and above; make caption text larger */
+@media screen and (min-width: 768px) {
+    #imageCarousel .carousel-caption {
+        font-size: 4rem
+    }
+}
+
+/* For extra large screens and above; make caption text largest */
 @media screen and (min-width: 1200px) {
     #imageCarousel .carousel-caption {
         font-size: 5rem
