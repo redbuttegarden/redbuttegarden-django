@@ -919,8 +919,12 @@ a:hover {
     height: auto;
 }
 
+.index-thumbnail {
+    position: relative;
+}
+
 .eventinfo {
-    position: absolute !important;
+    position: absolute;
     width: 80%;
     z-index: 5;
     bottom: 60px;
