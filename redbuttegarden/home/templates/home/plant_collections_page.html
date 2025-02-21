@@ -2,7 +2,7 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-    <div class="row-fluid text-center responsive">
+    <div class="row text-center responsive">
         {% image page.banner max-1280x500 %}
     </div>
     <br>
@@ -24,7 +24,7 @@
     {% with collections=page.plant_collections.all %}
         {% if collections %}
             {% for collection in collections %}
-                <div class="row-fluid">
+                <div class="row">
                     <div class="col-sm-6">
                         <a class="hover" href="{{ collection.slideshow_link }}" target="_blank">
                             <div class="collectionswrap">

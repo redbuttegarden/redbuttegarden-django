@@ -1,6 +1,6 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
-<div class="row-fluid">
+<div class="row">
     {% if value.list_items|length_is:"1" %}
         {% for list_item in value.list_items %}
             <a href="{{ list_item.url }}">

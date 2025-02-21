@@ -1,6 +1,6 @@
 {% load wagtailimages_tags %}
 
-<div id="image-link-list-{{ id }}" class="row-fluid xs-12">
+<div id="image-link-list-{{ id }}" class="row xs-12">
     {% if value.list_items|length_is:"1" %}
         {% for image_item in value.list_items %}
             <div>

@@ -7,11 +7,11 @@
 
 {% block content %}
     <div class="row">
-        <div class="row-fluid text-center responsive">
+        <div class="row text-center responsive">
             {% image page.banner max-1280x500 %}
         </div>
 
-        <div id="poster-holder" class="row-fluid">
+        <div id="poster-holder" class="row">
             {% for lineup in page.lineups %}
                 <div class="col-sm-4">
                     <div id="poster-outer-{{ forloop.counter0 }}" class="poster-outer collapsed" data-target="#{{ lineup.id }}" data-toggle="collapse" href="#{{ lineup.id }}" aria-expanded="false">
@@ -28,7 +28,7 @@
 
                     <div class="poster-info-pane panel-border collapse" id="{{ lineup.id }}" aria-expanded="false" style="height: 1px;">
                         <div class="tan-bg">
-                            <div class="row-fluid">
+                            <div class="row">
                                 <br>
 
                                 <div class="col-sm-12">

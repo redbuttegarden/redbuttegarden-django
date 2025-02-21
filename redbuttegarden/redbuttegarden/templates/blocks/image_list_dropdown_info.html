@@ -1,6 +1,6 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
-<div class="row-fluid">
+<div class="row">
     {% for list_item in value.list_items %}
         <div class="col-sm-4">
             <div class="eventwrapsmall hover collapsed" data-target="#{{ id }}-{{ forloop.counter }}" data-toggle="collapse"
@@ -12,7 +12,7 @@
             </div>
             <div id="{{ id }}-{{ forloop.counter }}" class="panel-border collapse" aria-expanded="false" style="height: 1px;">
                 <div class="tan-bg">
-                    <div class="row-fluid" style="margin-left: 15px;">
+                    <div class="row" style="margin-left: 15px;">
                         <h4 class="green">{{ list_item.title }}</h4>
                         {% include_block list_item.text %}
                     </div>

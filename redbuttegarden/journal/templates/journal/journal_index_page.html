@@ -2,7 +2,7 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
-    <div id="journal-banner" class="row-fluid text-center responsive">
+    <div id="journal-banner" class="row text-center responsive">
         {% image page.banner max-1280x500 %}
     </div>
     <br>
@@ -12,7 +12,7 @@
     {% endfor %}
 
     <hr>
-    <div class="row-fluid col xs-12">
+    <div class="row col xs-12">
         {% for post in posts %}
             <div class="col-sm-4 index-tile">
                 {% with post=post.specific %}
@@ -35,7 +35,7 @@
         {% empty %}
             <br>
             <br>
-            <div class="row-fluid">
+            <div class="row">
                 <div class="tan-bg">
                     <h4 class="text-center green">
                         There are currently no published journal posts. Please check back soon!
@@ -59,7 +59,7 @@
     <hr>
     <br>
 
-    <div class="row-fluid col xs-12">
+    <div class="row col xs-12">
         {% for block in page.bottom_button_info %}
             {% include_block block with id=block.id %}
         {% endfor %}

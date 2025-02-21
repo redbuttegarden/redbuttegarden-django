@@ -2,7 +2,7 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
-    <div class="row-fluid text-center responsive">
+    <div class="row text-center responsive">
         {% image page.banner max-1280x500 %}
     </div>
     <br>
@@ -13,7 +13,7 @@
 
     <hr>
 
-    <div id="wagtail-children" class="row-fluid col xs-12">
+    <div id="wagtail-children" class="row col xs-12">
         {% for sub in sub_pages %}
             <div class="col-sm-4 index-tile">
                 {% with sub=sub.specific %}
@@ -35,7 +35,7 @@
         {% empty %}
             <br>
             <br>
-            <div class="row-fluid">
+            <div class="row">
                 <div class="tan-bg">
                     <h4 class="text-center green">
                         Please check back later when we've added more specific information!
