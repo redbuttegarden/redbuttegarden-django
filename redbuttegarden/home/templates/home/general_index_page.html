@@ -13,9 +13,9 @@
 
     <hr>
 
-    <div id="wagtail-children" class="row col xs-12">
+    <div id="wagtail-children" class="d-flex flex-wrap justify-content-around">
         {% for sub in sub_pages %}
-            <div class="col-sm-4 index-tile">
+            <div class="index-tile">
                 {% with sub=sub.specific %}
                     <a class="hover" href="{% pageurl sub %}">
                         <div class="index-thumbnail">

@@ -145,7 +145,7 @@ nav[role=pagination] {
 
 .index-tile {
     margin-top: 30px;
-    max-width: 415px;
+    width: 385px;
     overflow: hidden;
 }
 
