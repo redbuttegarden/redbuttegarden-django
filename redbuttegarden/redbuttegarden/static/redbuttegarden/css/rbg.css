@@ -257,15 +257,6 @@ a:hover {
     color: #C4B59E; /* color when hyperlinks hovered over on default pages*/
 }
 
-#rbgdefaultbody {
-    max-width: 1280px;
-    min-height: 600px;
-    clear: both;
-    position: relative;
-    float: none;
-    padding: 65px 15px 15px 15px;
-}
-
 /**********************************************************/
 /*************  Begin CSS for membership page *************/
 /**********************************************************/
