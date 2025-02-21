@@ -5,7 +5,6 @@ services:
       - redbuttegarden/.env.dev
     build: redbuttegarden/
     volumes:
-      - ./redbuttegarden:/code
       - static_volume:/code/static
       - media_volume:/code/media
     depends_on:
