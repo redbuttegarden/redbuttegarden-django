@@ -621,86 +621,6 @@ a:hover {
 /**********  End CSS for Sponsors Packages Page ***********/
 /**********************************************************/
 
-/**********************************************************/
-/****************  Begin Generic Classes ******************/
-/**********************************************************/
-
-.red {
-    font-weight: bold;
-    color: #FF0000;
-}
-
-.blue {
-    color: #158FBF;
-}
-
-.bold {
-    font-weight: bold;
-}
-
-.italic {
-    font-style: italic;
-}
-
-.lilac {
-    font-weight: bold;
-    color: #A26BA2;
-}
-
-.orange {
-    font-weight: bold;
-    color: #FF7744;
-}
-
-.black {
-    font-weight: bold;
-    color: #000;
-}
-
-.white {
-    font-weight: bold;
-    color: #FFF;
-}
-
-.swag {
-    color: purple;
-    background-color: yellow;
-    text-decoration: underline;
-}
-
-.caps {
-    text-transform: capitalize;
-}
-
-.lowercase {
-    text-transform: lowercase;
-}
-
-.responsive, .responsive img {
-    max-width: 100%;
-    height: auto;
-}
-
-.hide {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .hide-mobile {
-        display: none;
-    }
-}
-
-@media (min-width: 769px) {
-    .hide-desktop {
-        display: none;
-    }
-}
-
-.green {
-    color: #196143;
-}
-
 .green-button, .tan-button, .dk-tn-button, .red-button, .orange-button {
     color: #FFF;
     font-weight: bold;
@@ -744,33 +664,10 @@ a:hover {
     opacity: .9;
 }
 
-.img-center, .img-center img {
-    display: block;
-    margin: 0 auto;
-}
-
-.border {
-    border: 1px solid #000;
-}
-
-.no-border {
-    border: 0;
-}
-
 .garden-panel {
     width: 95%;
     margin-left: auto;
     margin-right: auto;
-}
-
-/**********************************************************/
-/****************  End Generic Classes ********************/
-/**********************************************************/
-
-/* Fixes responsive table horizontal glitch on phones */
-
-.table-responsive .table {
-    max-width: none !important;
 }
 
 /*****************************************************/
