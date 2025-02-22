@@ -8,7 +8,9 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_includes %}
-    <div class="container-fluid px-0">
+    <div class="container-fluid vh-100 overflow-y-hidden px-0">
+    {#  Initially, only video is visible. When deneded, carousel displayeded in its place #}
+        {% include 'home/includes/video.html' %}
         {% include 'home/includes/image_carousel.html' with slides=page.event_slides.all %}
     </div>
 {% endblock %}
@@ -144,6 +146,7 @@
         }
     </script>
     {{ hours|json_script:"hours-data" }}
+    <script src="{% static 'home/js/hero_video.js' %}"></script>
     <script src="{% static 'home/js/hours.js' %}"></script>
     <script src="{% static 'home/js/weather.js' %}"></script>
     <script src="{% static 'home/js/follow_us_scroll.js' %}"></script>
