@@ -129,10 +129,6 @@ ul, ol {
     list-style-position: outside;
 }
 
-.image-list-dropdown {
-    min-height: 266px;
-}
-
 .foot-btn-wrap {
     margin: 10px 0;
 }
@@ -834,20 +830,11 @@ a:hover {
 }
 
 .eventwrapsmall, .collectionswrap {
-    max-width: 385px;
-    width: 100%;
-    height: auto;
-    position: relative !important;
-    margin-top: 30px;
+    position: relative;
 }
 
 .eventwraplarge {
     max-width: 1280px;
-}
-
-.eventwrapsmall img, .collectionswrap img {
-    width: 100%;
-    height: auto;
 }
 
 .index-thumbnail {
