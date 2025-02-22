@@ -1384,3 +1384,8 @@ a:hover {
 .contact-two-text {
     font-size: 2em;
 }
+
+.flex-even {
+    flex: 1;
+    min-width: 20rem;
+}
