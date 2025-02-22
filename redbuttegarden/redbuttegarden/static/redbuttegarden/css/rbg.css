@@ -1,3 +1,7 @@
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+}
+
 figcaption {
     text-align: center;
     font-style: italic;
@@ -620,6 +624,45 @@ a:hover {
 /**********************************************************/
 /**********  End CSS for Sponsors Packages Page ***********/
 /**********************************************************/
+
+.red {
+    font-weight: bold;
+    color: #FF0000;
+}
+
+.blue {
+    color: #158FBF;
+}
+
+.lilac {
+    font-weight: bold;
+    color: #A26BA2;
+}
+
+.orange {
+    font-weight: bold;
+    color: #FF7744;
+}
+
+.black {
+    font-weight: bold;
+    color: #000;
+}
+
+.white {
+    font-weight: bold;
+    color: #FFF;
+}
+
+.swag {
+    color: purple;
+    background-color: yellow;
+    text-decoration: underline;
+}
+
+.green {
+    color: var(--rbg-oak-green);
+}
 
 .green-button, .tan-button, .dk-tn-button, .red-button, .orange-button {
     color: #FFF;

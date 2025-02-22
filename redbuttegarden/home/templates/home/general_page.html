@@ -9,7 +9,7 @@
 
     {% for block in page.body %}
         {% if block.block_type == 'image' %}
-            {% image block.value original class="img-center img-responsive" %}
+            {% image block.value original class="img-fluid" %}
         {% else %}
             {% include_block block with id=block.id %}
         {% endif %}
