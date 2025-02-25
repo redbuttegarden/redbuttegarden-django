@@ -3,40 +3,34 @@
 
 {% block abnormal_content %}
     <div id="journalpostbody" class="container-fluid">
-        <div class="row text-center responsive">
-            {% image page.banner max-1280x500 %}
-        </div>
-        <br>
-
+        {% include 'includes/page_banner.html' with banner=page.banner %}
         <div class="row">
-            {% with gallery_items=post.gallery_images.all %}
-                {% if gallery_items %}
-                    <div class="col-sm-3">
-                {% else %}
-                    <div class="col-sm-2">
-                {% endif %}
-            {% endwith %}
+            <div class="col-12 col-sm-3">
                 {% if post.tags.all.count %}
                     <div class="tags">
                         <h3>Tags</h3>
-                        {% for tag in post.tags.all %}
-                            <div>
-                                <a href="{% routablepageurl journal_index_page "post_by_tag" tag.slug %}">
-                                    <span class="label label-info">{{ tag }}</span>
-                                </a>
-                            </div>
-                        {% endfor %}
+                        <ul class="nav nav-pills">
+                            {% for tag in post.tags.all %}
+                                <li class="nav-item">
+                                    <a class="px-2"
+                                       href="{% routablepageurl journal_index_page "post_by_tag" tag.slug %}">
+                                        <span class="badge rounded-pill text-bg-info">{{ tag }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
                     </div>
                 {% endif %}
 
                 {% with categories=post.categories.all %}
                     {% if categories %}
-                        <div class="tags">
+                        <div class="categories my-3">
                             <h3>Categories</h3>
-                            <ul class="nav nav-pills nav-stacked">
+                            <ul class="nav nav-pills">
                                 {% for category in categories %}
-                                    <li>
-                                        <a href="{% routablepageurl journal_index_page "post_by_category" category.slug %}">
+                                    <li class="nav-item w-100">
+                                        <a class="nav-link"
+                                           href="{% routablepageurl journal_index_page "post_by_category" category.slug %}">
                                             {{ category.name }}
                                         </a>
                                     </li>
@@ -45,12 +39,12 @@
                         </div>
                     {% endif %}
                 {% endwith %}
-                <div class="row">
+                <div class="row my-3">
                     {% with gallery_items=post.gallery_images.all %}
                         {% if gallery_items %}
                             {% for item in post.gallery_images.all %}
                                 <figure>
-                                    {% image item.image width-400 class="responsive" %}
+                                    {% image item.image width-400 class="img-fluid" %}
                                     <figcaption>{{ item.caption }}</figcaption>
                                 </figure>
                             {% endfor %}
@@ -59,13 +53,7 @@
                 </div>
             </div>
 
-            {% with gallery_items=post.gallery_images.all %}
-                {% if gallery_items %}
-                    <div class="col-sm-9">
-                {% else %}
-                    <div class="col-sm-10">
-                {% endif %}
-            {% endwith %}
+            <div class="col-12 col-sm-9 my-3 my-sm-0">
                 <h2>{{ post.title }}</h2>
                 <h5>Submitted: {{ post.date }}</h5>
                 {% if post.authors.all %}
@@ -80,7 +68,6 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-                <br>
 
                 {% for block in page.body %}
                     {% include_block block with id=block.id %}
