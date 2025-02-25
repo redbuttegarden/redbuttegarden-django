@@ -1,11 +1,11 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
-<div class="row">
+<div class="container-fluid d-flex flex-wrap justify-content-evenly">
     {% for list_item in value.list_items %}
-        <div class="col-12 col-sm-4 my-3">
+        <div class="image-dropdown-item my-3">
             <div class="eventwrapsmall hover" data-target="#{{ id }}-{{ forloop.counter }}" data-bs-toggle="collapse"
                  href="#{{ id }}-{{ forloop.counter }}" aria-expanded="false" aria-controls="{{ id }}-{{ forloop.counter }}">
-                <img class="img-rounded image-list-dropdown img-fluid" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
+                <img class="image-list-dropdown img-fluid w-100" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
                 <div class="eventinfo">
                     <div class="eventname">{{ list_item.title|truncatewords:7 }}</div>
                 </div>

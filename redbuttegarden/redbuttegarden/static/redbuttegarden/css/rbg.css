@@ -825,6 +825,10 @@ a:hover {
 /***************  Begin Event Images CSS ******************/
 /**********************************************************/
 
+.image-dropdown-item {
+    width: 385px;
+}
+
 .collectionswrap {
     max-width: 600px;
 }
