@@ -1,60 +1,16 @@
 {% load wagtailimages_tags %}
 
-<div id="image-link-list-{{ id }}" class="row xs-12">
-    {% if value.list_items|length_is:"1" %}
-        {% for image_item in value.list_items %}
-            <div>
-                <a href="{{ image_item.url }}">
-                    <div class="eventwrapsmall hover">
-                        {% image image_item.image original %}
-                        {% if image_item.title %}
-                            <div class="eventinfo">
-                                <div class="eventname">{{ image_item.title }}</div>
-                            </div>
-                        {% endif %}
+<div id="image-link-list-{{ id }}" class="container-fluid d-flex flex-wrap justify-content-evenly">
+    {% for image_item in value.list_items %}
+        <a href="{{ image_item.url }}">
+            <div class="index-thumbnail hover">
+                {% image image_item.image original %}
+                {% if image_item.title %}
+                    <div class="eventinfo">
+                        <div class="eventname">{{ image_item.title }}</div>
                     </div>
-                </a>
+                {% endif %}
             </div>
-        {% endfor %}
-    {% elif value.list_items|length_is:"2" %}
-        {% for image_item in value.list_items %}
-            <div class="col-sm-6">
-                <a href="{{ image_item.url }}">
-                    <div class="eventwrapsmall hover">
-                        {% comment %}
-                            Added blank alt attribute to image thumbnails since these are primarily to create a
-                            larger surface area for the page links and alt attributes would unnecessarily complicate
-                            page navigation for users using screen readers.
-                        {% endcomment %}
-                        {% image image_item.image fill-385x385 alt="" %}
-                        {% if image_item.title %}
-                            <div class="eventinfo">
-                                <div class="eventname">{{ image_item.title }}</div>
-                            </div>
-                        {% endif %}
-                    </div>
-                </a>
-            </div>
-        {% endfor %}
-    {% else %}
-        {% for image_item in value.list_items %}
-            <div class="col-sm-4">
-                <a href="{{ image_item.url }}">
-                    <div class="eventwrapsmall hover">
-                        {% comment %}
-                            Added blank alt attribute to image thumbnails since these are primarily to create a
-                            larger surface area for the page links and alt attributes would unnecessarily complicate
-                            page navigation for users using screen readers.
-                        {% endcomment %}
-                        {% image image_item.image fill-385x385 alt="" %}
-                        {% if image_item.title %}
-                            <div class="eventinfo">
-                                <div class="eventname">{{ image_item.title }}</div>
-                            </div>
-                        {% endif %}
-                    </div>
-                </a>
-            </div>
-        {% endfor %}
-    {% endif %}
+        </a>
+    {% endfor %}
 </div>
