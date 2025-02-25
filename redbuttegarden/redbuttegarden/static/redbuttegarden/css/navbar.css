@@ -12,13 +12,18 @@ nav .show > .bi {
     transition: transform 2s;
 }
 
-nav a, nav a:link, nav a:visited {
+nav.navbar a,
+nav.navbar a:link,
+nav.navbar a:visited {
     color: white;
     text-decoration: none;
     font-weight: inherit;
 }
 
-nav .nav-link:focus, nav .nav-link:hover, nav .nav-link:active, nav .navbar-nav .nav-link.show {
+nav.navbar .nav-link:focus,
+nav.navbar .nav-link:hover,
+nav.navbar .nav-link:active,
+nav.navbar .navbar-nav .nav-link.show {
     color: white;
     text-decoration: underline;
 }

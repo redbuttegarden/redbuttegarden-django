@@ -2,19 +2,17 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
-    <div id="journal-banner" class="row text-center responsive">
-        {% image page.banner max-1280x500 %}
-    </div>
-    <br>
+    {% include 'includes/page_banner.html' with banner=page.banner %}
 
     {% for block in page.body %}
         {% include_block block with id=block.id %}
     {% endfor %}
 
-    <hr>
-    <div class="row col xs-12">
+    <hr class="my-3">
+
+    <div class="d-flex flex-wrap justify-content-around">
         {% for post in posts %}
-            <div class="col-sm-4 index-tile">
+            <div class="index-tile">
                 {% with post=post.specific %}
                     <a class="hover" href="{% pageurl post %}">
                         <div class="index-thumbnail">
@@ -32,7 +30,7 @@
                     </a>
                 {% endwith %}
             </div>
-        {% empty %}
+            {% empty %}
             <br>
             <br>
             <div class="row">
@@ -48,16 +46,12 @@
     {% if posts.paginator.num_pages > 1 %}
         <div class="container">
             <div class="row">
-                <div class="col-md-12">
-                    {% include "includes/pagination.html" with subpages=posts %}
-                </div>
+                {% include "includes/pagination.html" with subpages=posts %}
             </div>
         </div>
     {% endif %}
 
-    <br>
-    <hr>
-    <br>
+    <hr class="my-3">
 
     <div class="row col xs-12">
         {% for block in page.bottom_button_info %}
