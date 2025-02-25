@@ -11,22 +11,6 @@
     padding-top: 5px;
 }
 
-.concertinfo, .concert-test {
-    position: relative;
-    max-width: 280px;
-    text-align: center;
-    max-height: 215px;
-    color: #fff;
-    height: 75px;
-    margin: 10px auto 10px auto;
-    font-size: 16px;
-    opacity: 1;
-}
-
-.concert-test {
-    height: 40px;
-}
-
 .concertwrapper {
     max-width: 330px;
 }
