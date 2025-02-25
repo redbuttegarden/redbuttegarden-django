@@ -12,10 +12,6 @@ figcaption {
     margin-bottom: 1em;
 }
 
-hr {
-    width: 95%;
-}
-
 #banner {
     max-width: 1280px;
 }
@@ -138,9 +134,8 @@ ul, ol {
 }
 
 /* Pagination navigation */
-nav[role=pagination] {
-    margin-top: 50px;
-    text-align: center;
+nav[role=pagination] a {
+    color: var(--rbg-penstemon-blue);
 }
 
 .index-tile {
@@ -229,12 +224,12 @@ html {
 }
 
 hr {
+    width: 95%;
     height: 2px;
     color: #196143;
     background-color: #196143;
     border: none;
-    margin-top: 3px;
-    margin-bottom: 3px;
+    margin: auto;
 }
 
 .hover:hover, .hover:focus {
@@ -963,34 +958,11 @@ a:hover {
     outline: 0;
 }
 
-.no-button-outline .volbutton {
-    padding: 0;
+.no-button-outline {
     border: none;
 }
 
 /* End panel code to get rid of button borders and blue border around selected button */
-
-.col-sm-4 {
-    /*display: none;*/
-}
-
-/* Hides <br /> on mobile devices */
-@media (max-width: 768px) {
-
-    .br-hide {
-        display: none;
-    }
-
-}
-
-/* Hides <br /> on large devices */
-@media (min-width: 769px) {
-
-    .br-hide-lg {
-        display: none;
-    }
-
-}
 
 /* Concert information CSS */
 

@@ -1,62 +1,16 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
-<div class="row">
-    {% if value.list_items|length_is:"1" %}
-        {% for list_item in value.list_items %}
-            <div class="lowpadding btn-block">
-                    <span class="no-button-outline">
-                        <button class="volbutton hover green-bg" data-target="#{{ id }}-{{ forloop.counter }}"
-                                data-toggle="collapse" href="#{{ id }}-{{ forloop.counter }}">
-                            {{ list_item.button_text }}
-                        </button>
-                    </span>
-                <div class="collapse tan-bg" id="{{ id }}-{{ forloop.counter }}">
-                    {{ list_item.info_text }}
-                </div>
+<div class="container-fluid d-flex flex-wrap justify-content-evenly">
+    {% for list_item in value.list_items %}
+        <div class="btn-block w-100 my-3">
+            <button class="volbutton hover green-bg no-button-outline px-3" type="button" data-target="#{{ id }}-{{ forloop.counter }}"
+                    data-bs-toggle="collapse" aria-expanded="false" aria-controls="{{ id }}-{{ forloop.counter }}"
+                    href="#{{ id }}-{{ forloop.counter }}">
+                {{ list_item.button_text }}
+            </button>
+            <div class="collapse tan-bg" id="{{ id }}-{{ forloop.counter }}">
+                {{ list_item.info_text }}
             </div>
-        {% endfor %}
-    {% elif value.list_items|length_is:"2" %}
-        {% for list_item in value.list_items %}
-            <div class="col-sm-6 lowpadding">
-                    <span class="no-button-outline">
-                        <button class="volbutton hover green-bg" data-target="#{{ id }}-{{ forloop.counter }}"
-                                data-toggle="collapse" href="#{{ id }}-{{ forloop.counter }}">
-                            {{ list_item.button_text }}
-                        </button>
-                    </span>
-                <div class="collapse tan-bg" id="{{ id }}-{{ forloop.counter }}">
-                    {{ list_item.info_text }}
-                </div>
-            </div>
-        {% endfor %}
-    {% elif value.list_items|length_is:"3" %}
-        {% for list_item in value.list_items %}
-            <div class="col-sm-4 lowpadding">
-                <span class="no-button-outline">
-                    <button class="volbutton hover green-bg" data-target="#{{ id }}-{{ forloop.counter }}"
-                            data-toggle="collapse" href="#{{ id }}-{{ forloop.counter }}">
-                        {{ list_item.button_text }}
-                    </button>
-                </span>
-                <div class="collapse tan-bg" id="{{ id }}-{{ forloop.counter }}">
-                    {{ list_item.info_text }}
-                </div>
-            </div>
-        {% endfor %}
-    {# I'm making the assumption that there won't be more than 4 buttons in a button_list_dropdown_info list #}
-    {% else %}
-        {% for list_item in value.list_items %}
-            <div class="col-sm-3 lowpadding">
-                    <span class="no-button-outline">
-                        <button class="volbutton hover green-bg" data-target="#{{ id }}-{{ forloop.counter }}"
-                                data-toggle="collapse" href="#{{ id }}-{{ forloop.counter }}">
-                            {{ list_item.button_text }}
-                        </button>
-                    </span>
-                <div class="collapse tan-bg" id="{{ id }}-{{ forloop.counter }}">
-                    {{ list_item.info_text }}
-                </div>
-            </div>
-        {% endfor %}
-    {% endif %}
+        </div>
+    {% endfor %}
 </div>
