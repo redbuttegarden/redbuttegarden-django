@@ -1,55 +1,11 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
-<div class="row">
-    {% if value.list_items|length_is:"1" %}
-        {% for list_item in value.list_items %}
-            <a href="{{ list_item.url }}">
-                <div>
-                    <div class="volbutton hover center {{ list_item.color }}">
-                        {{ list_item.text }}
-                    </div>
-                </div>
-            </a>
-        {% endfor %}
-    {% elif value.list_items|length_is:"2" %}
-        {% for list_item in value.list_items %}
-            <a href="{{ list_item.url }}">
-                <div class="col-sm-6">
-                    <div class="volbutton hover center {{ list_item.color }}">
-                        {{ list_item.text }}
-                    </div>
-                </div>
-            </a>
-        {% endfor %}
-    {% elif value.list_items|length_is:"3" %}
-        {% for list_item in value.list_items %}
-            <a href="{{ list_item.url }}">
-                <div class="col-sm-4">
-                    <div class="volbutton hover center {{ list_item.color }}">
-                        {{ list_item.text }}
-                    </div>
-                </div>
-            </a>
-        {% endfor %}
-    {% elif value.list_items|length_is:"4" %}
-        {% for list_item in value.list_items %}
-            <a href="{{ list_item.url }}">
-                <div class="col-sm-3">
-                    <div class="volbutton hover center {{ list_item.color }}">
-                        {{ list_item.text }}
-                    </div>
-                </div>
-            </a>
-        {% endfor %}
-    {% else %}
-        {% for list_item in value.list_items %}
-            <a href="{{ list_item.url }}">
-                <div class="col-sm-2">
-                    <div class="volbutton hover center {{ list_item.color }}">
-                        {{ list_item.text }}
-                    </div>
-                </div>
-            </a>
-        {% endfor %}
-    {% endif %}
+<div class="container-fluid d-flex flex-wrap justify-content-evenly">
+    {% for list_item in value.list_items %}
+        <a class="flex-fill m-1 m-sm-3" href="{{ list_item.url }}">
+            <div class="volbutton hover {{ list_item.color }} p-2">
+                {{ list_item.text }}
+            </div>
+        </a>
+    {% endfor %}
 </div>
