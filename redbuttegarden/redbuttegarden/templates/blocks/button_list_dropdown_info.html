@@ -2,8 +2,8 @@
 
 <div class="container-fluid d-flex flex-wrap justify-content-evenly">
     {% for list_item in value.list_items %}
-        <div class="btn-block w-100 my-3">
-            <button class="volbutton hover green-bg no-button-outline px-3" type="button" data-target="#{{ id }}-{{ forloop.counter }}"
+        <div class="dropdown-btn flex-fill m-1 m-sm-3">
+            <button class="volbutton hover no-button-outline px-3" type="button" data-target="#{{ id }}-{{ forloop.counter }}"
                     data-bs-toggle="collapse" aria-expanded="false" aria-controls="{{ id }}-{{ forloop.counter }}"
                     href="#{{ id }}-{{ forloop.counter }}">
                 {{ list_item.button_text }}

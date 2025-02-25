@@ -329,13 +329,6 @@ a:hover {
     opacity: .9;
 }
 
-.membenefits:before, .memfaq:before, .volbutton:before { /* create a full-height inline block pseudo-element */
-    content: ' ';
-    display: inline-block;
-    vertical-align: middle; /* vertical alignment of the inline element */
-    height: 100%;
-}
-
 #membenefits, #mempolicies, #memrecurring {
     max-width: 640px;
     background-color: #F2EDE4;
@@ -361,6 +354,10 @@ a:hover {
     margin-bottom: 4px;
     padding: 0;
     background-color: #196143;
+}
+
+.dropdown-btn {
+  max-width: 400px !important;
 }
 
 .memfaq {
