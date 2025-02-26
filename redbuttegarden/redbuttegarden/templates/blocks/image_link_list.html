@@ -2,15 +2,17 @@
 
 <div id="image-link-list-{{ id }}" class="container-fluid d-flex flex-wrap justify-content-evenly">
     {% for image_item in value.list_items %}
-        <a href="{{ image_item.url }}">
-            <div class="index-thumbnail hover">
-                {% image image_item.image original %}
-                {% if image_item.title %}
-                    <div class="eventinfo">
-                        <div class="eventname">{{ image_item.title }}</div>
-                    </div>
-                {% endif %}
-            </div>
-        </a>
+        <div class="p-1 mb-3">
+            <a href="{{ image_item.url }}">
+                <div class="index-thumbnail hover">
+                    {% image image_item.image original %}
+                    {% if image_item.title %}
+                        <div class="eventinfo">
+                            <div class="eventname">{{ image_item.title }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </a>
+        </div>
     {% endfor %}
 </div>
