@@ -238,8 +238,8 @@ a:hover {
 /*************  Begin CSS for membership page *************/
 /**********************************************************/
 
-#imageCardList .card,
-#cardList .card {
+.image-card-list .card,
+.card-list .card {
     background-color: #F2EDE4;
     border: 2px solid black;
 }
