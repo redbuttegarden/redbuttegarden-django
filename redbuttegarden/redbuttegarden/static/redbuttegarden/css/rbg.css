@@ -585,7 +585,7 @@ a:hover {
 
 .red {
     font-weight: bold;
-    color: #FF0000;
+    color: var(--rbg-fall-leaves-red);
 }
 
 .blue {
