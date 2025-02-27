@@ -1,18 +1,16 @@
 {% load wagtailcore_tags %}
 
 <div class="{{ value.background_color }}">
-    <div class="">
-        {% if value.title %}
-            <div class="row">
-                <h3 class="text-center green">{{ value.title }}</h3>
-            </div>
-        {% endif %}
-        <div class="d-flex flex-wrap {{ value.alignment }}">
-            {% for paragraph in value.paragraph %}
-                <div class="flex-even p-3">
-                    {{ paragraph|richtext }}
-                </div>
-            {% endfor %}
+    {% if value.title %}
+        <div class="row">
+            <h3 class="text-center green">{{ value.title }}</h3>
         </div>
+    {% endif %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-{{ value.paragraph|length }} {{ value.alignment }}">
+        {% for paragraph in value.paragraph %}
+            <div class="col py-1 py-md-3 px-3">
+                {{ paragraph|richtext }}
+            </div>
+        {% endfor %}
     </div>
 </div>

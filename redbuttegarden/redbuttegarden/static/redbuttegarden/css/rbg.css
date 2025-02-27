@@ -74,7 +74,8 @@ figcaption {
 }
 
 img.richtext-image {
-    padding: 10px;
+    max-width: 100%;
+    height: auto;
 }
 
 img.right {
