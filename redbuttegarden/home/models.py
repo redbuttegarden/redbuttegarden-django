@@ -254,16 +254,6 @@ class SingleListCardDropdownInfo(blocks.StructBlock):
     )
 
 
-class CardListDropdownInfo(blocks.StructBlock):
-    list_items = blocks.ListBlock(
-        SingleListCardDropdownInfo(),
-        label="Card"
-    )
-
-    class Meta:
-        template = 'blocks/card_list_dropdown_info.html'
-
-
 class TextAlignmentChoiceBlock(blocks.ChoiceBlock):
     choices = [
         ('center', 'Center'),
@@ -478,7 +468,6 @@ class GeneralPage(AbstractBase):
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
-        ('dropdown_card_list', CardListDropdownInfo()),
         ('card_info_list', ImageListCardInfo()),
         ('image_info_list', ImageInfoList()),
         ('image_link_list', ImageLinkList()),
