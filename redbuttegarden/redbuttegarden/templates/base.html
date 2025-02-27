@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 <head>
+    <meta charset="utf-8">
     <!-- Various Tracking Code Snippets -->
     {% if not request.is_preview %}
         {% include 'includes/tracking.html' %}
@@ -12,14 +13,13 @@
     <meta name="description" content="{{ page.title }}">
     <meta name="author" content="Red Butte Garden">
     <!-- Facebook Domain Verification -->
-    <meta name="facebook-domain-verification" content="7xf5nzx39bpdnc9taftqhsn1zzvr2e"/>
+    <meta name="facebook-domain-verification" content="7xf5nzx39bpdnc9taftqhsn1zzvr2e">
     <!-- Chrome, Firefox OS, Opera and Vivaldi -->
     <meta name="theme-color" content="#196143">
     <!-- Windows Phone -->
     <meta name="msapplication-navbutton-color" content="#196143">
     <!-- iOS Safari -->
     <meta name="apple-mobile-web-app-status-bar-style" content="#196143">
-    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -82,7 +82,8 @@
 
 <main id="main">
     {% block abnormal_content %}
-        <div id="rbgdefaultbody" class="container-xl p-4 p-lg-5">  {% block content %}{% endblock %}
+        <div id="rbgdefaultbody" class="container-xl p-4 p-lg-5">  
+            {% block content %}{% endblock %}
         </div>
     {% endblock %}
 </main>
