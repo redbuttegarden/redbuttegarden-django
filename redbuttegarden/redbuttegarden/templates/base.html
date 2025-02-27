@@ -4,13 +4,10 @@
 <html class="no-js" lang="en">
 <head>
     <meta charset="utf-8">
-    <!-- Various Tracking Code Snippets -->
-    {% if not request.is_preview %}
-        {% include 'includes/tracking.html' %}
-    {% endif %}
 
     <!-- meta tags for SEO and indexing -->
-    <meta name="description" content="{{ page.title }}">
+    <meta name="description"
+          content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.title }}{% endif %}">
     <meta name="author" content="Red Butte Garden">
     <!-- Facebook Domain Verification -->
     <meta name="facebook-domain-verification" content="7xf5nzx39bpdnc9taftqhsn1zzvr2e">
@@ -60,6 +57,11 @@
     {% block extra_css %}
         {# Override this in templates to add extra stylesheets #}
     {% endblock %}
+
+    <!-- Various Tracking Code Snippets -->
+    {% if not request.is_preview %}
+        {% include 'includes/tracking.html' %}
+    {% endif %}
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
@@ -82,7 +84,7 @@
 
 <main id="main">
     {% block abnormal_content %}
-        <div id="rbgdefaultbody" class="container-xl p-4 p-lg-5">  
+        <div id="rbgdefaultbody" class="container-xl p-4 p-lg-5">
             {% block content %}{% endblock %}
         </div>
     {% endblock %}
