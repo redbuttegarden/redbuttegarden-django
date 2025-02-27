@@ -67,7 +67,7 @@
     </script>
 
     <script src="{% static 'plants/js/name_styling.js' %}"></script>
-    <script type="text/javascript">
+    <script>
         document.getElementById("full-name").innerHTML = style_full_name("{{ collection.species.full_name|safe }}");
     </script>
 {% endblock %}
