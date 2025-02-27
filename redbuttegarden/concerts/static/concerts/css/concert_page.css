@@ -71,7 +71,7 @@
 .concerttext {
     background-color: #F2EDE4;
     position: relative;
-    height: 280px;
+    height: 350px;
 }
 
 .concerttext:before {      /* create a full-height inline block pseudo-element */
