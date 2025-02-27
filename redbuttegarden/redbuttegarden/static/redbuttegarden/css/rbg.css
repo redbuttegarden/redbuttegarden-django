@@ -269,13 +269,14 @@ a:hover {
 
 }
 
-.membutton, .apply-button,
+.membutton, a.apply-button,
 #accordion .apply-button .btn-inner {
     background-color: #196143;
     color: #FFF;
     height: 40px;
     font-size: 16px;
     border: 1px solid black;
+    text-decoration: none;
 }
 
 .foot-btn-wrap a.footer-button {
