@@ -1,42 +1,42 @@
-$("table").addClass("table");
-
-const donor_seating_map = document.createElement("a");
-donor_seating_map.setAttribute("href", "/media/images/CDC-VenueMap-2025.original.jpg");
-donor_seating_map.classList.add("red");
-
-const donor_parking_map = document.createElement("a");
-donor_parking_map.setAttribute("href", "/media/original_images/donor-permit-parking-map.jpg");
-donor_parking_map.classList.add("red");
-
-const concert_club_parking_map = document.createElement("a");
-concert_club_parking_map.setAttribute("href", "/media/original_images/concert-club-parking-map.jpg");
-concert_club_parking_map.classList.add("red");
-
-/* Add links to Package Comparison drop-down tables */
-$("#spon-table table td:nth-child(3)").each(function() {
-    $(this).wrapInner(donor_seating_map);
+const tables = document.getElementsByTagName('table');
+Array.from(tables).forEach(table => {
+    table.classList.add('table');
 });
 
-$("#spon-table table td:nth-child(5)").each(function() {
-    if (this.innerText.trim() === "Donor Lot") {
-        $(this).wrapInner(donor_parking_map);
-    } else if (this.innerText.trim() === "Concert Club Lot") {
-        $(this).wrapInner(concert_club_parking_map);
+const donorMapCells = document.querySelectorAll(".donor-package-tables table td:nth-child(5)");
+donorMapCells.forEach(cell => {
+    const cellText = cell.textContent.trim();
+
+    if (cellText && !cellText.includes("Location")) {
+        const donor_seating_map = document.createElement("a");
+        donor_seating_map.setAttribute("href", "/media/images/CDC-VenueMap-2025.original.jpg");
+        donor_seating_map.classList.add("red");
+
+        donor_seating_map.innerHTML = cell.innerHTML;
+        cell.innerHTML = "";
+        cell.appendChild(donor_seating_map);
     }
 });
 
-/* Add links to donor package seating tables */
-$(".donor-package-tables table td:nth-child(5)").each(function() {
-    let text = this.innerText.trim();
-    if (text && !text.includes("Location")) {
-        $(this).wrapInner(donor_seating_map);
-    }
-});
+const donorLotCells = document.querySelectorAll(".donor-package-tables table td:nth-child(6)");
+donorLotCells.forEach(cell => {
+    const cellText = cell.textContent.trim();
 
-$(".donor-package-tables table td:nth-child(6)").each(function() {
-    if (this.innerText.trim().includes("Donor Lot")) {
-        $(this).wrapInner(donor_parking_map);
-    } else if (this.innerText.trim().includes("Concert Club Lot")) {
-        $(this).wrapInner(concert_club_parking_map);
+    if (cellText && cellText.includes("Donor Lot")) {
+        const donor_seating_map = document.createElement("a");
+        donor_seating_map.setAttribute("href", "/media/images/CDC-VenueMap-2025.original.jpg");
+        donor_seating_map.classList.add("red");
+
+        donor_seating_map.innerHTML = cell.innerHTML;
+        cell.innerHTML = "";
+        cell.appendChild(donor_seating_map)
+    } else if (cellText && cellText.includes("Concert Club Lot")) {
+        const concert_club_parking_map = document.createElement("a");
+        concert_club_parking_map.setAttribute("href", "/media/original_images/concert-club-parking-map.jpg");
+        concert_club_parking_map.classList.add("red");
+
+        concert_club_parking_map.innerHTML = cell.innerHTML;
+        cell.innerHTML = "";
+        cell.appendChild(concert_club_parking_map)
     }
 });
