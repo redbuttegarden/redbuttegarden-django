@@ -80,6 +80,7 @@ figcaption {
 img.richtext-image {
     max-width: 100%;
     height: auto;
+    padding: 15px;
 }
 
 img.right {
