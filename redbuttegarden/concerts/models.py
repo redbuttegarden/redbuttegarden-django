@@ -377,6 +377,20 @@ class DonorPackagePage(AbstractBase):
         FieldPanel('body'),
     ]
 
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, **kwargs)
+
+        if request.user.is_authenticated:
+            try:
+                cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
+            except ConcertDonorClubMember.DoesNotExist:
+                cdc_member = None
+
+            if cdc_member:
+                context['cdc_member'] = cdc_member
+
+        return context
+
 
 class DonorSchedulePage(AbstractBase):
     body = StreamField(block_types=[
@@ -419,7 +433,10 @@ class ConcertDonorClubPortalPage(AbstractBase):
         context = super().get_context(request, **kwargs)
 
         if request.user.is_authenticated:
-            cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
+            try:
+                cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
+            except ConcertDonorClubMember.DoesNotExist:
+                cdc_member = None
 
             if cdc_member:
                 context['cdc_member'] = cdc_member

@@ -12,6 +12,14 @@
 {% block content %}
     {% include 'includes/page_banner.html' with banner=page.banner %}
 
+    {% if cdc_member %}
+        <div class="container text-center my-1 my-md-3">
+            <a id="portalLink" class="btn p-3" href="{% slugurl 'concert-club-portal' %}">
+                Thanks for being a Donor Club Member! Click here to enter our member portal
+            </a>
+        </div>
+    {% endif %}
+
     {% for block in page.body %}
         {% if block.block_type == 'image' %}
             {% image block.value original class="img-fluid" %}
