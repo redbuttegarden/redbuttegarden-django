@@ -8,18 +8,16 @@
 
 {% block content %}
     <div id="user-info">
-        <p class="name"><span class="bold">Name: </span>{{ request.user.get_full_name }}</p>
-        <p class="name"><span class="bold">Phone Number: </span>{{ cdc_member.phone_number }}</p>
-        <p class="name"><span class="bold">Email: </span>{{ request.user.email }}</p>
-        <p class="username"><span class="bold">Username: </span>{{ request.user.username }}</p>
+        <p class="name"><span class="fw-bold">Name: </span>{{ request.user.get_full_name }}</p>
+        <p class="name"><span class="fw-bold">Phone Number: </span>{{ cdc_member.phone_number }}</p>
+        <p class="name"><span class="fw-bold">Email: </span>{{ request.user.email }}</p>
+        <p class="username"><span class="fw-bold">Username: </span>{{ request.user.username }}</p>
         <p><a href="{% url 'concerts:cdc-profile' %}" title="Concert Donor Club Profile Page">Click here for
             YOUR {% now "Y" %} Summer Concert Lineup</a>
         </p>
     </div>
 
-    <div class="row text-center responsive">
-        {% image page.banner max-1280x500 %}
-    </div>
+    {% include 'includes/page_banner.html' with banner=page.banner %}
 
     {% for block in page.body %}
         {% include_block block with id=block.id %}
