@@ -80,6 +80,17 @@
 
 {% include 'includes/navbar.html' %}
 
+{% block messages %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {{ message.level_tag }} alert-dismissible text-center fade show m-0" role="alert">
+                {{ message.message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
 {% block extra_includes %}{% endblock %}
 
 <main id="main">
@@ -106,6 +117,7 @@
         crossorigin="anonymous"></script>
 <script src="{% static 'redbuttegarden/js/navbar.js' %}"></script>
 <script src="{% static 'search/js/search.js' %}"></script>
+<script src="{% static 'redbuttegarden/js/rbg.js' %}"></script>
 
 {% block extra_js %}
     {# Override this in templates to add extra javascript #}
