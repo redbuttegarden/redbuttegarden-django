@@ -233,3 +233,9 @@ footer {
     margin-bottom: 1em;
     border-left: 2px solid black;
 }
+
+/* For Social Good Calendars */
+.render-calendar a.fc-event, .render-calendar a.fc-event:link, .render-calendar a.fc-event:visited, .render-calendar a.fc-event:active {
+	color: white;
+	text-decoration: none;
+}
