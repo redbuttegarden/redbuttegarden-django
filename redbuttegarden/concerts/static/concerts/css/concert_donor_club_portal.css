@@ -5,10 +5,6 @@
     color: white;
 }
 
-#main #rbgdefaultbody {
-    max-width: 100%;
-}
-
 #main #rbgdefaultbody span {
     font-family: 'Manrope', Impact, serif;
 }
@@ -40,6 +36,11 @@
     #portal-links div {
         display: inherit;
     }
+}
+
+#main #rbgdefaultbody {
+    position: relative;
+    max-width: 100%;
 }
 
 #user-info {

@@ -1,3 +1,16 @@
+html * {
+    font-family: 'Usual', 'Open Sans', Impact, serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    margin: 1rem 0;
+}
+
+h2.accordion-header {
+    margin: 0;
+}
+
 figcaption {
     text-align: center;
     font-style: italic;
@@ -8,33 +21,15 @@ figcaption {
     margin-bottom: 1em;
 }
 
-hr {
-    width: 95%;
-}
-
 #banner {
     max-width: 1280px;
 }
 
-#journalpostbody {
-    margin: 0 auto 0 auto;
-    padding: 65px 15px 15px 15px;
+.tags ul li .badge {
+    white-space: inherit;
 }
 
-#journalpostbody img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 15px;
-}
-
-.tags div {
-    display: inline-block;
-    margin-bottom: 3px;
-}
-
-/* Used for categories in journal_page.html */
-.tags ul li {
+.categories ul li {
     border: 1px solid rgba(25, 97, 67, .7);
     border-radius: 10px;
 }
@@ -83,7 +78,9 @@ hr {
 }
 
 img.richtext-image {
-    padding: 10px;
+    max-width: 100%;
+    height: auto;
+    padding: 15px;
 }
 
 img.right {
@@ -125,10 +122,6 @@ ul, ol {
     list-style-position: outside;
 }
 
-.image-list-dropdown {
-    min-height: 266px;
-}
-
 .foot-btn-wrap {
     margin: 10px 0;
 }
@@ -138,9 +131,8 @@ ul, ol {
 }
 
 /* Pagination navigation */
-nav[role=pagination] {
-    margin-top: 50px;
-    text-align: center;
+nav[role=pagination] a {
+    color: var(--rbg-penstemon-blue);
 }
 
 .index-tile {
@@ -210,15 +202,6 @@ nav[role=pagination] {
     border-left: 2px solid black;
 }
 
-html * {
-    font-family: 'Open Sans', Impact, serif;
-}
-
-html {
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-}
-
 .wf-loading {
     font-size: 15px;
     line-height: 1.7;
@@ -229,12 +212,12 @@ html {
 }
 
 hr {
+    width: 95%;
     height: 2px;
     color: #196143;
     background-color: #196143;
     border: none;
-    margin-top: 3px;
-    margin-bottom: 3px;
+    margin: auto;
 }
 
 .hover:hover, .hover:focus {
@@ -261,23 +244,18 @@ a:hover {
 /*************  Begin CSS for membership page *************/
 /**********************************************************/
 
-.mempic {
+.image-card-list .card,
+.card-list .card {
+    background-color: #F2EDE4;
     border: 2px solid black;
+}
+
+.mempic {
+    border-right: 2px solid black;
     display: flex;
     justify-content: center;
     padding: 0;
-}
-
-.mempic img {
-    flex-shrink: 0;
-    min-width: 100%;
-    min-height: 100%;
-}
-
-.meminfo {
-    background-color: #F2EDE4;
-    border: 2px solid black;
-    padding: 0.5em;
+    overflow: hidden;
 }
 
 .meminfo h4 {
@@ -292,13 +270,14 @@ a:hover {
 
 }
 
-.membutton, .apply-button,
+.membutton, a.apply-button,
 #accordion .apply-button .btn-inner {
     background-color: #196143;
     color: #FFF;
     height: 40px;
     font-size: 16px;
     border: 1px solid black;
+    text-decoration: none;
 }
 
 .foot-btn-wrap a.footer-button {
@@ -307,13 +286,6 @@ a:hover {
     width: 100%;
     display: inherit;
     text-decoration: none;
-}
-
-.membutton {
-    margin-bottom: 20px;
-    position: absolute;
-    bottom: -10px;
-    right: 10px;
 }
 
 .membutton:hover {
@@ -348,13 +320,6 @@ a:hover {
     opacity: .9;
 }
 
-.membenefits:before, .memfaq:before, .volbutton:before { /* create a full-height inline block pseudo-element */
-    content: ' ';
-    display: inline-block;
-    vertical-align: middle; /* vertical alignment of the inline element */
-    height: 100%;
-}
-
 #membenefits, #mempolicies, #memrecurring {
     max-width: 640px;
     background-color: #F2EDE4;
@@ -380,6 +345,10 @@ a:hover {
     margin-bottom: 4px;
     padding: 0;
     background-color: #196143;
+}
+
+.dropdown-btn {
+  max-width: 400px !important;
 }
 
 .memfaq {
@@ -621,6 +590,45 @@ a:hover {
 /**********  End CSS for Sponsors Packages Page ***********/
 /**********************************************************/
 
+.red {
+    font-weight: bold;
+    color: var(--rbg-fall-leaves-red);
+}
+
+.blue {
+    color: #158FBF;
+}
+
+.lilac {
+    font-weight: bold;
+    color: #A26BA2;
+}
+
+.orange {
+    font-weight: bold;
+    color: #FF7744;
+}
+
+.black {
+    font-weight: bold;
+    color: #000;
+}
+
+.white {
+    font-weight: bold;
+    color: #FFF;
+}
+
+.swag {
+    color: purple;
+    background-color: yellow;
+    text-decoration: underline;
+}
+
+.green {
+    color: var(--rbg-oak-green);
+}
+
 .green-button, .tan-button, .dk-tn-button, .red-button, .orange-button {
     color: #FFF;
     font-weight: bold;
@@ -786,25 +794,20 @@ a:hover {
 /***************  Begin Event Images CSS ******************/
 /**********************************************************/
 
+.image-dropdown-item {
+    width: 385px;
+}
+
 .collectionswrap {
     max-width: 600px;
 }
 
 .eventwrapsmall, .collectionswrap {
-    max-width: 385px;
-    width: 100%;
-    height: auto;
-    position: relative !important;
-    margin-top: 30px;
+    position: relative;
 }
 
 .eventwraplarge {
     max-width: 1280px;
-}
-
-.eventwrapsmall img, .collectionswrap img {
-    width: 100%;
-    height: auto;
 }
 
 .index-thumbnail {
@@ -929,34 +932,11 @@ a:hover {
     outline: 0;
 }
 
-.no-button-outline .volbutton {
-    padding: 0;
+.no-button-outline {
     border: none;
 }
 
 /* End panel code to get rid of button borders and blue border around selected button */
-
-.col-sm-4 {
-    /*display: none;*/
-}
-
-/* Hides <br /> on mobile devices */
-@media (max-width: 768px) {
-
-    .br-hide {
-        display: none;
-    }
-
-}
-
-/* Hides <br /> on large devices */
-@media (min-width: 769px) {
-
-    .br-hide-lg {
-        display: none;
-    }
-
-}
 
 /* Concert information CSS */
 
@@ -1340,4 +1320,9 @@ a:hover {
 
 .contact-two-text {
     font-size: 2em;
+}
+
+.flex-even {
+    flex: 1;
+    min-width: 20rem;
 }

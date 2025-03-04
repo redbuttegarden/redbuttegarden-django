@@ -99,3 +99,11 @@ th.font-italic {
 .unreserved-seating tr:nth-child(6) td:nth-child(2) {
     font-style: normal;
 }
+
+#portalLink {
+    color: var(--rbg-conifer-green);
+    background-color: var(--rbg-dark-blue);
+    margin: 15px 0;
+    text-decoration: none;
+    border: 2px var(--rbg-fall-leaves-red) solid;
+}

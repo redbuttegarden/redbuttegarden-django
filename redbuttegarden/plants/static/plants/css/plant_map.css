@@ -102,7 +102,7 @@
 
     #legend {
         position: absolute;
-        top: 60px;
+        top: 100px;
         right: 25px;
         overflow: auto;
         background: rgba(255, 255, 255, 0.8);

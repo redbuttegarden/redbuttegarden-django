@@ -185,7 +185,7 @@ class ConcertBlock(blocks.StructBlock):
 
     # Added a ticket URL for concerts that are sold from a non-standard URL
     ticket_url = blocks.URLBlock(
-        default='https://www.etix.com/ticket/e/1041718/2024-red-butte-season-salt-lake-city-red-butte-garden')
+        default='https://www.etix.com/ticket/e/1049536/2025-red-butte-season-salt-lake-city-red-butte-garden-arboretum')
 
     class Meta:
         icon = 'music'
@@ -377,6 +377,20 @@ class DonorPackagePage(AbstractBase):
         FieldPanel('body'),
     ]
 
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, **kwargs)
+
+        if request.user.is_authenticated:
+            try:
+                cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
+            except ConcertDonorClubMember.DoesNotExist:
+                cdc_member = None
+
+            if cdc_member:
+                context['cdc_member'] = cdc_member
+
+        return context
+
 
 class DonorSchedulePage(AbstractBase):
     body = StreamField(block_types=[
@@ -419,7 +433,10 @@ class ConcertDonorClubPortalPage(AbstractBase):
         context = super().get_context(request, **kwargs)
 
         if request.user.is_authenticated:
-            cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
+            try:
+                cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
+            except ConcertDonorClubMember.DoesNotExist:
+                cdc_member = None
 
             if cdc_member:
                 context['cdc_member'] = cdc_member

@@ -13,9 +13,9 @@
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
                 <div class="d-flex justify-content-center vh-100">
                     {% if slide.image %}
-                        <a href="
+                        <a class="w-100" href="
                                 {% if slide.link.url %}{{ slide.link.url }}{% else %}{{ slide.alternate_link }}{% endif %}">
-                            {% picture slide.image format-{avif,webp,jpeg} original %}
+                            {% picture slide.image format-{avif,webp,jpeg} original class="img-fluid w-100" %}
                             {% if slide.text %}
                                 <div class="carousel-caption">
                                     <p>{{ slide.text|richtext }}</p>

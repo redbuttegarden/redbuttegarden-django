@@ -1,20 +1,20 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
-<br>
-
-<div class="row">
+<div class="image-card-list row">
     {% for list_item in value.list_items %}
-        {% if list_item.image %}
-            <div class="col-md-6">
-                <div class="col-md-12">
-                    <div class="image-list-card row equal">
-                        <div class="mempic col-xs-3">
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="row h-100 g-0">
+                    {% if list_item.image %}
+                        <div class="col-3 mempic rounded-start">
                             <img src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
                         </div>
-                        <div class="meminfo col-xs-9">
+                    {% endif %}
+                    <div class="{% if list_item.image %}col-9{% else %}col-12{% endif %}">
+                        <div class="card-body h-100 d-flex flex-column meminfo">
                             {% include_block list_item.text %}
                             {% if list_item.button_text %}
-                                <a class="row" href="{{ list_item.button_url }}">
+                                <a class="mt-auto align-self-end" href="{{ list_item.button_url }}">
                                     <input class="membutton" type="submit" value="{{ list_item.button_text }}">
                                 </a>
                             {% endif %}
@@ -22,19 +22,6 @@
                     </div>
                 </div>
             </div>
-        {% else %}
-            <div class="col-md-4">
-                <div class="container-fluid">
-                    <div class="meminfo">
-                        {% include_block list_item.text %}
-                        {% if list_item.button_text %}
-                            <a href="{{ list_item.button_url }}">
-                                <input class="membutton" type="submit" value="{{ list_item.button_text }}">
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        {% endif %}
+        </div>
     {% endfor %}
 </div>

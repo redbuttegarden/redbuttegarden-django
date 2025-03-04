@@ -1,7 +1,7 @@
 const mapModal = document.getElementById("mapModal");
 const modalCaption = document.getElementById("caption-display");
 const links = document.getElementsByTagName("a");
-const seatingMapURL = "/media/original_images/donor-seating-map-2018.jpg";
+const seatingMapURL = "/media/images/CDC-VenueMap-2025.original.jpg";
 const donorParkingMapURL = "/media/original_images/donor-permit-parking-map.jpg";
 const concertClubParkingMapURL = "/media/original_images/concert-club-parking-map.jpg";
 

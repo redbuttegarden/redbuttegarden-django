@@ -37,6 +37,7 @@ class ConcertDRFViewSet(viewsets.ModelViewSet):
 class ConcertViewSet(ModelViewSet):
     model = Concert
     form_fields = '__all__'
+    icon = 'media'
     inspect_view_enabled = True
 
 
@@ -48,6 +49,7 @@ class ConcertDonorClubPackageDRFViewSet(viewsets.ModelViewSet):
 class ConcertDonorClubPackageViewSet(ModelViewSet):
     model = ConcertDonorClubPackage
     form_fields = '__all__'
+    icon = 'list-ul'
     inspect_view_enabled = True
 
 
@@ -59,6 +61,7 @@ class ConcertDonorClubMemberDRFViewSet(viewsets.ModelViewSet):
 class ConcertDonorClubMemberViewSet(ModelViewSet):
     model = ConcertDonorClubMember
     form_fields = '__all__'
+    icon = 'group'
     inspect_view_enabled = True
 
 
@@ -71,6 +74,7 @@ class TicketDRFViewSet(viewsets.ModelViewSet):
 class TicketViewSet(ModelViewSet):
     model = Ticket
     form_fields = '__all__'
+    icon = 'tag'
     list_filter = ('owner', 'concert', 'package', 'order_id', 'barcode')
 
 

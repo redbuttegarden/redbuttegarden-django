@@ -28,7 +28,7 @@
 
     .btn {
         max-width: 300px;
-        background-color: #5b76b5;
+        background-color: var(--rbg-penstemon-blue);
         padding: 1rem;
     }
 
