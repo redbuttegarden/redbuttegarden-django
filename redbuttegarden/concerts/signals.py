@@ -48,7 +48,7 @@ def update_cc_list_membership_if_changed(sender, instance, **kwargs):
 
             if instance.active:
                 list_id = ConstantContactCDCListSettings.load().cdc_list_id
-                response = cc_add_contact_to_cdc_list(request, instance.user.email, list_id)
+                response = cc_add_contact_to_cdc_list(request, instance, list_id)
                 logger.debug(f'Constant Contact response: {response.json()}')
             else:
                 list_id = ConstantContactCDCListSettings.load().cdc_list_id

@@ -527,14 +527,26 @@ class ConcertDonorClubMember(models.Model):
             request = HttpRequest()
             request.user = OAuth2Token.objects.filter(name='constant_contact').first().user
             list_id = ConstantContactCDCListSettings.load().cdc_list_id
-            response = cc_add_contact_to_cdc_list(request, self.user.email, list_id)
+            response = cc_add_contact_to_cdc_list(request, self, list_id)
             logger.debug(f'Constant Contact response: {response.json()}')
             self.constant_contact_id = response['contact_id']
         else:
             if self.constant_contact_id is None:
                 request = HttpRequest()
                 request.user = OAuth2Token.objects.filter(name='constant_contact').first().user
-                self.constant_contact_id = cc_get_contact_id(request, self.user.email)
+                constant_contact_id = cc_get_contact_id(request, self.user.email)
+                if constant_contact_id:
+                    self.constant_contact_id = constant_contact_id
+                elif self.active:
+                    # Contact with email not found in Constant Contact so if active we create it by adding them to the CDC list
+                    list_id = ConstantContactCDCListSettings.load().cdc_list_id
+                    response = cc_add_contact_to_cdc_list(request, self, list_id)
+                    if response.ok:
+                        try:
+                            contact_id = response.json()['contact_id']
+                            self.constant_contact_id = contact_id
+                        except:
+                            logger.error(f'Something unexpected happened while trying to set the CC contact ID for {self}')
 
         super().save(*args, **kwargs)
 

@@ -34,9 +34,25 @@ oauth.register(
 )
 
 
-def cc_add_contact_to_cdc_list(request, email_address, list_id):
+def cc_add_contact_to_cdc_list(request, concert_donor_club_member, list_id):
+    """
+    Adds CC contact to CDC list and updates their account with CDC member details
+
+    Endpoint reference:
+    https://developer.constantcontact.com/api_reference/index.html#tag/Contacts/operation/createOrUpdateContact
+    """
     body = {
-        "email_address": email_address,
+        "first_name": str(concert_donor_club_member.user.first_name),
+        "last_name": str(concert_donor_club_member.user.last_name),
+        "email_address": str(concert_donor_club_member.user.email),
+        "phone_number": str(concert_donor_club_member.phone_number),
+        "custom_fields": [
+            {
+                # UUID for custom field "CDC Username" in Constant Contact
+                "custom_field_id": "98fec5e4-fabd-11ef-ab8a-fa163eeb983a",
+                "value": str(concert_donor_club_member.user.username)
+            }
+        ],
         "list_memberships": [
             list_id
         ]
@@ -52,7 +68,14 @@ def cc_get_contact_id(request, email_address):
     response = oauth.constant_contact.get('https://api.cc.email/v3/contacts',
                                    request=request, params=params)
     logger.debug(response.json())
-    return response.json()['contacts'][0]['contact_id']
+    try:
+        contact_id = response.json()['contacts'][0]['contact_id']
+    except IndexError as e:
+        # Likely that the contact does not exist in CC
+        logger.warning(f'Error getting CC ID when searching with {email_address}.\nError: {e}')
+        return None
+
+    return contact_id
 
 
 def cc_remove_contact_from_cdc_list(request, concert_donor_club_member, list_id):
