@@ -2,12 +2,15 @@ import datetime
 import logging
 from urllib.parse import urlparse
 
+from authlib.integrations.base_client import OAuthError
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.db.models import Count
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
@@ -16,11 +19,43 @@ from urllib3 import HTTPResponse
 from wagtail.admin.viewsets.base import ViewSetGroup
 from wagtail.admin.viewsets.model import ModelViewSet
 
-from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember, Ticket
+from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember, Ticket, OAuth2Token
 from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSerializer, ConcertDonorClubMemberSerializer, \
     TicketSerializer
+from concerts.utils.constant_contact import oauth
 
 logger = logging.getLogger(__name__)
+
+
+
+
+def cc_login(request):
+    # build a full authorize callback uri
+    redirect_uri = request.build_absolute_uri(reverse('concerts:callback'))
+    logger.debug(redirect_uri)
+    return oauth.constant_contact.authorize_redirect(request, redirect_uri)
+
+
+def callback(request):
+    try:
+        token = oauth.constant_contact.authorize_access_token(request)
+    except OAuthError as e:
+        logger.error(f'OAuthError during token callback: {e}')
+        messages.add_message(request, messages.ERROR, 'Failed to authenticate with Constant Contact.')
+        return redirect('/')
+
+    OAuth2Token.objects.update_or_create(
+        user=request.user,
+        name='constant_contact',
+        defaults={
+            'token_type': token['token_type'],
+            'access_token': token['access_token'],
+            'refresh_token': token['refresh_token'],
+            'expires_at': token['expires_at'],
+        }
+    )
+    messages.add_message(request, messages.SUCCESS, 'Successfully authenticated with Constant Contact.')
+    return redirect('/')
 
 
 class LargeResultsSetPagination(PageNumberPagination):
@@ -169,7 +204,6 @@ def process_ticket_data(request):
             if package_created:
                 logger.debug(f'Concert Donor Club Package created: {package}')
 
-
         ticket, ticket_created = Ticket.objects.update_or_create(barcode=request.data['ticket_barcode'],
                                                                  defaults={
                                                                      'order_id': request.data['order_id'],
@@ -270,3 +304,4 @@ def ticket_detail_view(request, concert_pk):
     }
 
     return render(request, 'concerts/concert_donor_club_tickets.html', context)
+

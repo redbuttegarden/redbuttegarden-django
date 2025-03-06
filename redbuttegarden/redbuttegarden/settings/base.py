@@ -191,6 +191,8 @@ WAGTAILDOCS_SERVE_METHOD = 'direct'
 # Zappa settings to strip the stage name from urls (requires X_FORWARDED_HOST custom header in Cloudfront)
 USE_X_FORWARDED_HOST = True
 FORCE_SCRIPT_NAME = ''
+# So request.build_absolute_uri returns https
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # CAS
 MIDDLEWARE_CLASSES = (
@@ -262,3 +264,7 @@ FB_API_TOKEN = os.environ.get('FB_API_TOKEN')
 FB_APP_ID = os.environ.get('FB_APP_ID')
 FB_CLIENT_ID = os.environ.get('FB_CLIENT_ID')
 INSTAGRAM_APP_ID = os.environ.get('INSTAGRAM_APP_ID')
+
+# Constant Contact
+CONSTANT_CONTACT_API_CLIENT_ID = os.environ.get('CONSTANT_CONTACT_API_CLIENT_ID')
+CONSTANT_CONTACT_API_CLIENT_SECRET = os.environ.get('CONSTANT_CONTACT_API_CLIENT_SECRET')
