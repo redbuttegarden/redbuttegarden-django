@@ -11,6 +11,7 @@ from django.db.models import Count
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django_filters.rest_framework import FilterSet, CharFilter
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
@@ -88,9 +89,19 @@ class ConcertDonorClubPackageViewSet(ModelViewSet):
     inspect_view_enabled = True
 
 
+class ConcertDonorClubMemberFilter(FilterSet):
+    email = CharFilter(field_name='user__email', lookup_expr='iexact')
+    username = CharFilter(field_name='user__username', lookup_expr='iexact')
+
+    class Meta:
+        fields = ('email', 'username')
+        model = ConcertDonorClubMember
+
+
 class ConcertDonorClubMemberDRFViewSet(viewsets.ModelViewSet):
     queryset = ConcertDonorClubMember.objects.all()
     serializer_class = ConcertDonorClubMemberSerializer
+    filterset_class = ConcertDonorClubMemberFilter
 
 
 class ConcertDonorClubMemberViewSet(ModelViewSet):
