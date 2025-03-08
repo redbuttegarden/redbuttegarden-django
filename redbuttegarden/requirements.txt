@@ -15,7 +15,7 @@ click==8.0.3
 code128==0.3
 coverage==7.5.3
 defusedxml==0.7.1
-Django==4.2.17
+Django==4.2.20
 django-cas-client==1.5.3
 django-cors-headers==3.5.0
 django-csp==3.7
