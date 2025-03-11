@@ -11,7 +11,7 @@
     <div class="carousel-inner">
         {% for slide in slides %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <div class="d-flex justify-content-center vh-100">
+                <div class="d-flex justify-content-center w-100 h-100">
                     {% if slide.image %}
                         <a class="w-100" href="
                                 {% if slide.link.url %}{{ slide.link.url }}{% else %}{{ slide.alternate_link }}{% endif %}">
