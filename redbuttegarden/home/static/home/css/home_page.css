@@ -1,3 +1,8 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 body.template-homepage {
     h1 {
         font-size: 3rem;
@@ -6,10 +11,32 @@ body.template-homepage {
 }
 
 #imageCarousel {
+    height: 90vh;
+
+    .carousel-inner {
+        height: 100%;
+    }
+
+    .carousel-item {
+        height: 100%;
+    }
+
+    .carousel-item img {
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+    }
+
     .carousel-caption {
-        font-size: 3rem;
-        top: 30%;
+        position: absolute;
+        align-content: center;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 10vmin;
         text-align: left;
+        width: 100%;
+        padding: 0 15%;
     }
 
     .carousel-indicators button {
@@ -30,20 +57,6 @@ body.template-homepage {
     iframe {
         width: 100%;
         height: 100%;
-    }
-}
-
-/* For medium screens and above; make caption text larger */
-@media screen and (min-width: 768px) {
-    #imageCarousel .carousel-caption {
-        font-size: 4rem
-    }
-}
-
-/* For extra large screens and above; make caption text largest */
-@media screen and (min-width: 1200px) {
-    #imageCarousel .carousel-caption {
-        font-size: 5rem
     }
 }
 
@@ -74,8 +87,11 @@ body.template-homepage {
     #openClosedBubble {
         position: absolute;
         top: 15px;
-        left: 15px;
-        font-size: 1.25rem;
+        left: 0;
+        right: 0;
+        margin-inline: auto;
+        width: fit-content;
+        font-size: 3vmin;
         padding: 10px 15px;
         border-style: solid;
         border-width: 2px;
@@ -83,6 +99,13 @@ body.template-homepage {
 
         i {
             padding: 0 10px;
+        }
+    }
+
+    @media screen and (min-width: 480px) {
+        #openClosedBubble {
+            margin-inline: inherit;
+            left: 15px;
         }
     }
 
@@ -134,6 +157,7 @@ body.template-homepage {
     }
 
     /* Change icon to white on hover */
+
     .ratio-1x1:hover #admissionIcon, .ratio-1x1:hover #locationIcon, .ratio-1x1:hover #sunIcon {
         filter: brightness(0) invert(1);
     }
