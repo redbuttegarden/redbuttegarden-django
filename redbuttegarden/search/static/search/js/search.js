@@ -40,6 +40,7 @@ function fetchResults(query, page) {
             resultsContainer.innerHTML = '';
             data.results.forEach(result => {
                 const resultItem = document.createElement('div');
+                resultItem.classList.add('my-2');
                 resultItem.innerHTML = `<a href="${result.url}">${result.title}</a>`;
                 resultsContainer.appendChild(resultItem);
             });
