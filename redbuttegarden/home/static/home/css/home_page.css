@@ -49,6 +49,7 @@ body.template-homepage {
         text-align: left;
         width: 100%;
         padding: 0 15%;
+        text-shadow: -2px 0 #196143, 0 2px #196143, 2px 0 #196143, 0 -2px #196143;
     }
 
     .carousel-indicators button {
@@ -85,8 +86,13 @@ body.template-homepage {
     #visitInfoText {
         background-color: var(--rbg-conifer-green);
 
+        #visitTextInner {
+            padding: 6rem;
+        }
+
         h1 {
-            color: var(--rbg-oak-green);
+            font-size: 5rem;
+            font-weight: normal;
         }
 
         a, a:link, a:visited, a:active {
