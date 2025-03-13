@@ -10,7 +10,19 @@ body.template-homepage {
     }
 }
 
+#heroContainer {
+    background-color: var(--rbg-conifer-green);
+    height: 90vh;
+    align-items: center;
+}
+
+#heroVideo {
+    width: 100%;
+    height: fit-content;
+}
+
 #imageCarousel {
+    width: 100%;
     height: 90vh;
 
     .carousel-inner {

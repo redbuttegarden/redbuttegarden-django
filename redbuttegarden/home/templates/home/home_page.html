@@ -8,7 +8,7 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_includes %}
-    <div class="container-fluid vh-100 overflow-y-hidden px-0">
+    <div id="heroContainer" class="d-flex container-fluid overflow-hidden px-0">
         {#  Initially, only video is visible. When finished playing, carousel displayed in its place #}
         {% include 'home/includes/video.html' %}
         {% include 'home/includes/image_carousel.html' with slides=page.event_slides.all %}
