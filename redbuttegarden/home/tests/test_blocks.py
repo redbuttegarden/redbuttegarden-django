@@ -30,7 +30,7 @@ class TestMultiColumnAlignedParagraphBlock(WagtailPageTests):
 
         response = self.client.get('/general-test-page', follow=True)
         html = response.content.decode('utf8')
-        self.assertIn('<div class="col-sm-12">\n                        <p>Testing!</p>\n                    </div>',
+        self.assertIn('<div class="col py-1 py-md-3 px-3">\n                <p>Testing!</p>\n            </div>',
                       html)
 
     def test_view_two_paragraphs(self):
@@ -49,9 +49,9 @@ class TestMultiColumnAlignedParagraphBlock(WagtailPageTests):
 
         response = self.client.get('/general-test-page', follow=True)
         html = response.content.decode('utf8')
-        self.assertIn('<div class="col-sm-6">\n                        <p>Testing!</p>\n                    </div>\n'
-                      '                \n                    <div class="col-sm-6">\n                        <p>Second '
-                      'Test Paragraph</p>\n                    </div>', html)
+        self.assertIn(
+            '<div class="col py-1 py-md-3 px-3">\n                <p>Testing!</p>\n            </div>\n        \n            <div class="col py-1 py-md-3 px-3">\n                <p>Second Test Paragraph</p>\n            </div>',
+            html)
 
     def test_view_three_paragraphs(self):
         general_page = GeneralPage(owner=self.user,
@@ -70,12 +70,9 @@ class TestMultiColumnAlignedParagraphBlock(WagtailPageTests):
 
         response = self.client.get('/general-test-page', follow=True)
         html = response.content.decode('utf8')
-        self.assertIn('<div class="col-sm-4">\n                        <p>Testing!</p>\n                    </div>\n   '
-                      '             \n                    <div class="col-sm-4">\n                        <p>Second '
-                      'Test Paragraph</p>\n                    </div>\n                \n                    '
-                      '<div class="col-sm-4">\n                        <p>Third Test Paragraph</p>\n                   '
-                      ' </div>',
-                      html)
+        self.assertIn(
+            '<div class="col py-1 py-md-3 px-3">\n                <p>Testing!</p>\n            </div>\n        \n            <div class="col py-1 py-md-3 px-3">\n                <p>Second Test Paragraph</p>\n            </div>\n        \n            <div class="col py-1 py-md-3 px-3">\n                <p>Third Test Paragraph</p>\n            </div>',
+            html)
 
     def test_view_four_paragraphs(self):
         general_page = GeneralPage(owner=self.user,
@@ -94,13 +91,9 @@ class TestMultiColumnAlignedParagraphBlock(WagtailPageTests):
 
         response = self.client.get('/general-test-page', follow=True)
         html = response.content.decode('utf8')
-        self.assertIn('<div class="col-sm-3">\n                        <p>Testing!</p>\n                    </div>\n   '
-                      '             \n                    <div class="col-sm-3">\n                        <p>Second '
-                      'Test Paragraph</p>\n                    </div>\n                \n                    <div '
-                      'class="col-sm-3">\n                        <p>Third Test Paragraph</p>\n                    '
-                      '</div>\n                \n                    <div class="col-sm-3">\n                        '
-                      '<p>Fourth Test Paragraph</p>\n                    </div>',
-                      html)
+        self.assertIn(
+            '<div class="col py-1 py-md-3 px-3">\n                <p>Testing!</p>\n            </div>\n        \n            <div class="col py-1 py-md-3 px-3">\n                <p>Second Test Paragraph</p>\n            </div>\n        \n            <div class="col py-1 py-md-3 px-3">\n                <p>Third Test Paragraph</p>\n            </div>\n        \n            <div class="col py-1 py-md-3 px-3">\n                <p>Fourth Test Paragraph</p>\n            </div>',
+            html)
 
     def test_view_five_paragraphs(self):
         general_page = GeneralPage(owner=self.user,
@@ -120,15 +113,9 @@ class TestMultiColumnAlignedParagraphBlock(WagtailPageTests):
 
         response = self.client.get('/general-test-page', follow=True)
         html = response.content.decode('utf8')
-        self.assertIn('<div class="col-sm-2">\n                        <p>Testing!</p>\n                    </div>\n   '
-                      '             \n                    <div class="col-sm-2">\n                        <p>Second '
-                      'Test Paragraph</p>\n                    </div>\n                \n                    '
-                      '<div class="col-sm-2">\n                        <p>Third Test Paragraph</p>\n                   '
-                      ' </div>\n                \n                    <div class="col-sm-2">\n                        '
-                      '<p>Fourth Test Paragraph</p>\n                    </div>\n                \n                    '
-                      '<div class="col-sm-2">\n                        <p>Fifth Test Paragraph</p>\n                   '
-                      ' </div>',
-                      html)
+        self.assertIn(
+            '<div class="col py-1 py-md-3 px-3">\n                <p>Testing!</p>\n            </div>\n        \n            <div class="col py-1 py-md-3 px-3">\n                <p>Second Test Paragraph</p>\n            </div>\n        \n            <div class="col py-1 py-md-3 px-3">\n                <p>Third Test Paragraph</p>\n            </div>\n        \n            <div class="col py-1 py-md-3 px-3">\n                <p>Fourth Test Paragraph</p>\n            </div>\n        \n            <div class="col py-1 py-md-3 px-3">\n                <p>Fifth Test Paragraph</p>\n            </div>',
+            html)
 
 
 class TestRetailPartnerBlock(WagtailPageTests):
@@ -152,7 +139,7 @@ class TestRetailPartnerBlock(WagtailPageTests):
                                                          'name': 'Test Partner',
                                                          'url': 'https://example.com',
                                                          'info': '<p>Testing!</p>'
-                                                        }
+                                                     }
                                                      }
                                                 ]))
         Page.objects.get(slug='home').add_child(instance=retail_partner_page)
