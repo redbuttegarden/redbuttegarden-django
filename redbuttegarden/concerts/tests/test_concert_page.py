@@ -8,7 +8,7 @@ from wagtail.models import Page
 from wagtail.images.tests.utils import Image, get_test_image_file
 
 from concerts.models import ConcertPage
-from concerts.utils import live_in_the_past
+from concerts.utils.utils import live_in_the_past
 
 
 class TestConcert(TestCase):
