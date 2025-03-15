@@ -62,7 +62,7 @@ function setHours(date = new Date()) {
 
 // Display open or closed icon/bubble over the "Visit the garden" image
 function displayOpenClosed(timeInfoDict) {
-    const visitGardenImg = document.getElementById('visitImage');
+    const visitGardenImgContainer = document.getElementById('visitInfoImg');
     let openClosedBubbleElem = document.getElementById('openClosedBubble');
 
     // Check if openClosedBubbleElem doesn't exist, create it
@@ -70,7 +70,7 @@ function displayOpenClosed(timeInfoDict) {
         openClosedBubbleElem = document.createElement('div');
         openClosedBubbleElem.id = "openClosedBubble";
 
-        visitGardenImg.parentNode.appendChild(openClosedBubbleElem);
+        visitGardenImgContainer.appendChild(openClosedBubbleElem);
     }
 
     let currentDate = new Date();

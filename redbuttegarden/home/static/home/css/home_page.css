@@ -90,14 +90,28 @@ body.template-homepage {
             padding: 3rem;
         }
 
-        @media screen and (min-width: 480px) {
+        @media screen and (min-width: 576px) {
+            #visitTextInner {
+                padding: 2rem;
+
+                h1 {
+                    font-size: 3rem;
+                }
+            }
+        }
+
+        @media screen and (min-width: 1720px) {
             #visitTextInner {
                 padding: 6rem;
+
+                h1 {
+                    font-size: 5rem;
+                }
             }
         }
 
         h1 {
-            font-size: 5rem;
+            font-size: 2rem;
             font-weight: normal;
         }
 
