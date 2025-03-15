@@ -2,41 +2,24 @@
 
 <div class="container">
     <br>
-    <div id="rbgCarousel" class="carousel slide" data-ride="carousel">
-        <!-- Indicators -->
-        <ol class="carousel-indicators">
-            {% for image in value.images %}
-                {% if forloop.first %}
-                    <li data-target="#rbgCarousel" data-slide-to="{{ forloop.counter0 }}" class="active"></li>
-                {% else %}
-                    <li data-target="#rbgCarousel" data-slide-to="{{ forloop.counter0 }}"></li>
-                {% endif %}
-            {% endfor %}
-        </ol>
-
+    <div id="rbgCarousel" class="carousel slide">
         <!-- Wrapper for slides -->
-        <div class="carousel-inner" role="listbox">
+        <div class="carousel-inner">
             {% for image in value.images %}
-                {% if forloop.first %}
-                    <div class="item active">
-                        {% image image original %}
-                    </div>
-                {% else %}
-                    <div class="item">
-                        {% image image original %}
-                    </div>
-                {% endif %}
+                <div class="carousel-item text-center {% if forloop.first %}active{% endif %}">
+                    {% image image original class="img-fluid" %}
+                </div>
             {% endfor %}
         </div>
 
         <!-- Left and right controls -->
-        <a class="left carousel-control" href="#rbgCarousel" role="button" data-slide="prev">
-            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="right carousel-control" href="#rbgCarousel" role="button" data-slide="next">
-            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
+        <button class="carousel-control-prev" type="button" data-bs-target="#rbgCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#rbgCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
 </div>
