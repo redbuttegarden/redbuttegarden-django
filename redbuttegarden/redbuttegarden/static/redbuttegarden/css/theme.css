@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
+    --rbg-lavender-purple: #C1B5D5;
     --rbg-oak-green: #0b412d;
     --rbg-oak-green-rgb: 10, 65, 45;
     --rbg-conifer-green: #D0E8E5;

@@ -256,9 +256,21 @@ body.template-homepage {
         overflow: hidden;
     }
 
-    .image-row img {
+    div.ratio-1x1 {
+        height: 385px;
+        width: 385px;
+        background-color: var(--rbg-lavender-purple);
         position: relative;
         display: inline-block;
+    }
+
+    img {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
     }
 
     .arrow {
