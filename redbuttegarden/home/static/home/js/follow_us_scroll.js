@@ -1,4 +1,3 @@
-const row = document.querySelector('.image-row');
 const images = document.querySelectorAll('.image-row img');
 const leftArrow = document.querySelector('.arrow-left');
 const rightArrow = document.querySelector('.arrow-right');
@@ -31,9 +30,28 @@ function scrollSocialLeft(event) {
     scrollToImage();
 }
 
+function nearestImageFromPoint(x, y) {
+    let nearestImg = null;
+    let minDistance = Infinity;
+
+    images.forEach(img => {
+        const rect = img.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const distance = Math.sqrt((centerX - x) ** 2 + (centerY - y) ** 2);
+
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearestImg = img;
+        }
+    });
+
+    return nearestImg;
+}
+
 function determineImageIndex(x, y) {
-    const imageUnderClick = document.elementsFromPoint(x, y).find(element => element.tagName === 'IMG');
-    imageIndex = Array.from(images).indexOf(imageUnderClick);
+    const imageNearestClick = nearestImageFromPoint(x, y);
+    imageIndex = Array.from(images).indexOf(imageNearestClick);
 }
 
 function scrollToImage() {
