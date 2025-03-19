@@ -1,7 +1,8 @@
 const hoursData = JSON.parse(document.getElementById('hours-data').textContent);
 const hoursElem = document.getElementById('hours');
-const hoursInfo1Elem = document.getElementById('hoursInfo1');
-const hoursInfo2Elem = document.getElementById('hoursInfo2');
+const visitTextElem = document.getElementById('visitText');
+const emphaticTextElem = document.getElementById('emphaticText');
+let concertDay = false;
 
 // Convert open times into string to be shown on home page
 function processGardenHours(garden_open, garden_close) {
@@ -51,10 +52,10 @@ function setHours(date = new Date()) {
 
     let processed_times = processGardenHours(hoursData.garden_open, hoursData.garden_close);
 
-    if (hoursData) {
+    if (hoursData && !concertDay) {
         hoursElem.textContent = processed_times.openTimeStr + " - " + processed_times.closeTimeStr;
-        hoursInfo1Elem.textContent = hoursData.additional_message;
-        hoursInfo2Elem.textContent = hoursData.additional_emphatic_mesg;
+        visitTextElem.textContent = hoursData.additional_message;
+        emphaticTextElem.textContent = hoursData.additional_emphatic_mesg;
     }
     displayOpenClosed(processed_times);
     handleConcertDay(currentMonth, currentDay, currentHour, minutesBeforeOpeningOrClosing);
@@ -103,11 +104,13 @@ function handleConcertDay(currentMonth, currentDay) {
                     buyLink = document.createElement('a');
                     buyLink.id = "buyLink";
                     buyLink.setAttribute("href", concertInfo[i]["TicketURL"]);
-                    buyLink.className = "mt-3 fw-bold";
+                    buyLink.className = "fw-bold";
                     buyLink.textContent = "Buy tickets to today's show!";
-                    hoursElem.parentNode.appendChild(buyLink);
+                    hoursElem.after(buyLink);
                 }
                 hoursElem.textContent = "Today (Concert Day): 9 AM - 5 PM";
+
+                concertDay = true;
                 break;
             }
         }
