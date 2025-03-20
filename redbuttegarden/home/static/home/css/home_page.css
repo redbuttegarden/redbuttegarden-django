@@ -248,19 +248,18 @@ body.template-homepage {
     a, a:link, a:visited, a:active {
         color: inherit;
         font-size: 1.25rem;
+        display: inline-block;
     }
 
     .image-row {
         width: 100%;
         white-space: nowrap;
         overflow: hidden;
-        height: 385px;
     }
 
     .image-row img {
         position: relative;
         display: inline-block;
-        min-width: 300px;
     }
 
     .arrow {
