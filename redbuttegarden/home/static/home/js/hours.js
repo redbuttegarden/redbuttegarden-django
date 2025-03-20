@@ -97,22 +97,28 @@ function handleConcertDay(currentMonth, currentDay) {
     // Check if buyLink already exists
     let buyLink = document.getElementById('buyLink');
 
-    if (!buyLink) {
-        for (let i = 0; i < concertInfo.length; i++) {
-            if (concertInfo[i]["Date"].getMonth() + 1 === currentMonth && concertInfo[i]["Date"].getDate() === currentDay) {
-                if (concertInfo[i]["TicketURL"]) {
+    for (let i = 0; i < concertInfo.length; i++) {
+        if (concertInfo[i]["Date"].getMonth() + 1 === currentMonth && concertInfo[i]["Date"].getDate() === currentDay) {
+            if (concertInfo[i]["TicketURL"]) {
+                if (!buyLink) {
                     buyLink = document.createElement('a');
-                    buyLink.id = "buyLink";
-                    buyLink.setAttribute("href", concertInfo[i]["TicketURL"]);
-                    buyLink.className = "fw-bold";
-                    buyLink.textContent = "Buy tickets to today's show!";
-                    hoursElem.after(buyLink);
                 }
-                hoursElem.textContent = "Today (Concert Day): 9 AM - 5 PM";
-
-                concertDay = true;
-                break;
+                buyLink.id = "buyLink";
+                buyLink.setAttribute("href", concertInfo[i]["TicketURL"]);
+                buyLink.className = "fw-bold";
+                buyLink.textContent = "Buy tickets to today's show!";
+                hoursElem.after(buyLink);
             }
+            hoursElem.textContent = "Today (Concert Day): 9 AM - 5 PM";
+
+            concertDay = true;
+            break;
+        } else {
+            if (buyLink) {
+                buyLink.remove();
+            }
+
+            concertDay = false;
         }
     }
 }
