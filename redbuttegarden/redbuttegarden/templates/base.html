@@ -34,14 +34,6 @@
     <!-- Adobe font import to get 'Usual' RBG font from style guide -->
     <link rel="stylesheet" href="https://use.typekit.net/cge0omp.css">
 
-
-    {% if page.dialog_display %}
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/hot-sneaks/jquery-ui.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
-                integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q=="
-                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    {% endif %}
-
     {# Global stylesheets #}
     <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/accessibility.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/navbar.css' %}">
@@ -97,17 +89,47 @@
     {% block abnormal_content %}
         <div id="rbgdefaultbody" class="container-xl p-4 p-lg-5">
             {% block content %}{% endblock %}
+            {% if page.dialog_display %}
+                {% if page.dialog_style == 'corner' %}
+                    {# Use a Bootstrap toast rather than modal #}
+                    <div class="toast position-fixed bottom-0 start-0 m-2" aria-live="polite" aria-atomic="true"
+                         data-bs-autohide="false">
+                        <div class="toast-header">
+                            <strong class="me-auto">{{ page.dialog_title }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            {{ page.dialog_content|richtext }}
+                        </div>
+                    </div>
+                {% else %}
+                    {# Full page - normal Bootstrap modal #}
+                    <div id="membershipModal" class="modal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title">{{ page.dialog_title }}</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {{ page.dialog_content|richtext }}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
         </div>
     {% endblock %}
 </main>
 
 {% include 'includes/footer.html' %}
-
-{% if page.dialog_display %}
-    <div id="dialog" class="{{ page.dialog_style }}"
-         title="{{ page.dialog_title }}">{{ page.dialog_content|richtext }}</div>
-    <script src="{% static 'redbuttegarden/js/dialog-display.js' %}"></script>
-{% endif %}
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
@@ -118,6 +140,22 @@
 <script src="{% static 'redbuttegarden/js/navbar.js' %}"></script>
 <script src="{% static 'search/js/search.js' %}"></script>
 <script src="{% static 'redbuttegarden/js/rbg.js' %}"></script>
+{% if page.dialog_display %}
+    <script>
+        // Open on page load
+        window.onload = (event) => {
+            const myAlert = document.querySelector('.toast');
+
+            if (myAlert) {
+                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(myAlert)
+                toastBootstrap.show();
+            } else {
+                const membershipModal = new bootstrap.Modal(document.getElementById('membershipModal'), {});
+                membershipModal.show();
+            }
+        }
+    </script>
+{% endif %}
 
 {% block extra_js %}
     {# Override this in templates to add extra javascript #}
