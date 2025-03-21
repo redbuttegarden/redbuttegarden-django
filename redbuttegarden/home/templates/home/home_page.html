@@ -141,6 +141,10 @@
         for (let i = 0; i < concertInfo.length; i++) {
             concertInfo[i]["Date"] = new Date(concertInfo[i]["Date"]);
         }
+        
+        window.onload = (event) => {
+            document.getElementById("heroVideo").play();
+        }
     </script>
     {{ hours|json_script:"hours-data" }}
     <script src="{% static 'home/js/hero_video.js' %}"></script>
