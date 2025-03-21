@@ -1,0 +1,19 @@
+{% load static wagtailcore_tags %}
+
+{% for result in search_results %}
+    {{ result }}
+    <div><a href="{% pageurl result %}">{{ result }}</a></div>
+    {% if result.search_description %}
+        <p class="italic">{{ result.search_description }}</p>
+    {% endif %}
+
+    {% if result.body %}
+        {% for block in result.body|slice:3 %}
+            {% if block.block_type == 'paragraph' %}
+                <p>{{ block.value.paragraph|striptags|safe|truncatechars:200 }}</p>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% empty %}
+    <p>No results found.</p>
+{% endfor %}

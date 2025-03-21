@@ -1,14 +1,13 @@
 import json
 import logging
 
-import unidecode
 from django import forms
+from django.apps import apps
 from django.core.paginator import Paginator
-from django.core.validators import ValidationError, RegexValidator, validate_slug
+from django.core.validators import ValidationError, RegexValidator, validate_slug, URLValidator
 from django.db import models
-from django.forms.utils import ErrorList
+from django.utils import timezone
 from django.utils.functional import cached_property
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from wagtail import blocks
@@ -22,7 +21,8 @@ from wagtail.embeds.blocks import EmbedBlock
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageBlock
 from wagtail.images.models import Image
-from wagtail.models import Page, Orderable, DraftStateMixin, RevisionMixin, PreviewableMixin, TranslatableMixin
+from wagtail.models import Page, Orderable, DraftStateMixin, RevisionMixin, PreviewableMixin, TranslatableMixin, \
+    Collection
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 from wagtail.telepath import register
@@ -254,16 +254,6 @@ class SingleListCardDropdownInfo(blocks.StructBlock):
     )
 
 
-class CardListDropdownInfo(blocks.StructBlock):
-    list_items = blocks.ListBlock(
-        SingleListCardDropdownInfo(),
-        label="Card"
-    )
-
-    class Meta:
-        template = 'blocks/card_list_dropdown_info.html'
-
-
 class TextAlignmentChoiceBlock(blocks.ChoiceBlock):
     choices = [
         ('center', 'Center'),
@@ -478,7 +468,6 @@ class GeneralPage(AbstractBase):
         ('html', blocks.RawHTMLBlock()),
         ('dropdown_image_list', ImageListDropdownInfo()),
         ('dropdown_button_list', ButtonListDropdownInfo()),
-        ('dropdown_card_list', CardListDropdownInfo()),
         ('card_info_list', ImageListCardInfo()),
         ('image_info_list', ImageInfoList()),
         ('image_link_list', ImageLinkList()),
@@ -654,61 +643,39 @@ class FAQPage(AbstractBase):
 @register_snippet
 class RBGHours(models.Model):
     """
-    Model for setting variables used by hours.js on the HomePage.
-    # TODO - Write tests to make sure hours display correctly for various times of day/year
+    Model for manually overriding the hours that are displayed by hours.js on the HomePage.
     """
     # Set a name for this hours object
     name = models.CharField(max_length=200, help_text=_("Create a name for this set of hours"))
-
-    # Allow users to manually set hour options independent of hours.js
-    allow_override = models.BooleanField(help_text=_("Override hours.js script and manually set all hours options"),
-                                         default=False)
-    garden_open = models.TimeField(null=True, blank=True,
-                                   help_text=_(
-                                       "When override set to True, this time will be shown as the time the garden opens"))
-    garden_close = models.TimeField(null=True, blank=True,
-                                    help_text=_(
-                                        "When override set to True, this time will be shown as the time the garden closes"))
+    garden_open = models.TimeField(null=True, blank=True, help_text=_("The time the garden opens"))
+    garden_close = models.TimeField(null=True, blank=True, help_text=_("The time the garden closes"))
     additional_message = models.CharField(max_length=200, null=True, blank=True,
                                           help_text=_("Message under the hours; e.g. 'Last entry at 3:30 PM'"))
     additional_emphatic_mesg = models.CharField(max_length=200, null=True, blank=True,
                                                 help_text=_("Message under hours in RED text"))
+    garden_open_message = models.CharField(max_length=200, null=True, blank=True, default=_("The Garden is open"))
+    garden_closed_message = models.CharField(max_length=200, null=True, blank=True, default=_("The Garden is closed now"))
 
-    # Day and time we close for Holiday Party in December
-    holiday_party_close_time = models.DateTimeField(null=True, blank=True,
-                                                    help_text=_("Day and time we close for Holiday Party in December"))
-    """
-    Originally created start and end dates for Garden After Dark but this won't work well
-    when GAD occurs on non-consecutive dates.
-    
-    Changed to a StreamField Model so as many or as few dates could be selected.
-    
-    When GAD occurs over so many days, it would be inconvenient to create them all individually,
-    the user can user the manual override option instead.
-    """
-    gad_dates = StreamField(block_types=[
-        ('date', blocks.DateBlock(verbose_name="Garden After Dark date", help_text=_("Date that GAD takes place")))
-    ], help_text=_("Choose the dates of GAD. If there are many, using the manual override might be easier"),
-        blank=True, null=True)
+    last_modified = models.DateTimeField(auto_now=True)
 
     panels = [
         FieldPanel('name'),
         MultiFieldPanel([
-            FieldPanel('allow_override'),
             FieldPanel('garden_open'),
             FieldPanel('garden_close'),
+        ], heading="Hours", classname="collapsible"),
+        MultiFieldPanel([
             FieldPanel('additional_message'),
             FieldPanel('additional_emphatic_mesg'),
-        ], heading="Manual override settings", classname="collapsible collapsed"),
-        FieldPanel('holiday_party_close_time'),
-        FieldPanel('gad_dates'),
+        ], heading="Messaging", classname="collapsible collapsed"),
     ]
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         verbose_name_plural = "RBG Hours"
+        ordering = ['-last_modified']
+
+    def __str__(self):
+        return self.name
 
 
 class HomePage(AbstractBase):
@@ -744,6 +711,44 @@ class HomePage(AbstractBase):
                 concert in concerts for concert_date in concert['concert_dates']]
             context['concert_info'] = json.dumps(concert_info, default=str)
 
+        # Make hours info easier for JS to consume
+        if self.hours:
+            context['hours'] = {
+                'garden_open': self.hours.garden_open.strftime('%-H:%M'),
+                'garden_close': self.hours.garden_close.strftime('%-H:%M'),
+                'additional_message': self.hours.additional_message,
+                'additional_emphatic_mesg': self.hours.additional_emphatic_mesg,
+            }
+
+        # Get upcoming events; avoid circular import
+        EventPage = apps.get_model(app_label='events', model_name='EventPage')
+        events = EventPage.objects.live().public().filter(alias_of=None, order_date__gte=timezone.now()).order_by('order_date')[:3]  # Get next 3 events
+        context['upcoming_events'] = events
+
+        # Get social media images
+        try:
+            instagram_collection = Collection.objects.get(name='Instagram Data')
+        except Collection.DoesNotExist as e:
+            instagram_collection = None
+
+        if instagram_collection:
+            social_media_images = Image.objects.filter(collection=instagram_collection).order_by('-created_at')[:10]
+
+            images_and_links = []
+            url_validator = URLValidator()
+            for image in social_media_images:
+                # Try to get permalink from image's description
+                permalink = image.description.split(' ')[0]
+                try:
+                    url_validator(permalink)
+                except (ValidationError,) as e:
+                    logger.warning(f"Failed to validate URL: {permalink}")
+                    continue
+
+                images_and_links.append({'image': image, 'url': permalink})
+
+            context['social_media_images_links'] = images_and_links
+
         return context
 
 
@@ -756,6 +761,7 @@ class EventSlides(Orderable):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    embed = models.URLField(blank=True, null=True, help_text=_('Link to external video URL'))
     link = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
@@ -772,12 +778,15 @@ class EventSlides(Orderable):
 
     panels = [
         FieldPanel('image'),
+        FieldPanel('embed'),
         PageChooserPanel('link'),
         FieldPanel('alternate_link'),
         FieldPanel('text'),
     ]
 
     def clean(self):
+        if self.image and self.embed:
+            raise ValidationError("Please choose only an image or embed link, not both")
         if self.link and self.alternate_link:
             raise ValidationError("Please choose only a page link OR an alternate link, not both")
 
@@ -866,6 +875,21 @@ class FooterText(
 
     class Meta(TranslatableMixin.Meta):
         verbose_name_plural = "Footer Text"
+
+
+class CurrentWeather(models.Model):
+    """
+    Singleton model for storing the current weather data for the homepage.
+
+    Single row is overwritten with each new weather update. This prevents
+    the database and backups from growing too large.
+    """
+    condition = models.CharField(max_length=50)
+    temperature = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
 
 
 @register_setting

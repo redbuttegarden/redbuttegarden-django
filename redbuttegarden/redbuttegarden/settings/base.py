@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 import environ
+from django.contrib import messages
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
     'wagtail.admin',
     'wagtail',
 
+    'django_filters',
     'cas',  # Sometimes necessary to comment this app out to dump database
     'corsheaders',
     'django_tables2',
@@ -190,6 +192,8 @@ WAGTAILDOCS_SERVE_METHOD = 'direct'
 # Zappa settings to strip the stage name from urls (requires X_FORWARDED_HOST custom header in Cloudfront)
 USE_X_FORWARDED_HOST = True
 FORCE_SCRIPT_NAME = ''
+# So request.build_absolute_uri returns https
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # CAS
 MIDDLEWARE_CLASSES = (
@@ -221,6 +225,14 @@ LOGIN_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
 # Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -230,6 +242,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
     ]
 }
 
@@ -244,3 +259,16 @@ COMET_CHAT_APP_ID = os.environ.get('COMET_CHAT_APP_ID')
 COMET_CHAT_REGION = 'US'
 COMET_CHAT_AUTH_KEY = os.environ.get('COMET_CHAT_AUTH_KEY')
 COMET_CHAT_WIDGET_ID = os.environ.get('COMET_CHAT_WIDGET_ID')
+
+# OpenWeather API
+OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY')
+
+# Facebook
+FB_API_TOKEN = os.environ.get('FB_API_TOKEN')
+FB_APP_ID = os.environ.get('FB_APP_ID')
+FB_CLIENT_ID = os.environ.get('FB_CLIENT_ID')
+INSTAGRAM_APP_ID = os.environ.get('INSTAGRAM_APP_ID')
+
+# Constant Contact
+CONSTANT_CONTACT_API_CLIENT_ID = os.environ.get('CONSTANT_CONTACT_API_CLIENT_ID')
+CONSTANT_CONTACT_API_CLIENT_SECRET = os.environ.get('CONSTANT_CONTACT_API_CLIENT_SECRET')

@@ -1,0 +1,105 @@
+
+#preFooterButtons {
+    .row {
+        background: #d0e8e5;
+        border: var(--rbg-oak-green) solid 1px;
+    }
+
+    /* Medium devices (tablets, 768px and up) */
+    @media (min-width: 768px) {
+        .col-12:nth-child(3), .col-md-4:nth-child(3) {
+            border-left: var(--rbg-oak-green) solid 1px;
+            border-right: var(--rbg-oak-green) solid 1px;
+        }
+
+
+    }
+
+    hr {
+        width: 75%;
+        margin: auto;
+        background-image: linear-gradient(
+                rgba(0, 0, 0, 0) 0%,
+                rgba(10, 65, 45, 1) 100%,
+                rgba(0, 0, 0, 0) 0%,
+        );
+        opacity: 100%;
+    }
+
+    .btn {
+        max-width: 300px;
+        background-color: var(--rbg-penstemon-blue);
+        padding: 1rem;
+    }
+
+    a, a:link, a:hover, a:active, a:visited {
+        color: white;
+        text-decoration: none;
+        font-weight: inherit;
+    }
+
+    svg {
+        max-width: 3rem;
+        height: auto;
+
+        path {
+            fill: white;
+        }
+
+        polygon {
+            fill: white;
+        }
+    }
+}
+
+#mainFooter {
+    color: white;
+    background-color: var(--rbg-oak-green);
+
+    a, a:link, a:hover, a:active, a:visited {
+        color: white;
+        text-decoration: none;
+        font-weight: inherit;
+    }
+
+    .footer-logo {
+        max-width: 8rem;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    li a {
+        display: grid;
+        width: 39px;
+        height: 39px;
+    }
+
+    .instagram {
+        background: url('../img/sprites.png') -240px -130px;
+    }
+
+    .pinterest {
+        background: url('../img/sprites.png') -80px -130px;
+    }
+
+    .youtube {
+        background: url('../img/sprites.png') -120px -90px;
+    }
+
+    .facebook {
+        background: url('../img/sprites.png') -40px -90px;
+    }
+
+    .yelp {
+        background: url('../img/sprites.png') -200px -90px;
+    }
+
+    hr {
+        opacity: 40%;
+        background-color: white;
+        height: 1px;
+        width: 100%;
+    }
+}

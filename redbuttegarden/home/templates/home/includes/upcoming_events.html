@@ -1,0 +1,22 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<h1>Upcoming Events</h1>
+
+{% for event in events %}
+    {% with event=event.specific %}
+        <a href="{{ event.url }}" class="col-12 col-md-4 py-3 py-lg-5">
+            <div class="card h-100">
+                {% picture event.thumbnail format-{avif,webp,jpeg} fill-500x385 class="img-fluid w-100" %}
+                <div class="card-body p-4">
+                    <div class="upcoming-event-date text-uppercase">{{ event.event_dates }}</div>
+                    <div class="upcoming-event-title fs-3">{{ event.title }}</div>
+                    <div class="card-text">{{ event.sub_heading }}</div>
+                </div>
+            </div>
+        </a>
+    {% endwith %}
+{% endfor %}
+
+<div class="container-fluid text-center">
+    <a class="btn fw-bold px-5 py-3" href="{% slugurl 'calendar' %}">SEE FULL CALENDAR</a>
+</div>

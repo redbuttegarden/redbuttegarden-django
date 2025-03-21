@@ -7,8 +7,10 @@ from django.contrib import messages
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
-
+from wagtail.contrib.settings.registry import register_setting
+from wagtail.contrib.settings.models import BaseGenericSetting
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail import blocks
 from wagtail.images.blocks import ImageBlock
@@ -17,7 +19,8 @@ from wagtail.admin.panels import FieldPanel, PageChooserPanel, TabbedInterface, 
 from wagtail.fields import RichTextField, StreamField
 from wagtail.search import index
 
-from concerts.utils import live_in_the_past, on_demand_expired
+from concerts.utils.constant_contact import cc_add_contact_to_cdc_list, cc_get_contact_id
+from concerts.utils.utils import live_in_the_past, on_demand_expired
 from home.abstract_models import AbstractBase
 from home.models import Heading, EmphaticText, AlignedParagraphBlock
 
@@ -185,7 +188,7 @@ class ConcertBlock(blocks.StructBlock):
 
     # Added a ticket URL for concerts that are sold from a non-standard URL
     ticket_url = blocks.URLBlock(
-        default='https://www.etix.com/ticket/e/1041718/2024-red-butte-season-salt-lake-city-red-butte-garden')
+        default='https://www.etix.com/ticket/e/1049536/2025-red-butte-season-salt-lake-city-red-butte-garden-arboretum')
 
     class Meta:
         icon = 'music'
@@ -377,6 +380,20 @@ class DonorPackagePage(AbstractBase):
         FieldPanel('body'),
     ]
 
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, **kwargs)
+
+        if request.user.is_authenticated:
+            try:
+                cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
+            except ConcertDonorClubMember.DoesNotExist:
+                cdc_member = None
+
+            if cdc_member:
+                context['cdc_member'] = cdc_member
+
+        return context
+
 
 class DonorSchedulePage(AbstractBase):
     body = StreamField(block_types=[
@@ -419,7 +436,10 @@ class ConcertDonorClubPortalPage(AbstractBase):
         context = super().get_context(request, **kwargs)
 
         if request.user.is_authenticated:
-            cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
+            try:
+                cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
+            except ConcertDonorClubMember.DoesNotExist:
+                cdc_member = None
 
             if cdc_member:
                 context['cdc_member'] = cdc_member
@@ -492,12 +512,51 @@ class ConcertDonorClubMember(models.Model):
     )
     phone_number = models.CharField(max_length=150)
     packages = models.ManyToManyField(ConcertDonorClubPackage, blank=True)
+    active = models.BooleanField(default=True)
+    constant_contact_id = models.UUIDField(blank=True, null=True)
 
     class Meta:
         ordering = ['user']
 
     def __str__(self):
         return str(self.user)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # Object is new
+            request = HttpRequest()
+            oauth_token = OAuth2Token.objects.filter(name='constant_contact').first()
+            if oauth_token:
+                request.user = oauth_token.user
+                list_id = ConstantContactCDCListSettings.load().cdc_list_id
+                response = cc_add_contact_to_cdc_list(request, self, list_id)
+                logger.debug(f'Constant Contact response: {response.json()}')
+                self.constant_contact_id = response['contact_id']
+            else:
+                logger.warning(f'No Constant Contact OAuth2Token found for {self}')
+        else:
+            if self.constant_contact_id is None:
+                request = HttpRequest()
+                oauth_token = OAuth2Token.objects.filter(name='constant_contact').first()
+                if oauth_token:
+                    request.user = oauth_token.user
+                    constant_contact_id = cc_get_contact_id(request, self.user.email)
+                    if constant_contact_id:
+                        self.constant_contact_id = constant_contact_id
+                    elif self.active:
+                        # Contact with email not found in Constant Contact so if active we create it by adding them to the CDC list
+                        list_id = ConstantContactCDCListSettings.load().cdc_list_id
+                        response = cc_add_contact_to_cdc_list(request, self, list_id)
+                        if response.ok:
+                            try:
+                                contact_id = response.json()['contact_id']
+                                self.constant_contact_id = contact_id
+                            except:
+                                logger.error(f'Something unexpected happened while trying to set the CC contact ID for {self}')
+                else:
+                    logger.warning(f'No Constant Contact OAuth2Token found for {self}')
+
+        super().save(*args, **kwargs)
 
 
 class Ticket(models.Model):
@@ -521,3 +580,34 @@ class Ticket(models.Model):
                                     ContentFile(bytes(code128.svg(self.barcode), encoding='utf-8')), save=False)
 
         super().save(**kwargs)
+
+
+class OAuth2Token(models.Model):
+    name = models.CharField(max_length=40)
+    token_type = models.CharField(max_length=40)
+    access_token = models.CharField(max_length=2048)
+    refresh_token = models.CharField(max_length=200)
+    expires_at = models.PositiveIntegerField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        limit_choices_to={'is_active': True},
+        on_delete=models.CASCADE,
+        default=None,
+    )
+
+    def to_token(self):
+        return dict(
+            access_token=self.access_token,
+            token_type=self.token_type,
+            refresh_token=self.refresh_token,
+            expires_at=self.expires_at,
+        )
+
+
+@register_setting
+class ConstantContactCDCListSettings(BaseGenericSetting):
+    cdc_list_id = models.CharField(
+        max_length=255,
+        help_text='List ID for the Concert Donor Club list in Constant Contact',
+    )
+

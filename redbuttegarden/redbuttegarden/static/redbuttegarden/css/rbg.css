@@ -1,3 +1,16 @@
+html * {
+    font-family: 'Usual', 'Open Sans', Impact, serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    margin: 1rem 0;
+}
+
+h2.accordion-header {
+    margin: 0;
+}
+
 figcaption {
     text-align: center;
     font-style: italic;
@@ -8,39 +21,21 @@ figcaption {
     margin-bottom: 1em;
 }
 
-hr {
-    width: 95%;
-}
-
 #banner {
     max-width: 1280px;
 }
 
-#journalpostbody {
-    margin: 0 auto 0 auto;
-    padding: 65px 15px 15px 15px;
+.tags ul li .badge {
+    white-space: inherit;
 }
 
-#journalpostbody img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 15px;
-}
-
-.tags div {
-    display: inline-block;
-    margin-bottom: 3px;
-}
-
-/* Used for categories in journal_page.html */
-.tags ul li {
-    border: 1px solid rgba(25,97,67,.7);
+.categories ul li {
+    border: 1px solid rgba(25, 97, 67, .7);
     border-radius: 10px;
 }
 
 #journalpostbody .col-sm-3 {
-    border-right: 1px solid rgba(25,97,67,.7);
+    border-right: 1px solid rgba(25, 97, 67, .7);
 }
 
 #sponsor-list, #table-info-card-list {
@@ -83,7 +78,9 @@ hr {
 }
 
 img.richtext-image {
-    padding: 10px;
+    max-width: 100%;
+    height: auto;
+    padding: 15px;
 }
 
 img.right {
@@ -125,10 +122,6 @@ ul, ol {
     list-style-position: outside;
 }
 
-.image-list-dropdown {
-    min-height: 266px;
-}
-
 .foot-btn-wrap {
     margin: 10px 0;
 }
@@ -138,14 +131,13 @@ ul, ol {
 }
 
 /* Pagination navigation */
-nav[role=pagination] {
-    margin-top: 50px;
-    text-align: center;
+nav[role=pagination] a {
+    color: var(--rbg-penstemon-blue);
 }
 
 .index-tile {
     margin-top: 30px;
-    max-width: 415px;
+    width: 385px;
     overflow: hidden;
 }
 
@@ -154,38 +146,13 @@ nav[role=pagination] {
     width: 385px;
 }
 
-footer {
-    position: absolute;
-    width: 100%;
-}
-
-#navhide1, #navhide2, #navhide3, #navhide4 {
-    padding-right: 1px;
-}
-
-/* Changes color of last 3 dropdown menu items to yellow */
-#navhide1 > a, #navhide2 > a, #navhide3 > a, #navhide4 > a {
-    background-color: #2f7055;
-}
-
-@media (max-width: 1280px) {
-    #navhide1 > a, #navhide2 > a, #navhide3 > a, #navhide4 > a {
-        padding-bottom: 5px;
-    }
-}
-
-#navhide1 > a:focus, #navhide2 > a:focus, #navhide3 > a:focus, #navhide4 > a:focus,
-#navhide1 > a:hover, #navhide2 > a:hover, #navhide3 > a:hover, #navhide4 > a:hover {
-    background-color: #FF7744;
-}
-
 .memfaqwrap > a, .memfaqwrap > a:link, .memfaqwrap > a.visited {
     text-decoration: none;
 }
 
 /* Backgrounds */
 .green-bg {
-    color: white;  /* Black text is too difficult to read with green background */
+    color: white; /* Black text is too difficult to read with green background */
     padding: 10px;
     background-color: #196143;
 }
@@ -197,7 +164,7 @@ footer {
 
 .dark-tan-bg {
     padding: 10px;
-    background-color:#C4B59E;
+    background-color: #C4B59E;
 }
 
 .white-bg {
@@ -206,13 +173,13 @@ footer {
 }
 
 .red-bg {
-    color: white;  /* Better color contrast makes it easier to read with white text */
+    color: white; /* Better color contrast makes it easier to read with white text */
     padding: 10px;
     background-color: red;
 }
 
 .orange-bg {
-    font-weight: bold;  /* Again, makes text easier to read this way */
+    font-weight: bold; /* Again, makes text easier to read this way */
     padding: 10px;
     background-color: #FF7744;
 }
@@ -221,12 +188,13 @@ footer {
     padding: 10px;
     background-color: #1b2940;
 }
+
 /* End backgrounds */
 
 .equal {
-  display: flex;
-  display: -webkit-flex;
-  flex-wrap: wrap;
+    display: flex;
+    display: -webkit-flex;
+    flex-wrap: wrap;
 }
 
 .image-list-card {
@@ -234,8 +202,1127 @@ footer {
     border-left: 2px solid black;
 }
 
-/* For Social Good Calendars */
-.render-calendar a.fc-event, .render-calendar a.fc-event:link, .render-calendar a.fc-event:visited, .render-calendar a.fc-event:active {
-	color: white;
-	text-decoration: none;
+.wf-loading {
+    font-size: 15px;
+    line-height: 1.7;
+    font-family: Impact;
+    font-weight: 300;
+    letter-spacing: 1.55px;
+    word-spacing: 0.15px;
+}
+
+hr {
+    width: 95%;
+    height: 2px;
+    color: #196143;
+    background-color: #196143;
+    border: none;
+    margin: auto;
+}
+
+.hover:hover, .hover:focus {
+    opacity: .9;
+    outline: #ff7744 auto 10px;
+    outline-offset: -2px;
+}
+
+.panel-heading:hover {
+    opacity: .9;
+}
+
+a, a:link, a:visited, a:active {
+    color: #65563E; /* hyperlink color for default pages */
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: #C4B59E; /* color when hyperlinks hovered over on default pages*/
+}
+
+/**********************************************************/
+/*************  Begin CSS for membership page *************/
+/**********************************************************/
+
+.image-card-list .card,
+.card-list .card {
+    background-color: #F2EDE4;
+    border: 2px solid black;
+}
+
+.mempic {
+    border-right: 2px solid black;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    overflow: hidden;
+}
+
+.meminfo h4 {
+    color: #196134;
+    font-weight: bold;
+}
+
+.meminfo h5, .sponinfo h5 {
+    color: #A26BA2;
+    font-weight: bold;
+    padding-bottom: 0px;
+
+}
+
+.membutton, a.apply-button,
+#accordion .apply-button .btn-inner {
+    background-color: #196143;
+    color: #FFF;
+    height: 40px;
+    font-size: 16px;
+    border: 1px solid black;
+    text-decoration: none;
+}
+
+.foot-btn-wrap a.footer-button {
+    background-color: #65563E;
+    color: #FFF;
+    width: 100%;
+    display: inherit;
+    text-decoration: none;
+}
+
+.membutton:hover {
+    opacity: .9;
+}
+
+.meminfowrapper {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    border-radius: 2px;
+}
+
+.membenefits {
+    max-width: 630px;
+    text-align: center;
+    background-color: #196143;
+    color: #FFF;
+    height: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 18px;
+    opacity: 1;
+    padding: 15px;
+    margin-bottom: 4px;
+}
+
+
+.membenefits:hover {
+    opacity: .9;
+}
+
+#membenefits, #mempolicies, #memrecurring {
+    max-width: 640px;
+    background-color: #F2EDE4;
+    color: #000;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 14px;
+    opacity: .9;
+    padding: 15px;
+    margin-bottom: 4px;
+    margin-top: -5px;
+}
+
+.memfaq, .volbutton {
+    max-width: 1190px;
+    text-align: center;
+    color: #FFF;
+    height: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 18px;
+    opacity: 1;
+    margin-bottom: 4px;
+    padding: 0;
+    background-color: #196143;
+}
+
+.dropdown-btn {
+  max-width: 400px !important;
+}
+
+.memfaq {
+    max-width: 1280px;
+}
+
+.memfaq:hover {
+    opacity: .9;
+}
+
+.lowpadding {
+    padding: 0 5px 0 5px;
+    margin: 0;
+}
+
+.nopadding {
+    padding: 0px !important;
+    margin: auto !important;
+}
+
+#rbgdefaultbody .foot-btn-wrap a, #rbgdefaultbody .foot-btn-wrap a:hover, #rbgdefaultbody .foot-btn-wrap a:active, #rbgdefaultbody .foot-btn-wrap a:visited, #rbgdefaultbody .foot-btn-wrap a:link {
+    text-decoration: none;
+    color: #FFF;
+    font-weight: normal;
+}
+
+.renewbutton {
+    background-color: #196143;
+    color: #FFF;
+    max-width: 325px;
+    min-height: 40px;
+    font-size: 16px;
+    border: 1px solid black;
+}
+
+/* Begin Wrapper for Google Maps */
+
+#googlemapswrapper {
+    max-width: 1280px;
+    max-height: 800px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* End Wrapper for Google Maps */
+
+/* Being CSS for RBG Banner Images */
+
+.concertbanner {
+    max-height: 175px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner img max-height value */
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #00502f;
+    overflow: hidden;
+}
+
+.concertbanner img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-height: 175px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner max-height value */
+    max-width: 100%;
+}
+
+.concertdonorbanner {
+    max-height: 150px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner img max-height value */
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #00502f;
+    overflow: hidden;
+}
+
+.concertdonorbanner img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-height: 150px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner max-height value */
+    max-width: 100%;
+}
+
+/* End CSS for RBG Banner Images*/
+
+/* Begin Accordion Panel Colors */
+.default-panel .panel-title {
+    background-color: #F2EDE4;
+}
+
+.panel:nth-child(odd) .purple-panel {
+    background-color: #92278f;
+}
+
+.panel:nth-child(even) .purple-panel {
+    background-color: #efc3ed;
+}
+
+.purple-panel h2, .purple-panel h3, .purple-panel h4, .purple-panel .panel-title {
+    color: white;
+}
+
+.panel:nth-child(odd) .orange-panel {
+    background-color: #fbaf40;
+}
+
+.panel:nth-child(even) .orange-panel {
+    background-color: #fdc778;
+}
+
+.orange-panel h2, .orange-panel h3, .orange-panel h4, .orange-panel .panel-title {
+    color: white;
+}
+
+.panel:nth-child(odd) .blue-panel {
+    background-color: #64b7e5;
+}
+
+.panel:nth-child(even) .blue-panel {
+    background-color: #91cced;
+}
+
+.blue-panel h2, .blue-panel h3, .blue-panel h4, .blue-panel .panel-title {
+    color: white;
+}
+
+.panel:nth-child(odd) .green-panel {
+    background-color: #b9d64f;
+}
+
+.panel:nth-child(even) .green-panel {
+    background-color: #cce282;
+}
+
+.green-panel h2, .green-panel h3, .green-panel h4, .green-panel .panel-title {
+    color: white;
+}
+
+#rbgdefaultbody .panel-default a, #rbgdefaultbody .panel-default a:link, #rbgdefaultbody .panel-default a:visited, #rbgdefaultbody .panel-default a:active { /* sets link color for panels to black with no underline  */
+    color: #000;
+    text-decoration: none;
+}
+
+#rbgdefaultbody .panel-body a, #rbgdefaultbody .panel-body a:link, #rbgdefaultbody .panel-body a:visited, #rbgdefaultbody .panel-body a:active { /* sets link colors inside panels back to site defaults */
+    color: #A7916E; /* hyperlink color for default pages */
+    text-decoration: underline;
+}
+
+#rbgdefaultbody .panel-body .apply-button a,
+#rbgdefaultbody .panel-body .apply-button a:link,
+#rbgdefaultbody .panel-body .apply-button a:visited,
+#rbgdefaultbody .panel-body .apply-button a:active {
+    color: #A7916E; /* hyperlink color for default pages */
+    text-decoration: none;
+}
+
+#rbgdefaultbody .panel-body a:hover {
+    color: #C4B59E; /* sets color when hyperlinks hovered over on pages within panel back to site defaults */
+}
+
+.panel-title {
+    font-size: 12px;
+}
+
+/* End Accordion Panel Colors */
+
+.donor-height {
+    height: 230px; /* This value might need to be changed each season for donor-package.html */
+}
+
+/**********************************************************/
+/*********  Begin CSS for Sponsors Packages Page **********/
+/**********************************************************/
+
+.sponinfo {
+    max-width: 620px;
+    width: 100%;
+    background-color: #f2ede4;
+    min-height: 340px;
+    padding: 7px;
+    border: 1px solid black;
+    font-size: 12px;
+    border-radius: 2px;
+    margin: 5px auto;
+}
+
+.sponinfo td {
+    text-align: center;
+    padding: 5px;
+    border: 1px solid black !important;
+}
+
+@media (max-width: 1280px) {
+
+    .sponinfo {
+        max-width: 1200px;
+        border-radius: 0px;
+    }
+
+}
+
+.spon-table {
+    max-width: 1280px;
+    text-align: center;
+    max-height: 100px;
+    background-color: #BCAC93;
+    color: #FFF;
+    height: 215px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 18px;
+}
+
+.private-rental {
+    background-color: #196143
+}
+
+.spon-table:before { /* create a full-height inline block pseudo-element */
+    content: ' ';
+    display: inline-block;
+    vertical-align: middle; /* vertical alignment of the inline element */
+    height: 100%;
+}
+
+#spon-table {
+    margin-top: -4px;
+    margin-bottom: 4px;
+}
+
+#sponcontain td, #sponcontain th {
+    text-align: center;
+}
+
+#sponcontain th {
+    background-color: #F5F5DC;
+}
+
+/**********************************************************/
+/**********  End CSS for Sponsors Packages Page ***********/
+/**********************************************************/
+
+.red {
+    font-weight: bold;
+    color: var(--rbg-fall-leaves-red);
+}
+
+.blue {
+    color: #158FBF;
+}
+
+.lilac {
+    font-weight: bold;
+    color: #A26BA2;
+}
+
+.orange {
+    font-weight: bold;
+    color: #FF7744;
+}
+
+.black {
+    font-weight: bold;
+    color: #000;
+}
+
+.white {
+    font-weight: bold;
+    color: #FFF;
+}
+
+.swag {
+    color: purple;
+    background-color: yellow;
+    text-decoration: underline;
+}
+
+.green {
+    color: var(--rbg-oak-green);
+}
+
+.green-button, .tan-button, .dk-tn-button, .red-button, .orange-button {
+    color: #FFF;
+    font-weight: bold;
+    font-size: 16px;
+    border: 1px solid black;
+    min-height: 60px;
+    min-width: 100px;
+    border-radius: 8px;
+    margin: 5px 0 5px;
+}
+
+.green-button {
+    background-color: #196143;
+}
+
+.tan-button {
+    background-color: #F2EDE4
+}
+
+.dk-tn-button {
+    background-color: #C4B59E;
+}
+
+.red-button {
+    background-color: red;
+}
+
+.orange-button {
+    background-color: #FF7744;
+}
+
+#rbgdefaultbody .green-button-wrap a, #rbgdefaultbody .green-button-wrap a:link {
+    text-decoration: none;
+}
+
+.normal {
+    font-weight: normal;
+}
+
+.green-button:hover, .tan-button:hover {
+    opacity: .9;
+}
+
+.garden-panel {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/*****************************************************/
+/****************  Begin Event CSS *******************/
+/*****************************************************/
+
+.event-pic, .ev-tickets, .ev-cal, .ev-hr, .ev-tickets, .ev-cal {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 280px;
+    text-transform: capitalize;
+}
+
+.event-pic img {
+    width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 2;
+}
+
+.ev-tickets img, .ev-cal img {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    margin: 4px auto 4px auto;
+    background-color: #196143;
+}
+
+.ev-hr {
+    background-color: gray;
+    clear: both;
+}
+
+.ev-tickets, .ev-cal {
+    clear: none;
+
+}
+
+.ev-title-reg {
+
+}
+
+.ev-title {
+    line-height: 75%;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.ev-title, .ev-title-reg, .ev-title-reg h1, .ev-sub, ev-title-mobile, ev-title-mobile h3, .ev-sub {
+    padding: 0px;
+    margin: 0px;
+}
+
+.ev-sub, .ev-date {
+    font-size: 18px;
+}
+
+
+.ev-sub {
+    padding-top: 15px !important;
+}
+
+.ev-date {
+    margin-top: -20px !important;
+}
+
+
+.ev-tickets, .ev-cal {
+    max-width: 280px;
+}
+
+.ev-tickets:hover, .ev-cal:hover {
+    background-color: #F2EDE4;
+}
+
+.ev-info-header {
+    font-weight: bold;
+    clear: both;
+}
+
+@media (min-width: 769px) {
+    .ev-title-mobile, .ev-date-mobile {
+        display: none;
+    }
+
+}
+
+@media (max-width: 769px) {
+    .ev-title-reg, .ev-date, .ev-space {
+        display: none;
+    }
+
+    .ev-date-mobile, .ev-title-mobile {
+        text-align: center;
+    }
+
+    .ev-title {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .ev-date-mobile {
+        font-weight: bold;
+    }
+}
+
+.inline, .ev-member-sale, .ev-public-sale, .ev-member-cost, .ev-public-cost {
+    display: inline;
+}
+
+/******************************************************/
+/****************  End Event CSS **********************/
+/******************************************************/
+
+/**********************************************************/
+/***************  Begin Event Images CSS ******************/
+/**********************************************************/
+
+.image-dropdown-item {
+    width: 385px;
+}
+
+.collectionswrap {
+    max-width: 600px;
+}
+
+.eventwrapsmall, .collectionswrap {
+    position: relative;
+}
+
+.eventwraplarge {
+    max-width: 1280px;
+}
+
+.index-thumbnail {
+    position: relative;
+}
+
+.eventinfo {
+    position: absolute;
+    width: 80%;
+    z-index: 5;
+    bottom: 60px;
+    background-color: #196143cc;
+    padding: 15px;
+}
+
+.eventinfo-small {
+    width: 45%;
+}
+
+.eventname {
+    font-size: 16px;
+    font-weight: bold;
+    color: #FFF;
+}
+
+.eventdate {
+    font-size: 14px;
+    color: #FFF;
+    text-transform: uppercase;
+    font-weight: normal;
+}
+
+.eventnotes {
+    color: #FFF;
+    font-style: italic;
+    width: 65%;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+@media (max-width: 768px) {
+
+    .eventname {
+        font-size: 16px;
+    }
+
+    .eventdate {
+        font-size: 12px;
+    }
+
+    .eventenotes {
+        font-size: 8px;
+    }
+}
+
+/**********************************************************/
+/****************  End Event Images CSS *******************/
+/**********************************************************/
+
+/* Begin Grid Page Header Code */
+
+.grid-header, .grid-header-small {
+    font-size: 36px;
+    text-align: center;
+    text-transform: capitalize;
+}
+
+.grid-header-small {
+    font-size: 1.75em;
+}
+
+.eventdivide hr {
+    height: 3px;
+}
+
+@media (max-width: 768px) {
+    .grid-header {
+        font-size: 22px;
+    }
+}
+
+/* End Grid Page Header Code */
+
+/* Colors grid of local retail partner grid items*/
+.local-retail-partner {
+    background-color: #F2EDE4;
+    border: 1px solid #000;
+}
+
+.test {
+    background-color: rgba(29, 108, 182, 0.3);
+}
+
+/* Volunteer Panel Code */
+.volbutton {
+    height: 60px;
+    min-width: 100px;
+    max-width: 1280px;
+    width: 100%;
+    background-color: #65563E;
+    cursor: pointer; /* Adding this makes collapse panels with this class work on Safari on iOS devices */
+}
+
+#volunteer-apps {
+    background-color: #f2ede4;
+    margin-top: -4px;
+}
+
+.panel-border {
+    margin-top: -4px;
+    border: 1px solid #D3D3D3;
+    border-top: 0px;
+}
+
+.tall-button {
+    height: 100px;
+}
+
+/* Begin panel code to get rid of button borders and blue border around selected button */
+
+.no-button-outline button:focus {
+    outline: 0;
+}
+
+.no-button-outline {
+    border: none;
+}
+
+/* End panel code to get rid of button borders and blue border around selected button */
+
+/* Concert information CSS */
+
+
+/* Hides main sections of Concerts Page when printing */
+.concert-print {
+    display: none;
+}
+
+@media print {
+
+    .concert-print-hide, .navbar-wrapper, #prefooterbg, #rbgfooterbg {
+        display: none;
+    }
+
+}
+
+.con-smaller {
+    font-size: 1.25em !important;
+}
+
+@media (max-width: 768px) {
+    .con-smaller {
+        font-size: 1.1em !important;
+    }
+}
+
+#rbgdefaultbody .con-title a, #rbgdefaultbody .con-title a:link, #rbgdefaultbody .con-title a:visited, #rbgdefaultbody .con-title a:active {
+    /* font-size: 1em !important; */
+    font-weight: bold;
+    text-decoration: none;
+    color: #000;
+}
+
+.con-title a:hover, .con-opener a:hover, .con-sub a:hover {
+    color: #C4B59E !important;
+    text-decoration: none;
+}
+
+.con-sub {
+    font-size: .9em;
+    font-style: italic;
+}
+
+#rbgdefaultbody .con-sub a, #rbgdefaultbody .con-sub a:link, #rbgdefaultbody .con-sub a:visited, #rbgdefaultbody .con-sub a:active {
+    /* font-size: 1em !important; */
+    font-weight: normal;
+    text-decoration: none;
+    color: #000;
+}
+
+#rbgdefaultbody .con-opener a, #rbgdefaultbody .con-opener a:link, #rbgdefaultbody .con-opener a:visited, #rbgdefaultbody .con-opener a:active {
+    /* font-size: 1em !important; */
+    font-weight: normal;
+    text-decoration: none;
+    color: #000;
+}
+
+.con-date {
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+.con-price {
+    font-size: .9em;
+}
+
+.con-times {
+    font-size: .9em;
+}
+
+.con-genre {
+    font-size: .9em;
+    font-style: italic;
+}
+
+.con-button, .con-button img {
+    background-color: #196143;
+}
+
+/* Event Carousel CSS */
+
+.carousel-inner > .item > img, .carousel-inner > .item > a > img {
+    width: 70%;
+    margin: auto;
+}
+
+#rbgCarousel {
+    background-color: #196143;
+}
+
+/* Vertical Concert Sponsors Banner  - HIDDEN FOR NOW, DEVELOPMENT WANTS HORIZONTAL*/
+
+#concert-sponsors-banner {
+    top: 160px;
+    right: 50px;
+    position: absolute;
+    display: none;
+}
+
+@media (max-width: 1670px) {
+    #concert-sponsors-banner {
+        display: none;
+    }
+}
+
+/* Begin CSS for Blog Post Navigation */
+
+.PageNavigation {
+    font-size: 14px;
+    display: block;
+    width: auto;
+    overflow: hidden;
+}
+
+.PageNavigation a {
+    display: block;
+    width: 50%;
+    float: left;
+    margin: 1em 0;
+}
+
+.PageNavigation .next {
+    text-align: right;
+}
+
+/* Begin Homepage Separator */
+
+.separator {
+    color: #196143;
+    background-color: #FFF;
+    font-weight: bold;
+    font-size: 3em;
+    position: relative;
+    margin: -35px auto 0 auto;
+    text-align: center;
+    width: 28%;
+}
+
+.hr-separator {
+    width: 55%;
+    border: 1px solid #196143;
+}
+
+@media (max-width: 768px) {
+
+    .separator {
+        font-size: 2em;
+        width: 40%;
+        margin: -25px auto 0 auto;
+    }
+
+    .hr-separator {
+        width: 85%;
+    }
+
+}
+
+.field-class-info {
+    min-height: 305px;
+}
+
+/* Offsite Pickup Table for Botany Bins */
+
+.offsite-pickup-table th {
+    color: #FFF;
+    background-color: #196143;
+    text-align: center;
+    font-size: 1.25em;
+    height: 28px;
+}
+
+.offsite-pickup-table tr:nth-child(odd) {
+    background-color: #F2EDE4;
+}
+
+.offsite-pickup-table tr:nth-child(even) {
+    background-color: #FFF;
+}
+
+.offsite-pickup-table tr td:nth-child(1) {
+    font-weight: bold;
+}
+
+.memfaq-con-table th {
+    color: #FFF;
+    background-color: #196143;
+    text-align: center;
+    font-size: 1em;
+    width: 200px;
+    padding: 1px;
+    border: 1px solid #000;
+}
+
+.memfaq-con-table td:nth-child(odd) {
+    padding-left: 10px;
+    border: 1px solid #000;
+}
+
+.memfaq-con-table td:nth-child(even) {
+    text-align: center;
+    border: 1px solid #000;
+}
+
+.donor-table th {
+    color: #FFF;
+    background-color: #196143;
+    text-align: center;
+    font-size: 1.25em;
+    height: 28px;
+}
+
+.donor-table tr:nth-child(odd) {
+    background-color: #F2EDE4;
+}
+
+.donor-table tr:nth-child(even) {
+    background-color: #FFF;
+}
+
+.donor-table tr td:nth-child(1) {
+    font-weight: bold;
+}
+
+.donor-table td {
+    text-align: center;
+}
+
+#donor-table1 {
+    margin-top: -5px;
+}
+
+/* Botany Bin Table */
+.botany-bin-table {
+    display: block;
+}
+
+
+.botany-bin-table table, .offsite-pickup-table table {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.botany-bin-table th {
+    color: #FFF;
+    background-color: #007600;
+    text-align: center;
+    font-size: 1.25em;
+    height: 28px;
+}
+
+.botany-bin-table td, .offsite-pickup-table td {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.botany-bin-table tr:nth-child(odd) {
+    background-color: #D7F5D7;
+}
+
+.botany-bin-table tr:nth-child(even) {
+    background-color: #A9EAA9;
+}
+
+#rbginfo {
+    text-align: center;
+    margin: 20px auto 0 auto;
+}
+
+/* Hides image on mobile devices */
+@media (max-width: 500px) {
+
+    .img-hide-mobile {
+        display: none;
+    }
+
+    #form-submit {
+        display: none;
+    }
+}
+
+/* Garden After Dark Panel Colors */
+
+.gad-panel-orange {
+    background-color: #F7931D;
+}
+
+.gad-panel-purple {
+    background-color: #652D91;
+}
+
+.gad-purple, #rbgdefaultbody .gad-purple a, #rbgdefaultbody .gad-purple a:hover, #rbgdefaultbody .gad-purple a:visited {
+    color: #652D91;
+    /* color: #594A68; */
+}
+
+.gad-bg-purple {
+    background-color: #652D91;
+}
+
+.gad-bg-orange {
+    background-color: #F68C39;
+}
+
+.gad-bg-light-orange {
+    background-color: #FCB752;
+}
+
+.gad-bg-lilac {
+    background-color: #C1ABD3;
+    /* background-color: #FB9807; */
+}
+
+.gad-light-purple {
+    color: #594A68;
+}
+
+/********************************/
+/* End Test Sprite for Presentation */
+/********************************/
+
+/* Green Sub-headers */
+
+.green-subheader {
+    color: #ffffff;
+    padding: 12px;
+    background-color: #196143;
+}
+
+.taleblazer-dropdown {
+    max-width: 640px;
+    background-color: #F2EDE4;
+    color: #000;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 14px;
+    opacity: .9;
+    padding: 15px;
+    margin-bottom: 4px;
+    margin-top: -5px;
+}
+
+#slides .slide-description {
+    text-shadow: -2px 0 #196143, 0 2px #196143, 2px 0 #196143, 0 -2px #196143;
+}
+
+/* Gardening Information */
+
+.gardening-title-div {
+    display: block;
+}
+
+.gardening-title {
+    border-bottom: 2.5px solid #00502F;
+    padding: 3px;
+    display: inline;
+}
+
+.gardening-subtitle {
+    margin-top: 20px;
+}
+
+/* Rental Sites */
+
+.contact-div {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.rental-info {
+    position: absolute !important;
+    width: 80%;
+    z-index: 5;
+    bottom: 175px;
+    background-color: #196143;
+    padding: 15px;
+}
+
+.contact-two-text {
+    font-size: 2em;
+}
+
+.flex-even {
+    flex: 1;
+    min-width: 20rem;
 }

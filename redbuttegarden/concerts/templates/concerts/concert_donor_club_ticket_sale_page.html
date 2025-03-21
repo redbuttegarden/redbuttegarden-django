@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row-fluid text-center responsive">
+    <div class="row text-center responsive">
         {% image page.banner max-1280x500 %}
     </div>
 
@@ -24,5 +24,5 @@
         const USER_ID = "{{ request.user.id }}";
         const USER_NAME = "{{ user_name }}";
     </script>
-    <script type="text/javascript" src="{% static 'concerts/js/ticket_sale_comet_chat.js' %}"></script>
+    <script src="{% static 'concerts/js/ticket_sale_comet_chat.js' %}"></script>
 {% endblock %}

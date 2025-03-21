@@ -1,269 +1,150 @@
 {% extends "base.html" %}
 {% load static wagtailcore_tags wagtailimages_tags %}
 
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'home/css/home_page.css' %}">
+{% endblock %}
+
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_includes %}
-    <div id="slider-wrapper">
-        <div id="inner-slider-wrapper1">
-            <div id="inner-slider-wrapper2">
-
-                <!-- Jssor Slider Begin -->
-                <div id="slider1_container">
-                    <!-- Slides Container -->
-                    <div id="slides" u="slides">
-                        {% include 'home/includes/eventslides.html' with slides=page.event_slides.all %}
-                    </div>
-
-                    <!-- bullet navigator container -->
-                    <div u="navigator" class="jssorb21" style="top: 68px;">
-                        <!-- bullet navigator item prototype -->
-                        <div u="prototype"></div>
-                    </div>
-
-                    <!-- Arrow Left -->
-                    <span u="arrowleft" class="jssora21l" style="top: 123px; left: 8px;"></span>
-
-                    <!-- Arrow Right -->
-                    <span u="arrowright" class="jssora21r" style="top: 123px; right: 8px;"></span>
-                </div>
-                <!-- Jssor Slider End -->
-
-                <!-- Begin Page Down Code -->
-                <div id="page-down2" class="col-xs-12">
-                    <span class="page-down-icon">
-                        <picture>
-                            <source srcset="{% static 'home/img/down-arrow.webp' %}" type="image/webp">
-                            <img alt="downward-arrow" src="{% static 'home/img/down-arrow.png' %}" />
-                        </picture>
-                    </span>
-                </div>
-                <!-- End Page Down Code -->
-            </div>
-        </div>
-        <!-- Begin Inner Info Div -->
-        <div id="rbg-info-wrapper1">
-            <div id="rbginfobg">
-                <div id="rbginfo" class="row-fluid clearfix">
-
-                    <div id="rbghours" class="col-xs-3">
-                        <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
-                            <div class="rbghours hover">
-                                <figure>
-                                    <picture>
-                                        <source srcset="{% static 'home/img/hours_of_operation_icon.webp' %}" type="image/webp">
-                                        <source srcset="{% static 'home/img/hours_of_operation_icon.png' %}" type="image/png">
-                                        <img src="{% static 'home/img/hours_of_operation_icon.png' %}" alt="Clock icon">
-                                    </picture>
-                                    <figcaption>HOURS OF OPERATION</figcaption>
-                                </figure>
-                            </div>
-                        </a>
-                        <div id="gardenHours"></div>
-                        <div id="gardenStatus"></div>
-                        <div id="gardenEmphatic" class="red text-center"></div>
-                        <div id="otherNotes"></div>
-                    </div>
-
-                    <div class="col-xs-3" onmouseenter="admissionHoverOn()">
-                        <a href="{% slugurl 'general-info' %}" aria-label="General Information Page">
-                            <div id="rbgadmission" class="rbgadmission hover">
-                                <figure>
-                                    <picture>
-                                        <source srcset="{% static 'home/img/admission_rates_icon.webp' %}" type="image/webp">
-                                        <source srcset="{% static 'home/img/admission_rates_icon.png' %}" type="image/png">
-                                        <img src="{% static 'home/img/admission_rates_icon.png' %}" alt="Clock icon">
-                                    </picture>
-                                    <figcaption>ADMISSION RATES</figcaption>
-                                </figure>
-                            </div>
-                        </a>
-                    </div>
-                    <div id="rbgdirections" class="col-xs-3">
-                        <a href="{% slugurl 'directions' %}" aria-label="How to get to the garden">
-                            <div class="rbgdirections hover">
-                                <figure>
-                                    <picture>
-                                        <source srcset="{% static 'home/img/how_to_get_here_icon.webp' %}" type="image/webp">
-                                        <source srcset="{% static 'home/img/how_to_get_here_icon.png' %}" type="image/png">
-                                        <img src="{% static 'home/img/how_to_get_here_icon.png' %}" alt="Clock icon">
-                                    </picture>
-                                    <figcaption>HOW TO GET HERE</figcaption>
-                                </figure>
-                            </div>
-                        </a>
-                    </div>
-                    <div id="rbgweather" class="col-xs-3">
-                        <a href="https://www.weatherbug.com/weather-camera/?cam=SLTWK" target="_blank" aria-label="External link to weatherbug weather station with camera">
-                            <div class="rbgweather hover">
-                                <figure>
-                                    <picture>
-                                        <source srcset="{% static 'home/img/todays_weather_icon.webp' %}" type="image/webp">
-                                        <source srcset="{% static 'home/img/todays_weather_icon.png' %}" type="image/png">
-                                        <img src="{% static 'home/img/todays_weather_icon.png' %}" alt="Clock icon">
-                                    </picture>
-                                    <figcaption>TODAY'S WEATHER</figcaption>
-                                </figure>
-                            </div>
-                        </a>
-                    </div>
-
-                    <!-- Begin Page Down Code for Slides on Mobile -->
-                    <div id="page-down" class="col-xs-12">
-                        <span class="page-down-icon">
-                            <picture>
-                                <source srcset="{% static 'home/img/down-arrow.webp' %}" type="image/webp">
-                                <img alt="downward-arrow" src="{% static 'home/img/down-arrow.png' %}" width="75em" height="25em"/>
-                            </picture>
-                        </span>
-                    </div>
-                    <!-- End Page Down Code for Slides on Mobile -->
-                </div>
-            </div>
-        </div>
-        <!-- End Inner Info Div-->
+    <div id="heroContainer" class="d-flex container-fluid overflow-hidden px-0">
+        {#  Initially, only video is visible. When finished playing, carousel displayed in its place #}
+        {% include 'home/includes/video.html' %}
+        {% include 'home/includes/image_carousel.html' with slides=page.event_slides.all %}
     </div>
-
-    <!-- Dump the RBG Hours snippit info for our hours.js script to consume -->
-    <div id="rbg_hours_info" style="display: none;">
-        <div id="hours_override">{{ page.hours.allow_override }}</div>
-        <div id="hours_man_open">{{ page.hours.garden_open|date:"g:i A" }}</div>
-        <div id="hours_man_close">{{ page.hours.garden_close|date:"g:i A" }}</div>
-        <!-- used default_if_none filter to prevent None from appearing literally if message not set -->
-        <div id="hours_man_add_msg">{{ page.hours.additional_message|default_if_none:"" }}</div>
-        <div id="hours_man_add_emph_msg">{{ page.hours.additional_emphatic_mesg|default_if_none:"" }}</div>
-        <div id="hours_holiday_day">{{ page.hours.holiday_party_close_time.day }}</div>
-        <div id="hours_holiday_hour">{{ page.hours.holiday_party_close_time.hour }}</div>
-        <div id="hours_holiday_minute">{{ page.hours.holiday_party_close_time.minute }}</div>
-        <div id="hours_gad_start">{{ page.hours.gad_start }}</div>
-        <div id="hours_gad_end">{{ page.hours.gad_end }}</div>
-    </div>
-
-    <!-- Begin Outer Info Div -->
-    <div id="rbg-info-wrapper2">
-        <div id="rbginfobg2">
-
-            <div id="rbginfo" class="row">
-
-                <div id="rbghours" class="col-sm-3">
-                    <br>
-                    <b>GARDEN HOURS (MDT)</b>
-                    <div id="gardenHours2"></div>
-                    <div id="gardenHours2-reservations"><span class="red text-center"></span></div>
-                    <div id="gardenStatus2"></div>
-                    <a href="{% slugurl 'general-info' %}" style="text-decoration:none;color:#FFFFFF;font-size:12px">CLICK TO SEE ALL HOURS</a>
-                    <br><br>
-                </div>
-
-                <div id="rbgadmission2" class="col-sm-3">
-                    {% include "home/includes/admission.html" %}
-                </div>
-
-                <div id="rbgdirections" class="col-sm-3">
-                    <div class="memfaqwrap">
-                        <br>
-                        <a href="{% slugurl 'directions' %}">
-                            <div class="memfaq volbutton">HOW TO GET HERE</div>
-                        </a>
-                        <br>
-                    </div>
-                </div>
-
-                <div id="rbgweather" class="col-sm-3">
-                    <div class="memfaqwrap">
-                        <br>
-                        <a href="https://weather.com/weather/today/l/84108:4:US" target="_blank">
-                            <div class="memfaq volbutton">TODAY'S WEATHER</div>
-                        </a>
-                        <br>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Outer Info Div -->
-{% endblock %}
-
-{% block extra_js %}
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="{% static 'home/js/ie10-viewport-bug-workaround.js' %}"></script>
-    <script>
-        // List of concert dates and their ticket URL
-        let concertInfo = {{ concert_info|safe }};
-        // Convert date strings to javascript Date objects
-        for (let i = 0; i < concertInfo.length; i++) {
-           concertInfo[i]["Date"] = new Date(concertInfo[i]["Date"]);
-        }
-    </script>
-    <script src="{% static 'home/js/hours.js' %}"></script>
-    <script type="text/javascript" src="{% static 'home/js/jssor.slider.mini.js' %}"></script>
-
-    {% include 'home/includes/jssor-slideshow-js.html' %}
-
-    {% include 'home/includes/page-down.html' %}
 {% endblock %}
 
 {% block abnormal_content %}
-    <div id="rbghomebody" class="container-fluid">
-        <div class="row">
-            <div class="col-sm-12">
-                <br />
-
-                <div>
-                    <hr class="hr-separator">
-                    <div class="separator">MEDIA</div>
+    <div class="container-fluid p-4 p-lg-5">
+        <div id="visitContainer" class="container-fluid mb-3 p-4 p-lg-5">
+            <div class="row">
+                <div id="visitInfoImg" class="d-flex col-12 col-lg-6 align-items-center p-0">
+                    <picture>
+                        <source srcset="{% static 'home/img/moose_creek.webp' %}">
+                        <img id="visitImage" src="{% static 'home/img/moose_creek.jpg' %}"
+                             alt="Photo of the water conservation garden">
+                    </picture>
                 </div>
-
-                <div class="row-fluid">
-                    <div class="col-sm-6">
-                        <a href="{% slugurl 'whats-blooming-now' %}">
-                            <picture>
-                                <source srcset="{% static 'home/img/blog1.webp' %}" type="image/webp">
-                                <img alt="Text says whats blooming over picture of several purple irises" class="hover" src="{% static 'home/img/blog1.jpg' %}" width="588em" height="332em">
-                            </picture>
-                        </a>
-                    </div>
-                    {# Social media page is the only non watail page. It's served from a view in the home app #}
-                    <div class="col-sm-6">
-                        <a href="/social-media">
-                            <picture>
-                                <source srcset="{% static 'home/img/socialMedia-small.webp' %}" type="image/webp">
-                                <img alt="hand holding smartphone" class="hover" src="{% static 'home/img/socialMedia-small.png' %}" width="588em" height="332em">
-                            </picture>
-                        </a>
+                <div id="visitInfoText" class="col-12 col-lg-6 p-0">
+                    <div id="visitTextInner" class="d-flex flex-column justify-content-center h-100">
+                        <h1>Visit the Garden</h1>
+                        <div id="hours"></div>
+                        <div id="emphaticText" class="red fw-bold"></div>
+                        <div id="visitText" class="fs-5 mt-4 mb-1"></div>
+                        <a class="mt-4" href="{% slugurl 'plan-your-garden-visit' %}">Plan your visit here</a>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <br />
-                <br />
-                <br />
-
-                <div>
-                    <hr class="hr-separator">
-                    <div class="separator">EVENTS</div>
+        <div id="iconLinkContainer" class="container-fluid mt-5 p-0">
+            <div class="row text-center">
+                <div class="col-12 col-md-4 p-3">
+                    <a href="{% slugurl 'general-info' %}">
+                        <div class="ratio ratio-1x1">
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <div id="admissionIcon" class="p-3">
+                                    <img class="img-fluid" src="{% static 'home/img/rbga_icons_tickets green.svg' %}"
+                                         alt="Icon depicting outline of ticket stubs">
+                                </div>
+                                <div class="fw-medium fs-4">ADMISSION RATES</div>
+                                <div>View Here</div>
+                                <div>&nbsp;</div>  <!-- For alignment purposes -->
+                            </div>
+                        </div>
+                    </a>
                 </div>
-
-                <br />
-
-                <div class="row-fluid">
-                    <div class="col-sm-12">
-                        <a href="{% slugurl 'calendar' %}">
-                            <picture>
-                                <source srcset="{% static 'home/img/whats-happening.webp' %}" type="image/webp">
-                                <img alt="text says whats happening over picture of red butte garden amphitheater" class="hover" src="{% static 'home/img/whats-happening.jpg' %}" width="1280em" height="325em">
-                            </picture>
-                        </a>
-                    </div>
+                <div class="col-12 col-md-4 p-3">
+                    <a href="{% slugurl 'plan-your-garden-visit' %}">
+                        <div class="ratio ratio-1x1">
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <div id="locationIcon" class="p-3">
+                                    <img class="img-fluid" src="{% static 'home/img/rbga_icons_location green.svg' %}"
+                                         alt="Icon depicting a map marker">
+                                </div>
+                                <div class="fw-medium fs-4">VISIT</div>
+                                <div>
+                                    300 Wakara Way <br/>
+                                    Salt Lake City, UT 84108
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
-
-                <br />
-                <br />
-                <br />
-                <br />
+                <div class="col-12 col-md-4 p-3">
+                    <a href="https://forecast.weather.gov/MapClick.php?lat=40.744532&lon=-111.8089965"
+                       title="External link to NOAA website for RBG's zipcode">
+                        <div class="ratio ratio-1x1">
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <div id="sunIcon" class="p-3">
+                                    <img class="img-fluid" src="{% static 'home/img/rbga_icons_sun green.svg' %}"
+                                         alt="Icon depicting a sun">
+                                </div>
+                                <div class="fw-medium fs-4">TODAY’S WEATHER</div>
+                                <div>
+                                    <div id="weatherConditions"></div>
+                                    <div id="weatherTemp"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-{% endblock abnormal_content %}
+
+    <div id="whatsBloomingContainer" class="container-fluid my-5 p-0">
+        <div class="row d-flex align-items-center">
+            <div class="col-12 col-lg-6 p-0">
+                <picture>
+                    <source srcset="{% static 'home/img/whats_blooming.webp' %}">
+                    <img id="whatsBloomingImage" class="img-fluid w-100"
+                         src="{% static 'home/img/whats_blooming.jpg' %}"
+                         alt="Photo of a green bee visiting a red flower">
+                </picture>
+            </div>
+            <div class="col-12 col-lg-6 p-0">
+                <div class="m-3 m-md-4 m-lg-5 p-3 p-md-4 p-lg-5">
+                    <h1>What's Blooming?</h1>
+                    <p>See how the Garden transforms week by week! Get expert insights and up-close plant portraits from
+                        curators Jason W. Baker and Heidi M. Simper, who are often out in the Garden documenting what’s
+                        sprouting, leafing, blooming, and thriving.</p>
+                    <p class="py-5">
+                        <a id="whatsBloomingLink" href="{% slugurl 'whats-blooming-now' %}">
+                            See what's blooming now
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="upcomingEventsContainer" class="container-fluid mt-5 p-4 p-lg-5">
+        <div class="row">
+            {% include 'home/includes/upcoming_events.html' with events=upcoming_events %}
+        </div>
+    </div>
+
+    {% if social_media_images_links %}
+        <div id="followUsContainer" class="container-fluid position-relative mt-5 p-5 pe-0">
+            {% include 'home/includes/follow_us_images.html' with images_and_links=social_media_images_links %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        // List of concert dates and their ticket URL
+        const concertInfo = {{ concert_info|safe }};
+        // Convert date strings to javascript Date objects
+        for (let i = 0; i < concertInfo.length; i++) {
+            concertInfo[i]["Date"] = new Date(concertInfo[i]["Date"]);
+        }
+    </script>
+    {{ hours|json_script:"hours-data" }}
+    <script src="{% static 'home/js/hero_video.js' %}"></script>
+    <script src="{% static 'home/js/hours.js' %}"></script>
+    <script src="{% static 'home/js/weather.js' %}"></script>
+    <script src="{% static 'home/js/follow_us_scroll.js' %}"></script>
+{% endblock %}

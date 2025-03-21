@@ -7,24 +7,8 @@
     opacity: 0.4;
 }
 
-.con-but-wrap > .row-fluid {
+.con-but-wrap > .row {
     padding-top: 5px;
-}
-
-.concertinfo, .concert-test {
-    position: relative;
-    max-width: 280px;
-    text-align: center;
-    max-height: 215px;
-    color: #fff;
-    height: 75px;
-    margin: 10px auto 10px auto;
-    font-size: 16px;
-    opacity: 1;
-}
-
-.concert-test {
-    height: 40px;
 }
 
 .concertwrapper {
@@ -87,7 +71,7 @@
 .concerttext {
     background-color: #F2EDE4;
     position: relative;
-    height: 280px;
+    height: 350px;
 }
 
 .concerttext:before {      /* create a full-height inline block pseudo-element */

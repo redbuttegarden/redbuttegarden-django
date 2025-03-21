@@ -2,7 +2,7 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-    <div class="row-fluid text-center responsive">
+    <div class="row text-center responsive">
         {% image page.banner max-1280x500 %}
     </div>
     <br>
@@ -14,7 +14,7 @@
     <br>
 
     <div class="text-center">
-        <div class="tan-bg row-fluid">
+        <div class="tan-bg row">
             {% for partner_block in page.retail_partners %}
                 <div class="col-md-4">
                     {% include_block partner_block with id=block.id %}
@@ -22,7 +22,7 @@
 
                 {% if forloop.counter|divisibleby:3 and not forloop.last %}
                     </div>
-                    <div class="{% cycle 'default' 'tan-bg' %} row-fluid">
+                    <div class="{% cycle 'default' 'tan-bg' %} row">
                 {% endif %}
             {% endfor %}
 

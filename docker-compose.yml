@@ -10,7 +10,7 @@ services:
       - media_volume:/code/media
     depends_on:
       - db
-    command: python manage.py runserver 0.0.0.0:8000
+    command: sh -c "python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
 
   db:
     container_name: rbg-db

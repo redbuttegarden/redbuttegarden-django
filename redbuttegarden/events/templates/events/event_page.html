@@ -3,7 +3,7 @@
 
 {% block content %}
     <!-- Begin First Column -->
-    <div class="row-fluid">
+    <div class="row">
         <div class="col-sm-3">
             <!-- Event Picture-->
             <div class="event-pic">
@@ -90,7 +90,7 @@
             <div class="ev-desc">
                 <div>
                     {% for block in page.body %}
-                        <div class="row-fluid">
+                        <div class="row">
                             {% if block.block_type == 'image' %}
                                 {% image block.value original class="img-responsive" %}
                             {% else %}
@@ -103,7 +103,7 @@
 
                         <br>
 
-                        <div class="row-fluid">
+                        <div class="row">
                             <p class="text-center">
                                 {% with policy_page=page.policy.policy_page.specific %}
                                     <a href="{% pageurl policy_page %}">

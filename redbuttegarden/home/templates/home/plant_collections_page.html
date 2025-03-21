@@ -2,33 +2,34 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-    <div class="row-fluid text-center responsive">
-        {% image page.banner max-1280x500 %}
-    </div>
-    <br>
+    {% include 'includes/page_banner.html' with banner=page.banner %}
+    
     {% include_block page.intro|richtext %}
-    <div class="panel-group" id="accordion">
-		    <div class="panel panel-default">
-		      <a data-toggle="collapse" data-parent="#accordion" href="#PC" class="" aria-expanded="true">
-		      	<div class="panel-heading">
-			        <div class="panel-title text-center">Click Here for More Info on our Types of Plant Collections</div>
-				</div>
-		      </a>
-		      <div id="PC" class="panel-collapse collapse" aria-expanded="false">
-		        <div class="panel-body">
-		        	{% include_block page.more_info_modal|richtext %}
-				</div>
-		      </div>
-		    </div>
-		</div>
+    
+    <div class="accordion my-1 my-md-3" id="accordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#PC"
+                        aria-expanded="false" aria-controls="PC">
+                    Click Here for More Info on our Types of Plant Collections
+                </button>
+            </h2>
+            <div id="PC" class="accordion-collapse collapse" data-bs-parent="#accordion">
+                <div class="accordion-body">
+                    {% include_block page.more_info_modal|richtext %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
     {% with collections=page.plant_collections.all %}
         {% if collections %}
             {% for collection in collections %}
-                <div class="row-fluid">
-                    <div class="col-sm-6">
-                        <a class="hover" href="{{ collection.slideshow_link }}" target="_blank">
+                <div class="row my-1 my-md-3">
+                    <div class="col-sm-6 d-flex align-items-center">
+                        <a class="hover w-100" href="{{ collection.slideshow_link }}" target="_blank">
                             <div class="collectionswrap">
-                                {% image collection.image width-385 %}
+                                {% image collection.image width-600 class="img-fluid w-100" %}
                                 <div class="eventinfo">
                                     <div class="eventname">{{ collection.title }}</div>
                                 </div>
@@ -40,23 +41,24 @@
                             <h4 class="text-center">{{ collection.title }}</h4>
                             {% include_block collection.text|richtext %}
                         </div>
-                        <div class="row">
+                        <div class="row text-center">
                             <div class="col-sm-6">
-                                <a class="hover" href="{{ collection.slideshow_link }}" target="_blank">
-                                    <button class="apply-button">View Our Slideshow</button>
+                                <a class="btn apply-button hover" href="{{ collection.slideshow_link }}"
+                                   target="_blank">
+                                    View Our Slideshow
                                 </a>
                             </div>
                             <div class="col-sm-6">
-                                <a class="hover" href="{{ collection.collection_doc.file.url }}">
-                                    <button class="apply-button">More Information</button>
+                                <a class="btn apply-button hover" href="{{ collection.collection_doc.file.url }}">
+                                    More Information
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <br>
-
+                
                 <hr>
+                
             {% endfor %}
         {% endif %}
     {% endwith %}

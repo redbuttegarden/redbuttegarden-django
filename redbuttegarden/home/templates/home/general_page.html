@@ -2,14 +2,11 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-    <div class="row-fluid text-center responsive">
-        {% image page.banner max-1280x500 %}
-    </div>
-    <br>
+    {% include 'includes/page_banner.html' with banner=page.banner %}
 
     {% for block in page.body %}
         {% if block.block_type == 'image' %}
-            {% image block.value original class="img-center img-responsive" %}
+            {% image block.value original class="img-fluid" %}
         {% else %}
             {% include_block block with id=block.id %}
         {% endif %}

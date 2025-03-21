@@ -18,7 +18,7 @@ class TestRetailPartnerPage(WagtailPageTests):
 
     def test_retail_partner_with_three_retail_partners(self):
         """
-        All three retail partners should exist within a div with the classes "tan-bg" and "row-fluid".
+        All three retail partners should exist within a div with the classes "tan-bg" and "row".
         There should not be a div with class "default"
         """
         retail_partner_page = RetailPartnerPage(owner=self.user,
@@ -70,12 +70,12 @@ class TestRetailPartnerPage(WagtailPageTests):
         response = self.client.get('/retail-partner-test-page', follow=True)
         self.assertEqual(response.status_code, 200)
         html = response.content.decode('utf8')
-        self.assertIn('<div class="tan-bg row-fluid">', html)
-        self.assertNotIn('<div class="default row-fluid">', html)
+        self.assertIn('<div class="tan-bg row">', html)
+        self.assertNotIn('<div class="default row">', html)
 
     def test_retail_partner_with_four_retail_partners(self):
         """
-        The first three retail partners should exist within a div with the classes "tan-bg" and "row-fluid".
+        The first three retail partners should exist within a div with the classes "tan-bg" and "row".
         The fourth partner should be contained in a div with the class "default" rather than "tan-bg"
         """
         retail_partner_page = RetailPartnerPage(owner=self.user,
@@ -139,8 +139,8 @@ class TestRetailPartnerPage(WagtailPageTests):
         response = self.client.get('/retail-partner-test-page', follow=True)
         self.assertEqual(response.status_code, 200)
         # The HTML Code here represents the first 3 retail partners
-        self.assertContains(response, """<div class="tan-bg row-fluid">\n            \n                <div class="col-md-4">\n                    \n\n<h3 class="green">First Test Partner</h3>\n\n\n    <h6>123 Test Lane, Test City, 12345\n    -\n    <a href="tel:(123) 123-1234">(123) 123-1234</a>\n</h6>\n\n\n<p><a href="https://example.com">https://example.com</a></p>\n\n<p>Testing!</p>\n\n                </div>\n\n                \n            \n                <div class="col-md-4">\n                    \n\n<h3 class="green">Second Test Partner</h3>\n\n\n    <h6>123 Test Lane, Test City, 12345\n    -\n    <a href="tel:(123) 123-1234">(123) 123-1234</a>\n</h6>\n\n\n<p><a href="https://example.com">https://example.com</a></p>\n\n<p>Testing!</p>\n\n                </div>\n\n                \n            \n                <div class="col-md-4">\n                    \n\n<h3 class="green">Third Test Partner</h3>\n\n\n    <h6>123 Test Lane, Test City, 12345\n    -\n    <a href="tel:(123) 123-1234">(123) 123-1234</a>\n</h6>\n\n\n<p><a href="https://example.com">https://example.com</a></p>\n\n<p>Testing!</p>\n\n                </div>\n\n                \n                    </div>""",
+        self.assertContains(response, """<div class="tan-bg row">\n            \n                <div class="col-md-4">\n                    \n\n<h3 class="green">First Test Partner</h3>\n\n\n    <h6>123 Test Lane, Test City, 12345\n    -\n    <a href="tel:(123) 123-1234">(123) 123-1234</a>\n</h6>\n\n\n<p><a href="https://example.com">https://example.com</a></p>\n\n<p>Testing!</p>\n\n                </div>\n\n                \n            \n                <div class="col-md-4">\n                    \n\n<h3 class="green">Second Test Partner</h3>\n\n\n    <h6>123 Test Lane, Test City, 12345\n    -\n    <a href="tel:(123) 123-1234">(123) 123-1234</a>\n</h6>\n\n\n<p><a href="https://example.com">https://example.com</a></p>\n\n<p>Testing!</p>\n\n                </div>\n\n                \n            \n                <div class="col-md-4">\n                    \n\n<h3 class="green">Third Test Partner</h3>\n\n\n    <h6>123 Test Lane, Test City, 12345\n    -\n    <a href="tel:(123) 123-1234">(123) 123-1234</a>\n</h6>\n\n\n<p><a href="https://example.com">https://example.com</a></p>\n\n<p>Testing!</p>\n\n                </div>\n\n                \n                    </div>""",
                             count=1, html=True)
         # The HTML Code here represents the fourth retail partner. It should also include 2 instances of "Your business could be here!"
-        self.assertContains(response, """<div class="default row-fluid">\n                \n            \n                <div class="col-md-4">\n                    \n\n<h3 class="green">Fourth Test Partner</h3>\n\n\n    <h6>123 Test Lane, Test City, 12345\n    -\n    <a href="tel:(123) 123-1234">(123) 123-1234</a>\n</h6>\n\n\n<p><a href="https://example.com">https://example.com</a></p>\n\n<p>Testing!</p>\n\n                </div>\n\n                \n            \n\n            \n            \n                \n                \n                    <div class="col-md-4">\n                        <h3 class="green">Your business could be here!</h3>\n                    </div>\n                    <div class="col-md-4">\n                        <h3 class="green">Your business could be here!</h3>\n                    </div>\n                    \n            \n        </div>""",
+        self.assertContains(response, """<div class="default row">\n                \n            \n                <div class="col-md-4">\n                    \n\n<h3 class="green">Fourth Test Partner</h3>\n\n\n    <h6>123 Test Lane, Test City, 12345\n    -\n    <a href="tel:(123) 123-1234">(123) 123-1234</a>\n</h6>\n\n\n<p><a href="https://example.com">https://example.com</a></p>\n\n<p>Testing!</p>\n\n                </div>\n\n                \n            \n\n            \n            \n                \n                \n                    <div class="col-md-4">\n                        <h3 class="green">Your business could be here!</h3>\n                    </div>\n                    <div class="col-md-4">\n                        <h3 class="green">Your business could be here!</h3>\n                    </div>\n                    \n            \n        </div>""",
                             count=1, html=True)

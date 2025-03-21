@@ -2,19 +2,17 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
-    <div id="journal-banner" class="row-fluid text-center responsive">
-        {% image page.banner max-1280x500 %}
-    </div>
-    <br>
+    {% include 'includes/page_banner.html' with banner=page.banner %}
 
     {% for block in page.body %}
         {% include_block block with id=block.id %}
     {% endfor %}
 
-    <hr>
-    <div class="row-fluid col xs-12">
+    <hr class="my-3">
+
+    <div class="d-flex flex-wrap justify-content-around">
         {% for post in posts %}
-            <div class="col-sm-4 index-tile">
+            <div class="index-tile">
                 {% with post=post.specific %}
                     <a class="hover" href="{% pageurl post %}">
                         <div class="index-thumbnail">
@@ -32,10 +30,10 @@
                     </a>
                 {% endwith %}
             </div>
-        {% empty %}
+            {% empty %}
             <br>
             <br>
-            <div class="row-fluid">
+            <div class="row">
                 <div class="tan-bg">
                     <h4 class="text-center green">
                         There are currently no published journal posts. Please check back soon!
@@ -48,18 +46,14 @@
     {% if posts.paginator.num_pages > 1 %}
         <div class="container">
             <div class="row">
-                <div class="col-md-12">
-                    {% include "includes/pagination.html" with subpages=posts %}
-                </div>
+                {% include "includes/pagination.html" with subpages=posts %}
             </div>
         </div>
     {% endif %}
 
-    <br>
-    <hr>
-    <br>
+    <hr class="my-3">
 
-    <div class="row-fluid col xs-12">
+    <div class="row col xs-12">
         {% for block in page.bottom_button_info %}
             {% include_block block with id=block.id %}
         {% endfor %}
@@ -69,6 +63,6 @@
 {# Enable automatic banner selection only for the What's Blooming Now Blog #}
 {% block extra_js %}
     {% if page.slug == 'whats-blooming-now' %}
-        <script type="text/javascript" src="{% static 'journal/js/auto_journal_banner.js' %}"></script>
+        <script src="{% static 'journal/js/auto_journal_banner.js' %}"></script>
     {% endif %}
 {% endblock %}

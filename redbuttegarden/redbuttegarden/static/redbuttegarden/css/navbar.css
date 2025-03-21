@@ -1,0 +1,180 @@
+/** Hide Bootstrap's default dropdown caret **/
+nav .dropdown-toggle::after {
+    display: none;
+}
+
+.navbar {
+    --bs-navbar-padding-y: 0;
+}
+
+nav .show > .bi {
+    transform: rotate(45deg);
+    transition: transform 2s;
+}
+
+nav.navbar a,
+nav.navbar a:link,
+nav.navbar a:visited {
+    color: white;
+    text-decoration: none;
+    font-weight: inherit;
+}
+
+nav.navbar .nav-link:focus,
+nav.navbar .nav-link:hover,
+nav.navbar .nav-link:active,
+nav.navbar .navbar-nav .nav-link.show {
+    color: white;
+    text-decoration: underline;
+}
+
+nav .navbar-collapse.collapse.show a, nav .navbar-collapse.collapse.show  .nav-link:hover, nav .navbar-collapse.collapse.show .nav-link:active, nav .navbar-collapse.collapse.show .navbar-nav .nav-link.show,
+nav .navbar-collapse.collapsing .nav-link:hover, nav .navbar-collapse.collapsing  .nav-link:active, nav .navbar-collapse.collapsing .navbar-nav .nav-link.show {
+    color: black;
+    text-decoration: none;
+}
+
+nav .dropdown-menu {
+    border: none;
+}
+
+nav .dropdown-item {
+    opacity: 80%;
+}
+
+nav .dropdown-item:hover {
+    color: white;
+    opacity: 100%;
+    background-color: inherit;
+}
+
+nav #topLinks {
+    display: inline-flex;
+    order: -1;
+    margin-left: auto;
+    margin-right: 10em;
+}
+
+nav #topLinks .nav-link {
+    padding: 0 1em;
+}
+
+nav #topLinks li {
+    border-right: 2px solid white;
+}
+
+nav #topLinks li:last-child {
+    border-right: none;
+}
+
+#rbgNavbar {
+    flex-flow: wrap;
+}
+
+nav #navLinks {
+    display: flex;
+    flex-basis: 100%;
+}
+
+/* Changes background color of OUTDOOR CONCERT SERIES link in navbar */
+.dropdown-menu .concert-li li {
+    background-color: #87CEEB;
+}
+
+nav.navbar {
+    background: var(--rbg-oak-green);
+}
+
+nav .form-control {
+    color: white;
+    border: none;
+    border-radius: 0;
+    background-color: var(--rbg-oak-green);
+}
+
+nav .show .form-control, nav .collapsing .form-control {
+    color: black;
+    background-color: #f7f7f7;
+}
+
+nav .form-control::placeholder {
+    color: white;
+}
+
+nav .navbar-collapse.collapse.show .form-control::placeholder,
+nav .navbar-collapse.collapsing .form-control::placeholder {
+    color: darkgray;
+}
+
+nav i.bi {
+    opacity: 50%;
+}
+
+nav .navbar-collapse.collapse.show i.bi, nav .navbar-collapse.collapsing i.bi {
+    font-size: 1.5rem;
+}
+
+.bi-search {
+    position: absolute;
+    color: white;
+}
+
+nav .navbar-collapse.collapse.show bi.bi-search, nav .navbar-collapse.collapsing bi.bi-search {
+    color: black;
+    opacity: 100%;
+    font-size: 1rem;
+}
+
+#logo img {
+    max-height: 50px;
+    width: auto;
+    padding: 3px 0 3px 0;
+}
+
+nav #navSearch {
+    order: 1;
+}
+
+.dropdown-menu.show {
+    background-color: var(--rbg-oak-green);
+}
+
+.navbar-collapse.collapse.show, .navbar-collapse.collapsing,
+.navbar-collapse.collapse.show .dropdown-menu.show, .navbar-collapse.collapsing .dropdown-menu.show {
+    background-color: #f7f7f7;
+}
+
+@media (max-width: 992px) {
+    nav #navLinks {
+        display: inherit;
+    }
+
+    nav a, nav a:link, nav a:visited, nav a:active {
+        color: black;
+    }
+
+    #logo img {
+        padding-right: 0;
+        padding-left: 0;
+        max-width: 10em;
+        height: auto;
+    }
+
+    nav .form-control {
+        border-bottom: 2px solid gray;
+        filter: none;
+    }
+}
+
+#searchModalPaginationContainer {
+    overflow-x: scroll;
+
+    a {
+        padding: 0 0.5em;
+    }
+
+    a.selected {
+        text-decoration: none;
+        color: inherit;
+    }
+}

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from ics import Calendar, Event
 
-from .utils import strip_tags
+from .utils.utils import strip_tags
 
 logger = logging.getLogger(__name__)
 
