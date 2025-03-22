@@ -1,87 +1,82 @@
 {% load wagtailcore_tags %}
 
-<div class="panel-group" id="accordion-{{ id }}">
+<div id="accordion-{{ id }}" class="accordion">
     {% for panel in value.list_items %}
-        <div class="panel panel-default">
-            <a data-toggle="collapse" data-parent="#accordion-{{ id }}" href="#{{ id }}-{{ forloop.counter }}" class="collapsed" aria-expanded="false">
-                <div class="{{ panel.background_color }}">
-                    <div class="panel-title">
-                        <div class="row">
-                            <div class="col-xs-4">
-                                <div class="text-center">{{ panel.col_one_header|richtext }}</div>
-                            </div>
+        <div class="accordion-item">
+            <a class="accordion-button collapsed {{ panel.background_color }}" data-bs-toggle="collapse"
+               data-bs-target="#{{ id }}-{{ forloop.counter }}" href="#{{ id }}-{{ forloop.counter }}"
+               aria-expanded="false" aria-controls="{{ id }}-{{ forloop.counter }}">
+                <div class="row w-100">
+                    <div class="col-12 col-sm-4">
+                        <div class="text-center">{{ panel.col_one_header|richtext }}</div>
+                    </div>
 
-                            <div class="col-xs-4">
-                                <div class="text-center">{{ panel.col_two_header|richtext }}</div>
-                            </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="text-center">{{ panel.col_two_header|richtext }}</div>
+                    </div>
 
-                            <div class="col-xs-4">
-                                <div class="text-center">{{ panel.col_three_header|richtext }}</div>
-                            </div>
-                        </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="text-center">{{ panel.col_three_header|richtext }}</div>
                     </div>
                 </div>
             </a>
-            <div id="{{ id }}-{{ forloop.counter }}" class="panel-collapse collapse" aria-expanded="false">
-                <div class="panel-body">
+            <div id="{{ id }}-{{ forloop.counter }}" class="panel-collapse collapse" data-parent="#accordion-{{ id }}">
+                <div class="panel-body p-3">
                     <div class="row">
-                        <div class="col-xs-6 col-sm-4">
+                        <div class="col-12 col-sm-4">
                             <div class="text-center">
                                 {% if panel.class_info_subheaders %}
-                                    <span class="green bold">GRADE:</span>
+                                    <span class="green fw-bold">GRADE:</span>
                                 {% endif %}
                                 {{ panel.col_one_top_info|richtext }}
                             </div>
                         </div>
 
-                        <div class="col-xs-6 col-sm-4">
+                        <div class="col-12 col-sm-4">
                             <div class="text-center">
                                 {% if panel.class_info_subheaders %}
-                                    <span class="green bold">AGES:</span>
+                                    <span class="green fw-bold">AGES:</span>
                                 {% endif %}
                                 {{ panel.col_two_top_info|richtext }}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-4">
+                        <div class="col-12 col-sm-4">
                             <div class="text-center">
                                 {% if panel.class_info_subheaders %}
-                                    <span class="green bold">SESSION:</span>
+                                    <span class="green fw-bold">SESSION:</span>
                                 {% endif %}
                                 {{ panel.col_three_top_info|richtext }}
                             </div>
                         </div>
-
                     </div>
 
                     {% include_block panel.middle_info %}
                     {% include_block panel.button %}
 
-                    <br>
-
                     <div class="row">
-                        <div class="col-xs-12 col-sm-4">
+                        <div class="col-12 col-sm-4">
                             <div class="text-center">
                                 {% if panel.class_info_subheaders %}
-                                    <span class="green bold">LOCATION:</span>
+                                    <span class="green fw-bold">LOCATION:</span>
                                 {% endif %}
                                 {{ panel.col_one_bottom_info|richtext }}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-4">
+                        <div class="col-12 col-sm-4">
                             <div class="text-center">
                                 {% if panel.class_info_subheaders %}
-                                    <span class="green bold">COST:</span>
+                                    <span class="green fw-bold">COST:</span>
                                 {% endif %}
                                 {{ panel.col_two_bottom_info|richtext }}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-4">
+                        <div class="col-12 col-sm-4">
                             <div class="text-center">
                                 {% if panel.class_info_subheaders %}
-                                    <span class="green bold">CONTACT INFORMATION:</span>
+                                    <span class="green fw-bold">CONTACT INFORMATION:</span>
                                 {% endif %}
                                 {{ panel.col_three_bottom_info|richtext }}
                             </div>
