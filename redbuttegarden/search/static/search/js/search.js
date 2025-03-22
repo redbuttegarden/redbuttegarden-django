@@ -45,15 +45,14 @@ function fetchResults(query, page) {
                 resultsContainer.appendChild(resultItem);
             });
             paginationContainer.innerHTML = '';
-            console.log(data.pages)
+
             for (let i = 1; i <= data.pages; i++) {
-                console.log(i)
                 const pageLink = document.createElement('a');
                 if (i === page) {
                     pageLink.classList.add('selected');
                 }
-                pageLink.href = `/search/?q=${query}&page=${i}`;
-                pageLink.innerText = i;
+                pageLink.href = '/search/?q=' + encodeURIComponent(query) + '&page=' + i;
+                pageLink.textContent = i.toString();
                 pageLink.addEventListener('click', function (event) {
                     event.preventDefault();
                     fetchResults(query, i);
