@@ -11,18 +11,12 @@
     padding-top: 5px;
 }
 
-.concertwrapper {
-    max-width: 330px;
-}
-
 @media (max-width: 768px) {
-
     .concertwrapper{
         margin-left: auto;
         margin-right: auto;
         float: none;
     }
-
 }
 
 .past:hover .pasttext{
@@ -68,17 +62,26 @@
     display: none;
 }
 
-.concerttext {
-    background-color: #F2EDE4;
-    position: relative;
-    height: 350px;
-}
-
 .concerttext:before {      /* create a full-height inline block pseudo-element */
     content: ' ';
     display: inline-block;
     vertical-align: middle; /* vertical alignment of the inline element */
     height: 100%;
+}
+
+.concerttext {
+    background-color: #F2EDE4;
+    position: relative;
+    height: 380px;
+}
+
+.concerttext h1,
+.concerttext h2,
+.concerttext h3,
+.concerttext h4,
+.concerttext h5,
+.concerttext h6 {
+  margin: 0.5rem 0;
 }
 
 .textwrapper {
