@@ -1,15 +1,16 @@
 .poster-outer {
+    position: relative;
     margin-top: 10px;
     width: 400px;
     height: 400px;
     background-color: #b5b9c2;
-    z-index: -1;
 }
 
 .poster-inner {
     position: absolute;
-    top: 35px;
-    left: 40px;
+    top: 200px;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 350px;
     height: 350px;
     background-color: #004f2f;

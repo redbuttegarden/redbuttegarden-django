@@ -6,52 +6,49 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="row text-center responsive">
-            {% image page.banner max-1280x500 %}
-        </div>
+    {% include 'includes/page_banner.html' with banner=page.banner %}
 
-        <div id="poster-holder" class="row">
-            {% for lineup in page.lineups %}
-                <div class="col-sm-4">
-                    <div id="poster-outer-{{ forloop.counter0 }}" class="poster-outer collapsed" data-target="#{{ lineup.id }}" data-toggle="collapse" href="#{{ lineup.id }}" aria-expanded="false">
-                        {% image lineup.value.poster max-285x285 as poster %}
-                        <img class="poster-img" src="{{ poster.url }}" alt="{{ poster.alt }}" />
+    <div id="poster-holder" class="row">
+        {% for lineup in page.lineups %}
+            <div class="col-4">
+                <div id="poster-outer-{{ forloop.counter0 }}" class="poster-outer collapsed"
+                     data-target="#{{ lineup.id }}" data-bs-toggle="collapse" href="#{{ lineup.id }}"
+                     aria-expanded="false" aria-controls="{{ lineup.id }}">
+                    {% image lineup.value.poster max-285x285 as poster %}
+                    <img class="poster-img" src="{{ poster.url }}" alt="{{ poster.alt }}"/>
 
-                        <div class="eventinfo">
-                            <div class="eventname">{{ lineup.value.year|stringformat:"s" }}</div>
-                        </div>
-                        <div class="poster-inner">
-                            <div id="innermost-{{ forloop.counter0 }}" class="poster-innermost"></div>
-                        </div>
+                    <div class="eventinfo">
+                        <div class="eventname">{{ lineup.value.year|stringformat:"s" }}</div>
                     </div>
+                    <div class="poster-inner">
+                        <div id="innermost-{{ forloop.counter0 }}" class="poster-innermost"></div>
+                    </div>
+                </div>
 
-                    <div class="poster-info-pane panel-border collapse" id="{{ lineup.id }}" aria-expanded="false" style="height: 1px;">
-                        <div class="tan-bg">
-                            <div class="row">
+                <div id="{{ lineup.id }}" class="poster-info-pane panel-border collapse">
+                    <div class="tan-bg">
+                        <div class="row">
+                            <div class="col-12">
+                                <h2 class="text-center green">{{ lineup.value.year|stringformat:"s" }} Concerts</h2>
+                                
+                                <hr>
+
+                                <div class="text-center">
+                                    {% image lineup.value.poster original as original %}
+                                    <a href="{{ original.url }}">
+                                        <input type="submit" name="Apply-Button" value="Lineup Poster"
+                                               class="apply-button hover">
+                                    </a>
+                                </div>
                                 <br>
 
-                                <div class="col-sm-12">
-                                    <h2 class="text-center green">{{ lineup.value.year|stringformat:"s" }} Concerts</h2>
-                                    <hr width="70%">
-                                    <br>
-
-                                    <div class="text-center">
-                                        {% image lineup.value.poster original as original %}
-                                        <a href="{{ original.url }}">
-                                            <input type="submit" name="Apply-Button" value="Lineup Poster" class="apply-button hover">
-                                        </a>
-                                    </div>
-                                    <br>
-
-                                    {{ lineup.value.artists|richtext }}
-                                </div>
+                                {{ lineup.value.artists|richtext }}
                             </div>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}
 
