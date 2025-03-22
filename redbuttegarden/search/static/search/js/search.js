@@ -1,9 +1,19 @@
+const navSearchForm = document.getElementById('navSearch');
 const navSearchInput = document.querySelector('#navSearch input[type="search"]');
 const searchModalInput = document.querySelector('#searchModalForm input[type="search"]');
 const searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
 const searchModalSearchButton = document.querySelector('#searchModal button.btn-primary');
 const resultsContainer = document.querySelector('#searchResults');
 const paginationContainer = document.getElementById('searchModalPaginationContainer');
+
+navSearchForm.addEventListener('click', (e) => {
+    e.preventDefault();
+    searchModal.show();
+    const searchTerm = searchModalInput.value;
+    if (searchTerm.length > 2) { // Only send request if search term has at least 3 characters
+        fetchResults(searchTerm, 1);
+    }
+});
 
 navSearchInput.addEventListener('focus', (e) => {
     e.preventDefault();
