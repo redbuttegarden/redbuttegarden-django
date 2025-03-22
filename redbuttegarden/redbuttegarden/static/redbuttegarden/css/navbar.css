@@ -52,7 +52,6 @@ nav #topLinks {
     display: inline-flex;
     order: -1;
     margin-left: auto;
-    margin-right: 10em;
 }
 
 nav #topLinks .nav-link {
@@ -133,6 +132,7 @@ nav .navbar-collapse.collapse.show bi.bi-search, nav .navbar-collapse.collapsing
 
 nav #navSearch {
     order: 1;
+    max-width: 195px;
 }
 
 .dropdown-menu.show {
