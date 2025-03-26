@@ -240,6 +240,11 @@ a:hover {
     color: #C4B59E; /* color when hyperlinks hovered over on default pages*/
 }
 
+/* SGS Calendar links should be white */
+.render-calendar a, .render-calendar a:link, .render-calendar a:visited, .render-calendar a:active {
+    color: white;
+}
+
 /**********************************************************/
 /*************  Begin CSS for membership page *************/
 /**********************************************************/
