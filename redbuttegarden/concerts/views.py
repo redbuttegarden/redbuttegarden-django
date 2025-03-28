@@ -109,6 +109,8 @@ class ConcertDonorClubMemberViewSet(ModelViewSet):
     form_fields = '__all__'
     icon = 'group'
     inspect_view_enabled = True
+    search_fields = ('user__email', 'user__username')
+    list_filter = ('active', 'packages')
 
 
 class TicketDRFViewSet(viewsets.ModelViewSet):
