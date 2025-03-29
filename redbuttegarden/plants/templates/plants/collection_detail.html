@@ -3,69 +3,53 @@
 
 {% block extra_css %}
     <link href="{% static 'plants/css/collection_detail.css' %}" rel="stylesheet">
-    <link href='https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css' rel='stylesheet' />
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css' rel='stylesheet'/>
     <script src='https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js'></script>
 {% endblock %}
 
 {% block content %}
     <div id="collection-info-container" class="container-fluid">
-        <div class="col-md-6">
-            <h1>Collection Detail</h1>
-            <div class="names">
-                {% if collection.species.vernacular_name %}
-                    <h4 class="common-name">{{ collection.species.vernacular_name }}</h4>
-                {% endif %}
-                <h4 class="scientific-name">
-                    <a href="{% url 'plants:species-detail' collection.species_id %}" id="full-name"></a>
-                </h4>
+        <div class="row">
+            <div class="col">
+                <h1>Collection Detail</h1>
+                <div class="names">
+                    {% if collection.species.vernacular_name %}
+                        <h2 class="common-name">{{ collection.species.vernacular_name }}</h2>
+                    {% endif %}
+                    <h3 class="scientific-name">
+                        <a href="{% url 'plants:species-detail' collection.species_id %}" id="full-name"></a>
+                    </h3>
+                </div>
+                <div class="collection-info">
+                    <p id="coords"
+                       class="location">{{ collection.location.latitude }}, {{ collection.location.longitude }}</p>
+                    {% if collection.plant_id %}
+                        <p><span class="fw-bold">Plant ID: </span>{{ collection.plant_id }}</p>
+                    {% endif %}
+                    <p><span class="fw-bold">Family: </span>{{ collection.species.genus.family.name }}</p>
+                    <p><span class="fw-bold">Garden Area: </span>{{ collection.garden.area }}</p>
+                    <p><span class="fw-bold">Garden Name: </span>{{ collection.garden.name }}</p>
+                    <p><span class="fw-bold">Bed #: </span>{{ collection.garden.code }}</p>
+                    {% if collection.plant_date %}
+                        <p><span class="fw-bold">Date Planted: </span>{{ collection.plant_date }}</p>
+                    {% endif %}
+                </div>
             </div>
-            <div class="collection-info">
-                <p id="coords" class="location">{{ collection.location.latitude }}, {{ collection.location.longitude }}</p>
-                {% if collection.plant_id %}
-                    <p><span class="bold">Plant ID: </span>{{ collection.plant_id }}</p>
-                {% endif %}
-                <p><span class="bold">Family: </span>{{ collection.species.genus.family.name }}</p>
-                <p><span class="bold">Garden Area: </span>{{ collection.garden.area }}</p>
-                <p><span class="bold">Garden Name: </span>{{ collection.garden.name }}</p>
-                <p><span class="bold">Bed #: </span>{{ collection.garden.code }}</p>
-                {% if collection.plant_date %}
-                    <p><span class="bold">Date Planted: </span>{{ collection.plant_date }}</p>
-                {% endif %}
+            <div class="col">
+                <div id="map"></div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div id="map"></div>
-        </div>
 
-        <div class="row small text-center">
-            <br>
-
-            Spotted an issue?
+        <div class="row small text-center mt-1 mt-md-3 mt-lg-5">
+            <div>Spotted an issue?</div>
             <a href="{% url 'plants:collection-feedback' collection.id %}"> Leave a comment with our feedback form.</a>
         </div>
     </div>
-
 {% endblock %}
 
 {% block extra_js %}
-    <script>
-        let coords = document.getElementById("coords");
-        let coordText = coords.innerHTML;
-        let coordinates = coordText.split(", ");
-
-        mapboxgl.accessToken = "{{ mapbox_token }}";
-        const map = new mapboxgl.Map({
-            container: 'map', // container ID
-            style: 'mapbox://styles/auslaner/ckok8ssno01wy18qubvcflh7x', // style URL
-            center: [coordinates[1], coordinates[0]], // starting position [lng, lat]
-            zoom: 17 // starting zoom
-        });
-
-        const collectionMarker = new mapboxgl.Marker()
-            .setLngLat([coordinates[1], coordinates[0]])
-            .addTo(map);
-    </script>
-
+    {{ mapbox_token|json_script:"mapboxToken" }}
+    <script src="{% static 'plants/js/collection_detail_map.js' %}"></script>
     <script src="{% static 'plants/js/name_styling.js' %}"></script>
     <script>
         document.getElementById("full-name").innerHTML = style_full_name("{{ collection.species.full_name|safe }}");
