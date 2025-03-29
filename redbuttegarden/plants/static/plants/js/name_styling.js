@@ -8,11 +8,11 @@ function style_full_name(name) {
         } else if (parts[i][0] === "'" && parts[i][parts[i].length - 1] === "'") {
             parts[i] = '</span><span>' + parts[i];
         } else if (parts[i] === 'var.' || parts[i] === 'subsp.' || parts[i] === 'f.') {
-            parts[i] = '</span>' + parts[i] + '<span class="italic">';
+            parts[i] = '</span>' + parts[i] + '<span class="fst-italic">';
         }
     }
 
-    parts.splice(0, 0, '<span class="italic">');
+    parts.splice(0, 0, '<span class="fst-italic">');
     parts.splice(parts.length, 0, '</span>');
 
     return parts.join(" ");

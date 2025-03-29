@@ -1,0 +1,7 @@
+ul.pagination {
+    display: flex;
+    justify-content: space-evenly;
+    max-width: fit-content;
+    margin-inline: auto;
+    gap: 1em;
+}
