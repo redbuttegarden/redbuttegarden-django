@@ -559,6 +559,12 @@ class ConcertDonorClubMember(models.Model):
         super().save(*args, **kwargs)
 
 
+class ConcertDonorClubMemberGroup(models.Model):
+    id = models.UUIDField(primary_key=True)
+    members = models.ManyToManyField(ConcertDonorClubMember)
+    package = models.ForeignKey(ConcertDonorClubPackage, on_delete=models.CASCADE)
+
+
 class Ticket(models.Model):
     owner = models.ForeignKey(ConcertDonorClubMember, on_delete=models.CASCADE)
     concert = models.ForeignKey(Concert, on_delete=models.CASCADE)

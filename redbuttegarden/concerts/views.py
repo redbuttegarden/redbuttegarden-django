@@ -20,14 +20,13 @@ from urllib3 import HTTPResponse
 from wagtail.admin.viewsets.base import ViewSetGroup
 from wagtail.admin.viewsets.model import ModelViewSet
 
-from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember, Ticket, OAuth2Token
+from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember, Ticket, OAuth2Token, \
+    ConcertDonorClubMemberGroup
 from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSerializer, ConcertDonorClubMemberSerializer, \
     TicketSerializer
 from concerts.utils.constant_contact import oauth
 
 logger = logging.getLogger(__name__)
-
-
 
 
 def cc_login(request):
@@ -107,10 +106,19 @@ class ConcertDonorClubMemberDRFViewSet(viewsets.ModelViewSet):
 class ConcertDonorClubMemberViewSet(ModelViewSet):
     model = ConcertDonorClubMember
     form_fields = '__all__'
+    icon = 'user'
+    inspect_view_enabled = True
+    search_fields = ('user__email', 'user__username', 'user__first_name', 'user__last_name')
+    list_filter = ('active', 'packages')
+
+
+class ConcertDonorClubMemberGroupViewSet(ModelViewSet):
+    model = ConcertDonorClubMemberGroup
+    form_fields = '__all__'
     icon = 'group'
     inspect_view_enabled = True
-    search_fields = ('user__email', 'user__username')
-    list_filter = ('active', 'packages')
+    search_fields = ('id', 'members_user__email', 'members_user__username')
+    list_filter = ['id']
 
 
 class TicketDRFViewSet(viewsets.ModelViewSet):
@@ -129,7 +137,8 @@ class TicketViewSet(ModelViewSet):
 class ConcertDonorClubViewSetGroup(ViewSetGroup):
     menu_label = 'Concert Donor Club'
     menu_icon = 'group'
-    items = (ConcertViewSet, ConcertDonorClubPackageViewSet, ConcertDonorClubMemberViewSet, TicketViewSet)
+    items = (ConcertViewSet, ConcertDonorClubPackageViewSet, ConcertDonorClubMemberViewSet, TicketViewSet,
+             ConcertDonorClubMemberGroupViewSet)
 
 
 def concert_thank_you(request):
@@ -317,4 +326,3 @@ def ticket_detail_view(request, concert_pk):
     }
 
     return render(request, 'concerts/concert_donor_club_tickets.html', context)
-
