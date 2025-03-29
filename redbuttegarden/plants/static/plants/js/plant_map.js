@@ -8,14 +8,29 @@ let map = new mapboxgl.Map({
     zoom: 16 // starting zoom
 });
 
+if (isMobile()) {
+    const geolocateControl = new mapboxgl.GeolocateControl({
+        positionOptions: {
+            enableHighAccuracy: true
+        },
+        trackUserLocation: true,
+        showUserHeading: true,
+    });
+    map.addControl(geolocateControl, 'bottom-left');
+}
+
 // Code for changing styles based off https://docs.mapbox.com/mapbox-gl-js/example/setstyle/
-const layerList = document.getElementById('menu');
+const layerList = document.getElementById('mapMenu');
 const inputs = layerList.getElementsByTagName('input');
 
 for (const input of inputs) {
     input.onclick = (layer) => {
         const layerId = layer.target.id;
-        map.setStyle('mapbox://styles/mapbox/' + layerId);
+
+        // Only change from default RBG custom style if something else is selected
+        if (layerId !== 'rbg-custom') {
+            map.setStyle('mapbox://styles/mapbox/' + layerId);
+        }
 
         map.once('styledata', () => {
             initialMapSetup(map);
@@ -33,6 +48,10 @@ let popup = new mapboxgl.Popup({
 
 let filterEl = document.getElementById('feature-filter');
 let listingEl = document.getElementById('feature-listing');
+
+function isMobile() {
+    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+}
 
 function renderListings(features) {
     features.sort((a, b) =>
