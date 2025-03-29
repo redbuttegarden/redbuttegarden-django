@@ -9,7 +9,7 @@
 {% block content %}
     <div class="container-fluid">
         <div class="row">
-            <div class="col">
+            <div class="col-md-6">
                 <div class="header">
                     <h1>{{ species.vernacular_name }}</h1>
                     <h2 id="full-name" class="scientific-name"></h2>
@@ -81,7 +81,7 @@
                 </div>
             </div>
 
-            <div class="col main-image text-center">
+            <div class="col-md-6 main-image text-center mt-5 mt-md-0">
                 {% if images %}
                     {% image images.first.image max-500x500 as main_img %}
                     <img src="{{ main_img.url }}" width="{{ main_img.width }}"
