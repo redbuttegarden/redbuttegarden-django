@@ -100,5 +100,13 @@
                 </div>
             </div>
         {% endif %}
+
+        {% if group_tickets %}
+            <ul>
+                {% for ticket in group_tickets %}
+                    <li>{{ ticket.barcode }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 {% endblock %}

@@ -20,6 +20,7 @@ from urllib3 import HTTPResponse
 from wagtail.admin.viewsets.base import ViewSetGroup
 from wagtail.admin.viewsets.model import ModelViewSet
 
+from concerts.forms import ConcertDonorClubPackageForm
 from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember, Ticket, OAuth2Token, \
     ConcertDonorClubMemberGroup
 from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSerializer, ConcertDonorClubMemberSerializer, \
@@ -86,6 +87,9 @@ class ConcertDonorClubPackageViewSet(ModelViewSet):
     form_fields = '__all__'
     icon = 'list-ul'
     inspect_view_enabled = True
+
+    def get_form_class(self, *args, **kwargs):
+        return ConcertDonorClubPackageForm
 
 
 class ConcertDonorClubMemberFilter(FilterSet):
@@ -264,6 +268,18 @@ def concert_donor_club_member_profile(request):
                                                                       concert__begin__year=current_year,
                                                                       package__isnull=True)
 
+    # Check if CDC member is part of any Concert Donor Club Member Group
+    try:
+        cdc_member_group = ConcertDonorClubMemberGroup.objects.filter(members__in=concert_donor_club_member).first()
+    except ConcertDonorClubMemberGroup.DoesNotExist:
+        cdc_member_group = None
+
+    if cdc_member_group:
+        # Get all the tickets for the concerts in the group
+        group_tickets = Ticket.objects.filter(package=cdc_member_group.package)
+    else:
+        group_tickets = None
+
     ticket_info = {}
     for package in current_season_packages:
         ticket_info[package.name] = []
@@ -303,6 +319,7 @@ def concert_donor_club_member_profile(request):
         'ticket_info': ticket_info,
         'add_ticket_info': add_ticket_info,
         'member_tickets': current_season_member_tickets,
+        'group_tickets': group_tickets,
     }
     return render(request, 'concerts/concert_donor_club_member_profile.html', context)
 
