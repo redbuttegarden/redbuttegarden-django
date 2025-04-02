@@ -17,5 +17,6 @@ urlpatterns = [
     path('api/cc-login/', views.cc_login, name='cc-login'),
     path('api/callback/', views.callback, name='callback'),
     path('api/cdc-etix-data/', views.process_ticket_data, name='api-cdc-etix-data'),
+    path('api/check-img/', views.check_image_url, name='check-img'),
     path('api/', include(router.urls)),
 ]

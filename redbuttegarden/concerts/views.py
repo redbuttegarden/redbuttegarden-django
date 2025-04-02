@@ -1,5 +1,7 @@
 import datetime
 import logging
+import requests
+from collections import defaultdict
 from urllib.parse import urlparse
 
 from authlib.integrations.base_client import OAuthError
@@ -8,7 +10,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.db.models import Count
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django_filters.rest_framework import FilterSet, CharFilter
@@ -16,7 +18,6 @@ from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
-from urllib3 import HTTPResponse
 from wagtail.admin.viewsets.base import ViewSetGroup
 from wagtail.admin.viewsets.model import ModelViewSet
 
@@ -152,7 +153,7 @@ def concert_thank_you(request):
         if parsed_url.hostname == 'etix.com' or parsed_url.hostname == 'www.etix.com':
             return render(request, 'concerts/concert_thank_you.html')
         else:
-            return HTTPResponse(status=204)
+            return HttpResponse(status=204)
     else:
         return redirect('/')
 
@@ -258,33 +259,50 @@ def concert_donor_club_member_profile(request):
     except ConcertDonorClubMember.DoesNotExist:
         raise Http404("No matching Concert Donor Membership found.")
 
-    current_year = datetime.date.today().year
+    # current_year = datetime.date.today().year
+    # for testing, pretend it's last year
+    current_year = 2024
 
     current_season_packages = concert_donor_club_member.packages.annotate(num_concerts=Count("concerts")).filter(
         num_concerts__gt=0, year=current_year)
-    current_season_member_tickets = Ticket.objects.filter(owner=concert_donor_club_member,
-                                                          concert__begin__year=current_year, package__isnull=False)
-    current_season_additional_concert_tickets = Ticket.objects.filter(owner=concert_donor_club_member,
-                                                                      concert__begin__year=current_year,
-                                                                      package__isnull=True)
+    current_season_tickets = Ticket.objects.filter(concert__begin__year=current_year)
+    current_season_member_tickets = current_season_tickets.filter(owner=concert_donor_club_member,
+                                                                  package__isnull=False)
+    current_season_additional_concert_tickets = current_season_tickets.filter(owner=concert_donor_club_member,
+                                                                              package__isnull=True)
 
     # Check if CDC member is part of any Concert Donor Club Member Group
     try:
-        cdc_member_group = ConcertDonorClubMemberGroup.objects.filter(members__in=concert_donor_club_member).first()
+        cdc_member_group = ConcertDonorClubMemberGroup.objects.filter(members__in=[concert_donor_club_member]).first()
     except ConcertDonorClubMemberGroup.DoesNotExist:
         cdc_member_group = None
 
     if cdc_member_group:
+        other_group_members = [member for member in cdc_member_group.members.all()]
+        # Remove the current user from the list of other group members
+        other_group_members.remove(concert_donor_club_member)
         # Get all the tickets for the concerts in the group
-        group_tickets = Ticket.objects.filter(package=cdc_member_group.package)
+        group_tickets = current_season_tickets.filter(owner__in=[member for member in other_group_members])
+
+        # Group tickets by concert
+        group_tickets_by_concert = defaultdict(list)
+        for ticket in group_tickets:
+            group_tickets_by_concert[ticket.concert].append(ticket)
+
+        # Set default_factory to None so it can be rendered in template: https://stackoverflow.com/a/12842716
+        group_tickets_by_concert.default_factory = None
     else:
-        group_tickets = None
+        other_group_members = []
+        group_tickets_by_concert = None
 
     ticket_info = {}
     for package in current_season_packages:
+        print(f'Package: {package.name}')
         ticket_info[package.name] = []
         for concert in package.concerts.all():
+            print(f'Concert: {concert.name}')
             ticket_count = current_season_member_tickets.filter(concert=concert).count()
+            print(f'Ticket Count: {ticket_count}')
 
             if ticket_count > 0:
                 ticket_info[package.name].append({
@@ -319,7 +337,8 @@ def concert_donor_club_member_profile(request):
         'ticket_info': ticket_info,
         'add_ticket_info': add_ticket_info,
         'member_tickets': current_season_member_tickets,
-        'group_tickets': group_tickets,
+        'other_group_member_usernames': [member.user.username for member in other_group_members],
+        'group_tickets_by_concert': group_tickets_by_concert,
     }
     return render(request, 'concerts/concert_donor_club_member_profile.html', context)
 
@@ -343,3 +362,25 @@ def ticket_detail_view(request, concert_pk):
     }
 
     return render(request, 'concerts/concert_donor_club_tickets.html', context)
+
+
+def check_image_url(request):
+    """
+    Check if the Etix band image will actually load
+    Annoyingly, Etix returns a 200 status code when requesting an image
+    url that doesn't load so instead we have to check the header content
+    length to check if the image actually exists
+    """
+    img_url = request.GET.get('img_url')
+    concert_name = request.GET.get('concert_name')
+    response = requests.head(img_url)
+
+    # HTMX won't swap content if we return 204
+    if not 'Content-Length' in response.headers or response.headers['Content-Length'] == '0':
+        # Image won't load so replace it with a placeholder that doesn't use an animation
+        return HttpResponse(
+            '<div class="placeholder w-100 h-100"><div class="placeholder col-12 h-100 w-100 rounded-1"></div></div>')
+    else:
+        print(f'Image exists: {img_url}')
+        return HttpResponse(
+            f'<img class="img-fluid rounded-start" src="{img_url}" alt="Concert promo art for {concert_name}">')
