@@ -478,6 +478,9 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
 
 
 class Concert(models.Model):
+    """
+    This model is only used for CDC Portal related things. Not related to concerts displayed on the ConcertPage.
+    """
     etix_id = models.PositiveBigIntegerField(primary_key=True)
     name = models.CharField(max_length=300)
     begin = models.DateTimeField()
@@ -560,9 +563,11 @@ class ConcertDonorClubMember(models.Model):
 
 
 class ConcertDonorClubMemberGroup(models.Model):
-    id = models.UUIDField(primary_key=True)
     members = models.ManyToManyField(ConcertDonorClubMember)
-    package = models.ForeignKey(ConcertDonorClubPackage, on_delete=models.CASCADE)
+
+    def __str__(self):
+        group_members = self.members.all()
+        return f'CDC Member Group #{self.id}: [{", ".join([str(member.user.username) for member in group_members])}]'
 
 
 class Ticket(models.Model):
