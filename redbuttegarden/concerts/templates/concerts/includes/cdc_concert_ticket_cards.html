@@ -1,0 +1,40 @@
+<div id="concertTicketCardAccordion-{{ id }}" class="accordion text-center my-3">
+    <h3 class="accordion-header border border-2 rounded">
+        <button class="accordion-button hover rounded-1 collapsed" type="button"
+                data-bs-target="#cards-{{ id }}"
+                data-bs-toggle="collapse"
+                aria-controls="other-concerts-{{ forloop.counter }}" aria-expanded="false">
+            <span class="d-block w-100 text-center fw-bold">{{ button_text }}</span>
+        </button>
+    </h3>
+    <div id="cards-{{ id }}" class="accordion-collapse collapse"
+         data-bs-parent="#concertTicketCardAccordion-{{ id }}">
+        {% for ticket_info in tickets_dict.values %}
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <div class="h-100"
+                             hx-get="{% url 'concerts:check-img' %}?image_url={{ ticket_info.image_url }}&concert_name={{ ticket_info.name }}"
+                             hx-trigger="load"
+                             hx-swap="outerHTML">
+                            <div class="placeholder-wave w-100 h-100">
+                                <div class="placeholder col-12 h-100 w-100 rounded-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ ticket_info.name }}</h4>
+                            <p class="card-text"><span
+                                    class="fw-bold">Begin:</span> {{ ticket_info.begin }}</p>
+                            <p class="card-text"><span
+                                    class="fw-bold">Doors:</span> {{ ticket_info.doors }}</p>
+                            <p class="card-text"><span class="fw-bold">Tickets:</span>
+                                (x{{ ticket_info.ticket_count }})</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

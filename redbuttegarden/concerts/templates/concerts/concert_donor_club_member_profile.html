@@ -12,80 +12,87 @@
         <div class="row">
             <div class="header">
                 <h1>Concert Donor Club Member Portal Profile</h1>
-                <p><span class="bold">Name:</span> {{ user_name }}</p>
-                <p><span class="bold">Phone Number:</span> {{ cdc_member.phone_number }}</p>
-                <p><span class="bold">Email:</span> {{ cdc_member.user.email }}</p>
+                <p><span class="fw-bold">Name:</span> {{ user_full_name }}</p>
+                <p><span class="fw-bold">Phone Number:</span> {{ cdc_member.phone_number }}</p>
+                <p><span class="fw-bold">Email:</span> {{ cdc_member.user.email }}</p>
             </div>
         </div>
 
-        <div class="row">
-            <div class="package-info text-center">
-                <h2>Packages</h2>
-
-                <div id="packages" class="accordion my-3">
-                    {% for package_name, concerts in ticket_info.items %}
-                        <h3 class="accordion-header border border-2 rounded">
-                            <button class="accordion-button hover rounded-1 collapsed" type="button"
-                                    data-bs-target="#{{ package_name|cut:" " }}-{{ forloop.counter }}"
-                                    data-bs-toggle="collapse" aria-expanded="false"
-                                    aria-controls="{{ package_name|cut:" " }}-{{ forloop.counter }}">
-                                <span class="d-block w-100 text-center fw-bold">{{ package_name }}</span>
-                            </button>
-                        </h3>
-                        <div id="{{ package_name|cut:" " }}-{{ forloop.counter }}" class="accordion-collapse collapse"
-                             data-bs-parent="#packages">
-                            {% for concert_info in concerts %}
-                                <div class="card mb-3">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <div class="h-100"
-                                                 hx-get="{% url 'concerts:check-img' %}?img_url={{ concert_info.img_url }}&concert_name={{ concert_info.name }}"
-                                                 hx-trigger="load"
-                                                 hx-swap="outerHTML">
-                                                <div class="placeholder-wave w-100 h-100">
-                                                    <div class="placeholder col-12 h-100 w-100 rounded-1"></div>
+        {% if ticket_info %}
+            <div class="row">
+                <div class="package-info text-center">
+                    <h2>Packages</h2>
+                
+                    {% for package_name, tickets_dict in ticket_info.items %}
+                        {% include 'concerts/includes/cdc_concert_ticket_cards.html' with id="packageTickets-{{ forloop.counter }}" button_text=package_name tickets_dict=tickets_dict %}
+                    {% endfor %}
+                
+                    <div id="packages" class="accordion my-3">
+                        {% for package_name, concerts in ticket_info.items %}
+                            <h3 class="accordion-header border border-2 rounded">
+                                <button class="accordion-button hover rounded-1 collapsed" type="button"
+                                        data-bs-target="#{{ package_name|cut:" " }}-{{ forloop.counter }}"
+                                        data-bs-toggle="collapse" aria-expanded="false"
+                                        aria-controls="{{ package_name|cut:" " }}-{{ forloop.counter }}">
+                                    <span class="d-block w-100 text-center fw-bold">{{ package_name }}</span>
+                                </button>
+                            </h3>
+                            <div id="{{ package_name|cut:" " }}-{{ forloop.counter }}"
+                                 class="accordion-collapse collapse"
+                                 data-bs-parent="#packages">
+                                {% for concert_info in concerts %}
+                                    <div class="card mb-3">
+                                        <div class="row g-0">
+                                            <div class="col-md-4">
+                                                <div class="h-100"
+                                                     hx-get="{% url 'concerts:check-img' %}?img_url={{ concert_info.img_url }}&concert_name={{ concert_info.name }}"
+                                                     hx-trigger="load"
+                                                     hx-swap="outerHTML">
+                                                    <div class="placeholder-wave w-100 h-100">
+                                                        <div class="placeholder col-12 h-100 w-100 rounded-1"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body">
+                                                    <h4 class="card-title">{{ concert_info.name }}</h4>
+                                                    <p class="card-text"><span
+                                                            class="fw-bold">Begin:</span> {{ concert_info.begin }}</p>
+                                                    <p class="card-text"><span
+                                                            class="fw-bold">Doors:</span> {{ concert_info.doors }}</p>
+                                                    <p class="card-text"><span class="fw-bold">Tickets:</span>
+                                                        (x{{ concert_info.count }})</p>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-8">
-                                            <div class="card-body">
-                                                <h4 class="card-title">{{ concert_info.name }}</h4>
-                                                <p class="card-text"><span
-                                                        class="fw-bold">Begin:</span> {{ concert_info.begin }}</p>
-                                                <p class="card-text"><span
-                                                        class="fw-bold">Doors:</span> {{ concert_info.doors }}</p>
-                                                <p class="card-text"><span class="fw-bold">Tickets:</span>
-                                                    (x{{ concert_info.count }})</p>
-                                            </div>
-                                        </div>
                                     </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
 
         {% if add_ticket_info %}
-            <hr>
+            <hr class="my-3">
             <div id="additionalConcerts" class="accordion additional-concerts text-center my-3">
                 <h3 class="accordion-header border border-2 rounded">
                     <button class="accordion-button hover rounded-1 collapsed" type="button"
-                            data-bs-target="#other-concerts-{{ forloop.counter }}"
+                            data-bs-target="#other-concerts"
                             data-bs-toggle="collapse"
-                            aria-controls="other-concerts-{{ forloop.counter }}" aria-expanded="false">
+                            aria-controls="other-concerts" aria-expanded="false">
                         <span class="d-block w-100 text-center fw-bold">Additional Tickets</span>
                     </button>
                 </h3>
-                <div id="other-concerts-{{ forloop.counter }}" class="accordion-collapse collapse"
+                <div id="other-concerts" class="accordion-collapse collapse"
                      data-bs-parent="#additionalConcerts">
                     {% for ticket_info in add_ticket_info.values %}
                         <div class="card mb-3">
                             <div class="row g-0">
                                 <div class="col-md-4">
                                     <div class="h-100"
-                                         hx-get="{% url 'concerts:check-img' %}?img_url={{ ticket_info.img_url }}&concert_name={{ concert_info.name }}"
+                                         hx-get="{% url 'concerts:check-img' %}?img_url={{ ticket_info.img_url }}&concert_name={{ ticket_info.name }}"
                                          hx-trigger="load"
                                          hx-swap="outerHTML">
                                         <div class="placeholder-wave w-100 h-100">
@@ -112,19 +119,12 @@
         {% endif %}
 
         {% if group_tickets_by_concert %}
-            <div>Your CDC membership is grouped with these other users so you can see each others tickets:
+            <hr class="my-3">
+            <div class="fw-light">Your CDC membership is grouped with these other users so you can see each others
+                CDC package tickets:
                 {{ other_group_member_usernames|join:", " }}</div>
 
-            <h2>CDC Group Tickets by Concert</h2>
-            {% for concert, tickets in group_tickets_by_concert.items %}
-                <h3>{{ concert.name }}</h3>
-                <ul>
-                    {% for ticket in tickets %}
-                        <li>Owner: {{ ticket.owner.user.get_full_name }},
-                            Barcode: {{ ticket.barcode }}</li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
+            {% include 'concerts/includes/cdc_concert_ticket_cards.html' with id="groupTickets" button_text="CDC Group Tickets" tickets_dict=group_tickets_by_concert %}
         {% endif %}
     </div>
 {% endblock %}

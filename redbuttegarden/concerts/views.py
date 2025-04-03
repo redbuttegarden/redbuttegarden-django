@@ -1,7 +1,6 @@
 import datetime
 import logging
 import requests
-from collections import defaultdict
 from urllib.parse import urlparse
 
 from authlib.integrations.base_client import OAuthError
@@ -27,6 +26,7 @@ from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMe
 from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSerializer, ConcertDonorClubMemberSerializer, \
     TicketSerializer
 from concerts.utils.constant_contact import oauth
+from concerts.utils.cdc_view_utils import summarize_tickets
 
 logger = logging.getLogger(__name__)
 
@@ -253,6 +253,10 @@ def concert_donor_club_member_profile(request):
     """
     Concert Donor Club member profile to display CDC package details &
     concert itinerary.
+
+    We could display individual tickets and earlier iterations did so along with a
+    concert detail page but at the moment it was requested to only show
+    ticket count totals per package and concert.
     """
     try:
         concert_donor_club_member = ConcertDonorClubMember.objects.get(user=request.user)
@@ -281,39 +285,31 @@ def concert_donor_club_member_profile(request):
         other_group_members = [member for member in cdc_member_group.members.all()]
         # Remove the current user from the list of other group members
         other_group_members.remove(concert_donor_club_member)
-        # Get all the tickets for the concerts in the group
-        group_tickets = current_season_tickets.filter(owner__in=[member for member in other_group_members])
-
-        # Group tickets by concert
-        group_tickets_by_concert = defaultdict(list)
-        for ticket in group_tickets:
-            group_tickets_by_concert[ticket.concert].append(ticket)
-
-        # Set default_factory to None so it can be rendered in template: https://stackoverflow.com/a/12842716
-        group_tickets_by_concert.default_factory = None
+        # Get all the package tickets for other members in the group
+        group_tickets = current_season_tickets.filter(owner__in=[member for member in other_group_members],
+                                                      package__isnull=False)
+        group_tickets_by_concert = summarize_tickets(group_tickets)
     else:
         other_group_members = []
         group_tickets_by_concert = None
 
     ticket_info = {}
+    # for package in current_season_packages:
+    #     ticket_info[package.name] = []
+    #     for concert in package.concerts.all():
+    #         ticket_count = current_season_member_tickets.filter(concert=concert).count()
+    #
+    #         if ticket_count > 0:
+    #             ticket_info[package.name].append({
+    #                 'name': concert.name,
+    #                 'begin': concert.begin,
+    #                 'doors': concert.begin - datetime.timedelta(
+    #                     minutes=concert.doors_before_event_time_minutes),
+    #                 'img_url': concert.image_url,
+    #                 'count': ticket_count
+    #             })
     for package in current_season_packages:
-        print(f'Package: {package.name}')
-        ticket_info[package.name] = []
-        for concert in package.concerts.all():
-            print(f'Concert: {concert.name}')
-            ticket_count = current_season_member_tickets.filter(concert=concert).count()
-            print(f'Ticket Count: {ticket_count}')
-
-            if ticket_count > 0:
-                ticket_info[package.name].append({
-                    'concert_pk': concert.pk,
-                    'name': concert.name,
-                    'begin': concert.begin,
-                    'doors': concert.begin - datetime.timedelta(
-                        minutes=concert.doors_before_event_time_minutes),
-                    'img_url': concert.image_url,
-                    'count': ticket_count
-                })
+        ticket_info[package.name] = summarize_tickets(current_season_member_tickets, package.concerts.all())
 
     add_ticket_info = {}
     for ticket in current_season_additional_concert_tickets:
@@ -321,7 +317,6 @@ def concert_donor_club_member_profile(request):
 
         if ticket_count > 0:
             add_ticket_info[ticket.concert.etix_id] = {
-                'concert_pk': ticket.concert.pk,
                 'name': ticket.concert.name,
                 'begin': ticket.concert.begin,
                 'doors': ticket.concert.begin - datetime.timedelta(
@@ -331,12 +326,11 @@ def concert_donor_club_member_profile(request):
             }
 
     context = {
-        'user_name': request.user.get_full_name(),
+        'user_full_name': request.user.get_full_name(),
         'cdc_member': concert_donor_club_member,
         # I expect there will almost always only be one package per member but may as well support multiple
         'ticket_info': ticket_info,
         'add_ticket_info': add_ticket_info,
-        'member_tickets': current_season_member_tickets,
         'other_group_member_usernames': [member.user.username for member in other_group_members],
         'group_tickets_by_concert': group_tickets_by_concert,
     }
@@ -371,9 +365,9 @@ def check_image_url(request):
     url that doesn't load so instead we have to check the header content
     length to check if the image actually exists
     """
-    img_url = request.GET.get('img_url')
+    image_url = request.GET.get('image_url')
     concert_name = request.GET.get('concert_name')
-    response = requests.head(img_url)
+    response = requests.head(image_url)
 
     # HTMX won't swap content if we return 204
     if not 'Content-Length' in response.headers or response.headers['Content-Length'] == '0':
@@ -381,6 +375,5 @@ def check_image_url(request):
         return HttpResponse(
             '<div class="placeholder w-100 h-100"><div class="placeholder col-12 h-100 w-100 rounded-1"></div></div>')
     else:
-        print(f'Image exists: {img_url}')
         return HttpResponse(
-            f'<img class="img-fluid rounded-start" src="{img_url}" alt="Concert promo art for {concert_name}">')
+            f'<img class="img-fluid rounded-start" src="{image_url}" alt="Concert promo art for {concert_name}">')
