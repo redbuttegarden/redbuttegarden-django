@@ -107,6 +107,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 CSRF_TRUSTED_ORIGINS = ['http://' + domain for domain in ALLOWED_HOSTS] + ['https://' + domain for domain in
                                                                            ALLOWED_HOSTS]
 
+WAGTAILADMIN_BASE_URL = 'https://rbg-it-web-dev.redbutte.utah.edu'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
