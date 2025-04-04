@@ -10,7 +10,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
-from rest_framework.authtoken.models import Token
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.contrib.settings.models import BaseGenericSetting
 from wagtail.contrib.table_block.blocks import TableBlock

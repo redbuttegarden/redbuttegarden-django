@@ -255,6 +255,14 @@
                 </ul>
             </div>
             <ul id="topLinks" class="navbar-nav me-5 pe-5">
+                {# set by concerts.context_processors #}
+                {% if is_concert_donor_club_member %}
+                    <li class="nav-item px-2">
+                        <a class="nav-link underline" title="Concert Club Portal" href="{% slugurl 'concert-club-portal' %}">
+                            CDC Portal
+                        </a>
+                    </li>
+                {% endif %}
                 <li class="nav-item px-2">
                     <a class="nav-link underline" title="Membership page" href="{% slugurl 'memberships' %}">
                         JOIN
