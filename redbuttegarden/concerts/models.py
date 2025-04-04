@@ -10,6 +10,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
+from rest_framework.authtoken.models import Token
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.contrib.settings.models import BaseGenericSetting
 from wagtail.contrib.table_block.blocks import TableBlock
@@ -452,7 +453,6 @@ class ConcertDonorClubPortalPage(AbstractBase):
 
 class ConcertDonorClubTicketSalePage(AbstractBase):
     body = StreamField(block_types=[
-        ('chat', CometChatBlock()),
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph'))
     ], blank=False)
 
@@ -468,28 +468,62 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, **kwargs)
+        cdc_member = ConcertDonorClubMember.objects.get(user=request.user)
 
         chat_user_response = requests.get(f'https://api.deadsimplechat.com/consumer/api/v2/user/{request.user.id}',
                                           params={'auth': settings.DEAD_SIMPLE_CHAT_PRIVATE_KEY})
-        logger.debug(f'Chat get user response: {chat_user_response.status_code} for user {request.user.id} - {request.user.username}.\n\tResponse: {chat_user_response.text}')
+        logger.debug(
+            f'Chat get user response: {chat_user_response.status_code} for user {request.user.id} - {request.user.username}.\n\tResponse: {chat_user_response.text}')
 
         if chat_user_response.status_code == 400:
-            # User doesn't exist to create them
-            chat_user_creation_response = requests.post('https://api.deadsimplechat.com/consumer/api/v1/user',
-                                                        params={'auth': settings.DEAD_SIMPLE_CHAT_PRIVATE_KEY},
-                                                        json={
-                                                            'chatRoom': 'Q53Td0Ekr',
-                                                            'externalUserId': str(request.user.id),  # Use the Django user ID as the external ID
-                                                            'isModerator': False,
-                                                            'email': request.user.email,
-                                                            'username': request.user.username,
-                                                            'uniqueUserIdentifier': str(request.user.id)
-                                                        })
-            logger.debug(f'Chat create user response: {chat_user_creation_response.status_code} for user {request.user.id} - {request.user.username}.\n\tResponse: {chat_user_creation_response.text}')
+            # User doesn't exist so create them
+            payload = {
+                'membershipDetails': {
+                    'roleName': 'admin' if request.user.is_staff else 'user',  # Use admin role for staff users
+                    'roomId': 'Q53Td0Ekr',
+                },
+                'email': request.user.email,
+                'username': request.user.username,
+                'uniqueUserIdentifier': str(request.user.id)
+            }
+            if request.user.first_name:
+                payload['firstName'] = request.user.first_name
 
-        context['user_name'] = request.user.get_full_name()
+            if request.user.last_name:
+                payload['lastName'] = request.user.last_name
+
+            chat_user_creation_response = requests.post('https://api.deadsimplechat.com/consumer/api/v2/user',
+                                                        params={'auth': settings.DEAD_SIMPLE_CHAT_PRIVATE_KEY},
+                                                        json=payload)
+            if chat_user_creation_response.status_code == 200:
+                # Save their access token to user's CDC member object
+                access_token = chat_user_creation_response.json().get('accessToken')
+                cdc_member.chat_access_token = access_token
+                cdc_member.save()
+
+            logger.debug(
+                f'Chat create user response: {chat_user_creation_response.status_code} for user {request.user.id} - {request.user.username}.\n\tResponse: {chat_user_creation_response.text}')
+
+        context['chat_access_token'] = cdc_member.chat_access_token
 
         return context
+
+
+def serve(self, request, *args, **kwargs):
+    """
+    Override the serve method to save chat access token to secure cookie
+    """
+    response = super().serve(request, *args, **kwargs)
+
+    response.set_secure_cookie(
+        key='access_token',
+        value=request.session.get('chat_access_token', ''),
+        max_age=datetime.timedelta(days=1).total_seconds(),  # 1 day expiration
+        httponly=False,
+        secure=settings.SECURE_SSL_REDIRECT,
+    )
+
+    return response
 
 
 class Concert(models.Model):
@@ -532,6 +566,12 @@ class ConcertDonorClubMember(models.Model):
     packages = models.ManyToManyField(ConcertDonorClubPackage, blank=True)
     active = models.BooleanField(default=True)
     constant_contact_id = models.UUIDField(blank=True, null=True)
+    chat_access_token = models.CharField(
+        max_length=750,
+        blank=True,
+        null=True,
+        help_text=_('This is used to store the Dead Simple Chat access token for this user.'),
+    )
 
     class Meta:
         ordering = ['user']
@@ -570,7 +610,8 @@ class ConcertDonorClubMember(models.Model):
                                 contact_id = response.json()['contact_id']
                                 self.constant_contact_id = contact_id
                             except:
-                                logger.error(f'Something unexpected happened while trying to set the CC contact ID for {self}')
+                                logger.error(
+                                    f'Something unexpected happened while trying to set the CC contact ID for {self}')
                 else:
                     logger.warning(f'No Constant Contact OAuth2Token found for {self}')
 
@@ -636,4 +677,3 @@ class ConstantContactCDCListSettings(BaseGenericSetting):
         max_length=255,
         help_text='List ID for the Concert Donor Club list in Constant Contact',
     )
-

@@ -11,6 +11,7 @@ const frame = (async () => {
      * Calling the Join Method to Join the Chat Room
      */
     await sdk.joinRoom({
-        uniqueUserIdentifier: USER_ID
+        uniqueUserIdentifier: USER_ID,
+        accessToken: USER_ACCESS_TOKEN, // Pass the user access token to authenticate the user.
     });
 })();
