@@ -2,6 +2,7 @@ import datetime
 import logging
 
 import code128
+import requests
 from django.conf import settings
 from django.contrib import messages
 from django.core.files.base import ContentFile
@@ -468,10 +469,24 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, **kwargs)
 
-        context['app_ID'] = settings.COMET_CHAT_APP_ID
-        context['app_region'] = settings.COMET_CHAT_REGION
-        context['auth_key'] = settings.COMET_CHAT_AUTH_KEY
-        context['widget_ID'] = settings.COMET_CHAT_WIDGET_ID
+        chat_user_response = requests.get(f'https://api.deadsimplechat.com/consumer/api/v2/user/{request.user.id}',
+                                          params={'auth': settings.DEAD_SIMPLE_CHAT_PRIVATE_KEY})
+        logger.debug(f'Chat get user response: {chat_user_response.status_code} for user {request.user.id} - {request.user.username}.\n\tResponse: {chat_user_response.text}')
+
+        if chat_user_response.status_code == 400:
+            # User doesn't exist to create them
+            chat_user_creation_response = requests.post('https://api.deadsimplechat.com/consumer/api/v1/user',
+                                                        params={'auth': settings.DEAD_SIMPLE_CHAT_PRIVATE_KEY},
+                                                        json={
+                                                            'chatRoom': 'Q53Td0Ekr',
+                                                            'externalUserId': str(request.user.id),  # Use the Django user ID as the external ID
+                                                            'isModerator': False,
+                                                            'email': request.user.email,
+                                                            'username': request.user.username,
+                                                            'uniqueUserIdentifier': str(request.user.id)
+                                                        })
+            logger.debug(f'Chat create user response: {chat_user_creation_response.status_code} for user {request.user.id} - {request.user.username}.\n\tResponse: {chat_user_creation_response.text}')
+
         context['user_name'] = request.user.get_full_name()
 
         return context
