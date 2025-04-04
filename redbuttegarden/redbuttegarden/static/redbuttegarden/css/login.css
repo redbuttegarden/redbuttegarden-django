@@ -5,12 +5,14 @@ body {
     background: linear-gradient(130deg, #258200, #31beff);
     height: 100vh;
 }
+
 p {
     margin: 1rem;
     letter-spacing: 0.55px;
     font-size: 16px;
     line-height: 28px;
 }
+
 .center {
     position: absolute;
     top: 50%;
@@ -21,28 +23,36 @@ p {
     border-radius: 10px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+
 .center h1 {
     text-align: center;
     padding: 0 0 20px 0;
     border-bottom: 1px solid silver;
 }
+
 .center img {
-    height: 100px;
-    width: 100%;
-    margin-top: 10px;
+    width: 80%;
+    height: auto;
+    filter: invert(100%);
+    margin: 10px auto;
+    display: block;
 }
+
 .center form {
     padding: 0 40px;
     box-sizing: border-box;
 }
+
 .full {
     width: 100%;
 }
+
 form .txt-field {
     position: relative;
     border-bottom: 2px solid #adadad;
     margin: 30px 0;
 }
+
 .txt-field input {
     width: 100%;
     padding: 0 5px;
@@ -52,6 +62,7 @@ form .txt-field {
     background: none;
     outline: none;
 }
+
 .txt-field label {
     position: absolute;
     top: 50%;
@@ -62,6 +73,7 @@ form .txt-field {
     pointer-events: none;
     transition: .5s;
 }
+
 .txt-field span::before {
     content: '';
     position: absolute;
@@ -72,27 +84,33 @@ form .txt-field {
     background-color: #2691d9;
     transition: .5s;
 }
+
 .txt-field input:focus ~ label,
 .txt-field input:valid ~ label {
     top: -5px;
     color: #2691d9;
 }
+
 .txt-field input:focus ~ span::before,
 .txt-field input:valid ~ span::before {
     width: 100%;
 }
+
 .pass {
     margin: -5px 0 20px 5px;
     color: #a6a6a6;
     cursor: pointer;
 }
+
 .pass:hover {
     text-decoration: underline;
 }
+
 .pass a {
     text-decoration: inherit;
     color: inherit;
 }
+
 input[type="submit"], .btn {
     width: 100%;
     height: 50px;
@@ -106,10 +124,12 @@ input[type="submit"], .btn {
     outline: none;
     margin-bottom: 30px;
 }
+
 input[type="submit"]:hover, .btn:hover {
     border-color: #2691d9;
     transition: .5s;
 }
+
 a.btn {
     width: 98%;
     text-decoration: none;

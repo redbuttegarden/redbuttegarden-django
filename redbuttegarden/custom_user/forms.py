@@ -10,8 +10,6 @@ from django.utils.translation import gettext_lazy as _
 
 from wagtail.users.forms import UserEditForm, UserCreationForm
 
-from home.templatetags.navigation_tags import is_active
-
 
 class CustomUserEditForm(UserEditForm):
     title = forms.CharField(required=True, label=_('Title'))
