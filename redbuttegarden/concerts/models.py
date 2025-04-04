@@ -508,23 +508,6 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
         return context
 
 
-def serve(self, request, *args, **kwargs):
-    """
-    Override the serve method to save chat access token to secure cookie
-    """
-    response = super().serve(request, *args, **kwargs)
-
-    response.set_secure_cookie(
-        key='access_token',
-        value=request.session.get('chat_access_token', ''),
-        max_age=datetime.timedelta(days=1).total_seconds(),  # 1 day expiration
-        httponly=False,
-        secure=settings.SECURE_SSL_REDIRECT,
-    )
-
-    return response
-
-
 class Concert(models.Model):
     """
     This model is only used for CDC Portal related things. Not related to concerts displayed on the ConcertPage.
