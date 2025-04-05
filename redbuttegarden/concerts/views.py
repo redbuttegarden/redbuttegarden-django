@@ -8,19 +8,21 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.db import IntegrityError
 from django.db.models import Count
 from django.http import Http404, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, path
+from django.views import View
 from django_filters.rest_framework import FilterSet, CharFilter
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
-from wagtail.admin.viewsets.base import ViewSetGroup
+from wagtail.admin.viewsets.base import ViewSetGroup, ViewSet
 from wagtail.admin.viewsets.model import ModelViewSet
 
-from concerts.forms import ConcertDonorClubPackageForm
+from concerts.forms import ConcertDonorClubPackageForm, UserAndConcertDonorClubMemberCreationForm
 from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember, Ticket, OAuth2Token, \
     ConcertDonorClubMemberGroup
 from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSerializer, ConcertDonorClubMemberSerializer, \
@@ -139,11 +141,23 @@ class TicketViewSet(ModelViewSet):
     list_filter = ('owner', 'concert', 'package', 'order_id', 'barcode')
 
 
+class UserAndConcertDonorClubMemberCreationViewSet(ViewSet):
+    icon = 'plus'
+    menu_label = 'Create User & CDC Member'
+    name = 'create_user_and_concert_donor_club_member'
+
+    def get_urlpatterns(self):
+        return [
+            path('', CreateUserAndConcertDonorClubMemberView.as_view(),
+                 name='create_user_and_concert_donor_club_member'),
+        ]
+
+
 class ConcertDonorClubViewSetGroup(ViewSetGroup):
     menu_label = 'Concert Donor Club'
     menu_icon = 'group'
     items = (ConcertViewSet, ConcertDonorClubPackageViewSet, ConcertDonorClubMemberViewSet, TicketViewSet,
-             ConcertDonorClubMemberGroupViewSet)
+             ConcertDonorClubMemberGroupViewSet, UserAndConcertDonorClubMemberCreationViewSet)
 
 
 def concert_thank_you(request):
@@ -156,6 +170,47 @@ def concert_thank_you(request):
             return HttpResponse(status=204)
     else:
         return redirect('/')
+
+
+class CreateUserAndConcertDonorClubMemberView(View):
+    template_name = 'wagtailadmin/create_user_cdc_member.html'
+
+    def get(self, request):
+        form = UserAndConcertDonorClubMemberCreationForm()
+        return render(request, self.template_name, {'form': form, 'submit_button_label': 'Create User & CDC Member', })
+
+    def post(self, request):
+        form = UserAndConcertDonorClubMemberCreationForm(request.POST)
+        if form.is_valid():
+            user, created = get_user_model().objects.get_or_create(username=form.cleaned_data['username'],
+                                                                   defaults={
+                                                                       "email": form.cleaned_data['email'],
+                                                                       "first_name": form.cleaned_data['first_name'],
+                                                                       "last_name": form.cleaned_data['last_name']})
+            if created:
+                messages.success(request,
+                                 f'User {user} created successfully.')
+            else:
+                messages.info(request, 'User already exists with that username.')
+
+            try:
+                cdc_member = ConcertDonorClubMember.objects.create(user=user,
+                                                                   phone_number=form.cleaned_data['phone_number'])
+                # Set the packages for the member
+                if form.cleaned_data['concert_donor_club_packages']:
+                    cdc_member.packages.set(
+                        form.cleaned_data['concert_donor_club_packages'])
+
+                messages.success(request, f'Concert Donor Club member created successfully for user {user}.')
+
+            except IntegrityError as e:
+                logger.warning(f'IntegrityError when creating ConcertDonorClubMember for user {user}. Error: {e}')
+                messages.warning(request,
+                                 'A Concert Donor Club member already exists for this user. A new member was not created.')
+                return redirect('wagtailadmin_explore_root')
+
+            return redirect('wagtailadmin_explore_root')
+        return render(request, self.template_name, {'form': form, 'submit_button_label': 'Create User & CDC Member', })
 
 
 @api_view(['POST'])

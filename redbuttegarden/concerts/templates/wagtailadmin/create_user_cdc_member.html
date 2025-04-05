@@ -1,0 +1,9 @@
+{% extends "wagtailadmin/generic/form.html" %}
+
+{% block titletag %}Create User & CDC Member{% endblock %}
+
+{% block content %}
+    {% include "wagtailadmin/shared/header.html" with title="Create User & CDC Member" icon="plus" %}
+
+    {{ block.super }}
+{% endblock %}
