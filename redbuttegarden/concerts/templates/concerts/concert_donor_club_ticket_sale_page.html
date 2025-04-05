@@ -6,21 +6,20 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row text-center responsive">
-        {% image page.banner max-1280x500 %}
-    </div>
+    {% include 'includes/page_banner.html' with banner=page.banner %}
 
     {% for block in page.body %}
         {% include_block block with id=block.id %}
     {% endfor %}
     
-        <iframe id="chat-frame" src="https://deadsimplechat.com/Q53Td0Ekr" width="100%" height="600px"></iframe>
+        <iframe id="chat-frame" src="https://deadsimplechat.com/{{ chat_room_id }}" width="100%" height="600px"></iframe>
 {% endblock %}
 
 {% block extra_js %}
     <script>
         const USER_ID = "{{ request.user.id }}";
+        const CHAT_ROOM_ID = "{{ chat_room_id }}"
         const USER_ACCESS_TOKEN = "{{ chat_access_token }}";
     </script>
-    <script src="{% static 'concerts/js/ticket_sale_comet_chat.js' %}"></script>
+    <script src="{% static 'concerts/js/ticket_sale_chat.js' %}"></script>
 {% endblock %}

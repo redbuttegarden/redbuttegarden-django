@@ -109,6 +109,8 @@ CSRF_TRUSTED_ORIGINS = ['http://' + domain for domain in ALLOWED_HOSTS] + ['http
 
 WAGTAILADMIN_BASE_URL = 'https://rbg-it-web-dev.redbutte.utah.edu'
 
+DEAD_SIMPLE_CHAT_ROOM_ID = 'Q53Td0Ekr'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

@@ -144,6 +144,8 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ORIGIN_ALLOW_ALL = False
 CSRF_TRUSTED_ORIGINS = ['https://' + domain for domain in ALLOWED_HOSTS]
 
+DEAD_SIMPLE_CHAT_ROOM_ID = 'zjaQPcy7v'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

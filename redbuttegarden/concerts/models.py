@@ -451,6 +451,9 @@ class ConcertDonorClubPortalPage(AbstractBase):
 
 
 class ConcertDonorClubTicketSalePage(AbstractBase):
+    """
+    Page for Concert Donor Club members to exchange their tickets with one another via Dead Simple Chat.
+    """
     body = StreamField(block_types=[
         ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph'))
     ], blank=False)
@@ -479,7 +482,7 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
             payload = {
                 'membershipDetails': {
                     'roleName': 'admin' if request.user.is_staff else 'user',  # Use admin role for staff users
-                    'roomId': 'Q53Td0Ekr',
+                    'roomId': settings.DEAD_SIMPLE_CHAT_ROOM_ID,
                 },
                 'email': request.user.email,
                 'username': request.user.username,
@@ -503,6 +506,7 @@ class ConcertDonorClubTicketSalePage(AbstractBase):
             logger.debug(
                 f'Chat create user response: {chat_user_creation_response.status_code} for user {request.user.id} - {request.user.username}.\n\tResponse: {chat_user_creation_response.text}')
 
+        context['chat_room_id'] = settings.DEAD_SIMPLE_CHAT_ROOM_ID
         context['chat_access_token'] = cdc_member.chat_access_token
 
         return context
