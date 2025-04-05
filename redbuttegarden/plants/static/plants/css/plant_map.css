@@ -73,7 +73,7 @@
 .credits, .tutorial {
     margin: 15px;
 }
-#menu {
+#mapMenu {
     position: absolute;
     z-index: 2;
     background: #efefef;

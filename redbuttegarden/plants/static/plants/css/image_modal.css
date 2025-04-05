@@ -104,12 +104,13 @@ img {
 }
 
 .demo {
-    opacity: 0.75;
+    opacity: 0.50;
 }
 
 .active,
 .demo:hover {
     opacity: 1;
+    border: solid 2px var(--rbg-oak-green);
 }
 
 img.hover-shadow {
@@ -123,4 +124,10 @@ img.hover-shadow {
 
 .caption-container > p {
     margin: 10px 10px;
+}
+
+.thumbnails {
+    max-width: fit-content;
+    margin-inline: auto;
+    gap: 1em;
 }

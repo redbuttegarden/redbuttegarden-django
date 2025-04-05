@@ -7,49 +7,17 @@
     font-weight: lighter;
 }
 
-.main-image {
-    float: right;
-    padding: 10px;
-}
-
-.species-info {
-    float: left;
-}
-
-.additional-photos {
-    margin-top: 10px;
-}
-
 #add-photo-label {
     font-size: smaller;
 }
 
-.details > p {
-    margin: 0;
+.icons img {
+    max-height: 50px;
+    width: auto;
 }
 
-.icons {
-    margin-left: 10px;
+.thumb-row {
+    max-width: fit-content;
+    margin-inline: auto;
+    gap: 1em;
 }
-
-.icons > img {
-    margin: 10px;
-}
-
-/* W3 Schools Code: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_lightbox */
-.thumb-row > .thumb-col {
-    padding: 0 8px;
-}
-
-.thumb-row:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-.thumb-col {
-    float: left;
-    margin: 10px 5px;
-}
-
-

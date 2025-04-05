@@ -1,5 +1,5 @@
-$('#collection-list-table').find('tr td:nth-child(2) a').each(function() {
-    let name = $( this ).text();
-    let sanitized_name = $('<div>').text(name).html();
-    $(this).text(style_full_name(sanitized_name));
+document.querySelectorAll('#collection-list-table tr td:nth-child(2) a').forEach(function(element) {
+    let name = element.textContent;
+    let sanitized_name = new DOMParser().parseFromString(name, 'text/html').body.textContent;
+    element.innerHTML = style_full_name(sanitized_name);
 });
