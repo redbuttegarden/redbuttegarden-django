@@ -1,14 +1,14 @@
-<div id="concertTicketCardAccordion-{{ id }}" class="accordion text-center my-3">
+<div id="{{ id }}-concertTicketCardAccordion-{{ count }}" class="accordion text-center my-3">
     <h3 class="accordion-header border border-2 rounded">
         <button class="accordion-button hover rounded-1 collapsed" type="button"
-                data-bs-target="#cards-{{ id }}"
+                data-bs-target="#{{ id }}-cards-{{ count }}"
                 data-bs-toggle="collapse"
-                aria-controls="other-concerts-{{ forloop.counter }}" aria-expanded="false">
+                aria-controls="{{ id }}-cards-{{ count }}" aria-expanded="false">
             <span class="d-block w-100 text-center fw-bold">{{ button_text }}</span>
         </button>
     </h3>
-    <div id="cards-{{ id }}" class="accordion-collapse collapse"
-         data-bs-parent="#concertTicketCardAccordion-{{ id }}">
+    <div id="{{ id }}-cards-{{ count }}" class="accordion-collapse collapse"
+         data-bs-parent="#{{ id }}-concertTicketCardAccordion-{{ count }}">
         {% for ticket_info in tickets_dict.values %}
             <div class="card mb-3">
                 <div class="row g-0">
@@ -32,6 +32,15 @@
                             <p class="card-text"><span class="fw-bold">Tickets:</span>
                                 (x{{ ticket_info.ticket_count }})</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div id="{{ id }}-cards-{{ count }}" class="accordion-collapse collapse"
+                 data-bs-parent="#{{ id }}-concertTicketCardAccordion-{{ count }}">
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="fst-italic p-5">No tickets found. Please check back later.</div>
                     </div>
                 </div>
             </div>

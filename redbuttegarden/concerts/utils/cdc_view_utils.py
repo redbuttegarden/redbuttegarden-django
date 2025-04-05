@@ -17,13 +17,16 @@ def summarize_tickets(ticket_queryset, concert_queryset=None):
 
     concert_tickets_summary_info = {}
     for concert in concert_queryset:
-        concert_tickets_summary_info[concert.pk] = {
-            'name': concert.name,
-            'begin': concert.begin,
-            'doors': concert.begin - datetime.timedelta(
-                minutes=concert.doors_before_event_time_minutes),
-            'image_url': concert.image_url,
-            'ticket_count': ticket_queryset.filter(concert=concert).count(),
-        }
+        ticket_count = ticket_queryset.filter(concert=concert).count()
+
+        if ticket_count > 0:
+            concert_tickets_summary_info[concert.pk] = {
+                'name': concert.name,
+                'begin': concert.begin,
+                'doors': concert.begin - datetime.timedelta(
+                    minutes=concert.doors_before_event_time_minutes),
+                'image_url': concert.image_url,
+                'ticket_count': ticket_count,
+            }
 
     return concert_tickets_summary_info

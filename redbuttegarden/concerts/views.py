@@ -263,9 +263,7 @@ def concert_donor_club_member_profile(request):
     except ConcertDonorClubMember.DoesNotExist:
         raise Http404("No matching Concert Donor Membership found.")
 
-    # current_year = datetime.date.today().year
-    # for testing, pretend it's last year
-    current_year = 2024
+    current_year = datetime.date.today().year
 
     current_season_packages = concert_donor_club_member.packages.annotate(num_concerts=Count("concerts")).filter(
         num_concerts__gt=0, year=current_year)
@@ -294,36 +292,10 @@ def concert_donor_club_member_profile(request):
         group_tickets_by_concert = None
 
     ticket_info = {}
-    # for package in current_season_packages:
-    #     ticket_info[package.name] = []
-    #     for concert in package.concerts.all():
-    #         ticket_count = current_season_member_tickets.filter(concert=concert).count()
-    #
-    #         if ticket_count > 0:
-    #             ticket_info[package.name].append({
-    #                 'name': concert.name,
-    #                 'begin': concert.begin,
-    #                 'doors': concert.begin - datetime.timedelta(
-    #                     minutes=concert.doors_before_event_time_minutes),
-    #                 'img_url': concert.image_url,
-    #                 'count': ticket_count
-    #             })
     for package in current_season_packages:
         ticket_info[package.name] = summarize_tickets(current_season_member_tickets, package.concerts.all())
 
-    add_ticket_info = {}
-    for ticket in current_season_additional_concert_tickets:
-        ticket_count = current_season_additional_concert_tickets.filter(concert=ticket.concert).count()
-
-        if ticket_count > 0:
-            add_ticket_info[ticket.concert.etix_id] = {
-                'name': ticket.concert.name,
-                'begin': ticket.concert.begin,
-                'doors': ticket.concert.begin - datetime.timedelta(
-                    minutes=ticket.concert.doors_before_event_time_minutes),
-                'img_url': ticket.concert.image_url,
-                'count': ticket_count
-            }
+    add_ticket_info = summarize_tickets(current_season_additional_concert_tickets)
 
     context = {
         'user_full_name': request.user.get_full_name(),
