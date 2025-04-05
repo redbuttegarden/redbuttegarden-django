@@ -26,7 +26,7 @@ def test_wagtail_admin_wagtail_login(wagtail_admin_user):
     # This post should fail to log the user in
     response = c.post(reverse('custom_user:login'), {'username': wagtail_admin_user.username, 'password': 'password'})
     assert response.status_code == 200
-    assert b'RBG staff are not permitted to use this login form' in response.content
+    assert b'RBG staff are required to login via the' in response.content
 
     user = get_user(c)
     assert user.is_authenticated is False
