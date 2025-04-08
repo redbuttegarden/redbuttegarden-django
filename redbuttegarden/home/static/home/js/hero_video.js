@@ -2,10 +2,8 @@ const videoElem = document.getElementById('heroVideo');
 const imageSlideshowElem = document.getElementById('imageCarousel');
 
 function toggleVisibility(event) {
-    videoElem.classList.toggle('d-none');
-    console.log(imageSlideshowElem.classList);
+    videoElem.parentElement.classList.toggle('d-none');
     imageSlideshowElem.classList.toggle('d-none');
-    console.log(imageSlideshowElem.classList);
 }
 
 videoElem.addEventListener('ended', toggleVisibility);
