@@ -47,3 +47,5 @@ class UserAndConcertDonorClubMemberCreationForm(forms.Form):
         data = self.cleaned_data['email']
         if ConcertDonorClubMember.objects.filter(user__email=data).exists():
             raise forms.ValidationError(_('A CDC member with this email address already exists.'))
+
+        return data
