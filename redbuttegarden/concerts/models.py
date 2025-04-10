@@ -577,7 +577,7 @@ class ConcertDonorClubMember(models.Model):
                 json_response = response.json()
                 logger.debug(f'Constant Contact response: {json_response}')
                 if 'contact_id' in json_response:
-                    self.constant_contact_id = response['contact_id']
+                    self.constant_contact_id = json_response['contact_id']
                 else:
                     logger.warning(f'No Constant Contact ID returned from Constant Contact for {self}')
             else:
