@@ -42,3 +42,8 @@ class UserAndConcertDonorClubMemberCreationForm(forms.Form):
         label=_('Select other CDC members to make their package tickets visible to one another (optional)'),
         required=False
     )
+
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        if ConcertDonorClubMember.objects.filter(user__email=data).exists():
+            raise forms.ValidationError(_('A CDC member with this email address already exists.'))
