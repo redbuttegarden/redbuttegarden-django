@@ -574,8 +574,12 @@ class ConcertDonorClubMember(models.Model):
                 request.user = oauth_token.user
                 list_id = ConstantContactCDCListSettings.load().cdc_list_id
                 response = cc_add_contact_to_cdc_list(request, self, list_id)
-                logger.debug(f'Constant Contact response: {response.json()}')
-                self.constant_contact_id = response['contact_id']
+                json_response = response.json()
+                logger.debug(f'Constant Contact response: {json_response}')
+                if 'contact_id' in json_response:
+                    self.constant_contact_id = response['contact_id']
+                else:
+                    logger.warning(f'No Constant Contact ID returned from Constant Contact for {self}')
             else:
                 logger.warning(f'No Constant Contact OAuth2Token found for {self}')
         else:
