@@ -7,7 +7,7 @@ router = DefaultRouter()
 router.register(r'concerts', views.ConcertDRFViewSet)
 router.register(r'cdc-packages', views.ConcertDonorClubPackageDRFViewSet)
 router.register(r'cdc-members', views.ConcertDonorClubMemberDRFViewSet)
-router.register(r'cdc-tickets', views.TicketDRFViewSet)
+router.register(r'cdc-tickets', views.TicketDRFViewSet, basename='cdc-tickets')
 
 app_name = 'concerts'
 urlpatterns = [
