@@ -129,9 +129,16 @@ class ConcertDonorClubMemberGroupViewSet(ModelViewSet):
 
 
 class TicketDRFViewSet(viewsets.ModelViewSet):
-    queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     pagination_class = LargeResultsSetPagination
+
+    def get_queryset(self):
+        queryset = Ticket.objects.all()
+        year = self.request.query_params.get('year')
+        if year:
+            queryset = queryset.filter(concert__begin__year=year)
+
+        return queryset
 
 
 class TicketViewSet(ModelViewSet):
