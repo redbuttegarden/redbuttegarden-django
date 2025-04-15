@@ -117,6 +117,7 @@ class ConcertDonorClubMemberViewSet(ModelViewSet):
     inspect_view_enabled = True
     search_fields = ('user__email', 'user__username', 'user__first_name', 'user__last_name')
     list_filter = ('active', 'packages')
+    list_export = ('user', 'user.email', 'phone_number')
 
 
 class ConcertDonorClubMemberGroupViewSet(ModelViewSet):
@@ -124,8 +125,8 @@ class ConcertDonorClubMemberGroupViewSet(ModelViewSet):
     form_fields = '__all__'
     icon = 'group'
     inspect_view_enabled = True
-    search_fields = ('id', 'members_user__email', 'members_user__username')
-    list_filter = ['id']
+    search_fields = ('id', 'members__user__email', 'members__user__username')
+    list_filter = ('id',)
 
 
 class TicketDRFViewSet(viewsets.ModelViewSet):
