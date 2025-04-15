@@ -1,57 +1,41 @@
 {% extends 'base.html' %}
 {% load static wagtailcore_tags wagtailimages_tags %}
 
+{% block body_class %}event-page{% endblock %}
+
 {% block content %}
     <!-- Begin First Column -->
     <div class="row">
         <div class="col-sm-3">
             <!-- Event Picture-->
-            <div class="event-pic">
+            <div class="event-pic mt-2 mt-lg-4">
                 {% image page.thumbnail fill-300x300 %}
             </div>
 
-            <div class="ev-title-mobile">
-                <br>
-                <div class="ev-title caps">{{ page.title }}</div>
-                <div class="ev-sub">{{ page.sub_heading }}</div>
-            </div>
-
-            <div class="ev-date-mobile">
-                {{ page.event_dates }}
-            </div>
-
-            <br>
-
-            <div class="ev-info-header green">LOCATION:</div>
+            <div class="ev-info-header green mt-2 mt-lg-4">LOCATION:</div>
             <div class="ev-location">
                 {{ page.location }}
             </div>
 
-            <br>
-
             <!-- Registration Info -->
             {% if page.additional_info %}
-                <div class="ev-info-header green">ADDITIONAL INFO:</div>
+                <div class="ev-info-header green mt-2 mt-lg-4">ADDITIONAL INFO:</div>
                 <div class="ev-member-sale">
                     {{ page.additional_info|richtext }}
                 </div>
-
-                <br>
             {% endif %}
 
             <!-- Instructor Info -->
             {% if page.instructor %}
-                <div class="ev-info-header green">INSTRUCTOR:</div>
+                <div class="ev-info-header green mt-2 mt-lg-4">INSTRUCTOR:</div>
                 <div>
                     {{ page.instructor }}
                 </div>
-
-                <br>
             {% endif %}
 
             <!-- Price Info -->
             {% if page.member_cost or page.public_cost %}
-                <div class="ev-info-header green">COST:</div>
+                <div class="ev-info-header green mt-2 mt-lg-4">COST:</div>
             {% endif %}
 
             {% if page.member_cost %}
@@ -67,25 +51,15 @@
                     <div class="ev-public-cost"><span class="green fw-bold">{{ page.public_cost }}</span></div>
                 </div>
             {% endif %}
-
-            <br>
-
         </div>
         <!-- End First Column -->
 
         <!-- Begin Second Column -->
         <div class="col-sm-9">
-            <div class="ev-title-reg">
-                <div class="ev-title">{{ page.title|upper }}</div>
-                <div class="ev-sub">{{ page.sub_heading }}</div>
-            </div>
+            <h1 class="mt-5 mt-md-3">{{ page.title }}</h1>
+            <div class="ev-sub fs-5">{{ page.sub_heading }}</div>
 
-            <br>
-
-            <div class="ev-date">{{ page.event_dates }}</div>
-
-            <br>
-            <br>
+            <div class="ev-date fst-italic">{{ page.event_dates }}</div>
 
             <div class="ev-desc">
                 <div>
@@ -100,10 +74,7 @@
                     {% endfor %}
 
                     {% if page.policy.name %}
-
-                        <br>
-
-                        <div class="row">
+                        <div class="row my-5">
                             <p class="text-center">
                                 {% with policy_page=page.policy.policy_page.specific %}
                                     <a href="{% pageurl policy_page %}">

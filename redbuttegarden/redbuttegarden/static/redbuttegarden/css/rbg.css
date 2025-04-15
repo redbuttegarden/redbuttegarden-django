@@ -682,6 +682,10 @@ a:hover {
 /****************  Begin Event CSS *******************/
 /*****************************************************/
 
+body.event-page h1 {
+    font-size: 24px;
+}
+
 .event-pic, .ev-tickets, .ev-cal, .ev-hr, .ev-tickets, .ev-cal {
     margin-left: auto;
     margin-right: auto;
@@ -711,37 +715,7 @@ a:hover {
 
 .ev-tickets, .ev-cal {
     clear: none;
-
 }
-
-.ev-title-reg {
-
-}
-
-.ev-title {
-    line-height: 75%;
-    font-size: 36px;
-    font-weight: bold;
-}
-
-.ev-title, .ev-title-reg, .ev-title-reg h1, .ev-sub, ev-title-mobile, ev-title-mobile h3, .ev-sub {
-    padding: 0px;
-    margin: 0px;
-}
-
-.ev-sub, .ev-date {
-    font-size: 18px;
-}
-
-
-.ev-sub {
-    padding-top: 15px !important;
-}
-
-.ev-date {
-    margin-top: -20px !important;
-}
-
 
 .ev-tickets, .ev-cal {
     max-width: 280px;
@@ -754,32 +728,6 @@ a:hover {
 .ev-info-header {
     font-weight: bold;
     clear: both;
-}
-
-@media (min-width: 769px) {
-    .ev-title-mobile, .ev-date-mobile {
-        display: none;
-    }
-
-}
-
-@media (max-width: 769px) {
-    .ev-title-reg, .ev-date, .ev-space {
-        display: none;
-    }
-
-    .ev-date-mobile, .ev-title-mobile {
-        text-align: center;
-    }
-
-    .ev-title {
-        font-size: 24px;
-        font-weight: bold;
-    }
-
-    .ev-date-mobile {
-        font-weight: bold;
-    }
 }
 
 .inline, .ev-member-sale, .ev-public-sale, .ev-member-cost, .ev-public-cost {
