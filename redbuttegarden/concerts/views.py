@@ -196,6 +196,7 @@ class CreateUserAndConcertDonorClubMemberView(View):
                                                                        "first_name": form.cleaned_data['first_name'],
                                                                        "last_name": form.cleaned_data['last_name']})
             if created:
+                user.groups.add(Group.objects.get(name="Concert Donor Club Member"))
                 messages.success(request,
                                  f'User {user} created successfully.')
             else:
