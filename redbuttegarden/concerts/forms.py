@@ -8,6 +8,42 @@ from wagtail.admin.forms import WagtailAdminModelForm
 from .models import ConcertDonorClubPackage, Concert, ConcertDonorClubMember
 
 
+class ConcertDonorClubMemberForm(forms.ModelForm):
+    username = forms.CharField(max_length=150, required=False, disabled=True)
+    email = forms.EmailField(required=False)
+    first_name = forms.CharField(max_length=30, required=False)
+    last_name = forms.CharField(max_length=30, required=False)
+
+    class Meta:
+        model = ConcertDonorClubMember
+        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'packages', 'active', 'constant_contact_id', 'chat_access_token']
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance')
+        if instance and instance.user:
+            initial = kwargs.get('initial', {})
+            initial.update({
+                'username': instance.user.username,
+                'email': instance.user.email,
+                'first_name': instance.user.first_name,
+                'last_name': instance.user.last_name,
+            })
+            kwargs['initial'] = initial
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        user = instance.user
+        user.username = self.cleaned_data['username']
+        user.email = self.cleaned_data['email']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        if commit:
+            user.save()
+            instance.save()
+        return instance
+
+
 class ConcertDonorClubPackageForm(forms.ModelForm):
     class Meta:
         model = ConcertDonorClubPackage

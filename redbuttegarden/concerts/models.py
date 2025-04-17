@@ -549,7 +549,8 @@ class ConcertDonorClubMember(models.Model):
         null=True, blank=True
     )
     phone_number = models.CharField(max_length=150)
-    packages = models.ManyToManyField(ConcertDonorClubPackage, blank=True)
+    packages = models.ManyToManyField(ConcertDonorClubPackage, blank=True,
+                                      help_text=_('Concert Donor Club packages that this member has purchased. Hold command'))
     active = models.BooleanField(default=True)
     constant_contact_id = models.UUIDField(blank=True, null=True)
     chat_access_token = models.CharField(

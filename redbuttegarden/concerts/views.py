@@ -19,10 +19,12 @@ from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, ObjectList
 from wagtail.admin.viewsets.base import ViewSetGroup, ViewSet
 from wagtail.admin.viewsets.model import ModelViewSet
 
-from concerts.forms import ConcertDonorClubPackageForm, UserAndConcertDonorClubMemberCreationForm
+from concerts.forms import ConcertDonorClubPackageForm, UserAndConcertDonorClubMemberCreationForm, \
+    ConcertDonorClubMemberForm
 from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember, Ticket, OAuth2Token, \
     ConcertDonorClubMemberGroup
 from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSerializer, ConcertDonorClubMemberSerializer, \
@@ -78,6 +80,8 @@ class ConcertViewSet(ModelViewSet):
     form_fields = '__all__'
     icon = 'media'
     inspect_view_enabled = True
+    search_fields = ('name', 'begin')
+    list_filter = {'begin': ('exact', 'year__exact', 'month__exact', 'day__exact')}
 
 
 class ConcertDonorClubPackageDRFViewSet(viewsets.ModelViewSet):
@@ -90,6 +94,8 @@ class ConcertDonorClubPackageViewSet(ModelViewSet):
     form_fields = '__all__'
     icon = 'list-ul'
     inspect_view_enabled = True
+    search_fields = ('name', 'year')
+    list_filter = ('year', 'concerts')
 
     def get_form_class(self, *args, **kwargs):
         return ConcertDonorClubPackageForm
@@ -112,12 +118,14 @@ class ConcertDonorClubMemberDRFViewSet(viewsets.ModelViewSet):
 
 class ConcertDonorClubMemberViewSet(ModelViewSet):
     model = ConcertDonorClubMember
-    form_fields = '__all__'
     icon = 'user'
     inspect_view_enabled = True
     search_fields = ('user__email', 'user__username', 'user__first_name', 'user__last_name')
     list_filter = ('active', 'packages')
     list_export = ('user', 'user.email', 'phone_number')
+
+    def get_form_class(self, for_update=False):
+        return ConcertDonorClubMemberForm
 
 
 class ConcertDonorClubMemberGroupViewSet(ModelViewSet):
