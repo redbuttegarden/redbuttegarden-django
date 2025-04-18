@@ -561,7 +561,7 @@ class ConcertDonorClubMember(models.Model):
     )
 
     class Meta:
-        ordering = ['user']
+        ordering = ['user__username', 'user__last_name', 'user__first_name']
 
     def __str__(self):
         return str(self.user)

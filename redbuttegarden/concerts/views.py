@@ -134,7 +134,6 @@ class ConcertDonorClubMemberGroupViewSet(ModelViewSet):
     icon = 'group'
     inspect_view_enabled = True
     search_fields = ('id', 'members__user__email', 'members__user__username')
-    list_filter = ('id',)
 
 
 class TicketDRFViewSet(viewsets.ModelViewSet):
@@ -154,7 +153,13 @@ class TicketViewSet(ModelViewSet):
     model = Ticket
     form_fields = '__all__'
     icon = 'tag'
-    list_filter = ('owner', 'concert', 'package', 'order_id', 'barcode')
+    inspect_view_enabled = True
+    search_fields = ('owner__username', 'owner__email', 'owner__first_name', 'owner__last_name', 'concert__name',)
+    list_filter = {
+        'owner': ('exact',),
+        'concert': ('exact',),
+        'concert__begin': ('year__exact', 'month__exact', 'day__exact'),
+    }
 
 
 class UserAndConcertDonorClubMemberCreationViewSet(ViewSet):
