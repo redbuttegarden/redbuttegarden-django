@@ -10,7 +10,7 @@
 {% block extra_includes %}
     <div id="heroContainer" class="d-flex container-fluid overflow-hidden px-0">
         {#  Initially, only video is visible. When finished playing, carousel displayed in its place #}
-        {% include 'home/includes/video.html' %}
+{#        {% include 'home/includes/video.html' %}#}
         {% include 'home/includes/image_carousel.html' with slides=page.event_slides.all %}
     </div>
 {% endblock %}
@@ -147,7 +147,7 @@
         }
     </script>
     {{ hours|json_script:"hours-data" }}
-    <script src="{% static 'home/js/hero_video.js' %}"></script>
+{#    <script src="{% static 'home/js/hero_video.js' %}"></script>#}
     <script src="{% static 'home/js/hours.js' %}"></script>
     <script src="{% static 'home/js/weather.js' %}"></script>
     <script src="{% static 'home/js/follow_us_scroll.js' %}"></script>
