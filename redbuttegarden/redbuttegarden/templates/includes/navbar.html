@@ -98,6 +98,11 @@
                                    href="{% slugurl 'concerts' %}">
                                 Outdoor Concert Series
                             </a></li>
+                            <li><a class="dropdown-item"
+                                   title="Event index page for Friends & Family Night event series"
+                                   href="{% slugurl 'friends-and-family-night' %}">
+                                Friends & Family Event Series
+                            </a></li>
                             {#  main_event_page set in get_context method of abstract base page #}
                             {% if main_event_page %}
                                 <li><a class="dropdown-item"
@@ -258,7 +263,8 @@
                 {# set by concerts.context_processors #}
                 {% if is_concert_donor_club_member %}
                     <li class="nav-item px-2">
-                        <a class="nav-link underline" title="Concert Club Portal" href="{% slugurl 'concert-club-portal' %}">
+                        <a class="nav-link underline" title="Concert Club Portal"
+                           href="{% slugurl 'concert-club-portal' %}">
                             CDC PORTAL
                         </a>
                     </li>
