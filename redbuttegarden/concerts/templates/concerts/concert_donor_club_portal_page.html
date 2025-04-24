@@ -12,14 +12,27 @@
         <p class="name"><span class="fw-bold">Phone Number: </span>{{ cdc_member.phone_number }}</p>
         <p class="name"><span class="fw-bold">Email: </span>{{ request.user.email }}</p>
         <p class="username"><span class="fw-bold">Username: </span>{{ request.user.username }}</p>
-        <p><a href="{% url 'concerts:cdc-profile' %}" title="Concert Donor Club Profile Page">Click here for
-            YOUR {% now "Y" %} Summer Concert Lineup</a>
-        </p>
+        {% if cdc_member.active %}
+            <p><a href="{% url 'concerts:cdc-profile' %}" title="Concert Donor Club Profile Page">Click here for
+                YOUR {% now "Y" %} Summer Concert Lineup</a>
+            </p>
+        {% endif %}
     </div>
 
     {% include 'includes/page_banner.html' with banner=page.banner %}
 
-    {% for block in page.body %}
-        {% include_block block with id=block.id %}
-    {% endfor %}
+    {% if cdc_member.active %}
+        {% for block in page.body %}
+            {% include_block block with id=block.id %}
+        {% endfor %}
+    {% else %}
+        <div>
+            <p>
+                CDC portal links normally appear here but it looks like your Concert Donor Club membership isn't currently active.
+            </p>
+            <p>
+                It may just be that we're still processing things on our end but if you believe this to be a mistake, feel free to reach out to <a href="mailto:sponsors@redbutte.utah.edu">sponsors@redbutte.utah.edu</a>.
+            </p>
+        </div>
+    {% endif %}
 {% endblock %}

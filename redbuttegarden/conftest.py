@@ -24,8 +24,8 @@ def create_user(django_user_model):
 
 @pytest.fixture
 def create_cdc_member():
-    def _create_cdc_member(user, phone='123-456-7890', packages=None):
-        cdc_member = ConcertDonorClubMember(user=user, phone_number=phone)
+    def _create_cdc_member(user, phone='123-456-7890', packages=None, active=True):
+        cdc_member = ConcertDonorClubMember(user=user, phone_number=phone, active=active)
         cdc_member.save()
 
         if packages:

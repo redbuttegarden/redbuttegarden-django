@@ -76,3 +76,22 @@ def test_logged_in_active_cdc_member_correct_group_can_view_cdc_portal_page(clie
     response = client.get(cdc_portal_page.get_url())
     assert response.status_code == 200
     assert 'CDC Portal' in response.content.decode('utf-8')
+
+
+def test_logged_in_inactive_cdc_member_correct_group_cannot_view_cdc_portal_page_content(client, cdc_portal_page, create_user,
+                                                                             create_cdc_member):
+    """
+    Test that a logged in inactive CDC member can view the CDC portal
+    Wagtail Page but the body content should be replaced with a message
+    warning their membership is inactive.
+    """
+    cdc_user = create_user()
+    cdc_group = Group.objects.get(name='Concert Donor Club Member')
+    cdc_user.groups.add(cdc_group)
+    cdc_member = create_cdc_member(user=cdc_user, active=False)
+    client.force_login(cdc_user)
+    assert cdc_member.active is False
+    assert cdc_user.groups.filter(name='Concert Donor Club Member').exists() is True
+    response = client.get(cdc_portal_page.get_url())
+    assert response.status_code == 200
+    assert 'your Concert Donor Club membership isn\'t currently active' in response.content.decode('utf-8')
