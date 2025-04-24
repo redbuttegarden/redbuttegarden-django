@@ -1,4 +1,5 @@
 import pytest
+from django.contrib.auth.models import Group
 
 from wagtail.models import Page, PageViewRestriction
 
@@ -56,3 +57,22 @@ def test_logged_in_active_cdc_member_wrong_group_cannot_view_cdc_portal_page(cli
     response = client.get(cdc_portal_page.get_url())
     assert response.status_code == 302  # Redirect to login page
     assert response.url.startswith('/accounts/login/')
+
+
+def test_logged_in_active_cdc_member_correct_group_can_view_cdc_portal_page(client, cdc_portal_page, create_user,
+                                                                            create_cdc_member):
+    """
+    Test that a logged in active CDC member can view the CDC portal
+    Wagtail Page if they are also in the Concert Donor Club Member
+    Group.
+    """
+    cdc_user = create_user()
+    cdc_group = Group.objects.get(name='Concert Donor Club Member')
+    cdc_user.groups.add(cdc_group)
+    cdc_member = create_cdc_member(user=cdc_user)
+    client.force_login(cdc_user)
+    assert cdc_member.active
+    assert cdc_user.groups.filter(name='Concert Donor Club Member').exists() is True
+    response = client.get(cdc_portal_page.get_url())
+    assert response.status_code == 200
+    assert 'CDC Portal' in response.content.decode('utf-8')
