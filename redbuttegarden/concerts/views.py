@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from authlib.integrations.base_client import OAuthError
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import Group
 from django.db import IntegrityError
 from django.db.models import Count
@@ -19,7 +19,6 @@ from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, ObjectList
 from wagtail.admin.viewsets.base import ViewSetGroup, ViewSet
 from wagtail.admin.viewsets.model import ModelViewSet
 
@@ -181,6 +180,20 @@ class ConcertDonorClubViewSetGroup(ViewSetGroup):
              ConcertDonorClubMemberGroupViewSet, UserAndConcertDonorClubMemberCreationViewSet)
 
 
+def active_concert_donor_club_member_check(user):
+    """
+    Check if the user is an active Concert Donor Club member
+    """
+    try:
+        concert_donor_club_member = ConcertDonorClubMember.objects.get(user=user)
+        if concert_donor_club_member.active:
+            return True
+        else:
+            return False
+    except ConcertDonorClubMember.DoesNotExist:
+        return False
+
+
 def concert_thank_you(request):
     referer = request.META.get('HTTP_REFERER')
     if referer:
@@ -325,7 +338,7 @@ def process_ticket_data(request):
     return JsonResponse({'status': 'Auth failure'})
 
 
-@login_required
+@user_passes_test(active_concert_donor_club_member_check)
 def concert_donor_club_member_profile(request):
     """
     Concert Donor Club member profile to display CDC package details &
@@ -386,8 +399,8 @@ def concert_donor_club_member_profile(request):
     return render(request, 'concerts/concert_donor_club_member_profile.html', context)
 
 
-@login_required
-def ticket_detail_view(request, concert_pk):
+@user_passes_test(active_concert_donor_club_member_check)
+def concert_detail_tickets_view(request, concert_pk):
     """
     Display members tickets for given concert
     """
@@ -396,14 +409,17 @@ def ticket_detail_view(request, concert_pk):
     except ConcertDonorClubMember.DoesNotExist:
         raise Http404("No matching Concert Donor Membership found.")
 
-    concert = Concert.objects.get(pk=concert_pk)
+    try:
+        concert = Concert.objects.get(pk=concert_pk)
+    except Concert.DoesNotExist:
+        logger.warning(f'Concert with pk {concert_pk} not found.')
+        raise Http404("No matching Concert found.")
 
     context = {
         'concert': concert,
         'doors': concert.begin - datetime.timedelta(minutes=concert.doors_before_event_time_minutes),
         'tickets': Ticket.objects.filter(owner=concert_donor_club_member, concert=concert),
     }
-
     return render(request, 'concerts/concert_donor_club_tickets.html', context)
 
 
