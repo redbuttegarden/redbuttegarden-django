@@ -1,6 +1,5 @@
 import pytest
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.urls import reverse
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory, APIClient
@@ -9,7 +8,6 @@ from concerts.models import Ticket, ConcertDonorClubMember, ConcertDonorClubPack
 from concerts.views import process_ticket_data
 
 
-@pytest.mark.django_db
 @pytest.fixture
 def create_api_user_and_token(django_user_model):
     user = django_user_model.objects.create_user(username='api_user')
@@ -17,7 +15,6 @@ def create_api_user_and_token(django_user_model):
     return user, token
 
 
-@pytest.mark.django_db
 @pytest.fixture
 def create_cdc_package():
     def _create_cdc_package(name='Test Package'):
@@ -27,23 +24,6 @@ def create_cdc_package():
         return cdc_package
 
     return _create_cdc_package
-
-
-@pytest.mark.django_db
-@pytest.fixture
-def create_cdc_group():
-    cdc_group = Group.objects.create(name='Concert Donor Club Member')
-
-    return cdc_group
-
-
-@pytest.fixture
-def create_user(django_user_model):
-    def _create_user(username='cdc_test_user', first_name='first', last_name='last', email='test@email.com'):
-        return django_user_model.objects.create_user(username=username, first_name=first_name, last_name=last_name,
-                                                     email=email)
-
-    return _create_user
 
 
 @pytest.fixture
@@ -104,7 +84,6 @@ def test_process_ticket_data_view_unauthorized(drf_request_factory):
     assert response.status_code == 401
 
 
-@pytest.mark.django_db
 def test_process_ticket_data_view_no_cdc_member(create_cdc_group, create_api_user_and_token, drf_client_with_user,
                                                 make_ticket_data):
     """If no ConcertDonorClubMember exists, one should be created"""
@@ -120,7 +99,6 @@ def test_process_ticket_data_view_no_cdc_member(create_cdc_group, create_api_use
     assert ConcertDonorClubMember.objects.filter(user__username=issued_ticket_data['etix_username']).exists()
 
 
-@pytest.mark.django_db
 def test_process_ticket_data_view_no_cdc_member_first_name_asterisk(create_cdc_group, create_api_user_and_token,
                                                                     drf_client_with_user,
                                                                     make_ticket_data):
@@ -135,7 +113,6 @@ def test_process_ticket_data_view_no_cdc_member_first_name_asterisk(create_cdc_g
     assert cdc_member.user.first_name == ''
 
 
-@pytest.mark.django_db
 def test_process_ticket_data_view_issued(create_user, create_cdc_member, create_api_user_and_token,
                                          drf_client_with_user, make_ticket_data):
     cdc_user = create_user()
@@ -145,7 +122,6 @@ def test_process_ticket_data_view_issued(create_user, create_cdc_member, create_
     assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
 
 
-@pytest.mark.django_db
 def test_process_ticket_data_view_blank_package_name(create_user, create_cdc_member, create_api_user_and_token,
                                          drf_client_with_user, make_ticket_data):
     """
@@ -159,7 +135,6 @@ def test_process_ticket_data_view_blank_package_name(create_user, create_cdc_mem
     assert not ConcertDonorClubPackage.objects.filter(name=' ').exists()
 
 
-@pytest.mark.django_db
 def test_process_ticket_data_updates_user_first_name(create_cdc_group, create_api_user_and_token,
                                                      drf_client_with_user,
                                                      make_ticket_data, create_user):
@@ -174,7 +149,6 @@ def test_process_ticket_data_updates_user_first_name(create_cdc_group, create_ap
     assert user.first_name == 'Updated'
 
 
-@pytest.mark.django_db
 def test_process_ticket_data_updates_user_last_name(create_cdc_group, create_api_user_and_token,
                                                     drf_client_with_user,
                                                     make_ticket_data, create_user):
@@ -189,7 +163,6 @@ def test_process_ticket_data_updates_user_last_name(create_cdc_group, create_api
     assert user.last_name == 'Updated'
 
 
-@pytest.mark.django_db
 def test_process_ticket_data_updates_user_email(create_cdc_group, create_api_user_and_token,
                                                 drf_client_with_user,
                                                 make_ticket_data, create_user):
