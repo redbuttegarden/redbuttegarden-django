@@ -2,6 +2,8 @@ import pytest
 
 from django.contrib.auth.models import Group
 
+from concerts.models import ConcertDonorClubMember
+
 
 @pytest.fixture(autouse=True)
 def enable_db_access_for_all_tests(db):
@@ -18,6 +20,20 @@ def create_user(django_user_model):
                                                      email=email)
 
     return _create_user
+
+
+@pytest.fixture
+def create_cdc_member():
+    def _create_cdc_member(user, phone='123-456-7890', packages=None):
+        cdc_member = ConcertDonorClubMember(user=user, phone_number=phone)
+        cdc_member.save()
+
+        if packages:
+            cdc_member.packages.add(packages)
+
+        return cdc_member
+
+    return _create_cdc_member
 
 
 @pytest.fixture
