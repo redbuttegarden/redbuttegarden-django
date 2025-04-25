@@ -6,7 +6,7 @@ from . import views
 router = DefaultRouter()
 router.register(r'concerts', views.ConcertDRFViewSet)
 router.register(r'cdc-packages', views.ConcertDonorClubPackageDRFViewSet)
-router.register(r'cdc-members', views.ConcertDonorClubMemberDRFViewSet)
+router.register(r'cdc-members', views.ConcertDonorClubMemberDRFViewSet, basename='cdc-members')
 router.register(r'cdc-tickets', views.TicketDRFViewSet, basename='cdc-tickets')
 
 app_name = 'concerts'
