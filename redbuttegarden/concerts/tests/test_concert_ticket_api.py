@@ -1,18 +1,10 @@
 import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from rest_framework.authtoken.models import Token
-from rest_framework.test import APIRequestFactory, APIClient
+from rest_framework.test import APIRequestFactory
 
 from concerts.models import Ticket, ConcertDonorClubMember, ConcertDonorClubPackage
 from concerts.views import process_ticket_data
-
-
-@pytest.fixture
-def create_api_user_and_token(django_user_model):
-    user = django_user_model.objects.create_user(username='api_user')
-    token = Token.objects.create(user=user)
-    return user, token
 
 
 @pytest.fixture
@@ -29,14 +21,6 @@ def create_cdc_package():
 @pytest.fixture
 def drf_request_factory():
     return APIRequestFactory()
-
-
-@pytest.fixture
-def drf_client_with_user(create_api_user_and_token):
-    user, token = create_api_user_and_token
-    client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-    return client
 
 
 @pytest.fixture

@@ -1,6 +1,8 @@
 import pytest
 
 from django.contrib.auth.models import Group
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient
 
 from concerts.models import ConcertDonorClubMember
 
@@ -41,3 +43,18 @@ def create_cdc_group():
     cdc_group = Group.objects.create(name='Concert Donor Club Member')
 
     return cdc_group
+
+
+@pytest.fixture
+def create_api_user_and_token(django_user_model):
+    user = django_user_model.objects.create_user(username='api_user')
+    token = Token.objects.create(user=user)
+    return user, token
+
+
+@pytest.fixture
+def drf_client_with_user(create_api_user_and_token):
+    user, token = create_api_user_and_token
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    return client
