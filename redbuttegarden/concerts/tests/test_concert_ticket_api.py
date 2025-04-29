@@ -93,7 +93,7 @@ def test_process_ticket_data_view_issued(create_user, create_cdc_member, create_
 
 
 def test_process_ticket_data_view_blank_package_name(create_user, create_cdc_member, create_api_user_and_token,
-                                         drf_client_with_user, make_ticket_data):
+                                                     drf_client_with_user, make_ticket_data):
     """
     ConcertDonorClubPackages should not be created with empty string names
     """
@@ -103,6 +103,23 @@ def test_process_ticket_data_view_blank_package_name(create_user, create_cdc_mem
     drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
     assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
     assert not ConcertDonorClubPackage.objects.filter(name=' ').exists()
+
+
+def test_process_ticket_data_view_package_name_missing(create_user, create_cdc_member, create_api_user_and_token,
+                                                       drf_client_with_user, make_ticket_data):
+    """
+    API view should gracefully handle missing package names and ConcertDonorClubPackages should not be created
+    """
+    cdc_user = create_user()
+    create_cdc_member(user=cdc_user)
+    original_package_count = ConcertDonorClubPackage.objects.count()
+    issued_ticket_data = make_ticket_data(ticket_status='ISSUED', etix_username=cdc_user.username, package_name=None)
+    response = drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json',
+                                         follow=True)
+    assert response.status_code == 200
+    assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
+    assert not ConcertDonorClubPackage.objects.filter(name=None).exists()
+    assert ConcertDonorClubPackage.objects.count() == original_package_count
 
 
 def test_process_ticket_data_updates_user_first_name(create_cdc_group, create_api_user_and_token,
