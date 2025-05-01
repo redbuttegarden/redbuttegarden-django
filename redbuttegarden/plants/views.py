@@ -58,8 +58,9 @@ class SpeciesList(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Species.objects.all()
 
-        genus = self.request.query_params.get('genus')
+        genus = self.request.query_params.get('genus', 'unspecified')
         name = self.request.query_params.get('name', 'unspecified')
+        full_name = self.request.query_params.get('full_name', 'unspecified')
         subspecies = self.request.query_params.get('subspecies', 'unspecified')
         variety = self.request.query_params.get('variety', 'unspecified')
         subvariety = self.request.query_params.get('subvariety', 'unspecified')
@@ -67,10 +68,12 @@ class SpeciesList(generics.ListCreateAPIView):
         subforma = self.request.query_params.get('subforma', 'unspecified')
         cultivar = self.request.query_params.get('cultivar', 'unspecified')
 
-        if genus:
+        if genus != 'unspecified':
             queryset = queryset.filter(genus__name=genus)
         if name != 'unspecified':
             queryset = queryset.filter(name=name)
+        if full_name != 'unspecified':
+            queryset = queryset.filter(full_name=full_name)
         if subspecies != 'unspecified':
             queryset = queryset.filter(subspecies=subspecies)
         if variety != 'unspecified':
