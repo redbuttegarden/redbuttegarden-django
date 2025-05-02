@@ -44,4 +44,4 @@ def serve_pdf(document, request):
 @hooks.register('register_help_menu_item')
 def register_rbg_style_guide_menu_item():
     return MenuItem(name='rbg_style_guide', label='RBG Style Guide',
-                        url='https://uofu.box.com/s/3ud6o8pyuou2wq7n6avpcejo3ulhhbfi', icon_name='link')
+                        url='https://uofu.box.com/s/gb5psi7cn82tm62a8ndmouv53y47nre1', icon_name='link')
