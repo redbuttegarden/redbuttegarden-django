@@ -686,7 +686,7 @@ class HomePage(AbstractBase):
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    hours_section_text = RichTextField(null=True, blank=True, help_text=_('Text to within the hours section'))
+    hours_section_text = RichTextField(null=True, blank=True, help_text=_('This text is dislayed within the hours section, just beneath the hours'))
     concert_page = models.ForeignKey(
         'concerts.ConcertPage',
         null=True,
