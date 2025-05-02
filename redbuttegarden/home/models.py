@@ -686,6 +686,7 @@ class HomePage(AbstractBase):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    hours_section_text = RichTextField(null=True, blank=True, help_text=_('Text to within the hours section'))
     concert_page = models.ForeignKey(
         'concerts.ConcertPage',
         null=True,
@@ -697,6 +698,7 @@ class HomePage(AbstractBase):
 
     content_panels = Page.content_panels + [
         FieldPanel('hours', help_text=_("Choose the set of hours to display on the home page")),
+        FieldPanel('hours_section_text'),
         InlinePanel('event_slides', label=_('Slideshow Images')),
         FieldPanel('concert_page', permission='superuser')  # Arbitrary permission name; only superusers can access this
     ]
