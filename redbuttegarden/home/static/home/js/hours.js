@@ -1,10 +1,26 @@
-const hoursData = JSON.parse(document.getElementById('hours-data').textContent);
+const pageID = document.getElementById('pageID').textContent;
 const hoursElem = document.getElementById('hours');
 const visitTextElem = document.getElementById('visitText');
 const emphaticTextElem = document.getElementById('emphaticText');
 let concertDay = false;
 
-// Convert open times into string to be shown on home page
+async function getGardenHours() {
+    try {
+        const response = await fetch(`/api/hours/${pageID}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Fetch error: ', error);
+    }
+}
+
 function processGardenHours(garden_open, garden_close) {
     let openTime = garden_open.split(":");
     let closeTime = garden_close.split(":");
@@ -13,7 +29,7 @@ function processGardenHours(garden_open, garden_close) {
     let openMinute = parseInt(openTime[1]);
     let closeMinute = parseInt(closeTime[1]);
 
-    let currentDate = new Date()
+    let currentDate = new Date();
 
     let openDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), openHour, openMinute);
     let closeDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), closeHour, closeMinute);
@@ -36,11 +52,27 @@ function processGardenHours(garden_open, garden_close) {
         openDate: openDate,
         closeDate: closeDate,
         openTimeStr: openTimeStr,
-        closeTimeStr: closeTimeStr
+        closeTimeStr: closeTimeStr,
     }
 }
 
-function setHours(date = new Date()) {
+/**
+ * Return the first RBGHours object that matches the current month and day
+ * @param rbgHours
+ * @param currentMonth
+ * @param currentDay
+ * @returns {*|null}
+ */
+function getFirstRBGHoursMatch(rbgHours, currentMonth, currentDay) {
+    for (let i = 0; i < Object.keys(rbgHours).length; i++) {
+        if (rbgHours[i].months_of_year.includes(currentMonth) && rbgHours[i].days_of_week.includes(currentDay)) {
+            return rbgHours[i];
+        }
+    }
+    return null;
+}
+
+function setHours(rbgHours, date = new Date()) {
     let offset = date.getTimezoneOffset() / 60;
     let offsetDifference = offset - 6;
 
@@ -50,12 +82,15 @@ function setHours(date = new Date()) {
     let currentMinute = date.getMinutes();
     let minutesBeforeOpeningOrClosing = 60 - currentMinute;
 
-    let processed_times = processGardenHours(hoursData.garden_open, hoursData.garden_close);
+    // Get the RBGHours object for the current day of the week and month of the year
+    let matchedRBGHours = getFirstRBGHoursMatch(rbgHours, currentMonth, currentDay);
 
-    if (hoursData && !concertDay) {
+    let processed_times = processGardenHours(matchedRBGHours.garden_open, matchedRBGHours.garden_close);
+
+    if (!concertDay) {
         hoursElem.textContent = processed_times.openTimeStr + " - " + processed_times.closeTimeStr;
-        visitTextElem.textContent = hoursData.additional_message;
-        emphaticTextElem.textContent = hoursData.additional_emphatic_mesg;
+        visitTextElem.textContent = matchedRBGHours.additional_message;
+        emphaticTextElem.textContent = matchedRBGHours.additional_emphatic_mesg;
     }
     displayOpenClosed(processed_times);
     handleConcertDay(currentMonth, currentDay, currentHour, minutesBeforeOpeningOrClosing);
@@ -123,10 +158,13 @@ function handleConcertDay(currentMonth, currentDay) {
     }
 }
 
-setInterval(() => {
-    setHours()
-}, 60000); // Update every minute
+setInterval(async () => {
+    let rbgHours = await getGardenHours();
+    setHours(rbgHours);
+}, 300000); // Update every 5 minutes
 
-window.onload = () => {
-    setHours();
+let rbgHours;
+window.onload = async () => {
+    rbgHours = await getGardenHours();
+    setHours(rbgHours);
 }
