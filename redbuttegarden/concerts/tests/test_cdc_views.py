@@ -30,17 +30,18 @@ def test_anonymous_user_cannot_view_cdc_portal_page(client, cdc_portal_page):
     """
     response = client.get(cdc_portal_page.get_url())
     assert response.status_code == 302  # Redirect to login page
-    assert response.url.startswith('/accounts/login/')
+    assert response.url.startswith('/accounts/login')
 
 
-def test_anonymous_user_cannot_view_cdc_ticket_detail_page(client, create_cdc_ticket):
+def test_anonymous_user_cannot_view_cdc_concert_detail_tickets_page(client, create_cdc_ticket, create_concert):
     """
-    Test that an anonymous user cannot view ticket details returned by concert_detail_tickets_view.
+    Test that an anonymous user cannot view ticket details for a
+    particular concert returned by concert_detail_tickets_view.
     """
     ticket = create_cdc_ticket(barcode='1234567890')
-    response = client.get(reverse('concerts:cdc-tickets', args=[ticket.pk]))
+    response = client.get(reverse('concerts:cdc-tickets', args=[ticket.concert.pk]))
     assert response.status_code == 302  # Redirect to login page
-    assert response.url.startswith('/accounts/login/')
+    assert response.url.startswith('/accounts/login')
 
 
 def test_logged_in_user_cannot_view_cdc_portal_page(client, cdc_portal_page, create_user):
@@ -67,7 +68,7 @@ def test_logged_in_active_cdc_member_wrong_group_cannot_view_cdc_portal_page(cli
     assert cdc_user.groups.filter(name='Concert Donor Club Member').exists() is False
     response = client.get(cdc_portal_page.get_url())
     assert response.status_code == 302  # Redirect to login page
-    assert response.url.startswith('/accounts/login/')
+    assert response.url.startswith('/accounts/login')
 
 
 def test_logged_in_active_cdc_member_correct_group_can_view_cdc_portal_page(client, cdc_portal_page, create_user,
