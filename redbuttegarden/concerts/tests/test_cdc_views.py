@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.auth.models import Group
+from django.urls import reverse
 
 from wagtail.models import Page, PageViewRestriction
 
@@ -28,6 +29,16 @@ def test_anonymous_user_cannot_view_cdc_portal_page(client, cdc_portal_page):
     Test that an anonymous user cannot view the CDC portal Wagtail Page.
     """
     response = client.get(cdc_portal_page.get_url())
+    assert response.status_code == 302  # Redirect to login page
+    assert response.url.startswith('/accounts/login/')
+
+
+def test_anonymous_user_cannot_view_cdc_ticket_detail_page(client, create_cdc_ticket):
+    """
+    Test that an anonymous user cannot view ticket details returned by concert_detail_tickets_view.
+    """
+    ticket = create_cdc_ticket(barcode='1234567890')
+    response = client.get(reverse('concerts:cdc-tickets', args=[ticket.pk]))
     assert response.status_code == 302  # Redirect to login page
     assert response.url.startswith('/accounts/login/')
 
