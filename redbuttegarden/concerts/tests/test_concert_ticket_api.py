@@ -1,10 +1,70 @@
+from datetime import datetime
+
 import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework.test import APIRequestFactory
 
-from concerts.models import Ticket, ConcertDonorClubMember, ConcertDonorClubPackage
-from concerts.views import process_ticket_data
+from concerts.models import Concert, Ticket, ConcertDonorClubMember, ConcertDonorClubPackage
+from concerts.views import process_ticket_data, TicketDRFViewSet
+
+
+@pytest.fixture
+def create_concert():
+    def _create_concert():
+        naive_begin = datetime(year=2025, month=1, day=1, hour=19, minute=0)
+        naive_end = datetime(year=2025, month=1, day=1, hour=21, minute=0)
+        begin = timezone.make_aware(naive_begin, timezone.get_default_timezone())
+        end = timezone.make_aware(naive_end, timezone.get_default_timezone())
+        concert = Concert(
+            etix_id=123456,
+            name='Test Concert',
+            begin=begin,
+            end=end,
+            doors_before_event_time_minutes=60,
+            image_url='https://example.com/image.jpg',
+        )
+        concert.save()
+
+        return concert
+
+    return _create_concert
+
+
+@pytest.fixture
+def create_cdc_member(create_user):
+    def _create_cdc_member(user=None):
+        user = user or create_user()
+        cdc_member = ConcertDonorClubMember(
+            user=user,
+            phone_number='123-456-7890',
+        )
+        cdc_member.save()
+
+        return cdc_member
+
+    return _create_cdc_member
+
+
+@pytest.fixture
+def create_cdc_ticket(create_cdc_member, create_concert, create_cdc_package):
+    def _create_cdc_ticket(barcode, owner=None, concert=None, package=None):
+        owner = owner or create_cdc_member()
+        concert = concert or create_concert()
+        package = package or create_cdc_package()
+        cdc_ticket = Ticket(
+            owner=owner,
+            concert=concert,
+            package=package,
+            order_id=123456789,
+            barcode=barcode,
+        )
+        cdc_ticket.save()
+
+        return cdc_ticket
+
+    return _create_cdc_ticket
 
 
 @pytest.fixture
@@ -51,6 +111,19 @@ def make_ticket_data():
 def test_process_ticket_data_view_unauthorized(drf_request_factory):
     request = drf_request_factory.post(reverse('concerts:api-cdc-etix-data'), {'data': 'dummy_data'}, format='json')
     response = process_ticket_data(request)
+    assert response.status_code == 401
+
+
+def test_ticket_drf_viewset_unauthorized(drf_request_factory, create_cdc_ticket):
+    """
+    Anonymous users should not be able to view the details of a ticket from the TicketDRFViewSet
+    """
+    assert not Ticket.objects.all().exists()
+    ticket = create_cdc_ticket(barcode=1234567890)
+    assert Ticket.objects.all().exists()
+    request = drf_request_factory.get(reverse('concerts:cdc-tickets', args=[ticket.pk]))
+    view = TicketDRFViewSet.as_view({'get': 'retrieve'})
+    response = view(request)
     assert response.status_code == 401
 
 
@@ -156,6 +229,18 @@ def test_process_ticket_data_updates_user_email(create_cdc_group, create_api_use
     """
     Incoming ticket data should update existing users email.
     """
+    user = create_user(username='existing-user', email='Initial')
+    assert user.email == 'Initial'
+    issued_ticket_data = make_ticket_data('ISSUED', etix_username='existing-user', owner_email='Updated')
+    drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
+    user.refresh_from_db()
+    assert user.email == 'Updated'
+
+
+def test_anonymous_user_cannot_view_cdc_ticket_detail_view(create_cdc_group, create_api_user_and_token,
+                                                           drf_client_with_user,
+                                                           make_ticket_data, create_user):
+
     user = create_user(username='existing-user', email='Initial')
     assert user.email == 'Initial'
     issued_ticket_data = make_ticket_data('ISSUED', etix_username='existing-user', owner_email='Updated')
