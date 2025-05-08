@@ -2,8 +2,6 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from concerts.models import ConcertDonorClubMember
-
 
 @pytest.fixture
 def make_cdc_member_data():

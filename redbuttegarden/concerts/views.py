@@ -192,6 +192,9 @@ def active_concert_donor_club_member_check(user):
             return False
     except ConcertDonorClubMember.DoesNotExist:
         return False
+    except TypeError:
+        # Handle the case where user is not authenticated
+        return False
 
 
 def concert_thank_you(request):

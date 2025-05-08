@@ -1,56 +1,29 @@
+
+
 import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from rest_framework.test import APIRequestFactory
 
 from concerts.models import Ticket, ConcertDonorClubMember, ConcertDonorClubPackage
-from concerts.views import process_ticket_data
-
-
-@pytest.fixture
-def create_cdc_package():
-    def _create_cdc_package(name='Test Package'):
-        cdc_package = ConcertDonorClubPackage(name=name, year=2024)
-        cdc_package.save()
-
-        return cdc_package
-
-    return _create_cdc_package
-
-
-@pytest.fixture
-def drf_request_factory():
-    return APIRequestFactory()
-
-
-@pytest.fixture
-def make_ticket_data():
-    def _make_ticket_data(ticket_status, etix_username='test-user', owner_first_name='First', owner_last_name='Last',
-                          owner_email='email@email.com', package_name='Opener Placeholder'):
-        return {
-            "order_id": 99999999,
-            "etix_username": etix_username,
-            "owner_email": owner_email,
-            "owner_first_name": owner_first_name,
-            "owner_last_name": owner_last_name,
-            "owner_phone": "123 4569999",
-            "package_name": package_name,
-            "event_name": "Markéta Irglová and Glen Hansard of The Swell Season",
-            "event_id": 12934887,
-            "event_begin": "2024-01-30T19:31:45.261Z",
-            "event_end": "2024-01-30T19:31:45.261Z",
-            "event_doors_before_event_time_minutes": 60,
-            "event_image_url": "https://event.etix.com/ticket/json/files/get?file=1477ca2a-f33a-47a6-bdec-827df3edc859&alt=150w",
-            "ticket_status": ticket_status,
-            "ticket_barcode": "11546743321"
-        }
-
-    return _make_ticket_data
+from concerts.views import process_ticket_data, TicketDRFViewSet
 
 
 def test_process_ticket_data_view_unauthorized(drf_request_factory):
     request = drf_request_factory.post(reverse('concerts:api-cdc-etix-data'), {'data': 'dummy_data'}, format='json')
     response = process_ticket_data(request)
+    assert response.status_code == 401
+
+
+def test_ticket_drf_viewset_unauthorized(drf_request_factory, create_cdc_ticket):
+    """
+    Anonymous users should not be able to view the details of a ticket from the TicketDRFViewSet
+    """
+    assert not Ticket.objects.all().exists()
+    ticket = create_cdc_ticket(barcode=1234567890)
+    assert Ticket.objects.all().exists()
+    request = drf_request_factory.get(reverse('concerts:cdc-tickets', args=[ticket.pk]))
+    view = TicketDRFViewSet.as_view({'get': 'retrieve'})
+    response = view(request)
     assert response.status_code == 401
 
 
@@ -156,6 +129,18 @@ def test_process_ticket_data_updates_user_email(create_cdc_group, create_api_use
     """
     Incoming ticket data should update existing users email.
     """
+    user = create_user(username='existing-user', email='Initial')
+    assert user.email == 'Initial'
+    issued_ticket_data = make_ticket_data('ISSUED', etix_username='existing-user', owner_email='Updated')
+    drf_client_with_user.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
+    user.refresh_from_db()
+    assert user.email == 'Updated'
+
+
+def test_anonymous_user_cannot_view_cdc_ticket_detail_view(create_cdc_group, create_api_user_and_token,
+                                                           drf_client_with_user,
+                                                           make_ticket_data, create_user):
+
     user = create_user(username='existing-user', email='Initial')
     assert user.email == 'Initial'
     issued_ticket_data = make_ticket_data('ISSUED', etix_username='existing-user', owner_email='Updated')
