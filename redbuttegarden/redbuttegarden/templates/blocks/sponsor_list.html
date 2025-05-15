@@ -1,10 +1,10 @@
 {% load wagtailimages_tags %}
 
-<div id="sponsor-list" class="row text-center">
+<div id="sponsor-list" class="d-flex flex-wrap justify-content-center text-center">
     {% for sponsor in value.list_items %}
     <div class="info-table-card">
-        <h3>{{  sponsor.sponsor_title }}</h3>
-        <a href="{{ sponsor.sponsor_url }}" class="responsive">
+        <div class="fs-3 fw-bold">{{  sponsor.sponsor_title }}</div>
+        <a href="{{ sponsor.sponsor_url }}" class="img-fluid">
             {% image sponsor.sponsor_logo original %}
         </a>
     </div>
