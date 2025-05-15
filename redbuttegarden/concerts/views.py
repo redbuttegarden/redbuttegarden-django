@@ -296,14 +296,17 @@ def process_ticket_data(request):
 
             logger.info(f'Concert Donor Club Concert created: {concert}')
 
+        user_defaults = {
+            'email': request.data['owner_email'],
+            'first_name': request.data[
+                'owner_first_name'] if request.data[
+                                           'owner_first_name'] != '*' else '',
+            'last_name': request.data[
+                'owner_last_name']}
+        # Filter out any None values from the user_defaults dictionary so we don't replace existing values with None
+        filtered_user_defaults = {k: v for k, v in user_defaults.items() if v is not None}
         cdc_user, created = get_user_model().objects.update_or_create(username=request.data['etix_username'],
-                                                                      defaults={
-                                                                          'email': request.data['owner_email'],
-                                                                          'first_name': request.data[
-                                                                              'owner_first_name'] if request.data[
-                                                                                                         'owner_first_name'] != '*' else '',
-                                                                          'last_name': request.data[
-                                                                              'owner_last_name']})
+                                                                      defaults=filtered_user_defaults)
 
         if created:
             logger.debug(f'Created user {cdc_user}. Adding them to CDC member group...')
