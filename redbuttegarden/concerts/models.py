@@ -631,14 +631,6 @@ class Ticket(models.Model):
     def __str__(self):
         return f'{self.barcode} ({self.concert})'
 
-    def save(self, **kwargs):
-        logger.debug(f'Saving ticket {self}')
-        if self.barcode and not self.barcode_image:
-            self.barcode_image.save(f'{self.barcode}.svg',
-                                    ContentFile(bytes(code128.svg(self.barcode), encoding='utf-8')), save=False)
-
-        super().save(**kwargs)
-
 
 class OAuth2Token(models.Model):
     name = models.CharField(max_length=40)
