@@ -622,6 +622,7 @@ class Ticket(models.Model):
     concert = models.ForeignKey(Concert, on_delete=models.CASCADE)
     package = models.ForeignKey(ConcertDonorClubPackage, on_delete=models.SET_NULL, null=True, blank=True)
     order_id = models.PositiveBigIntegerField()
+    etix_id = models.PositiveBigIntegerField(null=True, blank=True)
     barcode = models.PositiveBigIntegerField(unique=True)
     barcode_image = models.ImageField(upload_to='tickets', blank=True, null=True)
 
