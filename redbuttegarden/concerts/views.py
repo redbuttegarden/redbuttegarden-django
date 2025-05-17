@@ -142,6 +142,10 @@ class TicketDRFViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Ticket.objects.all()
         year = self.request.query_params.get('year')
+        etix_id = self.request.query_params.get('etix_id')
+
+        if etix_id:
+            queryset = queryset.filter(etix_id=etix_id)
         if year:
             queryset = queryset.filter(concert__begin__year=year)
 

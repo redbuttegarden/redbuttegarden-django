@@ -1,4 +1,5 @@
 from datetime import datetime
+
 import pytest
 
 from django.contrib.auth.models import Group
@@ -11,14 +12,14 @@ from concerts.models import Concert, ConcertDonorClubMember, Ticket, ConcertDono
 
 
 @pytest.fixture
-def create_concert():
-    def _create_concert():
-        naive_begin = datetime(year=2025, month=1, day=1, hour=19, minute=0)
-        naive_end = datetime(year=2025, month=1, day=1, hour=21, minute=0)
+def create_concert(year=2025):
+    def _create_concert(etix_id, year=year):
+        naive_begin = datetime(year=year, month=1, day=1, hour=19, minute=0)
+        naive_end = datetime(year=year, month=1, day=1, hour=21, minute=0)
         begin = timezone.make_aware(naive_begin, timezone.get_default_timezone())
         end = timezone.make_aware(naive_end, timezone.get_default_timezone())
         concert = Concert(
-            etix_id=123456,
+            etix_id=etix_id,
             name='Test Concert',
             begin=begin,
             end=end,
@@ -48,18 +49,22 @@ def create_cdc_member(create_user):
 
 
 @pytest.fixture
-def create_cdc_ticket(create_user, create_cdc_member, create_concert, create_cdc_package, user=None):
-    def _create_cdc_ticket(barcode, owner=None, concert=None, package=None, user=user):
-        user = user or create_user()
-        owner = owner or create_cdc_member(user)
-        concert = concert or create_concert()
+def create_cdc_ticket(create_user, create_cdc_member, create_concert, create_cdc_package, owner=None, user=None):
+    def _create_cdc_ticket(barcode, etix_id, owner=owner, user=user, concert=None, concert_etix_id=None, package=None):
+        if not owner:
+            user = user or create_user()
+            owner = create_cdc_member(user)
+
+        concert = concert or create_concert(concert_etix_id)
         package = package or create_cdc_package()
+
         cdc_ticket = Ticket(
             owner=owner,
             concert=concert,
             package=package,
             order_id=123456789,
             barcode=barcode,
+            etix_id=etix_id,
         )
         cdc_ticket.save()
 

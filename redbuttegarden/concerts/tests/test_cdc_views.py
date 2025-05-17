@@ -38,7 +38,7 @@ def test_anonymous_user_cannot_view_cdc_concert_detail_tickets_page(client, crea
     Test that an anonymous user cannot view ticket details for a
     particular concert returned by concert_detail_tickets_view.
     """
-    ticket = create_cdc_ticket(barcode='1234567890')
+    ticket = create_cdc_ticket(etix_id=1, concert_etix_id=1, barcode='1234567890')
     response = client.get(reverse('concerts:cdc-tickets', args=[ticket.concert.pk]))
     assert response.status_code == 302  # Redirect to login page
     assert response.url.startswith('/accounts/login')
