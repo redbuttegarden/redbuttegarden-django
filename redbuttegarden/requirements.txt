@@ -69,7 +69,7 @@ pytz==2024.2
 PyYAML==6.0.2
 requests==2.32.3
 s3transfer==0.10.0
-setuptools==75.6.0
+setuptools==78.1.1
 simplejson==3.19.3
 six==1.16.0
 soupsieve==2.3
