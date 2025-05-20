@@ -1,3 +1,4 @@
+import csv
 import datetime
 import logging
 import requests
@@ -5,14 +6,16 @@ from urllib.parse import urlparse
 
 from authlib.integrations.base_client import OAuthError
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group
 from django.db import IntegrityError
 from django.db.models import Count
-from django.http import Http404, JsonResponse, HttpResponse
+from django.http import Http404, JsonResponse, HttpResponse, StreamingHttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, path
+from django.utils import timezone
 from django.views import View
 from django_filters.rest_framework import FilterSet, CharFilter
 from rest_framework import viewsets
@@ -452,3 +455,32 @@ def check_image_url(request):
     else:
         return HttpResponse(
             f'<img class="img-fluid rounded-start" src="{image_url}" alt="Concert promo art for {concert_name}">')
+
+
+class Echo:
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
+
+
+@staff_member_required
+def streaming_ticket_csv_view(request):
+    """A view that streams a CSV file of Ticket objects."""
+    # Generate a sequence of rows. The range is based on the maximum number of
+    # rows that can be handled by a single sheet in most spreadsheet
+    # applications.
+    rows = ([f"{ticket.pk}", f"{ticket.barcode}"] for ticket in Ticket.objects.all())
+    pseudo_buffer = Echo()
+    writer = csv.writer(pseudo_buffer)
+    now = timezone.now()
+    todays_date = now.today()
+    date_string = todays_date.strftime("%m-%d-%Y")
+    return StreamingHttpResponse(
+        (writer.writerow(row) for row in rows),
+        content_type="text/csv",
+        headers={f"Content-Disposition": f'attachment; filename="tickets_{date_string}.csv"'},
+    )

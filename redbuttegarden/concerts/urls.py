@@ -14,6 +14,7 @@ urlpatterns = [
     path('thank-you/', views.concert_thank_you, name='thank-you'),
     path('cdc-member-profile/', views.concert_donor_club_member_profile, name='cdc-profile'),
     path('cdc-tickets/<int:concert_pk>/', views.concert_detail_tickets_view, name='cdc-tickets'),
+    path('admin/export-tickets/', views.streaming_ticket_csv_view, name='export-tickets'),
     path('api/cc-login/', views.cc_login, name='cc-login'),
     path('api/callback/', views.callback, name='callback'),
     path('api/cdc-etix-data/', views.process_ticket_data, name='api-cdc-etix-data'),
