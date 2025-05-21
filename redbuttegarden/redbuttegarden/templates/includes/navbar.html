@@ -52,13 +52,15 @@
                             <li><a class="dropdown-item"
                                    title="Link to our poetry box map, poetry walk info, and contest"
                                    href="{% slugurl 'poetry' %}">Poetry in the Garden</a></li>
+                            <li><a class="dropdown-item" title="Link to page with info about our themed gardens"
+                                   href="{% slugurl 'themed-gardens' %}">Themed Gardens</a></li>
                         </ul>
                     </li>
 
                     <li class="nav-item dropdown px-0 px-lg-2">
                         <a class="nav-link dropdown-toggle underline" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
-                            Plants &amp; Gardens
+                            Collections & Gardening
                             <i class="bi bi-chevron-down"></i>
                         </a>
                         <ul class="dropdown-menu pe-5 pb-3">
@@ -68,8 +70,6 @@
                                 <a class="dropdown-item"
                                    title="Filter our plant collections to be displayed on the plant map based on given search criteria"
                                    href="{% url 'plants:collection-search' %}">Search Our Plant Collections</a></li>
-                            <li><a class="dropdown-item" title="Link to page with info about our themed gardens"
-                                   href="{% slugurl 'themed-gardens' %}">Themed Gardens</a></li>
                             <li><a class="dropdown-item"
                                    title="Link to slideshows and descriptions of our various plant collections"
                                    href="{% slugurl 'plant-collections' %}">Plant Collections Information</a></li>
@@ -77,7 +77,7 @@
                                    href="{% slugurl 'gardening-information' %}">Gardening Information</a></li>
                             <li><a class="dropdown-item"
                                    title="Desciptions of what's going on in our Conservation Department"
-                                   href="{% slugurl 'conservation-research' %}">Plant Conservation Research</a></li>
+                                   href="{% slugurl 'conservation-research' %}">Conservation Research</a></li>
                             <li><a class="dropdown-item" title="A blog for keeping up with blooms at the garden"
                                    href="{% slugurl 'whats-blooming-now' %}">What's Blooming Now Blog</a></li>
                         </ul>
