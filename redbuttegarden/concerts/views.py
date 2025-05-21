@@ -29,6 +29,7 @@ from concerts.forms import ConcertDonorClubPackageForm, UserAndConcertDonorClubM
     ConcertDonorClubMemberForm
 from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember, Ticket, OAuth2Token, \
     ConcertDonorClubMemberGroup
+from concerts.permissions import IsInAPIGroup
 from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSerializer, ConcertDonorClubMemberSerializer, \
     TicketSerializer
 from concerts.utils.constant_contact import oauth
@@ -146,17 +147,21 @@ class TicketDRFViewSet(viewsets.ModelViewSet):
         queryset = Ticket.objects.all()
         year = self.request.query_params.get('year')
         etix_id = self.request.query_params.get('etix_id')
+        barcode = self.request.query_params.get('barcode')
 
         if etix_id:
             queryset = queryset.filter(etix_id=etix_id)
         if year:
             queryset = queryset.filter(concert__begin__year=year)
+        if barcode:
+            queryset = queryset.filter(barcode=barcode)
 
         return queryset
 
 
 class TicketViewSet(ModelViewSet):
     model = Ticket
+    permission_classes = [IsInAPIGroup]
     form_fields = '__all__'
     icon = 'tag'
     inspect_view_enabled = True
