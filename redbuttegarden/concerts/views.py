@@ -142,6 +142,7 @@ class ConcertDonorClubMemberGroupViewSet(ModelViewSet):
 class TicketDRFViewSet(viewsets.ModelViewSet):
     serializer_class = TicketSerializer
     pagination_class = LargeResultsSetPagination
+    permission_classes = [IsInAPIGroup]
 
     def get_queryset(self):
         queryset = Ticket.objects.all()
@@ -161,7 +162,6 @@ class TicketDRFViewSet(viewsets.ModelViewSet):
 
 class TicketViewSet(ModelViewSet):
     model = Ticket
-    permission_classes = [IsInAPIGroup]
     form_fields = '__all__'
     icon = 'tag'
     inspect_view_enabled = True

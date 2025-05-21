@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.urls import reverse
 
 from concerts.models import Ticket, ConcertDonorClubMember, ConcertDonorClubPackage
@@ -40,10 +41,24 @@ def test_anonymous_user_cannot_view_cdc_ticket_detail_view(drf_request_factory, 
     assert user.email == 'Initial'
 
 
-def test_ticket_drf_viewset_authorized(drf_client_with_user, create_cdc_ticket):
+def test_ticket_drf_viewset_authorized_not_api_group(drf_client_with_user, create_cdc_ticket):
     """
-    Authorized users should be able to view the details of a ticket from the TicketDRFViewSet
+    Authorized users NOT in the API group should NOT be able to view the details of a ticket from the TicketDRFViewSet
     """
+    assert not Ticket.objects.all().exists()
+    ticket = create_cdc_ticket(barcode=1234567890, etix_id=1, concert_etix_id=1)
+    assert Ticket.objects.all().exists()
+    response = drf_client_with_user.get(reverse('concerts:cdc-tickets-detail', args=[ticket.pk]))
+    assert response.status_code == 403
+
+
+def test_ticket_drf_viewset_authorized_in_api_group(drf_client_with_user, create_cdc_ticket, django_user_model):
+    """
+    Authorized users in the API group should be able to view the details of a ticket from the TicketDRFViewSet
+    """
+    api_user = django_user_model.objects.get(username='api_user')
+    api_group, _ = Group.objects.get_or_create(name='API')
+    api_user.groups.add(api_group)
     assert not Ticket.objects.all().exists()
     ticket = create_cdc_ticket(barcode=1234567890, etix_id=1, concert_etix_id=1)
     assert Ticket.objects.all().exists()
@@ -52,10 +67,13 @@ def test_ticket_drf_viewset_authorized(drf_client_with_user, create_cdc_ticket):
 
 
 def test_ticket_drf_viewset_authorized_query_by_year(drf_client_with_user, create_user, create_cdc_member,
-                                                     create_concert, create_cdc_ticket):
+                                                     create_concert, create_cdc_ticket, django_user_model):
     """
-    Authorized users should be able to filter ticket results from the TicketDRFViewSet by concert year
+    Authorized users in API group should be able to filter ticket results from the TicketDRFViewSet by concert year
     """
+    api_user = django_user_model.objects.get(username='api_user')
+    api_group, _ = Group.objects.get_or_create(name='API')
+    api_user.groups.add(api_group)
     assert not Ticket.objects.all().exists()
     owner_user = create_user(username='ticket_owner')
     ticket_owner = create_cdc_member(user=owner_user)
@@ -72,10 +90,13 @@ def test_ticket_drf_viewset_authorized_query_by_year(drf_client_with_user, creat
 
 
 def test_ticket_drf_viewset_authorized_query_by_etix_id(drf_client_with_user, create_user, create_cdc_member,
-                                                        create_cdc_ticket):
+                                                        create_cdc_ticket, django_user_model):
     """
     Authorized users should be able to filter ticket results from the TicketDRFViewSet by concert year
     """
+    api_user = django_user_model.objects.get(username='api_user')
+    api_group, _ = Group.objects.get_or_create(name='API')
+    api_user.groups.add(api_group)
     assert not Ticket.objects.all().exists()
     owner_user = create_user(username='ticket_owner')
     ticket_owner = create_cdc_member(user=owner_user)
