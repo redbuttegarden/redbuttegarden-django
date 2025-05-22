@@ -77,7 +77,6 @@ class PlantSearchViewTestCase(TestCase):
         response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         json_response = json.loads(response.json())
-        print(json_response)
         self.assertEqual(len(json_response['features']), 1)
         self.assertEqual(json_response['features'][0]['properties']['species_full_name'],
                          "Acer rubrum 'October Glory'")
