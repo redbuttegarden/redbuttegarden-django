@@ -33,6 +33,9 @@ class PlantSearchViewTestCase(TestCase):
         get_collection(plant_id='7', family_name='Rosaceae', genus_name='Rosa',
                        species_name='sericea', subspecies='omeiensis', forma='pteracantha',
                        full_name='Rosa sericea subsp. omeiensis f. pteracantha')
+        get_collection(plant_id='8', family_name='Sapindaceae', genus_name='Acer',
+                       species_name='rubrum', cultivar='October Glory',
+                       full_name="Acer rubrum 'October Glory'")
 
         params = {'scientific_name': 'Geranium'}
         url = reverse('plants:plant-map') + '?' + urlencode(params)
@@ -67,6 +70,17 @@ class PlantSearchViewTestCase(TestCase):
         self.assertEqual(len(json_response['features']), 1)
         self.assertEqual(json_response['features'][0]['properties']['species_full_name'],
                          "Hydrangea anomala subsp. petiolaris")
+
+        params = {'scientific_name': 'Acer rubrum'}
+        url = reverse('plants:plant-map') + '?' + urlencode(params)
+        print(url)
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        json_response = json.loads(response.json())
+        print(json_response)
+        self.assertEqual(len(json_response['features']), 1)
+        self.assertEqual(json_response['features'][0]['properties']['species_full_name'],
+                         "Acer rubrum 'October Glory'")
 
 
     def test_collection_search_by_garden_area(self):
