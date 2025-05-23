@@ -103,8 +103,8 @@ class Species(ClusterableModel):
         unique_together = ['genus', 'name', 'subspecies', 'variety', 'subvariety', 'forma', 'subforma', 'cultivar']
         verbose_name_plural = 'species'
         constraints = [
-            models.CheckConstraint(check=models.Q(vernacular_name__length__gt=0), name='vernacular_name_not_empty'),
-            models.CheckConstraint(check=models.Q(full_name__length__gt=0), name='full_name_not_empty')
+            models.CheckConstraint(condition=models.Q(vernacular_name__length__gt=0), name='vernacular_name_not_empty'),
+            models.CheckConstraint(condition=models.Q(full_name__length__gt=0), name='full_name_not_empty')
         ]
 
 

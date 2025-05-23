@@ -22,6 +22,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='species',
-            constraint=models.CheckConstraint(check=models.Q(('full_name__length__gt', 0)), name='full_name_not_empty'),
+            constraint=models.CheckConstraint(condition=models.Q(('full_name__length__gt', 0)), name='full_name_not_empty'),
         ),
     ]
