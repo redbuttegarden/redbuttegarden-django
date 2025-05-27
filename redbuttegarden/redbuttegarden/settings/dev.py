@@ -32,11 +32,9 @@ DATABASES = {
 # Static files
 AWS_STORAGE_BUCKET_NAME = 'zappa-rbg-dev-static-east'
 AWS_S3_REGION_NAME = 'us-east-1'
-AWS_S3_FILE_OVERWRITE = False
 STATIC_BUCKET = 'zappa-rbg-dev-static-east'
 STATICFILES_STORAGE = 'home.custom_storages.StaticStorage'
 MEDIA_BUCKET = 'zappa-rbg-dev-static-east'
-DEFAULT_FILE_STORAGE = 'home.custom_storages.MediaStorage'
 AWS_S3_CUSTOM_DOMAIN = 'dhsyi82ptcyu5.cloudfront.net'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
 MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')

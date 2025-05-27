@@ -42,14 +42,24 @@ AWS_SES_RETURN_PATH = os.environ.get('IT_EMAIL')
 WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = 'admin@redbuttegarden.org'
 WAGTAILADMIN_NOTIFICATION_USE_HTML = True
 
-# Static files
-AWS_STORAGE_BUCKET_NAME = 'rbg-web-static'
+# Static files and storage settings
+STORAGES = {
+    'default': {
+        'BACKEND': 'storages.backends.s3.S3Storage',
+        'OPTIONS': {
+            'bucket_name': 'rbg-web-static',
+            'location': 'media'
+        },
+    },
+    'staticfiles': {
+        'BACKEND': 'storages.backends.s3.S3Storage',
+        'OPTIONS': {
+            'bucket_name': 'rbg-web-static',
+            'location': 'static'
+        },
+    },
+}
 AWS_S3_REGION_NAME = 'us-east-1'
-AWS_S3_FILE_OVERWRITE = True
-STATIC_BUCKET = AWS_STORAGE_BUCKET_NAME
-STATICFILES_STORAGE = 'home.custom_storages.StaticStorage'
-MEDIA_BUCKET = AWS_STORAGE_BUCKET_NAME
-DEFAULT_FILE_STORAGE = 'home.custom_storages.MediaStorage'
 AWS_S3_CUSTOM_DOMAIN = 'redbuttegarden.org'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
 MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
