@@ -43,13 +43,18 @@ WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = 'admin@redbuttegarden.org'
 WAGTAILADMIN_NOTIFICATION_USE_HTML = True
 
 # Static files and storage settings
+AWS_S3_CUSTOM_DOMAIN = 'redbuttegarden.org'
+STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
+MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
 STORAGES = {
     'default': {
         'BACKEND': 'storages.backends.s3.S3Storage',
         'OPTIONS': {
             'bucket_name': 'rbg-web-static',
             'location': 'media',
-            'region_name': 'us-east-1'
+            'region_name': 'us-east-1',
+            'access_key': os.environ.get('STATIC_ACCESS_KEY_ID'),
+            'secret_key': os.environ.get('STATIC_SECRET_ACCESS_KEY'),
         },
     },
     'staticfiles': {
@@ -57,16 +62,12 @@ STORAGES = {
         'OPTIONS': {
             'bucket_name': 'rbg-web-static',
             'location': 'static',
-            'region_name': 'us-east-1'
+            'region_name': 'us-east-1',
+            'access_key': os.environ.get('STATIC_ACCESS_KEY_ID'),
+            'secret_key': os.environ.get('STATIC_SECRET_ACCESS_KEY'),
         },
     },
 }
-AWS_S3_CUSTOM_DOMAIN = 'redbuttegarden.org'
-STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
-MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
-
-AWS_ACCESS_KEY_ID = os.environ.get('STATIC_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('STATIC_SECRET_ACCESS_KEY')
 
 WAGTAILFRONTENDCACHE = {
     'mainsite': {
