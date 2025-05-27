@@ -48,18 +48,19 @@ STORAGES = {
         'BACKEND': 'storages.backends.s3.S3Storage',
         'OPTIONS': {
             'bucket_name': 'rbg-web-static',
-            'location': 'media'
+            'location': 'media',
+            'region_name': 'us-east-1'
         },
     },
     'staticfiles': {
         'BACKEND': 'storages.backends.s3.S3Storage',
         'OPTIONS': {
             'bucket_name': 'rbg-web-static',
-            'location': 'static'
+            'location': 'static',
+            'region_name': 'us-east-1'
         },
     },
 }
-AWS_S3_REGION_NAME = 'us-east-1'
 AWS_S3_CUSTOM_DOMAIN = 'redbuttegarden.org'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
 MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
