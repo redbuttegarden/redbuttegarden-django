@@ -181,21 +181,7 @@ WAGTAILSEARCH_BACKENDS = {
         'SEARCH_CONFIG': 'english',
     },
 }
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
-"""
-ENQUEUE_ON_COMMIT is set to False to prevent tasks from being enqueued
-This prevents a change in behavior when updating to Wagtail 6.4
-RBG website gets no benefit from new Wagtail background task support since
-it is serverless and can't run a task queue
-https://docs.wagtail.org/en/stable/releases/6.4.html#background-tasks-run-at-end-of-current-transaction
-"""
-# settings.py
-TASKS = {
-    "default": {
-        "BACKEND": "django_tasks.backends.immediate.ImmediateBackend",
-        "ENQUEUE_ON_COMMIT": False,
-    }
-}
+
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
 WAGTAILADMIN_BASE_URL = 'https://redbuttegarden.org'
@@ -231,7 +217,7 @@ DEFAULT_FROM_EMAIL = 'admin@redbuttegarden.org'
 SERVER_EMAIL = os.environ.get('IT_EMAIL')
 
 # This was setup to allow authentication for viewing VR Tours
-WAGTAIL_PASSWORD_REQUIRED_TEMPLATE = 'custom_user/password_required.html'
+PASSWORD_REQUIRED_TEMPLATE = 'custom_user/password_required.html'
 LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/'
 

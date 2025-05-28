@@ -12,6 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddConstraint(
             model_name='species',
-            constraint=models.CheckConstraint(condition=models.Q(('vernacular_name__length__gt', 0)), name='vernacular_name_not_empty'),
+            constraint=models.CheckConstraint(check=models.Q(('vernacular_name__length__gt', 0)), name='vernacular_name_not_empty'),
         ),
     ]
