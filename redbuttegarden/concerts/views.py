@@ -165,7 +165,9 @@ class TicketViewSet(ModelViewSet):
     form_fields = '__all__'
     icon = 'tag'
     inspect_view_enabled = True
-    search_fields = ('owner__username', 'owner__email', 'owner__first_name', 'owner__last_name', 'concert__name',)
+    search_fields = (
+        'barcode', 'owner__user__username', 'owner__user__email', 'owner__user__first_name', 'owner__user__last_name',
+        'concert__name',)
     list_filter = {
         'owner': ('exact',),
         'concert': ('exact',),
