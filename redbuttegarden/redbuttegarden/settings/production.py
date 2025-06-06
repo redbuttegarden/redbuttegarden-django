@@ -43,19 +43,29 @@ WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = 'admin@redbuttegarden.org'
 WAGTAILADMIN_NOTIFICATION_USE_HTML = True
 
 # Static files
-AWS_STORAGE_BUCKET_NAME = 'rbg-web-static'
-AWS_S3_REGION_NAME = 'us-east-1'
-AWS_S3_FILE_OVERWRITE = True
-STATIC_BUCKET = AWS_STORAGE_BUCKET_NAME
-STATICFILES_STORAGE = 'home.custom_storages.StaticStorage'
-MEDIA_BUCKET = AWS_STORAGE_BUCKET_NAME
-DEFAULT_FILE_STORAGE = 'home.custom_storages.MediaStorage'
 AWS_S3_CUSTOM_DOMAIN = 'redbuttegarden.org'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
 MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
-
-AWS_ACCESS_KEY_ID = os.environ.get('STATIC_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('STATIC_SECRET_ACCESS_KEY')
+STORAGES = {
+    'default': {
+        'BACKEND': 'home.custom_storages.MediaStorage',
+        'OPTIONS': {
+            'region_name': 'us-east-1',
+            'bucket_name': 'rbg-web-static',
+            'access_key': os.environ.get('STATIC_ACCESS_KEY_ID'),
+            'secret_key': os.environ.get('STATIC_SECRET_ACCESS_KEY'),
+        },
+    },
+    'staticfiles': {
+        'BACKEND': 'home.custom_storages.StaticStorage',
+        'OPTIONS': {
+            'region_name': 'us-east-1',
+            'bucket_name': 'rbg-web-static',
+            'access_key': os.environ.get('STATIC_ACCESS_KEY_ID'),
+            'secret_key': os.environ.get('STATIC_SECRET_ACCESS_KEY'),
+        },
+    },
+}
 
 WAGTAILFRONTENDCACHE = {
     'mainsite': {
