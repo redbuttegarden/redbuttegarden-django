@@ -10,19 +10,33 @@ ALLOWED_HOSTS += ['train.localhost', 'localhost', 'testserver', '127.0.0.1', 'rb
 
 BASE_URL = 'http://rbg-it-web-dev.redbutte.utah.edu:8000'
 
-# Use local static file storage when running locally
-AWS_STORAGE_BUCKET_NAME = ''
-AWS_S3_REGION_NAME = 'us-east-1'
-STATIC_BUCKET = ''
-MEDIA_BUCKET = ''
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-AWS_S3_CUSTOM_DOMAIN = ''
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-
-AWS_ACCESS_KEY_ID = 'FOO'
-AWS_SECRET_ACCESS_KEY = 'BAR'
+# Use AWS S3 test bucket for storage when running locally
+# Static files and storage settings
+AWS_S3_CUSTOM_DOMAIN = 'rbg-it-web-dev.redbutte.utah.edu'
+STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
+MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
+STORAGES = {
+    'default': {
+        'BACKEND': 'storages.backends.s3.S3Storage',
+        'OPTIONS': {
+            'bucket_name': 'rbg-web-static-testing',
+            'location': 'media',
+            'region_name': 'us-east-1',
+            'access_key': os.environ.get('STATIC_ACCESS_KEY_ID'),
+            'secret_key': os.environ.get('STATIC_SECRET_ACCESS_KEY'),
+        },
+    },
+    'staticfiles': {
+        'BACKEND': 'storages.backends.s3.S3Storage',
+        'OPTIONS': {
+            'bucket_name': 'rbg-web-static-testing',
+            'location': 'static',
+            'region_name': 'us-east-1',
+            'access_key': os.environ.get('STATIC_ACCESS_KEY_ID'),
+            'secret_key': os.environ.get('STATIC_SECRET_ACCESS_KEY'),
+        },
+    },
+}
 
 # Disable cloudfront invalidations when running locally
 WAGTAILFRONTENDCACHE = {}
