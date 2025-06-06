@@ -476,11 +476,12 @@ class Echo:
 
 @staff_member_required
 def streaming_ticket_csv_view(request):
-    """A view that streams a CSV file of Ticket objects."""
+    """A view that streams a CSV file of this concert season's Ticket objects."""
     # Generate a sequence of rows. The range is based on the maximum number of
     # rows that can be handled by a single sheet in most spreadsheet
     # applications.
-    rows = ([f"{ticket.pk}", f"{ticket.barcode}"] for ticket in Ticket.objects.all())
+    current_year = datetime.date.today().year
+    rows = ([f"{ticket.pk}", f"{ticket.barcode}"] for ticket in Ticket.objects.filter(concert__begin__year=current_year))
     pseudo_buffer = Echo()
     writer = csv.writer(pseudo_buffer)
     now = timezone.now()
