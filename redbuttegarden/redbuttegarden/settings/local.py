@@ -17,21 +17,19 @@ STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
 MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
 STORAGES = {
     'default': {
-        'BACKEND': 'storages.backends.s3.S3Storage',
+        'BACKEND': 'home.custom_storages.MediaStorage',
         'OPTIONS': {
-            'bucket_name': 'rbg-web-static-testing',
-            'location': 'media',
             'region_name': 'us-east-1',
+            'bucket_name': 'rbg-web-static-testing',
             'access_key': os.environ.get('STATIC_ACCESS_KEY_ID'),
             'secret_key': os.environ.get('STATIC_SECRET_ACCESS_KEY'),
         },
     },
     'staticfiles': {
-        'BACKEND': 'storages.backends.s3.S3Storage',
+        'BACKEND': 'home.custom_storages.StaticStorage',
         'OPTIONS': {
-            'bucket_name': 'rbg-web-static-testing',
-            'location': 'static',
             'region_name': 'us-east-1',
+            'bucket_name': 'rbg-web-static-testing',
             'access_key': os.environ.get('STATIC_ACCESS_KEY_ID'),
             'secret_key': os.environ.get('STATIC_SECRET_ACCESS_KEY'),
         },
