@@ -25,3 +25,40 @@ Dockerfile
 collections.geojson
 ./frontend/node_modules
 ./frontend/build
+
+# Python cache and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+
+# Terraform state and config
+*.tfstate
+*.tfstate.backup
+.terraform/
+terraform_*.tfvars
+
+# Zappa deployment artifacts
+.zappa/
+
+# Git and version control
+.git/
+.gitignore
+
+# Docker-related
+Dockerfile
+.dockerignore
+
+# Secrets and environment files
+*.env
+*.env*
+*.pem
+*.key
+
+# OS and editor files
+.DS_Store
+*.swp
+*.swo
+

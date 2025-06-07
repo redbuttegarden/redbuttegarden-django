@@ -29,3 +29,39 @@ ve3.9/
 ve3.12/
 README.md
 
+# Python cache and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+
+# Terraform state and config
+*.tfstate
+*.tfstate.backup
+.terraform/
+terraform_*.tfvars
+
+# Zappa deployment artifacts
+.zappa/
+
+# Git and version control
+.git/
+.gitignore
+
+# Docker-related
+Dockerfile
+.dockerignore
+
+# Secrets and environment files
+*.env
+*.pem
+*.key
+
+# OS and editor files
+.DS_Store
+*.swp
+*.swo
+
+

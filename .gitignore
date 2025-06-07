@@ -20,3 +20,21 @@
 *.pyc
 /nginx/certs/
 /frontend
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# Secrets
+*.env
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+terraform_*.tfvars
+
+# Zappa
+.zappa

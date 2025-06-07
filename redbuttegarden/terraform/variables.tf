@@ -1,0 +1,40 @@
+
+variable "region" {
+  description = "AWS region"
+  type        = string
+}
+
+variable "project_name" {
+  description = "Project name"
+  type        = string
+}
+
+variable "environment" {
+  description = "Environment name (dev, staging, prod)"
+  type        = string
+}
+
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC"
+  type        = string
+}
+
+variable "public_subnet_cidrs" {
+  description = "CIDR blocks for public subnets"
+  type        = list(string)
+}
+
+variable "private_subnet_cidrs" {
+  description = "CIDR blocks for private subnets"
+  type        = list(string)
+}
+
+variable "db_username" {
+  description = "Username for the RDS instance"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Password for the RDS instance"
+  type        = string
+}
