@@ -1,57 +1,115 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.urls import reverse
-from rest_framework.test import APIRequestFactory
 
 from concerts.models import Ticket, ConcertDonorClubMember, ConcertDonorClubPackage
-from concerts.views import process_ticket_data
-
-
-@pytest.fixture
-def create_cdc_package():
-    def _create_cdc_package(name='Test Package'):
-        cdc_package = ConcertDonorClubPackage(name=name, year=2024)
-        cdc_package.save()
-
-        return cdc_package
-
-    return _create_cdc_package
-
-
-@pytest.fixture
-def drf_request_factory():
-    return APIRequestFactory()
-
-
-@pytest.fixture
-def make_ticket_data():
-    def _make_ticket_data(ticket_status, etix_username='test-user', owner_first_name='First', owner_last_name='Last',
-                          owner_email='email@email.com', package_name='Opener Placeholder'):
-        return {
-            "order_id": 99999999,
-            "etix_username": etix_username,
-            "owner_email": owner_email,
-            "owner_first_name": owner_first_name,
-            "owner_last_name": owner_last_name,
-            "owner_phone": "123 4569999",
-            "package_name": package_name,
-            "event_name": "Markéta Irglová and Glen Hansard of The Swell Season",
-            "event_id": 12934887,
-            "event_begin": "2024-01-30T19:31:45.261Z",
-            "event_end": "2024-01-30T19:31:45.261Z",
-            "event_doors_before_event_time_minutes": 60,
-            "event_image_url": "https://event.etix.com/ticket/json/files/get?file=1477ca2a-f33a-47a6-bdec-827df3edc859&alt=150w",
-            "ticket_status": ticket_status,
-            "ticket_barcode": "11546743321"
-        }
-
-    return _make_ticket_data
+from concerts.views import process_ticket_data, TicketDRFViewSet
 
 
 def test_process_ticket_data_view_unauthorized(drf_request_factory):
     request = drf_request_factory.post(reverse('concerts:api-cdc-etix-data'), {'data': 'dummy_data'}, format='json')
     response = process_ticket_data(request)
     assert response.status_code == 401
+
+
+def test_ticket_drf_viewset_unauthorized(drf_request_factory, create_cdc_ticket):
+    """
+    Anonymous users should not be able to view the details of a ticket from the TicketDRFViewSet
+    """
+    assert not Ticket.objects.all().exists()
+    ticket = create_cdc_ticket(etix_id=1, concert_etix_id=1, barcode=1234567890)
+    assert Ticket.objects.all().exists()
+    request = drf_request_factory.get(reverse('concerts:cdc-tickets', args=[ticket.pk]))
+    view = TicketDRFViewSet.as_view({'get': 'retrieve'})
+    response = view(request)
+    assert response.status_code == 401
+
+
+def test_anonymous_user_cannot_view_cdc_ticket_detail_view(drf_request_factory, make_ticket_data, create_user):
+    """
+    Anonymous users should not be able to use the TicketDRFViewSet to make changes
+    """
+    user = create_user(username='existing-user', email='Initial')
+    assert user.email == 'Initial'
+    issued_ticket_data = make_ticket_data('ISSUED', etix_username='existing-user', owner_email='Updated')
+    request = drf_request_factory.post(reverse('concerts:api-cdc-etix-data'), issued_ticket_data, format='json')
+    view = TicketDRFViewSet.as_view({'post': 'update'})
+    response = view(request)
+    assert response.status_code == 401
+    user.refresh_from_db()
+    assert user.email == 'Initial'
+
+
+def test_ticket_drf_viewset_authorized_not_api_group(drf_client_with_user, create_cdc_ticket):
+    """
+    Authorized users NOT in the API group should NOT be able to view the details of a ticket from the TicketDRFViewSet
+    """
+    assert not Ticket.objects.all().exists()
+    ticket = create_cdc_ticket(barcode=1234567890, etix_id=1, concert_etix_id=1)
+    assert Ticket.objects.all().exists()
+    response = drf_client_with_user.get(reverse('concerts:cdc-tickets-detail', args=[ticket.pk]))
+    assert response.status_code == 403
+
+
+def test_ticket_drf_viewset_authorized_in_api_group(drf_client_with_user, create_cdc_ticket, django_user_model):
+    """
+    Authorized users in the API group should be able to view the details of a ticket from the TicketDRFViewSet
+    """
+    api_user = django_user_model.objects.get(username='api_user')
+    api_group, _ = Group.objects.get_or_create(name='API')
+    api_user.groups.add(api_group)
+    assert not Ticket.objects.all().exists()
+    ticket = create_cdc_ticket(barcode=1234567890, etix_id=1, concert_etix_id=1)
+    assert Ticket.objects.all().exists()
+    response = drf_client_with_user.get(reverse('concerts:cdc-tickets-detail', args=[ticket.pk]))
+    assert response.status_code == 200
+
+
+def test_ticket_drf_viewset_authorized_query_by_year(drf_client_with_user, create_user, create_cdc_member,
+                                                     create_concert, create_cdc_ticket, django_user_model):
+    """
+    Authorized users in API group should be able to filter ticket results from the TicketDRFViewSet by concert year
+    """
+    api_user = django_user_model.objects.get(username='api_user')
+    api_group, _ = Group.objects.get_or_create(name='API')
+    api_user.groups.add(api_group)
+    assert not Ticket.objects.all().exists()
+    owner_user = create_user(username='ticket_owner')
+    ticket_owner = create_cdc_member(user=owner_user)
+    concert_2024 = create_concert(etix_id=1, year=2024)
+    concert_2025 = create_concert(etix_id=2, year=2025)
+    ticket_2024 = create_cdc_ticket(barcode=1234567890, etix_id=1, owner=ticket_owner, concert=concert_2024)
+    ticket_2025 = create_cdc_ticket(barcode=1234567891, etix_id=2, owner=ticket_owner, concert=concert_2025)
+    assert Ticket.objects.filter(concert__begin__year=2024).count() == 1
+    response = drf_client_with_user.get(reverse('concerts:cdc-tickets-list') + '?year=2024', headers={'Accept': 'application/json'})
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json['count'] == 1
+    assert response_json['results'][0]['pk'] == ticket_2024.pk
+
+
+def test_ticket_drf_viewset_authorized_query_by_etix_id(drf_client_with_user, create_user, create_cdc_member,
+                                                        create_cdc_ticket, django_user_model):
+    """
+    Authorized users should be able to filter ticket results from the TicketDRFViewSet by concert year
+    """
+    api_user = django_user_model.objects.get(username='api_user')
+    api_group, _ = Group.objects.get_or_create(name='API')
+    api_user.groups.add(api_group)
+    assert not Ticket.objects.all().exists()
+    owner_user = create_user(username='ticket_owner')
+    ticket_owner = create_cdc_member(user=owner_user)
+    ticket_one = create_cdc_ticket(barcode=1234567890, owner=ticket_owner, etix_id=2234567890, concert_etix_id=1)
+    ticket_two = create_cdc_ticket(barcode=1234567891, owner=ticket_owner, etix_id=2234567891, concert_etix_id=2)
+    assert Ticket.objects.all().exists()
+    response = drf_client_with_user.get(reverse('concerts:cdc-tickets-list') + '?etix_id=2234567890', headers={'Accept': 'application/json'}, follow=True)
+    assert response.status_code == 200
+    print(response)
+    print(response.content)
+    response_json = response.json()
+    assert response_json['count'] == 1
+    assert response_json['results'][0]['etix_id'] == ticket_one.etix_id
 
 
 def test_process_ticket_data_view_no_cdc_member(create_cdc_group, create_api_user_and_token, drf_client_with_user,

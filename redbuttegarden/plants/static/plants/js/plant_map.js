@@ -1,7 +1,7 @@
 const mapboxToken = JSON.parse(document.getElementById('mapboxToken').textContent);
 
 mapboxgl.accessToken = mapboxToken;
-let map = new mapboxgl.Map({
+const map = new mapboxgl.Map({
     container: 'map', // container ID
     style: 'mapbox://styles/auslaner/ckrdvnurq2ix018o34dv8sxft', // style URL
     center: [-111.823807, 40.766367], // starting position [lng, lat]
@@ -12,9 +12,7 @@ if (isMobile()) {
     const geolocateControl = new mapboxgl.GeolocateControl({
         positionOptions: {
             enableHighAccuracy: true
-        },
-        trackUserLocation: true,
-        showUserHeading: true,
+        }, trackUserLocation: true, showUserHeading: true,
     });
     map.addControl(geolocateControl, 'bottom-left');
 }
@@ -33,6 +31,7 @@ for (const input of inputs) {
         }
 
         map.once('styledata', () => {
+            console.log('Initializing map with style: ' + layerId);
             initialMapSetup(map);
         })
     };
@@ -54,10 +53,7 @@ function isMobile() {
 }
 
 function renderListings(features) {
-    features.sort((a, b) =>
-        (a.properties.family_name > b.properties.family_name) ? 1 :
-            (a.properties.family_name === b.properties.family_name) ? ((a.properties.genus_name > b.properties.genus_name) ? 1 :
-                (a.properties.genus_name === b.properties.genus_name) ? ((a.properties.species_name > b.properties.species_name) ? 1 : -1) : -1) : -1);
+    features.sort((a, b) => (a.properties.family_name > b.properties.family_name) ? 1 : (a.properties.family_name === b.properties.family_name) ? ((a.properties.genus_name > b.properties.genus_name) ? 1 : (a.properties.genus_name === b.properties.genus_name) ? ((a.properties.species_name > b.properties.species_name) ? 1 : -1) : -1) : -1);
     let empty = document.createElement('p');
     // Clear any existing listings
     listingEl.innerHTML = '';
@@ -68,10 +64,7 @@ function renderListings(features) {
                 let collection = document.createElement('a');
                 collection.href = "/plants/collection/" + prop.id + "/";
                 collection.target = '_blank';
-                collection.innerHTML =
-                    '<div class="feature-listing">' + prop.family_name + ' ' +
-                    style_full_name(prop.species_full_name) +
-                    '</div>';
+                collection.innerHTML = '<div class="feature-listing">' + prop.family_name + ' ' + style_full_name(prop.species_full_name) + '</div>';
                 collection.addEventListener('mouseover', function () {
                     // Highlight corresponding feature on the map
                     popup
@@ -123,7 +116,7 @@ function resetMapFilter(map) {
     map.setFilter('unclustered-point', ['has', 'id']);
 }
 
-function initialMapSetup(map) {
+async function initialMapSetup(map) {
     // Add a new source from our GeoJSON data and
     // set the 'cluster' option to true. GL-JS will
     // add the point_count property to your source data.
@@ -188,83 +181,59 @@ function initialMapSetup(map) {
 
     // If URL includes parameters send ajax request for filtered collections
     // Otherwise, load geojson file of all collections
-    if (window.location.href.includes('?')) {
-        $.ajax({
-            url: '{{ request.get_full_path }}',
-            success: function (data) {
-                const filteredCollections = JSON.parse(data);
+    const currentUrl = window.location.href;
+    if (currentUrl.includes('?')) {
+        try {
+            const response = await fetch(currentUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
 
-                map.addSource('collections', {
-                    type: 'geojson',
-                    data: filteredCollections,
-                    cluster: true,
-                    clusterMaxZoom: 17, // Max zoom to cluster points on
-                    clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
-                });
-
-                map.addLayer({
-                    id: 'clusters',
-                    type: 'circle',
-                    source: 'collections',
-                    filter: ['has', 'point_count'],
-                    paint: {
-                        // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-                        // with three steps to implement three types of circles:
-                        //   * Blue, 20px circles when point count is less than 100
-                        //   * Yellow, 30px circles when point count is between 100 and 750
-                        //   * Pink, 40px circles when point count is greater than or equal to 750
-                        'circle-color': [
-                            'step',
-                            ['get', 'point_count'],
-                            '#51bbd6',
-                            100,
-                            '#f1f075',
-                            750,
-                            '#f28cb1'
-                        ],
-                        'circle-radius': [
-                            'step',
-                            ['get', 'point_count'],
-                            20,
-                            100,
-                            30,
-                            750,
-                            40
-                        ]
-                    }
-                });
-
-                map.addLayer({
-                    id: 'cluster-count',
-                    type: 'symbol',
-                    source: 'collections',
-                    filter: ['has', 'point_count'],
-                    layout: {
-                        'text-field': '{point_count_abbreviated}',
-                        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                        'text-size': 12
-                    }
-                });
-
-                map.addLayer({
-                    id: 'unclustered-point',
-                    type: 'symbol',
-                    source: 'collections',
-                    filter: ['!', ['has', 'point_count']],
-                    layout: {
-                        'icon-image': ['get', 'habit'],
-                        'icon-size': 2
-                    }
-                });
-
-                document.getElementById("map-load-overlay").style.display = "none";
-
-                // Call this function on initialization
-                // passing an empty array to render an empty state
-                renderListings([]);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        });
+            const filteredCollections = await response.json();
 
+            map.addSource('collections', {
+                type: 'geojson',
+                data: JSON.parse(filteredCollections),
+                cluster: true,
+                clusterMaxZoom: 17,
+                clusterRadius: 40
+            });
+
+            map.addLayer({
+                id: 'clusters', type: 'circle', source: 'collections', filter: ['has', 'point_count'], paint: {
+                    'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
+                    'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+                }
+            });
+
+            map.addLayer({
+                id: 'cluster-count', type: 'symbol', source: 'collections', filter: ['has', 'point_count'], layout: {
+                    'text-field': '{point_count_abbreviated}',
+                    'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                    'text-size': 12
+                }
+            });
+
+            map.addLayer({
+                id: 'unclustered-point',
+                type: 'symbol',
+                source: 'collections',
+                filter: ['!', ['has', 'point_count']],
+                layout: {
+                    'icon-image': ['get', 'habit'], 'icon-size': 2
+                }
+            });
+
+            document.getElementById("map-load-overlay").style.display = "none";
+
+            renderListings([]);
+        } catch (error) {
+            console.error(error.message);
+        }
     } else {
         map.addSource('collections', {
             type: 'geojson',
@@ -275,43 +244,19 @@ function initialMapSetup(map) {
         });
 
         map.addLayer({
-            id: 'clusters',
-            type: 'circle',
-            source: 'collections',
-            filter: ['has', 'point_count'],
-            paint: {
+            id: 'clusters', type: 'circle', source: 'collections', filter: ['has', 'point_count'], paint: {
                 // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
                 // with three steps to implement three types of circles:
                 //   * Blue, 20px circles when point count is less than 100
                 //   * Yellow, 30px circles when point count is between 100 and 750
                 //   * Pink, 40px circles when point count is greater than or equal to 750
-                'circle-color': [
-                    'step',
-                    ['get', 'point_count'],
-                    '#51bbd6',
-                    100,
-                    '#f1f075',
-                    750,
-                    '#f28cb1'
-                ],
-                'circle-radius': [
-                    'step',
-                    ['get', 'point_count'],
-                    20,
-                    100,
-                    30,
-                    750,
-                    40
-                ]
+                'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
+                'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
             }
         });
 
         map.addLayer({
-            id: 'cluster-count',
-            type: 'symbol',
-            source: 'collections',
-            filter: ['has', 'point_count'],
-            layout: {
+            id: 'cluster-count', type: 'symbol', source: 'collections', filter: ['has', 'point_count'], layout: {
                 'text-field': '{point_count_abbreviated}',
                 'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
                 'text-size': 12
@@ -324,8 +269,7 @@ function initialMapSetup(map) {
             source: 'collections',
             filter: ['!', ['has', 'point_count']],
             layout: {
-                'icon-image': ['get', 'habit'],
-                'icon-size': 2
+                'icon-image': ['get', 'habit'], 'icon-size': 2
             }
         });
 
@@ -361,17 +305,13 @@ function initialMapSetup(map) {
             layers: ['clusters']
         });
         var clusterId = features[0].properties.cluster_id;
-        map.getSource('collections').getClusterExpansionZoom(
-            clusterId,
-            function (err, zoom) {
-                if (err) return;
+        map.getSource('collections').getClusterExpansionZoom(clusterId, function (err, zoom) {
+            if (err) return;
 
-                map.easeTo({
-                    center: features[0].geometry.coordinates,
-                    zoom: zoom
-                });
-            }
-        );
+            map.easeTo({
+                center: features[0].geometry.coordinates, zoom: zoom
+            });
+        });
     });
 
     // When a click event occurs on a feature in
@@ -409,59 +349,8 @@ function initialMapSetup(map) {
 
         new mapboxgl.Popup()
             .setLngLat(coordinates)
-            .setHTML(
-                '<div class="pop-up-row">' +
-                '<a href="/plants/collection/' + collection_id + '/">Collection Detail Page</a>' +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Family Name: </span>' + family_name +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Genus Name: </span><span class="scientific-name">' + genus_name + '</span>' +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Species Name: </span><span class="scientific-name">' + species_name + '</span>' +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                formatted_species_full_name +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Vernacular Name: </span>' + vernacular_name +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Habit: </span>' + habit +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Hardiness: </span>' + hardiness +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Water Regime: </span>' + water_regime +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Exposure: </span>' + exposure +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Bloom Times: </span>' + bloom_time +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Plant Size: </span>' + plant_size +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Garden Area: </span>' + garden_area +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Garden Name: </span>' + garden_name +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Garden Code: </span>' + garden_code +
-                '</div>' +
-                '<div class="pop-up-row">' +
-                '<span class="pop-up-label">Planted On: </span>' + planted_on +
-                '</div>'
-            )
+            .setHTML('<div class="pop-up-row">' + '<a href="/plants/collection/' + collection_id + '/">Collection Detail Page</a>' + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Family Name: </span>' + family_name + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Genus Name: </span><span class="scientific-name">' + genus_name + '</span>' + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Species Name: </span><span class="scientific-name">' + species_name + '</span>' + '</div>' + '<div class="pop-up-row">' + formatted_species_full_name + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Vernacular Name: </span>' + vernacular_name + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Habit: </span>' + habit + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Hardiness: </span>' + hardiness + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Water Regime: </span>' + water_regime + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Exposure: </span>' + exposure + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Bloom Times: </span>' + bloom_time + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Plant Size: </span>' + plant_size + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Garden Area: </span>' + garden_area + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Garden Name: </span>' + garden_name + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Garden Code: </span>' + garden_code + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Planted On: </span>' + planted_on + '</div>')
             .addTo(map);
-
-        console.log(e.features[0]);
     });
 
     map.on('mouseenter', 'clusters', function () {
@@ -473,11 +362,9 @@ function initialMapSetup(map) {
 
     function formatSpeciesFullName(species_id, species_full_name) {
         if (species_id) {
-            return '<span class="pop-up-label">Full Name: </span><a href="/plants/species/' + species_id + '/"' +
-                style_full_name(species_full_name) + '</a>'
+            return '<span class="pop-up-label">Full Name: </span><a href="/plants/species/' + species_id + '/"' + style_full_name(species_full_name) + '</a>'
         } else {
-            return '<span class="pop-up-label">Full Name: </span>' +
-                style_full_name(species_full_name)
+            return '<span class="pop-up-label">Full Name: </span>' + style_full_name(species_full_name)
         }
     }
 
@@ -502,15 +389,9 @@ function initialMapSetup(map) {
 
         // Set the filter to populate features into the layer.
         if (filtered.length) {
-            map.setFilter('unclustered-point', [
-                'match',
-                ['get', 'id'],
-                filtered.map(function (feature) {
-                    return feature.properties.id;
-                }),
-                true,
-                false
-            ]);
+            map.setFilter('unclustered-point', ['match', ['get', 'id'], filtered.map(function (feature) {
+                return feature.properties.id;
+            }), true, false]);
         }
     }
 
@@ -518,5 +399,7 @@ function initialMapSetup(map) {
 }
 
 map.on('load', function () {
-    initialMapSetup(map);
+    (async () => {
+        await initialMapSetup(map);
+    })();
 });

@@ -1,3 +1,4 @@
+import csv
 import datetime
 import logging
 import requests
@@ -5,14 +6,16 @@ from urllib.parse import urlparse
 
 from authlib.integrations.base_client import OAuthError
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group
 from django.db import IntegrityError
 from django.db.models import Count
-from django.http import Http404, JsonResponse, HttpResponse
+from django.http import Http404, JsonResponse, HttpResponse, StreamingHttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, path
+from django.utils import timezone
 from django.views import View
 from django_filters.rest_framework import FilterSet, CharFilter
 from rest_framework import viewsets
@@ -26,6 +29,7 @@ from concerts.forms import ConcertDonorClubPackageForm, UserAndConcertDonorClubM
     ConcertDonorClubMemberForm
 from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember, Ticket, OAuth2Token, \
     ConcertDonorClubMemberGroup
+from concerts.permissions import IsInAPIGroup
 from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSerializer, ConcertDonorClubMemberSerializer, \
     TicketSerializer
 from concerts.utils.constant_contact import oauth
@@ -138,12 +142,20 @@ class ConcertDonorClubMemberGroupViewSet(ModelViewSet):
 class TicketDRFViewSet(viewsets.ModelViewSet):
     serializer_class = TicketSerializer
     pagination_class = LargeResultsSetPagination
+    permission_classes = [IsInAPIGroup]
 
     def get_queryset(self):
         queryset = Ticket.objects.all()
         year = self.request.query_params.get('year')
+        etix_id = self.request.query_params.get('etix_id')
+        barcode = self.request.query_params.get('barcode')
+
+        if etix_id:
+            queryset = queryset.filter(etix_id=etix_id)
         if year:
             queryset = queryset.filter(concert__begin__year=year)
+        if barcode:
+            queryset = queryset.filter(barcode=barcode)
 
         return queryset
 
@@ -153,7 +165,9 @@ class TicketViewSet(ModelViewSet):
     form_fields = '__all__'
     icon = 'tag'
     inspect_view_enabled = True
-    search_fields = ('owner__username', 'owner__email', 'owner__first_name', 'owner__last_name', 'concert__name',)
+    search_fields = (
+        'barcode', 'owner__user__username', 'owner__user__email', 'owner__user__first_name', 'owner__user__last_name',
+        'concert__name',)
     list_filter = {
         'owner': ('exact',),
         'concert': ('exact',),
@@ -191,6 +205,9 @@ def active_concert_donor_club_member_check(user):
         else:
             return False
     except ConcertDonorClubMember.DoesNotExist:
+        return False
+    except TypeError:
+        # Handle the case where user is not authenticated
         return False
 
 
@@ -293,14 +310,17 @@ def process_ticket_data(request):
 
             logger.info(f'Concert Donor Club Concert created: {concert}')
 
+        user_defaults = {
+            'email': request.data['owner_email'],
+            'first_name': request.data[
+                'owner_first_name'] if request.data[
+                                           'owner_first_name'] != '*' else '',
+            'last_name': request.data[
+                'owner_last_name']}
+        # Filter out any None values from the user_defaults dictionary so we don't replace existing values with None
+        filtered_user_defaults = {k: v for k, v in user_defaults.items() if v is not None}
         cdc_user, created = get_user_model().objects.update_or_create(username=request.data['etix_username'],
-                                                                      defaults={
-                                                                          'email': request.data['owner_email'],
-                                                                          'first_name': request.data[
-                                                                              'owner_first_name'] if request.data[
-                                                                                                         'owner_first_name'] != '*' else '',
-                                                                          'last_name': request.data[
-                                                                              'owner_last_name']})
+                                                                      defaults=filtered_user_defaults)
 
         if created:
             logger.debug(f'Created user {cdc_user}. Adding them to CDC member group...')
@@ -442,3 +462,33 @@ def check_image_url(request):
     else:
         return HttpResponse(
             f'<img class="img-fluid rounded-start" src="{image_url}" alt="Concert promo art for {concert_name}">')
+
+
+class Echo:
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
+
+
+@staff_member_required
+def streaming_ticket_csv_view(request):
+    """A view that streams a CSV file of this concert season's Ticket objects."""
+    # Generate a sequence of rows. The range is based on the maximum number of
+    # rows that can be handled by a single sheet in most spreadsheet
+    # applications.
+    current_year = datetime.date.today().year
+    rows = ([f"{ticket.pk}", f"{ticket.barcode}"] for ticket in Ticket.objects.filter(concert__begin__year=current_year))
+    pseudo_buffer = Echo()
+    writer = csv.writer(pseudo_buffer)
+    now = timezone.now()
+    todays_date = now.today()
+    date_string = todays_date.strftime("%m-%d-%Y")
+    return StreamingHttpResponse(
+        (writer.writerow(row) for row in rows),
+        content_type="text/csv",
+        headers={f"Content-Disposition": f'attachment; filename="tickets_{date_string}.csv"'},
+    )

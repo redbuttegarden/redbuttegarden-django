@@ -548,7 +548,7 @@ class ConcertDonorClubMember(models.Model):
         on_delete=models.CASCADE,
         null=True, blank=True
     )
-    phone_number = models.CharField(max_length=150)
+    phone_number = models.CharField(max_length=150, null=True, blank=True)
     packages = models.ManyToManyField(ConcertDonorClubPackage, blank=True,
                                       help_text=_('Concert Donor Club packages that this member has purchased. Hold command'))
     active = models.BooleanField(default=True)
@@ -622,6 +622,7 @@ class Ticket(models.Model):
     concert = models.ForeignKey(Concert, on_delete=models.CASCADE)
     package = models.ForeignKey(ConcertDonorClubPackage, on_delete=models.SET_NULL, null=True, blank=True)
     order_id = models.PositiveBigIntegerField()
+    etix_id = models.PositiveBigIntegerField(null=True, blank=True, unique=True)
     barcode = models.PositiveBigIntegerField(unique=True)
     barcode_image = models.ImageField(upload_to='tickets', blank=True, null=True)
 
@@ -630,14 +631,6 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f'{self.barcode} ({self.concert})'
-
-    def save(self, **kwargs):
-        logger.debug(f'Saving ticket {self}')
-        if self.barcode and not self.barcode_image:
-            self.barcode_image.save(f'{self.barcode}.svg',
-                                    ContentFile(bytes(code128.svg(self.barcode), encoding='utf-8')), save=False)
-
-        super().save(**kwargs)
 
 
 class OAuth2Token(models.Model):
