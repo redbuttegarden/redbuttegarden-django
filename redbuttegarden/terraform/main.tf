@@ -83,6 +83,9 @@ resource "aws_db_instance" "main" {
   db_subnet_group_name = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.main.id]
   skip_final_snapshot  = true
+  enabled_cloudwatch_logs_exports = ["postgresql"]
+  monitoring_interval             = 60
+  performance_insights_enabled    = false
 }
 
 resource "aws_s3_bucket" "code_bucket" {
@@ -232,3 +235,9 @@ resource "aws_iam_role" "zappa_execution" {
     ]
   })
 }
+
+resource "aws_iam_role_policy_attachment" "zappa_logs" {
+  role       = aws_iam_role.zappa_execution.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
