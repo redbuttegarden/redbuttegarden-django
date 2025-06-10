@@ -1,5 +1,6 @@
 provider "aws" {
-  region = var.region
+  region = "us-east-1"
+  alias = "us_east_1"
 }
 
 data "aws_route53_zone" "main" {

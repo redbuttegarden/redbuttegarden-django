@@ -1,11 +1,5 @@
-
-variable "region" {
-  description = "AWS region"
-  type        = string
-}
-
 variable "environment" {
-  description = "Environment name (dev, staging, prod)"
+  description = "Environment name (dev, staging)"
   type        = string
 }
 
