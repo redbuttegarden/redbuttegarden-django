@@ -92,10 +92,12 @@ resource "aws_db_instance" "main" {
 
 resource "aws_s3_bucket" "code_bucket" {
   bucket = "rbg-code-${var.environment}"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket" "static_bucket" {
   bucket = "rbg-static-${var.environment}"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_ownership_controls" "private_code_bucket" {
