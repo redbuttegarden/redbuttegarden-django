@@ -60,10 +60,10 @@ resource "aws_acm_certificate" "env_cert" {
 }
 
 resource "aws_route53_record" "env_cert_validation" {
-  name    = aws_acm_certificate.env_cert.domain_validation_options[0].resource_record_name
-  type    = aws_acm_certificate.env_cert.domain_validation_options[0].resource_record_type
+  name    = tolist(aws_acm_certificate.env_cert.domain_validation_options)[0].resource_record_name
+  type    = tolist(aws_acm_certificate.env_cert.domain_validation_options)[0].resource_record_type
   zone_id = data.aws_route53_zone.main.zone_id
-  records = [aws_acm_certificate.env_cert.domain_validation_options[0].resource_record_value]
+  records = [tolist(aws_acm_certificate.env_cert.domain_validation_options)[0].resource_record_value]
   ttl     = 60
 }
 
@@ -78,7 +78,7 @@ resource "aws_db_instance" "main" {
   engine               = "postgres"
   engine_version       = "16.8"
   instance_class       = "db.t4g.micro"
-  name                 = "${var.environment}_db"
+  db_name                 = "${var.environment}_db"
   username             = var.db_username
   password             = var.db_password
   db_subnet_group_name = aws_db_subnet_group.main.name
