@@ -54,7 +54,7 @@ resource "aws_acm_certificate" "env_cert" {
 
   tags = {
     Environment = var.environment
-    Project     = var.project_name
+    Project     = "redbuttegarden"
   }
 }
 
@@ -86,11 +86,11 @@ resource "aws_db_instance" "main" {
 }
 
 resource "aws_s3_bucket" "code_bucket" {
-  bucket = "${var.project_name}-code-${var.environment}"
+  bucket = "rbg-code-${var.environment}"
 }
 
 resource "aws_s3_bucket" "static_bucket" {
-  bucket = "${var.project_name}-static-${var.environment}"
+  bucket = "rbg-static-${var.environment}"
 }
 
 resource "aws_s3_bucket_ownership_controls" "private_code_bucket" {
@@ -200,7 +200,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   tags = {
     Environment = var.environment
-    Project     = var.project_name
+    Project     = "redbuttegarden"
   }
   enabled = true
 }
