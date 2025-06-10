@@ -14,7 +14,7 @@ services:
 
   db:
     container_name: rbg-db
-    image: "postgres:16.7"
+    image: "postgres:16.8"
     env_file:
       - redbuttegarden/.env.dev
     volumes:

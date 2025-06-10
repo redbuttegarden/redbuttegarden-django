@@ -75,7 +75,7 @@ resource "aws_acm_certificate_validation" "env_cert_validation" {
 resource "aws_db_instance" "main" {
   allocated_storage    = 20
   engine               = "postgres"
-  engine_version       = "16.7"
+  engine_version       = "16.8"
   instance_class       = "db.t4g.micro"
   name                 = "${var.environment}_db"
   username             = var.db_username
