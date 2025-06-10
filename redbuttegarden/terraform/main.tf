@@ -1,6 +1,7 @@
 provider "aws" {
   region = "us-east-1"
   alias = "us_east_1"
+  profile = "terraform"
 }
 
 data "aws_route53_zone" "main" {
