@@ -35,6 +35,7 @@ env/
 *.tfstate.backup
 .terraform/
 .terraform.lock*
+.terraform.tfstate*
 terraform_*.tfvars
 
 # Zappa
