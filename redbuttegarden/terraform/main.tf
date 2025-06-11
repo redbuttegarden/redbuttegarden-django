@@ -1,6 +1,6 @@
 provider "aws" {
-  region = "us-east-1"
-  alias = "us_east_1"
+  region  = "us-east-1"
+  alias   = "us_east_1"
   profile = "terraform"
 }
 
@@ -24,6 +24,7 @@ resource "aws_subnet" "private" {
   count = length(var.private_subnet_cidrs)
   vpc_id = aws_vpc.main.id
   cidr_block = element(var.private_subnet_cidrs, count.index)
+  availability_zone = element(var.private_subnet_azs, count.index)
 }
 
 resource "aws_security_group" "main" {
@@ -74,34 +75,60 @@ resource "aws_acm_certificate_validation" "env_cert_validation" {
   validation_record_fqdns = [aws_route53_record.env_cert_validation.fqdn]
 }
 
+resource "aws_iam_role" "rds_monitoring" {
+  name = "${var.environment}-rds-monitoring-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "monitoring.rds.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "rds_monitoring_policy" {
+  role       = aws_iam_role.rds_monitoring.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+}
+
+
 resource "aws_db_instance" "main" {
-  allocated_storage    = 20
-  engine               = "postgres"
-  engine_version       = "16.8"
-  instance_class       = "db.t4g.micro"
-  db_name                 = "${var.environment}_db"
-  username             = var.db_username
-  password             = var.db_password
-  db_subnet_group_name = aws_db_subnet_group.main.name
+  allocated_storage            = 20
+  engine                       = "postgres"
+  engine_version               = "16.8"
+  instance_class               = "db.t4g.micro"
+  db_name                      = "${var.environment}_db"
+  username                     = var.db_username
+  password                     = var.db_password
+  db_subnet_group_name         = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.main.id]
-  skip_final_snapshot  = true
+  skip_final_snapshot          = true
   enabled_cloudwatch_logs_exports = ["postgresql"]
-  monitoring_interval             = 60
-  performance_insights_enabled    = false
+  monitoring_interval          = 60
+  performance_insights_enabled = false
+  monitoring_role_arn          = aws_iam_role.rds_monitoring.arn
 }
 
 resource "aws_s3_bucket" "code_bucket" {
-  bucket = "rbg-code-${var.environment}"
+  bucket        = "rbg-code-${var.environment}"
   force_destroy = true
 }
 
 resource "aws_s3_bucket" "static_bucket" {
-  bucket = "rbg-static-${var.environment}"
+  bucket        = "rbg-static-${var.environment}"
   force_destroy = true
 }
 
 resource "aws_s3_bucket_ownership_controls" "private_code_bucket" {
   bucket = aws_s3_bucket.code_bucket.id
+
+  depends_on = [aws_s3_bucket.code_bucket]
   rule {
     object_ownership = "BucketOwnerPreferred"
   }
@@ -109,6 +136,8 @@ resource "aws_s3_bucket_ownership_controls" "private_code_bucket" {
 
 resource "aws_s3_bucket_ownership_controls" "private_static_bucket" {
   bucket = aws_s3_bucket.static_bucket.id
+
+  depends_on = [aws_s3_bucket.static_bucket]
   rule {
     object_ownership = "BucketOwnerPreferred"
   }
@@ -245,3 +274,7 @@ resource "aws_iam_role_policy_attachment" "zappa_logs" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+resource "aws_cloudwatch_log_group" "rds_postgres_logs" {
+  name              = "/aws/rds/instance/${aws_db_instance.main.id}/postgresql"
+  retention_in_days = 14
+}

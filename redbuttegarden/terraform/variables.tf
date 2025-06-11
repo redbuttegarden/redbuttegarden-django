@@ -27,3 +27,8 @@ variable "db_password" {
   description = "Password for the RDS instance"
   type        = string
 }
+
+variable "private_subnet_azs" {
+  type    = list(string)
+  default = ["us-east-1a", "us-east-1c"]
+}
