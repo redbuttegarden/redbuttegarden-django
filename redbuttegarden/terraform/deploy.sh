@@ -7,7 +7,7 @@ ACTION=$2
 if [ "$ACTION" == "up" ]; then
   terraform init
   AWS_PROFILE=terraform terraform apply -var-file=terraform_${ENV}.tfvars -auto-approve
-  python update_zappa_vpc.py $ENV
+  python3 update_zappa_vpc.py $ENV
 elif [ "$ACTION" == "down" ]; then
   AWS_PROFILE=terraform terraform destroy -var-file=terraform_${ENV}.tfvars -auto-approve
 else
