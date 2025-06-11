@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 
 
 def update_zappa_settings(env):
@@ -9,8 +10,8 @@ def update_zappa_settings(env):
 
     # Get the Terraform outputs for the specified environment
     terraform_output = subprocess.check_output([
-        'terraform', 'output', '-json', f'-var-file=terraform_{env}.tfvars'
-    ])
+        'terraform', 'output', '-json',
+    ], env={"AWS_PROFILE": "terraform"}, text=True)
     terraform_output = json.loads(terraform_output)
 
     # Update the corresponding section in zappa_settings.json
@@ -21,7 +22,11 @@ def update_zappa_settings(env):
     with open('../zappa_settings.json', 'w') as f:
         json.dump(zappa_settings, f, indent=4)
 
-# Example usage:
-# update_zappa_settings('dev')
-# update_zappa_settings('staging')
-# update_zappa_settings('prod')
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python myscript.py <environment>")
+        sys.exit(1)
+
+    environment = sys.argv[1]
+    update_zappa_settings(environment)
