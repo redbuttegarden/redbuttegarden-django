@@ -158,10 +158,19 @@ resource "aws_s3_bucket_acl" "private_static_bucket" {
 }
 
 resource "aws_cloudfront_distribution" "cdn" {
+  aliases = ["${var.environment}.redbuttegarden.org"]
+
   origin {
-    domain_name = "${aws_s3_bucket.code_bucket.bucket}.s3.amazonaws.com"
+    domain_name = var.lambda_endpoint_url
     origin_id   = "code-bucket-origin"
     origin_path = "/${var.environment}"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols = ["TLSv1.2"]
+    }
   }
 
   origin {

@@ -32,3 +32,8 @@ variable "private_subnet_azs" {
   type    = list(string)
   default = ["us-east-1a", "us-east-1c"]
 }
+
+variable "lambda_endpoint_url" {
+  description = "URL of the Lambda function endpoint"
+  type        = string
+}
