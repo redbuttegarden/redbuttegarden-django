@@ -17,6 +17,11 @@ def update_zappa_settings(env):
     # Update the corresponding section in zappa_settings.json
     zappa_settings[env]['vpc_config']['SubnetIds'] = terraform_output['public_subnet_ids']['value']
     zappa_settings[env]['vpc_config']['SecurityGroupIds'] = [terraform_output['security_group_id']['value']]
+    zappa_settings[env]['environment_variables']['DB_HOST'] = terraform_output['db_instance_endpoint']['value']
+    zappa_settings[env]['environment_variables']['CLOUDFRONT_DISTRIBUTION_ID'] = \
+        terraform_output['cloudfront_distribution_id']['value']
+    zappa_settings[env]['environment_variables']['CLOUDFRONT_DOMAIN_NAME'] = \
+        terraform_output['cloudfront_domain_name']['value']
 
     # Save the updated zappa_settings.json file
     with open('../zappa_settings.json', 'w') as f:
@@ -25,7 +30,7 @@ def update_zappa_settings(env):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python myscript.py <environment>")
+        print("Usage: python update_zappa_vpc.py <environment>")
         sys.exit(1)
 
     environment = sys.argv[1]

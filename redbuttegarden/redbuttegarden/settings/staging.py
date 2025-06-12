@@ -1,14 +1,14 @@
 """
 For staging in AWS environment
 """
+import os
 
 from .production import *
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ['0.0.0.0',
-                 'davlmcslie.execute-api.us-east-1.amazonaws.com',  # Newer AWS Account
-                 'redbuttegarden.org', 'www.redbuttegarden.org', 'train.redbuttegarden.org',
-                 'dev-shop.redbuttegarden.org', 'staging.redbuttegarden.org',]
+ALLOWED_HOSTS = ['tpygqpw7zi.execute-api.us-east-1.amazonaws.com',
+                 os.environ.get('CLOUDFRONT_DOMAIN_NAME'),
+                 'staging.redbuttegarden.org',]
 
 BASE_URL = 'https://staging.redbuttegarden.org'
 
@@ -21,7 +21,7 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('STATIC_SECRET_ACCESS_KEY')
 WAGTAILFRONTENDCACHE = {
     'mainsite': {
         'BACKEND': 'home.custom_cache_backend.CustomCloudfrontBackend',
-        'DISTRIBUTION_ID': '',
+        'DISTRIBUTION_ID': os.environ.get('CLOUDFRONT_DISTRIBUTION_ID', ''),
         'HOSTNAMES': ['staging.redbuttegarden.org']
     },
 }
