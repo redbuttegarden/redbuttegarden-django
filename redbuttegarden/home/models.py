@@ -688,8 +688,6 @@ class RBGHours(models.Model):
     """
 
     name = models.CharField(max_length=200, help_text=_("Create a name for this set of hours"))
-    garden_closed = models.BooleanField(default=False,
-                                        help_text=_("Check this box if the garden is closed for the day"))
     garden_open = models.TimeField(null=True, blank=True, help_text=_("The time the garden opens"))
     garden_close = models.TimeField(null=True, blank=True, help_text=_("The time the garden closes"))
     additional_message = RichTextField(null=True, blank=True,
@@ -711,7 +709,6 @@ class RBGHours(models.Model):
     panels = [
         FieldPanel('name'),
         MultiFieldPanel([
-            FieldPanel('garden_closed'),
             FieldPanel('garden_open'),
             FieldPanel('garden_close'),
         ], heading="Hours", classname="collapsible"),
@@ -729,7 +726,7 @@ class RBGHours(models.Model):
 
     class Meta:
         verbose_name_plural = "RBG Hours"
-        ordering = ['last_modified']
+        ordering = ['-last_modified']
 
     def __str__(self):
         return self.name
