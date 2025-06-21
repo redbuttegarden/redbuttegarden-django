@@ -19,11 +19,6 @@ class Migration(migrations.Migration):
             name='hours',
         ),
         migrations.AddField(
-            model_name='homepage',
-            name='hours_section_text',
-            field=wagtail.fields.RichTextField(blank=True, help_text='This text is displayed within the hours section, just beneath the hours', null=True),
-        ),
-        migrations.AddField(
             model_name='rbghours',
             name='days_of_week',
             field=home.custom_fields.ChoiceArrayField(base_field=models.IntegerField(choices=[(0, 'Sunday'), (1, 'Monday'), (2, 'Tuesday'), (3, 'Wednesday'), (4, 'Thursday'), (5, 'Friday'), (6, 'Saturday')]), blank=True, help_text='Select the days of the week this set of hours applies to', null=True, size=None),

@@ -649,54 +649,69 @@ class RBGHoursOrderable(Orderable):
     )
 
 
+DAYS_OF_WEEK = (
+    (0, "Sunday"),
+    (1, "Monday"),
+    (2, "Tuesday"),
+    (3, "Wednesday"),
+    (4, "Thursday"),
+    (5, "Friday"),
+    (6, "Saturday"),
+)
+MONTHS_OF_YEAR = (
+    (0, "January"),
+    (1, "February"),
+    (2, "March"),
+    (3, "April"),
+    (4, "May"),
+    (5, "June"),
+    (6, "July"),
+    (7, "August"),
+    (8, "September"),
+    (9, "October"),
+    (10, "November"),
+    (11, "December"),
+)
+
+
+def default_days_of_week():
+    return [choice[0] for choice in DAYS_OF_WEEK]
+
+
+def default_months_of_year():
+    return [choice[0] for choice in MONTHS_OF_YEAR]
+
+
 class RBGHours(models.Model):
     """
-    Model for defining the hours that are displayed by hours.js on the HomePage.
+    Model for defining the hours that are processed and displayed by hours.js on the HomePage.
     """
+
     name = models.CharField(max_length=200, help_text=_("Create a name for this set of hours"))
+    garden_closed = models.BooleanField(default=False,
+                                        help_text=_("Check this box if the garden is closed for the day"))
     garden_open = models.TimeField(null=True, blank=True, help_text=_("The time the garden opens"))
     garden_close = models.TimeField(null=True, blank=True, help_text=_("The time the garden closes"))
-    additional_message = models.CharField(max_length=200, null=True, blank=True,
-                                          help_text=_("Message under the hours; e.g. 'Last entry at 3:30 PM'"))
-    additional_emphatic_mesg = models.CharField(max_length=200, null=True, blank=True,
-                                                help_text=_("Message under hours in RED text"))
+    additional_message = RichTextField(null=True, blank=True,
+                                       help_text=_("Message under the hours; e.g. 'Last entry at 3:30 PM'"))
+    additional_emphatic_mesg = RichTextField(null=True, blank=True,
+                                             help_text=_("Message under hours in RED text"))
     garden_open_message = models.CharField(max_length=200, null=True, blank=True, default=_("The Garden is open"))
     garden_closed_message = models.CharField(max_length=200, null=True, blank=True,
                                              default=_("The Garden is closed now"))
-
-    DAYS_OF_WEEK = (
-        (0, "Sunday"),
-        (1, "Monday"),
-        (2, "Tuesday"),
-        (3, "Wednesday"),
-        (4, "Thursday"),
-        (5, "Friday"),
-        (6, "Saturday"),
-    )
-    MONTHS_OF_YEAR = (
-        (0, "January"),
-        (1, "February"),
-        (2, "March"),
-        (3, "April"),
-        (4, "May"),
-        (5, "June"),
-        (6, "July"),
-        (7, "August"),
-        (8, "September"),
-        (9, "October"),
-        (10, "November"),
-        (11, "December"),
-    )
     days_of_week = ChoiceArrayField(models.IntegerField(choices=DAYS_OF_WEEK), blank=True, null=True,
-                              help_text=_("Select the days of the week this set of hours applies to"))
+                                    default=default_days_of_week,
+                                    help_text=_("Select the days of the week this set of hours applies to"))
     months_of_year = ChoiceArrayField(models.IntegerField(choices=MONTHS_OF_YEAR), blank=True, null=True,
-                                help_text=_("Select the months of the year this set of hours applies to"))
+                                      default=default_months_of_year,
+                                      help_text=_("Select the months of the year this set of hours applies to"))
 
     last_modified = models.DateTimeField(auto_now=True)
 
     panels = [
         FieldPanel('name'),
         MultiFieldPanel([
+            FieldPanel('garden_closed'),
             FieldPanel('garden_open'),
             FieldPanel('garden_close'),
         ], heading="Hours", classname="collapsible"),
@@ -714,7 +729,7 @@ class RBGHours(models.Model):
 
     class Meta:
         verbose_name_plural = "RBG Hours"
-        ordering = ['-last_modified']
+        ordering = ['last_modified']
 
     def __str__(self):
         return self.name

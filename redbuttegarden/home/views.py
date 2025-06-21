@@ -43,6 +43,7 @@ def get_hours(request, page_id: int):
             for idx, rbg_hours_orderable in enumerate(hours_orderables.all()):
                 json_response[idx] = {
                     'name': rbg_hours_orderable.hours.name,
+                    'garden_closed': rbg_hours_orderable.hours.garden_closed,
                     'garden_open': rbg_hours_orderable.hours.garden_open.strftime('%-H:%M'),
                     'garden_close': rbg_hours_orderable.hours.garden_close.strftime('%-H:%M'),
                     'open_message': rbg_hours_orderable.hours.garden_open_message,
