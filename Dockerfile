@@ -6,4 +6,6 @@ LABEL maintainer="avery.uslaner@redbutte.utah.edu"
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_ENV=production
 
+COPY . /var/task
+
 RUN dnf install -y gcc postgresql-devel
