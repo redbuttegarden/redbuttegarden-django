@@ -2,6 +2,7 @@
 **/.classpath
 **/.dockerignore
 **/.env
+**/.env.*
 **/.git
 **/.gitignore
 **/.project
@@ -12,7 +13,6 @@
 **/*.*proj.user
 **/*.dbmdl
 **/*.jfm
-**/bin
 **/charts
 **/docker-compose*
 **/compose*
@@ -23,10 +23,7 @@
 **/secrets.dev.yaml
 **/values.dev.yaml
 **/.coverage
-ve/
-ve3.8/
-ve3.9/
-ve3.12/
+nginx/
 README.md
 
 # Python cache and virtual environments
