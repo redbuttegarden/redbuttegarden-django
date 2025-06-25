@@ -8,6 +8,11 @@ variable "vpc_cidr" {
   type        = string
 }
 
+variable "local_vpn_cidr" {
+  description = "CIDR block for the local VPN"
+  type        = string
+}
+
 variable "public_subnet_cidrs" {
   description = "CIDR blocks for public subnets"
   type        = list(string)
@@ -28,9 +33,14 @@ variable "db_password" {
   type        = string
 }
 
+variable "public_subnet_azs" {
+  type    = list(string)
+  default = ["us-east-1a", "us-east-1b"]
+}
+
 variable "private_subnet_azs" {
   type    = list(string)
-  default = ["us-east-1a", "us-east-1c"]
+  default = ["us-east-1a", "us-east-1b"]
 }
 
 variable "lambda_endpoint_url" {

@@ -6,9 +6,7 @@ import os
 from .production import *
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ['tpygqpw7zi.execute-api.us-east-1.amazonaws.com',
-                 os.environ.get('CLOUDFRONT_DOMAIN_NAME'),
-                 'staging.redbuttegarden.org',]
+ALLOWED_HOSTS = ['staging.redbuttegarden.org']
 
 BASE_URL = 'https://staging.redbuttegarden.org'
 

@@ -15,9 +15,10 @@ def update_zappa_settings(env):
     terraform_output = json.loads(terraform_output)
 
     # Update the corresponding section in zappa_settings.json
-    zappa_settings[env]['vpc_config']['SubnetIds'] = terraform_output['public_subnet_ids']['value']
+    zappa_settings[env]['vpc_config']['SubnetIds'] = terraform_output['private_subnet_ids']['value']
     zappa_settings[env]['vpc_config']['SecurityGroupIds'] = [terraform_output['security_group_id']['value']]
-    zappa_settings[env]['environment_variables']['DB_HOST'] = terraform_output['db_instance_endpoint']['value']
+    zappa_settings[env]['environment_variables']['DB_HOST'] = \
+        terraform_output['db_instance_endpoint']['value'].split(':')[0]
     zappa_settings[env]['environment_variables']['CLOUDFRONT_DISTRIBUTION_ID'] = \
         terraform_output['cloudfront_distribution_id']['value']
     zappa_settings[env]['environment_variables']['CLOUDFRONT_DOMAIN_NAME'] = \

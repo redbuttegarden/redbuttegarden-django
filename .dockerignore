@@ -38,7 +38,7 @@ env/
 *.tfstate
 *.tfstate.backup
 .terraform/
-terraform_*.tfvars
+redbuttegarden/terraform
 
 # Zappa deployment artifacts
 .zappa/

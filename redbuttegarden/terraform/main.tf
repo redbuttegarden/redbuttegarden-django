@@ -11,6 +11,10 @@ data "aws_route53_zone" "main" {
 
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
+
+  tags = {
+    Name = "rbg-web-${var.environment}-vpc"
+  }
 }
 
 resource "aws_subnet" "public" {
@@ -18,6 +22,11 @@ resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
   cidr_block = element(var.public_subnet_cidrs, count.index)
   map_public_ip_on_launch = true
+  availability_zone = element(var.public_subnet_azs, count.index)
+
+  tags = {
+    Name = "rbg-web-${var.environment}-public-subnet-${count.index + 1}"
+  }
 }
 
 resource "aws_subnet" "private" {
@@ -25,6 +34,10 @@ resource "aws_subnet" "private" {
   vpc_id = aws_vpc.main.id
   cidr_block = element(var.private_subnet_cidrs, count.index)
   availability_zone = element(var.private_subnet_azs, count.index)
+
+  tags = {
+    Name = "rbg-web-${var.environment}-private-subnet-${count.index + 1}"
+  }
 }
 
 resource "aws_security_group" "main" {
@@ -34,7 +47,15 @@ resource "aws_security_group" "main" {
     from_port = 5432
     to_port   = 5432
     protocol  = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.local_vpn_cidr]
+  }
+
+  # Allow all traffic from within the same security group
+  ingress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+    self      = true
   }
 
   egress {
@@ -56,6 +77,7 @@ resource "aws_acm_certificate" "env_cert" {
   validation_method = "DNS"
 
   tags = {
+    Project     = "rbg-web-${var.environment}",
     Environment = var.environment
     Project     = "redbuttegarden"
   }
@@ -96,7 +118,6 @@ resource "aws_iam_role_policy_attachment" "rds_monitoring_policy" {
   role       = aws_iam_role.rds_monitoring.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
-
 
 resource "aws_db_instance" "main" {
   allocated_storage            = 20
@@ -171,6 +192,11 @@ resource "aws_cloudfront_distribution" "cdn" {
       origin_protocol_policy = "https-only"
       origin_ssl_protocols = ["TLSv1.2"]
     }
+
+    custom_header {
+      name  = "X-Forwarded-Host"
+      value = "${var.environment}.redbuttegarden.org"
+    }
   }
 
   origin {
@@ -181,51 +207,27 @@ resource "aws_cloudfront_distribution" "cdn" {
   default_cache_behavior {
     target_origin_id       = "code-bucket-origin"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods = ["GET", "HEAD"]
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
-      }
-    }
-    min_ttl     = 0
-    default_ttl = 3600
-    max_ttl     = 86400
+    cache_policy_id = "53a64cc9-dc83-47e0-80e1-68fcd20d45f9" # Custom Zappa-Django-Cache Policy
   }
 
   ordered_cache_behavior {
     path_pattern           = "/static/*"
     target_origin_id       = "static-bucket-origin"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods = ["GET", "HEAD"]
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
-      }
-    }
-    min_ttl     = 0
-    default_ttl = 3600
-    max_ttl     = 86400
+    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" # S3-Static-Content-Cache Policy
   }
 
   ordered_cache_behavior {
     path_pattern           = "/media/*"
     target_origin_id       = "static-bucket-origin"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods = ["GET", "HEAD"]
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
-      }
-    }
-    min_ttl     = 0
-    default_ttl = 3600
-    max_ttl     = 86400
+    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" # S3-Static-Content-Cache Policy
   }
 
   restrictions {
@@ -242,10 +244,8 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   depends_on = [aws_acm_certificate_validation.env_cert_validation]
 
-
   tags = {
-    Environment = var.environment
-    Project     = "redbuttegarden"
+    Name = "rbg-web-${var.environment}",
   }
   enabled = true
 }
@@ -284,6 +284,60 @@ resource "aws_iam_role_policy_attachment" "zappa_logs" {
 }
 
 resource "aws_cloudwatch_log_group" "rds_postgres_logs" {
-  name              = "/aws/rds/instance/${aws_db_instance.main.id}/postgresql"
+  name              = "/aws/rds/instance/${aws_db_instance.main.id}/postgresql/rbg-web-${var.environment}"
   retention_in_days = 14
+}
+
+# Additions for NAT Gateway, Internet Gateway, and Route Tables
+
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_eip" "nat" {
+  depends_on = [aws_internet_gateway.main]
+}
+
+resource "aws_nat_gateway" "main" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public[0].id
+  depends_on = [aws_internet_gateway.main]
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+
+  tags = {
+    Name = "rbg-web-${var.environment}-public-route-table"
+  }
+}
+
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.main.id
+  }
+
+  tags = {
+    Name = "rbg-web-${var.environment}-private-route-table"
+  }
+}
+
+resource "aws_route_table_association" "public" {
+  count = length(aws_subnet.public)
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route_table_association" "private" {
+  count = length(aws_subnet.private)
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private.id
 }
