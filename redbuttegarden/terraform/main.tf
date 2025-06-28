@@ -120,13 +120,11 @@ resource "aws_iam_role_policy_attachment" "rds_monitoring_policy" {
 }
 
 resource "aws_db_instance" "main" {
+  identifier_prefix            = "rbg-web-${var.environment}-db-"
   allocated_storage            = 20
   engine                       = "postgres"
   engine_version               = "16.8"
-  instance_class               = "db.t4g.micro"
-  db_name                      = "${var.environment}_db"
-  username                     = var.db_username
-  password                     = var.db_password
+  instance_class               = "db.t3.micro"
   db_subnet_group_name         = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.main.id]
   skip_final_snapshot          = true
@@ -134,6 +132,11 @@ resource "aws_db_instance" "main" {
   monitoring_interval          = 60
   performance_insights_enabled = false
   monitoring_role_arn          = aws_iam_role.rds_monitoring.arn
+  snapshot_identifier          = var.rds_snapshot_id
+  storage_encrypted            = true
+  lifecycle {
+    ignore_changes = ["snapshot_identifier"]
+  }
 }
 
 resource "aws_s3_bucket" "code_bucket" {
@@ -200,8 +203,9 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   origin {
-    domain_name = "${aws_s3_bucket.static_bucket.bucket}.s3.amazonaws.com"
-    origin_id   = "static-bucket-origin"
+    domain_name              = "${aws_s3_bucket.static_bucket.bucket}.s3.amazonaws.com"
+    origin_id                = "static-bucket-origin"
+    origin_access_control_id = var.cloudfront_origin_access_id
   }
 
   default_cache_behavior {
@@ -209,7 +213,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods = ["GET", "HEAD"]
-    cache_policy_id = "53a64cc9-dc83-47e0-80e1-68fcd20d45f9" # Custom Zappa-Django-Cache Policy
+    cache_policy_id        = "53a64cc9-dc83-47e0-80e1-68fcd20d45f9" # Custom Zappa-Django-Cache Policy
   }
 
   ordered_cache_behavior {
@@ -218,7 +222,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods = ["GET", "HEAD"]
-    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" # S3-Static-Content-Cache Policy
+    cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6" # S3-Static-Content-Cache Policy
   }
 
   ordered_cache_behavior {
@@ -227,7 +231,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods = ["GET", "HEAD"]
-    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" # S3-Static-Content-Cache Policy
+    cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6" # S3-Static-Content-Cache Policy
   }
 
   restrictions {

@@ -23,6 +23,8 @@ def update_zappa_settings(env):
         terraform_output['cloudfront_distribution_id']['value']
     zappa_settings[env]['environment_variables']['CLOUDFRONT_DOMAIN_NAME'] = \
         terraform_output['cloudfront_domain_name']['value']
+    zappa_settings[env]['environment_variables']['LAMBDA_ENDPOINT_URL'] = \
+        terraform_output['lambda_endpoint_url']['value']
 
     # Save the updated zappa_settings.json file
     with open('../zappa_settings.json', 'w') as f:

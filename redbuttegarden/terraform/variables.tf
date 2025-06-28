@@ -15,12 +15,12 @@ variable "local_vpn_cidr" {
 
 variable "public_subnet_cidrs" {
   description = "CIDR blocks for public subnets"
-  type        = list(string)
+  type = list(string)
 }
 
 variable "private_subnet_cidrs" {
   description = "CIDR blocks for private subnets"
-  type        = list(string)
+  type = list(string)
 }
 
 variable "db_username" {
@@ -34,16 +34,26 @@ variable "db_password" {
 }
 
 variable "public_subnet_azs" {
-  type    = list(string)
+  type = list(string)
   default = ["us-east-1a", "us-east-1b"]
 }
 
 variable "private_subnet_azs" {
-  type    = list(string)
+  type = list(string)
   default = ["us-east-1a", "us-east-1b"]
 }
 
 variable "lambda_endpoint_url" {
   description = "URL of the Lambda function endpoint"
+  type        = string
+}
+
+variable "rds_snapshot_id" {
+  description = "Snapshot ID for the RDS instance"
+  type        = string
+}
+
+variable "cloudfront_origin_access_id" {
+  description = "Cloudfront origin access identity ID"
   type        = string
 }

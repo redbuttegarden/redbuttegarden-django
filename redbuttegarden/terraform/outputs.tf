@@ -37,3 +37,7 @@ output "static_bucket_name" {
 output "iam_role_arn" {
   value = aws_iam_role.zappa_execution.arn
 }
+
+output "lambda_endpoint_url" {
+  value = var.lambda_endpoint_url
+}
