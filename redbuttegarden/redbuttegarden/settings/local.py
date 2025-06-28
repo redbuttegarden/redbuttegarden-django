@@ -8,7 +8,7 @@ MIDDLEWARE.insert(8, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 ALLOWED_HOSTS += ['train.localhost', 'localhost', 'testserver', '127.0.0.1', 'rbg-it-web-dev.redbutte.utah.edu']
 
-BASE_URL = 'http://rbg-it-web-dev.redbutte.utah.edu:8000'
+BASE_URL = 'https://rbg-it-web-dev.redbutte.utah.edu'
 
 # Use local static file storage when running locally
 AWS_STORAGE_BUCKET_NAME = ''
@@ -26,6 +26,8 @@ AWS_SECRET_ACCESS_KEY = 'BAR'
 
 # Disable cloudfront invalidations when running locally
 WAGTAILFRONTENDCACHE = {}
+
+DISABLE_SERVER_SIDE_CURSORS = True
 
 # Django Toolbar settings
 # We just always show the toolbar to make it easier for our docker environment
