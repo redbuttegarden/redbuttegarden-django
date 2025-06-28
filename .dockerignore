@@ -33,6 +33,7 @@ __pycache__/
 *.pyd
 .venv/
 env/
+ve3.12/
 
 # Terraform state and config
 *.tfstate
