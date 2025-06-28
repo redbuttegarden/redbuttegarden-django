@@ -135,7 +135,7 @@ resource "aws_db_instance" "main" {
   snapshot_identifier          = var.rds_snapshot_id
   storage_encrypted            = true
   lifecycle {
-    ignore_changes = ["snapshot_identifier"]
+    ignore_changes = [snapshot_identifier]
   }
 }
 
