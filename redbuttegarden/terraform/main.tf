@@ -254,6 +254,34 @@ resource "aws_cloudfront_distribution" "cdn" {
   enabled = true
 }
 
+resource "aws_s3_bucket_policy" "cloudfront_access" {
+  bucket = aws_s3_bucket.static_bucket.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid       = "AllowCloudFrontServicePrincipalReadWrite",
+        Effect    = "Allow",
+        Principal = {
+          Service = "cloudfront.amazonaws.com"
+        },
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ],
+        Resource = "arn:aws:s3:::rbg-static-${var.environment}/*",
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = aws_cloudfront_distribution.cdn.arn
+          }
+        }
+      }
+    ]
+  })
+}
+
 resource "aws_route53_record" "env_alias" {
   zone_id = data.aws_route53_zone.main.zone_id
   name    = "${var.environment}.redbuttegarden.org"
