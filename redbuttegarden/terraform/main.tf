@@ -149,6 +149,18 @@ resource "aws_s3_bucket" "static_bucket" {
   force_destroy = true
 }
 
+resource "null_resource" "copy_s3_objects" {
+  provisioner "local-exec" {
+    command = "aws s3 sync s3://rbg-web-static s3://${aws_s3_bucket.static_bucket.bucket} --exclude \"*/VR-Tours/*\""
+  }
+
+  triggers = {
+    bucket_name = aws_s3_bucket.static_bucket.bucket
+  }
+
+  depends_on = [aws_s3_bucket.static_bucket]
+}
+
 resource "aws_s3_bucket_ownership_controls" "private_code_bucket" {
   bucket = aws_s3_bucket.code_bucket.id
 
@@ -261,8 +273,8 @@ resource "aws_s3_bucket_policy" "cloudfront_access" {
     Version = "2012-10-17",
     Statement = [
       {
-        Sid       = "AllowCloudFrontServicePrincipalReadWrite",
-        Effect    = "Allow",
+        Sid    = "AllowCloudFrontServicePrincipalReadWrite",
+        Effect = "Allow",
         Principal = {
           Service = "cloudfront.amazonaws.com"
         },
