@@ -141,7 +141,7 @@
             concertInfo[i]["Date"] = new Date(concertInfo[i]["Date"]);
         }
     </script>
-    {{ hours|json_script:"hours-data" }}
+    {{ self.id|json_script:"pageID" }}
     <script src="{% static 'home/js/hours.js' %}"></script>
     <script src="{% static 'home/js/weather.js' %}"></script>
     <script src="{% static 'home/js/follow_us_scroll.js' %}"></script>

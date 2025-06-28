@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel, PageChooserPanel, TabbedInterface, \
-    ObjectList, PublishingPanel
+    ObjectList, PublishingPanel, MultipleChooserPanel
 from wagtail.blocks.struct_block import StructBlockAdapter
 from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.contrib.settings.registry import register_setting
@@ -24,10 +24,10 @@ from wagtail.images.models import Image
 from wagtail.models import Page, Orderable, DraftStateMixin, RevisionMixin, PreviewableMixin, TranslatableMixin, \
     Collection
 from wagtail.search import index
-from wagtail.snippets.models import register_snippet
 from wagtail.telepath import register
 
 from home.abstract_models import AbstractBase
+from home.custom_fields import ChoiceArrayField
 
 logger = logging.getLogger(__name__)
 
@@ -640,21 +640,69 @@ class FAQPage(AbstractBase):
         verbose_name = "FAQ Page"
 
 
-@register_snippet
+class RBGHoursOrderable(Orderable):
+    """This allows us to select one or more RBG Hours from Snippets."""
+    page = ParentalKey("home.HomePage", related_name="rbg_hours")
+    hours = models.ForeignKey(
+        "home.RBGHours",
+        on_delete=models.CASCADE,
+    )
+
+
+DAYS_OF_WEEK = (
+    (0, "Sunday"),
+    (1, "Monday"),
+    (2, "Tuesday"),
+    (3, "Wednesday"),
+    (4, "Thursday"),
+    (5, "Friday"),
+    (6, "Saturday"),
+)
+MONTHS_OF_YEAR = (
+    (0, "January"),
+    (1, "February"),
+    (2, "March"),
+    (3, "April"),
+    (4, "May"),
+    (5, "June"),
+    (6, "July"),
+    (7, "August"),
+    (8, "September"),
+    (9, "October"),
+    (10, "November"),
+    (11, "December"),
+)
+
+
+def default_days_of_week():
+    return [choice[0] for choice in DAYS_OF_WEEK]
+
+
+def default_months_of_year():
+    return [choice[0] for choice in MONTHS_OF_YEAR]
+
+
 class RBGHours(models.Model):
     """
-    Model for manually overriding the hours that are displayed by hours.js on the HomePage.
+    Model for defining the hours that are processed and displayed by hours.js on the HomePage.
     """
-    # Set a name for this hours object
+
     name = models.CharField(max_length=200, help_text=_("Create a name for this set of hours"))
     garden_open = models.TimeField(null=True, blank=True, help_text=_("The time the garden opens"))
     garden_close = models.TimeField(null=True, blank=True, help_text=_("The time the garden closes"))
-    additional_message = models.CharField(max_length=200, null=True, blank=True,
-                                          help_text=_("Message under the hours; e.g. 'Last entry at 3:30 PM'"))
-    additional_emphatic_mesg = models.CharField(max_length=200, null=True, blank=True,
-                                                help_text=_("Message under hours in RED text"))
+    additional_message = RichTextField(null=True, blank=True,
+                                       help_text=_("Message under the hours; e.g. 'Last entry at 3:30 PM'"))
+    additional_emphatic_mesg = RichTextField(null=True, blank=True,
+                                             help_text=_("Message under hours in RED text"))
     garden_open_message = models.CharField(max_length=200, null=True, blank=True, default=_("The Garden is open"))
-    garden_closed_message = models.CharField(max_length=200, null=True, blank=True, default=_("The Garden is closed now"))
+    garden_closed_message = models.CharField(max_length=200, null=True, blank=True,
+                                             default=_("The Garden is closed now"))
+    days_of_week = ChoiceArrayField(models.IntegerField(choices=DAYS_OF_WEEK), blank=True, null=True,
+                                    default=default_days_of_week,
+                                    help_text=_("Select the days of the week this set of hours applies to"))
+    months_of_year = ChoiceArrayField(models.IntegerField(choices=MONTHS_OF_YEAR), blank=True, null=True,
+                                      default=default_months_of_year,
+                                      help_text=_("Select the months of the year this set of hours applies to"))
 
     last_modified = models.DateTimeField(auto_now=True)
 
@@ -667,7 +715,13 @@ class RBGHours(models.Model):
         MultiFieldPanel([
             FieldPanel('additional_message'),
             FieldPanel('additional_emphatic_mesg'),
+            FieldPanel('garden_open_message'),
+            FieldPanel('garden_closed_message'),
         ], heading="Messaging", classname="collapsible collapsed"),
+        MultiFieldPanel([
+            FieldPanel('days_of_week'),
+            FieldPanel('months_of_year'),
+        ], heading="Active Times", classname="collapsible"),
     ]
 
     class Meta:
@@ -679,14 +733,8 @@ class RBGHours(models.Model):
 
 
 class HomePage(AbstractBase):
-    hours = models.ForeignKey(
-        'home.RBGHours',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
-    hours_section_text = RichTextField(null=True, blank=True, help_text=_('This text is dislayed within the hours section, just beneath the hours'))
+    hours_section_text = RichTextField(null=True, blank=True, help_text=_(
+        'This text is displayed within the hours section, just beneath the hours'))
     concert_page = models.ForeignKey(
         'concerts.ConcertPage',
         null=True,
@@ -697,7 +745,8 @@ class HomePage(AbstractBase):
     )
 
     content_panels = Page.content_panels + [
-        FieldPanel('hours', help_text=_("Choose the set of hours to display on the home page")),
+        MultipleChooserPanel('rbg_hours', label=_("RBG Hours"), chooser_field_name="hours",
+                             help_text=_("Choose the set of hours to display on the home page")),
         FieldPanel('hours_section_text'),
         InlinePanel('event_slides', label=_('Slideshow Images')),
         FieldPanel('concert_page', permission='superuser')  # Arbitrary permission name; only superusers can access this
@@ -713,18 +762,10 @@ class HomePage(AbstractBase):
                 concert in concerts for concert_date in concert['concert_dates']]
             context['concert_info'] = json.dumps(concert_info, default=str)
 
-        # Make hours info easier for JS to consume
-        if self.hours:
-            context['hours'] = {
-                'garden_open': self.hours.garden_open.strftime('%-H:%M'),
-                'garden_close': self.hours.garden_close.strftime('%-H:%M'),
-                'additional_message': self.hours.additional_message,
-                'additional_emphatic_mesg': self.hours.additional_emphatic_mesg,
-            }
-
         # Get upcoming events; avoid circular import
         EventPage = apps.get_model(app_label='events', model_name='EventPage')
-        events = EventPage.objects.live().public().filter(alias_of=None, order_date__gte=timezone.now()).order_by('order_date')[:3]  # Get next 3 events
+        events = EventPage.objects.live().public().filter(alias_of=None, order_date__gte=timezone.now()).order_by(
+            'order_date')[:3]  # Get next 3 events
         context['upcoming_events'] = events
 
         # Get social media images

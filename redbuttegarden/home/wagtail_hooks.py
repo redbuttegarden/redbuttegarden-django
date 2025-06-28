@@ -3,6 +3,9 @@ from django.http import HttpResponse
 from wagtail.admin.rich_text.converters.html_to_contentstate import InlineStyleElementHandler
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
+from wagtail.snippets.models import register_snippet
+
+from home.views import RBGHoursViewSet
 
 
 @hooks.register("register_rich_text_features")
@@ -44,4 +47,7 @@ def serve_pdf(document, request):
 @hooks.register('register_help_menu_item')
 def register_rbg_style_guide_menu_item():
     return MenuItem(name='rbg_style_guide', label='RBG Style Guide',
-                        url='https://uofu.box.com/s/gb5psi7cn82tm62a8ndmouv53y47nre1', icon_name='link')
+                    url='https://uofu.box.com/s/gb5psi7cn82tm62a8ndmouv53y47nre1', icon_name='link')
+
+
+register_snippet(RBGHoursViewSet)

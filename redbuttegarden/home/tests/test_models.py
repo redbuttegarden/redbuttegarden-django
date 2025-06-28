@@ -1,10 +1,86 @@
+import traceback
+
 from django.contrib.auth.models import Group
+from django.urls import reverse
 from wagtail.models import Page
 from wagtail.test.utils import WagtailPageTests, get_user_model
 from wagtail.test.utils.form_data import nested_form_data, streamfield, inline_formset, rich_text
 
 from home.models import FAQPage, GeneralPage, GeneralIndexPage, HomePage, PlantCollectionsPage, TwoColumnGeneralPage, \
-    RetailPartnerPage
+    RetailPartnerPage, RBGHours
+
+
+def assertCanCreateWithPanels(
+        test_case,
+        parent_page,
+        page_model,
+        title,
+        slug,
+        inline_panel_data=None,
+        extra_form_data=None,
+        publish=False
+):
+    """
+    Helper to test Wagtail page creation with inline panels and custom form data.
+
+    :param test_case: The test class (usually `self`)
+    :param parent_page: The parent page to create under
+    :param page_model: The Wagtail Page model class
+    :param title: Title of the new page
+    :param slug: Slug of the new page
+    :param inline_panel_data: Dict of inline panel names to list of dicts (e.g. {'rbg_hours': [{...}]})
+    :param extra_form_data: Any additional form fields
+    :param publish: Whether to simulate clicking "Publish"
+    """
+    inline_panel_data = inline_panel_data or {}
+    extra_form_data = extra_form_data or {}
+
+    form_data = nested_form_data({
+        'title': title,
+        'slug': slug,
+        **inline_panel_data,
+        **extra_form_data,
+    })
+
+    # Add management form data for each inline panel
+    for panel_name, items in inline_panel_data.items():
+        form_data.update({
+            f'{panel_name}-TOTAL_FORMS': str(len(items)),
+            f'{panel_name}-INITIAL_FORMS': '0',
+            f'{panel_name}-MIN_NUM_FORMS': '0',
+            f'{panel_name}-MAX_NUM_FORMS': '1000',
+        })
+
+    if publish:
+        form_data['action-publish'] = 'Publish'
+
+    # Get the correct admin URL
+    temp_instance = page_model(title="Temp", slug="temp")
+    content_type = temp_instance.get_content_type()
+    add_url = reverse('wagtailadmin_pages:add', args=[
+        content_type.app_label,
+        content_type.model,
+        parent_page.id
+    ])
+
+    response = test_case.client.post(add_url, form_data, follow=True)
+
+    if response.status_code not in (200, 302):
+        if hasattr(response, 'context') and 'form' in response.context:
+            form = response.context['form']
+            print("Main form errors:", form.errors)
+            for name, formset in form.formsets.items():
+                print(f"Formset '{name}' errors:")
+                for subform in formset.forms:
+                    print(subform.errors)
+                print("Non-form errors:", formset.non_form_errors())
+        else:
+            print("Response content:")
+            print(response.content.decode())
+        test_case.fail("Page creation failed")
+
+    # Confirm the page was created
+    assert Page.objects.filter(title=title, slug=slug).exists(), "Page was not created"
 
 
 class HomePageTests(WagtailPageTests):
@@ -60,10 +136,35 @@ class HomePageInstanceTests(WagtailPageTests):
         ))
 
     def test_can_create_home(self):
-        self.assertCanCreate(self.home, HomePage, nested_form_data(
-            {'title': 'Home Test Page',
-             'event_slides': inline_formset([])}
-        ))
+        rbg_hour = RBGHours.objects.create(name="Test Hours")
+
+        form_data = nested_form_data({
+            'title': 'Home Test Page',
+            'slug': 'home-test-page',
+            'rbg_hours': [
+                {
+                    'hours': rbg_hour.pk,
+                    'ORDER': 0,
+                }
+            ],
+            'event_slides': inline_formset([]),
+        })
+
+        form_data.update({
+            'rbg_hours-TOTAL_FORMS': '1',
+            'rbg_hours-INITIAL_FORMS': '0',
+            'rbg_hours-MIN_NUM_FORMS': '0',
+            'rbg_hours-MAX_NUM_FORMS': '1000',
+        })
+
+        # Get the content type ID for HomePage
+        homepage_instance = HomePage(title="Temp", slug="temp")
+        content_type = homepage_instance.get_content_type()
+        add_url = reverse('wagtailadmin_pages:add', args=[content_type.app_label, content_type.model, self.home.id])
+
+        self.client.post(add_url, form_data, follow=True)
+
+        assert Page.objects.filter(title="Home Test Page", slug="home-test-page").exists(), "Page was not created"
 
     def test_can_create_plant_collections(self):
         self.assertCanCreate(self.home, PlantCollectionsPage, nested_form_data(
@@ -77,6 +178,7 @@ class HomePageInstanceTests(WagtailPageTests):
     Test currently fails with "django.utils.datastructures.MultiValueDictKeyError: 'retail_partners-0-value-addresses-count'"
     even though addresses ListBlock should be optional
     """
+
     # def test_can_create_retail_partner(self):
     #     self.assertCanCreate(self.home, RetailPartnerPage, nested_form_data(
     #         {'title': 'Retail Partner Test Page',
