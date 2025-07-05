@@ -263,6 +263,18 @@ resource "aws_cloudfront_distribution" "cdn" {
     cache_policy_id        = "53a64cc9-dc83-47e0-80e1-68fcd20d45f9" # Custom Zappa-Django-Cache Policy
   }
 
+  # Do not cache the staticfiles.json file
+  ordered_cache_behavior {
+    path_pattern               = "/static/staticfiles.json"
+    target_origin_id           = "static-bucket-origin"
+    viewer_protocol_policy     = "redirect-to-https"
+    allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods = ["GET", "HEAD"]
+    cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # S3-Static-Content-NoCache Policy
+    origin_request_policy_id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf" # Managed-CORS-S3Origin
+    response_headers_policy_id = "60669652-455b-4ae9-85a4-c4c02393f86c" # Managed-SimpleCORS
+  }
+
   ordered_cache_behavior {
     path_pattern               = "/static/*"
     target_origin_id           = "static-bucket-origin"
