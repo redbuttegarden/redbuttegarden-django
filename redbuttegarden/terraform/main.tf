@@ -193,6 +193,37 @@ resource "aws_s3_bucket_acl" "private_static_bucket" {
   acl    = "private"
 }
 
+resource "aws_cloudfront_cache_policy" "no_cache_with_csrf" {
+  name = "NoCacheWithCSRF"
+
+  default_ttl = 1
+  max_ttl     = 1
+  min_ttl     = 1
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "all"
+    }
+
+    headers_config {
+      header_behavior = "whitelist"
+      headers {
+        items = [
+          "Authorization",
+          "Origin",
+          "Referer",
+          "X-Requested-With",
+          "X-CSRFToken"
+        ]
+      }
+    }
+
+    query_strings_config {
+      query_string_behavior = "all"
+    }
+  }
+}
+
 resource "aws_cloudfront_distribution" "cdn" {
   aliases = ["${var.environment}.redbuttegarden.org"]
 
@@ -244,6 +275,33 @@ resource "aws_cloudfront_distribution" "cdn" {
     allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods = ["GET", "HEAD"]
     cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6" # S3-Static-Content-Cache Policy
+  }
+
+  ordered_cache_behavior {
+    path_pattern           = "/admin/*"
+    target_origin_id       = "code-bucket-origin"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods = ["GET", "HEAD"]
+    cache_policy_id        = aws_cloudfront_cache_policy.no_cache_with_csrf.id
+  }
+
+  ordered_cache_behavior {
+    path_pattern           = "/admin/editing-sessions/*"
+    target_origin_id       = "code-bucket-origin"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods = ["GET", "HEAD"]
+    cache_policy_id        = aws_cloudfront_cache_policy.no_cache_with_csrf.id
+  }
+
+  ordered_cache_behavior {
+    path_pattern           = "*/api/*"
+    target_origin_id       = "code-bucket-origin"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods = ["GET", "HEAD"]
+    cache_policy_id        = aws_cloudfront_cache_policy.no_cache_with_csrf.id
   }
 
   restrictions {
