@@ -15,7 +15,7 @@
                     {% if slide.image %}
                         <a class="w-100" href="
                                 {% if slide.link.url %}{{ slide.link.url }}{% else %}{{ slide.alternate_link }}{% endif %}">
-                            {% picture slide.image format-{avif,webp,jpeg} original class="img-fluid w-100" %}
+                            {% picture slide.image format-{webp,jpeg} original class="img-fluid w-100" %}
                             {% if slide.text %}
                                 <div class="carousel-caption">
                                     <p>{{ slide.text|richtext }}</p>
