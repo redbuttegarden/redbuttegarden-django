@@ -44,7 +44,7 @@ def concert_page_changed(concert_page):
         c.events.add(e)
 
     with default_storage.open(f'concert_calendar_{concert_page.slug}.ics', mode='w') as cal_file:
-        if settings.DEFAULT_FILE_STORAGE == 'home.custom_storages.MediaStorage':
+        if settings.STORAGES['default']['BACKEND'] == 'home.custom_storages.MediaStorage':
             # S3 Storage seems to require bytes regardless of write mode
             for line in c:
                 cal_file.write(line.encode('utf-8'))
