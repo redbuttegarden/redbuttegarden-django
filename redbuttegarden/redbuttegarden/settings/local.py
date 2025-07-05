@@ -25,7 +25,7 @@ STORAGES = {
         'LOCATION': '/code/media',
     },
     'staticfiles': {
-        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+        'BACKEND': 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage',
         'LOCATION': '/code/static',
     },
 }
