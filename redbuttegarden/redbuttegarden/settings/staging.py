@@ -10,12 +10,23 @@ ALLOWED_HOSTS = ['staging.redbuttegarden.org',
 BASE_URL = 'https://staging.redbuttegarden.org'
 
 # Static files
-AWS_STORAGE_BUCKET_NAME = 'rbg-static-staging'
-STATIC_BUCKET = AWS_STORAGE_BUCKET_NAME
-MEDIA_BUCKET = AWS_STORAGE_BUCKET_NAME
 AWS_S3_CUSTOM_DOMAIN = 'staging.redbuttegarden.org'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
 MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')
+STATIC_BUCKET = 'rbg-static-staging'
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_QUERYSTRING_AUTH = False
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'home.custom_storages.MediaStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'home.custom_storages.StaticStorage',
+    },
+}
 
 WAGTAILFRONTENDCACHE = {
     'mainsite': {
