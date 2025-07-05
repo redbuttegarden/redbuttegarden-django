@@ -201,6 +201,9 @@ resource "aws_cloudfront_cache_policy" "no_cache_with_csrf" {
   min_ttl     = 1
 
   parameters_in_cache_key_and_forwarded_to_origin {
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
+
     cookies_config {
       cookie_behavior = "all"
     }
@@ -222,6 +225,7 @@ resource "aws_cloudfront_cache_policy" "no_cache_with_csrf" {
       query_string_behavior = "all"
     }
   }
+
 }
 
 resource "aws_cloudfront_distribution" "cdn" {
@@ -260,34 +264,29 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   ordered_cache_behavior {
-    path_pattern           = "/static/*"
-    target_origin_id       = "static-bucket-origin"
-    viewer_protocol_policy = "redirect-to-https"
+    path_pattern               = "/static/*"
+    target_origin_id           = "static-bucket-origin"
+    viewer_protocol_policy     = "redirect-to-https"
     allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods = ["GET", "HEAD"]
-    cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6" # S3-Static-Content-Cache Policy
+    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" # S3-Static-Content-Cache Policy
+    origin_request_policy_id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf" # Managed-CORS-S3Origin
+    response_headers_policy_id = "60669652-455b-4ae9-85a4-c4c02393f86c" # Managed-SimpleCORS
   }
 
   ordered_cache_behavior {
-    path_pattern           = "/media/*"
-    target_origin_id       = "static-bucket-origin"
-    viewer_protocol_policy = "redirect-to-https"
+    path_pattern               = "/media/*"
+    target_origin_id           = "static-bucket-origin"
+    viewer_protocol_policy     = "redirect-to-https"
     allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods = ["GET", "HEAD"]
-    cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6" # S3-Static-Content-Cache Policy
+    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" # S3-Static-Content-Cache Policy
+    origin_request_policy_id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf" # Managed-CORS-S3Origin
+    response_headers_policy_id = "60669652-455b-4ae9-85a4-c4c02393f86c" # Managed-SimpleCORS
   }
 
   ordered_cache_behavior {
     path_pattern           = "/admin/*"
-    target_origin_id       = "code-bucket-origin"
-    viewer_protocol_policy = "redirect-to-https"
-    allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-    cached_methods = ["GET", "HEAD"]
-    cache_policy_id        = aws_cloudfront_cache_policy.no_cache_with_csrf.id
-  }
-
-  ordered_cache_behavior {
-    path_pattern           = "/admin/editing-sessions/*"
     target_origin_id       = "code-bucket-origin"
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
@@ -381,7 +380,9 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public[0].id
+  subnet_id     = aws_subnet.public[
+  0
+  ].id
   depends_on = [aws_internet_gateway.main]
 }
 
