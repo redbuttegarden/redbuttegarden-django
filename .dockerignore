@@ -62,4 +62,6 @@ Dockerfile
 *.swp
 *.swo
 
-
+# Ignore the Django static and media files directories
+redbuttegarden/static/
+redbuttegarden/media/
