@@ -218,7 +218,7 @@ DEFAULT_FROM_EMAIL = 'admin@redbuttegarden.org'
 SERVER_EMAIL = os.environ.get('IT_EMAIL')
 
 # This was setup to allow authentication for viewing VR Tours
-PASSWORD_REQUIRED_TEMPLATE = 'custom_user/password_required.html'
+WAGTAIL_PASSWORD_REQUIRED_TEMPLATE = 'custom_user/password_required.html'
 LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/'
 
