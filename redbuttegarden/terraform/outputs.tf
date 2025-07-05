@@ -34,10 +34,6 @@ output "static_bucket_name" {
   value = aws_s3_bucket.static_bucket.bucket
 }
 
-output "iam_role_arn" {
-  value = aws_iam_role.zappa_execution.arn
-}
-
 output "lambda_endpoint_url" {
   value = var.lambda_endpoint_url
 }
