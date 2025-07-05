@@ -15,11 +15,20 @@ AWS_STORAGE_BUCKET_NAME = ''
 AWS_S3_REGION_NAME = 'us-east-1'
 STATIC_BUCKET = ''
 MEDIA_BUCKET = ''
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 AWS_S3_CUSTOM_DOMAIN = ''
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        'LOCATION': '/code/media',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+        'LOCATION': '/code/static',
+    },
+}
 
 AWS_ACCESS_KEY_ID = 'FOO'
 AWS_SECRET_ACCESS_KEY = 'BAR'
