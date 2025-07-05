@@ -306,27 +306,6 @@ resource "aws_route53_record" "env_alias" {
   }
 }
 
-resource "aws_iam_role" "zappa_execution" {
-  name = "${var.environment}_zappa_execution_role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = "sts:AssumeRole",
-        Effect = "Allow",
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "zappa_logs" {
-  role       = aws_iam_role.zappa_execution.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-
 resource "aws_cloudwatch_log_group" "rds_postgres_logs" {
   name              = "/aws/rds/instance/${aws_db_instance.main.id}/postgresql/rbg-web-${var.environment}"
   retention_in_days = 14
