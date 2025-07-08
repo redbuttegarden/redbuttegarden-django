@@ -1,6 +1,7 @@
 """
 For production in AWS environment
 """
+import logging
 
 from .base import *
 
@@ -149,9 +150,20 @@ CSRF_TRUSTED_ORIGINS = ['https://' + domain for domain in ALLOWED_HOSTS]
 
 DEAD_SIMPLE_CHAT_ROOM_ID = 'zjaQPcy7v'
 
+
+class IgnoreDisallowedHost(logging.Filter):
+    def filter(self, record):
+        return 'DisallowedHost' not in record.getMessage()
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'ignore_disallowed_host': {
+            '()': IgnoreDisallowedHost,
+        },
+    },
     'formatters': {
         'console': {
             'format': '%(name)-12s %(levelname)-8s %(message)s'
@@ -166,7 +178,7 @@ LOGGING = {
     'loggers': {
         '': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'ERROR',
         },
     },
 }
