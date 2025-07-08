@@ -59,6 +59,8 @@ jobs:
         pip install django-debug-toolbar
     - name: Run migrations
       run: python manage.py migrate
+    - name: Collect static files
+      run: python manage.py collectstatic --noinput
     - name: Test
       run: pytest
       env:
