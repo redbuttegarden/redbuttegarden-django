@@ -2,19 +2,19 @@
 
 <div class="row">
     <div class="col-sm-12 center">
-        {% if value.images|length_is:"4" %}
+        {% if value.images|length == 4 %}
             {% for img in value.images %}
                 <div class="col-sm-3">
                     {% image img width-300 class='img-center'%}
                 </div>
             {% endfor %}
-        {% elif value.images|length_is:"3" %}
+        {% elif value.images|length == 3 %}
             {% for img in value.images %}
                 <div class="col-sm-4">
                     {% image img width-400 class='img-center'%}
                 </div>
             {% endfor %}
-        {% elif value.images|length_is:"2" %}
+        {% elif value.images|length == 2 %}
             {% for img in value.images %}
                 <div class="col-sm-6">
                     {% image img width-600 class='img-center'%}
