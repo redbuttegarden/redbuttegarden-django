@@ -241,7 +241,10 @@ a:hover {
 }
 
 /* SGS Calendar links should be white */
-.render-calendar a, .render-calendar a:link, .render-calendar a:visited, .render-calendar a:active {
+.render-calendar a .fc-title,
+.render-calendar tbody a:link .fc-title,
+.render-calendar tbody a:visited .fc-title,
+.render-calendar tbody a:active .fc-title {
     color: white;
 }
 
@@ -353,7 +356,7 @@ a:hover {
 }
 
 .dropdown-btn {
-  max-width: 400px !important;
+    max-width: 400px !important;
 }
 
 .memfaq {
