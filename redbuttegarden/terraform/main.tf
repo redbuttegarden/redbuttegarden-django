@@ -315,6 +315,15 @@ resource "aws_cloudfront_distribution" "cdn" {
     cache_policy_id        = aws_cloudfront_cache_policy.no_cache_with_csrf.id
   }
 
+  ordered_cache_behavior {
+    path_pattern           = "/accounts/*"
+    target_origin_id       = "code-bucket-origin"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods = ["GET", "HEAD"]
+    cache_policy_id        = aws_cloudfront_cache_policy.no_cache_with_csrf.id
+  }
+
   restrictions {
     geo_restriction {
       restriction_type = "none"
