@@ -4,13 +4,15 @@
     {% for list_item in value.list_items %}
         <div class="image-dropdown-item my-3">
             <div class="eventwrapsmall hover" data-target="#{{ id }}-{{ forloop.counter }}" data-bs-toggle="collapse"
-                 href="#{{ id }}-{{ forloop.counter }}" aria-expanded="false" aria-controls="{{ id }}-{{ forloop.counter }}">
-                <img class="image-list-dropdown img-fluid w-100" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
+                 href="#{{ id }}-{{ forloop.counter }}" aria-expanded="false"
+                 aria-controls="{{ id }}-{{ forloop.counter }}" role="button">
+                <img class="image-list-dropdown img-fluid w-100" src="{{ list_item.image.file.url }}"
+                     alt="{{ list_item.image.alt }}">
                 <div class="eventinfo">
                     <div class="eventname">{{ list_item.title|truncatewords:7 }}</div>
                 </div>
             </div>
-            <div id="{{ id }}-{{ forloop.counter }}" class="panel-border collapse" aria-expanded="false">
+            <div id="{{ id }}-{{ forloop.counter }}" class="panel-border collapse">
                 <div class="tan-bg">
                     <div class="row">
                         <h4 class="green">{{ list_item.title }}</h4>
