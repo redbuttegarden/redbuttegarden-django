@@ -789,14 +789,24 @@ class HomePage(AbstractBase):
             url_validator = URLValidator()
             for image in social_media_images:
                 # Try to get permalink from image's description
-                permalink = image.description.split(' ')[0]
                 try:
+                    permalink = image.description.split(' ')[0]
                     url_validator(permalink)
+                except (IndexError,):
+                    logger.warning(f"Image {image.id} does not have a valid permalink in its description.")
+                    continue
                 except (ValidationError,) as e:
-                    logger.warning(f"Failed to validate URL: {permalink}")
+                    logger.warning(f"Failed to validate URL: {permalink}\n\n{e}")
                     continue
 
-                images_and_links.append({'image': image, 'url': permalink})
+                # Try to get the the caption from the image's description
+                try:
+                    caption = ' '.join(image.description.split(' ')[1:])
+                except IndexError:
+                    logger.warning(f"Image {image.id} does not have a caption in its description.")
+                    caption = None
+
+                images_and_links.append({'image': image, 'url': permalink, 'caption': caption})
 
             context['social_media_images_links'] = images_and_links
 
