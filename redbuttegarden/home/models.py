@@ -101,9 +101,17 @@ class ImageLink(blocks.StructBlock):
         label='Title',
         max_length=200,
         required=False,
+        help_text=_('Visible text title that is overlayed on the image'),
     )
     url = blocks.URLBlock(
         label="URL"
+    )
+    url_title = blocks.CharBlock(
+        label='URL Title',
+        max_length=200,
+        required=False,
+        help_text=_(
+            'Screen reader title used to describe the link. This is not displayed visually but is important for accessibility.'),
     )
     image = ImageBlock()
 
