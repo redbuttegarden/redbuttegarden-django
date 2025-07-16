@@ -1,11 +1,9 @@
 import datetime
 import logging
 
-import code128
 import requests
 from django.conf import settings
 from django.contrib import messages
-from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.http import HttpRequest
@@ -176,8 +174,13 @@ class ConcertBlock(blocks.StructBlock):
     available_until = blocks.DateTimeBlock(required=False, blank=True, null=True,
                                            help_text=_(
                                                'Date that on-demand virtual concert will remain available until'))
-    # Band/opener names and url properties replaced with single RichTextField to account for wide variety in how the
-    # bands info may be displayed
+    band_name = blocks.CharBlock(
+        label=_('Band Name'),
+        max_length=200,
+        help_text=_('Name of the band or artist performing at the concert.'),
+        required=True,
+        blank=False,
+    )
     band_info = blocks.RichTextBlock(
         help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
                     ' centered.'))
@@ -189,6 +192,7 @@ class ConcertBlock(blocks.StructBlock):
 
     # Added a ticket URL for concerts that are sold from a non-standard URL
     ticket_url = blocks.URLBlock(
+        label=_('Ticket URL'),
         default='https://www.etix.com/ticket/e/1049536/2025-red-butte-season-salt-lake-city-red-butte-garden-arboretum')
 
     class Meta:
@@ -550,7 +554,8 @@ class ConcertDonorClubMember(models.Model):
     )
     phone_number = models.CharField(max_length=150, null=True, blank=True)
     packages = models.ManyToManyField(ConcertDonorClubPackage, blank=True,
-                                      help_text=_('Concert Donor Club packages that this member has purchased. Hold command'))
+                                      help_text=_(
+                                          'Concert Donor Club packages that this member has purchased. Hold command'))
     active = models.BooleanField(default=True)
     constant_contact_id = models.UUIDField(blank=True, null=True)
     chat_access_token = models.CharField(
