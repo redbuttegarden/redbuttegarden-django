@@ -1,11 +1,27 @@
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 from django.http import HttpResponse
+from django.utils.html import format_html
 from wagtail.admin.rich_text.converters.html_to_contentstate import InlineStyleElementHandler
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
 from wagtail.snippets.models import register_snippet
 
 from home.views import RBGHoursViewSet
+
+
+@hooks.register('insert_global_admin_js')
+def include_sweetalert2():
+    return format_html(
+        """<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.2/dist/sweetalert2.all.min.js" integrity="sha256-Ua8fKA4E1l7RSqT5HOjK0m/PrSwP41XFTs++qmtWey8=" crossorigin="anonymous"></script>""")
+
+
+
+@hooks.register('insert_global_admin_js')
+def warn_on_pdf_upload():
+    return format_html(
+        '<script src="{}"></script>',
+        '/static/admin/js/warn_pdf_upload.js'  # Adjust path as needed
+    )
 
 
 @hooks.register("register_rich_text_features")
