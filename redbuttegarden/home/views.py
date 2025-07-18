@@ -13,7 +13,7 @@ class RBGHoursViewSet(SnippetViewSet):
     icon = 'time'
     inspect_view_enabled = True
     search_fields = (
-    'name', 'additional_message', 'additional_emphatic_mesg', 'garden_open_message', 'garden_closed_message')
+        'name', 'additional_message', 'additional_emphatic_mesg', 'garden_open_message', 'garden_closed_message')
 
 
 def latest_weather(request):
@@ -60,3 +60,55 @@ def get_hours(request, page_id: int):
             logger.warning(f"Page with ID {page_id} does not have any RBGHours associated with it.")
 
     return HttpResponse(status=204)
+
+
+def robots_txt(request):
+    lines = [
+        # Allow major search engine bots
+        "User - agent: Googlebot",
+        "Allow: /",
+
+        "User - agent: Bingbot",
+        "Allow: /",
+
+        "User - agent: Slurp",
+        "Allow: /",
+
+        "User - agent: DuckDuckBot",
+        "Allow: /",
+
+        "User - agent: Baiduspider",
+        "Allow: /",
+
+        "User - agent: Yandex",
+        "Allow: /",
+
+        # Disallow known AI training bots,
+        "User - agent: GPTBot",
+        "Disallow: /",
+
+        "User - agent: CCBot",
+        "Disallow: /",
+
+        "User - agent: anthropic - ai",
+        "Disallow: /",
+
+        "User - agent: ClaudeBot",
+        "Disallow: /",
+
+        "User - agent: facebookexternalhit",
+        "Disallow: /",
+
+        "User - agent: Bytespider",
+        "Disallow: /",
+
+        "User - agent: Amazonbot",
+        "Disallow: /",
+
+        "User-agent: *",
+        "Disallow: /admin/",
+        "Disallow: /accounts/",
+        "Disallow: /api/",
+        "Disallow: /*/api/",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
