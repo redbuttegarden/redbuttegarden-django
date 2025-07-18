@@ -572,8 +572,14 @@ class ConcertDonorClubMember(models.Model):
         return str(self.user)
 
     def save(self, *args, **kwargs):
+        # If in DEBUG mode, skip saving to Constant Contact
+        if settings.DEBUG:
+            logger.debug(f'Skipping Constant Contact save for {self} in DEBUG mode.')
+            super().save(*args, **kwargs)
+            return
+
+        # If the object is new send it to Constant Contact to create a new contact
         if not self.id:
-            # Object is new
             request = HttpRequest()
             oauth_token = OAuth2Token.objects.filter(name='constant_contact').first()
             if oauth_token:
