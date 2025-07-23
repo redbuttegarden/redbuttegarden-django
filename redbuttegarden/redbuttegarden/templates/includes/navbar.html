@@ -291,6 +291,18 @@
                         CART LOGIN
                     </a>
                 </li>
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item px-2">
+                        <form id="rbgLogoutForm" method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit">
+                                {# Use permission check to help disambiguate logout functionality for web editors and CDC users #}
+                                {% if perms.wagtailadmin.access_admin %}RBG{% else %}CDC{% endif %}
+                                LOGOUT
+                            </button>
+                        </form>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

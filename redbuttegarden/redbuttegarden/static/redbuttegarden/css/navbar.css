@@ -28,8 +28,8 @@ nav.navbar .navbar-nav .nav-link.show {
     text-decoration: underline;
 }
 
-nav .navbar-collapse.collapse.show a, nav .navbar-collapse.collapse.show  .nav-link:hover, nav .navbar-collapse.collapse.show .nav-link:active, nav .navbar-collapse.collapse.show .navbar-nav .nav-link.show,
-nav .navbar-collapse.collapsing .nav-link:hover, nav .navbar-collapse.collapsing  .nav-link:active, nav .navbar-collapse.collapsing .navbar-nav .nav-link.show {
+nav .navbar-collapse.collapse.show a, nav .navbar-collapse.collapse.show .nav-link:hover, nav .navbar-collapse.collapse.show .nav-link:active, nav .navbar-collapse.collapse.show .navbar-nav .nav-link.show,
+nav .navbar-collapse.collapsing .nav-link:hover, nav .navbar-collapse.collapsing .nav-link:active, nav .navbar-collapse.collapsing .navbar-nav .nav-link.show {
     color: black;
     text-decoration: none;
 }
@@ -177,4 +177,19 @@ nav #navSearch {
         text-decoration: none;
         color: inherit;
     }
+}
+
+#rbgLogoutForm button {
+    background: none;
+    border: none;
+    padding: 0 1em;
+    font: inherit;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#rbgLogoutForm button:hover {
+    color: white;
+    text-decoration: underline;
 }
