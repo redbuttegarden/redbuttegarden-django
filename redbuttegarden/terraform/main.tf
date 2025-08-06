@@ -126,7 +126,7 @@ resource "aws_db_instance" "main" {
   engine_version               = "16.8"
   instance_class               = "db.t3.micro"
   db_subnet_group_name         = aws_db_subnet_group.main.name
-  vpc_security_group_ids = [aws_security_group.main.id]
+  vpc_security_group_ids       = [aws_security_group.main.id]
   skip_final_snapshot          = true
   enabled_cloudwatch_logs_exports = ["postgresql"]
   monitoring_interval          = 60
