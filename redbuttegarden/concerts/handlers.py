@@ -20,7 +20,11 @@ def concert_page_changed(concert_page):
         band_info_html = str(concert['band_info'])
         # Add spaces before HTML is stripped so text isn't mashed
         band_info = strip_tags(band_info_html.replace('><', '> <'))
-        e.name = strip_tags(band_info)
+        e.name = concert.band_name
+        e.description = strip_tags(band_info)
+        e.location = 'Red Butte Garden Amphitheatre'
+        e.url = concert['ticket_url']
+
         if concert['show_time']:
             event_start = datetime.datetime(year=concert.soonest_date.year,
                                   month=concert.soonest_date.month,
@@ -29,7 +33,7 @@ def concert_page_changed(concert_page):
                                   minute=concert['show_time'].minute,
                                   tzinfo=concert.soonest_date.tzinfo)
             e.begin = event_start
-            e.end = event_start + datetime.timedelta(hours=3)
+            e.end = event_start + datetime.timedelta(hours=4)  # Assuming concerts last 4 hours
         else:
             # Start time to be determined
             event_start = datetime.datetime(year=concert.soonest_date.year,
@@ -41,6 +45,7 @@ def concert_page_changed(concert_page):
             e.begin = event_start
             e.end = event_start + datetime.timedelta(hours=24)
             e.description = 'Concert Time TBD. Check back soon.'
+
         c.events.add(e)
 
     with default_storage.open(f'concert_calendar_{concert_page.slug}.ics', mode='w') as cal_file:

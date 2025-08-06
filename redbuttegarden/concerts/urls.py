@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from . import views
+from .feeds import ConcertsFeed
 
 router = DefaultRouter()
 router.register(r'concerts', views.ConcertDRFViewSet)
@@ -11,6 +12,7 @@ router.register(r'cdc-tickets', views.TicketDRFViewSet, basename='cdc-tickets')
 
 app_name = 'concerts'
 urlpatterns = [
+    path('rss/', ConcertsFeed(), name='concert-rss'),
     path('thank-you/', views.concert_thank_you, name='thank-you'),
     path('cdc-member-profile/', views.concert_donor_club_member_profile, name='cdc-profile'),
     path('cdc-tickets/<int:concert_pk>/', views.concert_detail_tickets_view, name='cdc-tickets'),

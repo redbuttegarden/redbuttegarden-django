@@ -53,9 +53,16 @@
 
     {% if presale_concerts or wave_one_concerts or concerts %}
         <div class="row text-center">
-            <a href="{% get_media_prefix %}concert_calendar_{{ page.slug }}.ics">
-                Download iCal Event Calendar
-            </a>
+            <div class="col">
+                <a href="{% get_media_prefix %}concert_calendar_{{ page.slug }}.ics">
+                    Download iCal Event Calendar
+                </a>
+            </div>
+            <div class="col">
+                <a href="{% url 'concerts:concert-rss' %}">
+                    RSS Feed
+                </a>
+            </div>
         </div>
 
         {% if presale_concerts %}
