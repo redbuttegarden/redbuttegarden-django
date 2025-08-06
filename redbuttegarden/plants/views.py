@@ -73,7 +73,7 @@ class SpeciesList(generics.ListCreateAPIView):
         if name != 'unspecified':
             queryset = queryset.filter(name=name)
         if full_name != 'unspecified':
-            queryset = queryset.filter(full_name=full_name)
+            queryset = queryset.filter(full_name__icontains=full_name)
         if subspecies != 'unspecified':
             queryset = queryset.filter(subspecies=subspecies)
         if variety != 'unspecified':
