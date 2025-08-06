@@ -1,6 +1,6 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
-<div class="d-flex flex-wrap justify-content-between">
+<div class="d-flex flex-wrap justify-content-sm-between justify-content-center">
     {% for concert in concerts %}
         <div {% if not concert.virtual and concert.live_in_the_past or concert.on_demand_expired %}class="past"{% endif %}>
             <div class="concertwrapper">
