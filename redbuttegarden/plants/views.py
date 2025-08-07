@@ -11,6 +11,7 @@ from django.db import IntegrityError
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.middleware.csrf import get_token
 from django.urls import reverse
+from django.utils import timezone
 from geojson import dumps
 from requests import HTTPError
 from rest_framework import generics, viewsets, status
@@ -27,7 +28,7 @@ from wagtail.images.models import Image
 from .tables import CollectionTable
 
 from .forms import CollectionSearchForm, FeedbackReportForm
-from .models import Family, Genus, Species, Collection, Location, SpeciesImage
+from .models import Family, Genus, Species, Collection, Location, SpeciesImage, BloomEvent
 from .serializers import FamilySerializer, SpeciesSerializer, CollectionSerializer, GenusSerializer, \
     LocationSerializer
 from .utils import filter_by_parameter, get_feature_collection, style_message
@@ -213,7 +214,13 @@ def collection_detail(request, collection_id):
     """
     collection = get_object_or_404(Collection, pk=collection_id)
     mapbox_api_token = getattr(settings, 'MAPBOX_API_TOKEN', None)
+
+    # Check if there are any BloomEvents associated with the collection
+    today_local = timezone.localdate()
+    in_bloom = collection.bloomevent_set.filter(
+        bloom_start__lte=today_local, bloom_end__gte=today_local).exists()
     return render(request, 'plants/collection_detail.html', {'collection': collection,
+                                                             'in_bloom': in_bloom,
                                                              'mapbox_token': mapbox_api_token})
 
 
@@ -223,7 +230,13 @@ def species_detail(request, species_id):
     """
     species = get_object_or_404(Species, pk=species_id)
     species_images = SpeciesImage.objects.filter(species=species)
+
+    # Check if there are any BloomEvents associated with the species
+    today_local = timezone.localdate()
+    in_bloom = BloomEvent.objects.filter(species=species,
+                                         bloom_start__lte=today_local, bloom_end__gte=today_local).exists()
     return render(request, 'plants/species_detail.html', {'species': species,
+                                                          'in_bloom': in_bloom,
                                                           'images': species_images})
 
 

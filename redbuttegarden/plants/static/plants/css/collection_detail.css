@@ -26,3 +26,12 @@ p.location {
 .collection-info-container {
     min-height: 500px;
 }
+
+#blooming {
+    font-style: italic;
+
+    svg {
+        max-width: 35px;
+        height: auto;
+    }
+}

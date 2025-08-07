@@ -42,7 +42,7 @@ class GardenBloomFeed(Feed):
         if item.species:
             return reverse('plants:species-detail', args=[item.species.id])
         elif item.collections:
-            return reverse('plants:collection-detail', args=[item.collections[0].id])
+            return reverse('plants:collection-detail', args=[item.collections.first().id])
         else:
             return reverse('plants:plant-map')
 
@@ -84,7 +84,7 @@ class GardenBloomICalFeed(ICalFeed):
             if collection_to_link:
                 return reverse('plants:collection-detail', args=[collection_to_link.id])
             else:
-                return reverse('plants:collection-detail', args=[item.collections[0].id])
+                return reverse('plants:collection-detail', args=[item.collections.first().id])
         else:
             return reverse('plants:plant-map')
 
