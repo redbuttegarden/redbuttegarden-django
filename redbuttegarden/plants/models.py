@@ -9,7 +9,6 @@ from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import InlinePanel
 from wagtail.admin.panels import FieldPanel
 from wagtail.models import Orderable
-from wagtail.snippets.models import register_snippet
 
 models.CharField.register_lookup(Length)
 
