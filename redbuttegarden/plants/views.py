@@ -359,3 +359,14 @@ def collection_list(request):
 
 def feedback_thanks(request):
     return render(request, 'plants/feedback_thanks.html')
+
+
+def get_filtered_collections(request, species_id):
+    """
+    Returns a JSON response with filtered collections based on the species_id.
+
+    Used for AJAX requests to dynamically populate options in a form field of BloomEvent admin Snippet.
+    """
+    # Filter collections to those that match the given species_id
+    options = Collection.objects.filter(species=species_id).values('id', 'plant_id')
+    return JsonResponse({'options': [{'value': o['id'], 'label': o['plant_id']} for o in options]})
