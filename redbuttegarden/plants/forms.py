@@ -1,11 +1,13 @@
 from collections import OrderedDict
 
 from django import forms
+from django.db import models
 from django.forms import CheckboxInput
 from django.utils.dates import MONTHS
-from django.utils.translation import gettext_lazy as _
+from wagtail.admin.forms import WagtailAdminModelForm
+from wagtail.admin.widgets import AdminDateInput
 
-from plants.models import Family, Species, Collection, GardenArea
+from plants.models import Family, Species, Collection, GardenArea, BloomEvent
 
 
 class CollectionSearchForm(forms.Form):
@@ -127,3 +129,35 @@ class FeedbackReportForm(forms.Form):
                 pass
             else:
                 visible.field.widget.attrs['class'] = 'form-control'
+
+
+class BloomEventSnippetForm(forms.ModelForm):
+    """
+    Form used to create a Bloom Event.
+    """
+
+    class Meta:
+        model = BloomEvent
+        fields = '__all__'
+
+        widgets = {
+            'bloom_start': AdminDateInput(),
+            'bloom_end': AdminDateInput(),
+        }
+
+    class Media:
+        js = ['admin/js/bloom_event_collection_qs.js']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        species_id = None
+        if self.data and 'species' in self.data:
+            species_id = self.data.get('species')
+        elif self.instance and self.instance.pk:
+            species_id = self.instance.species_id
+
+        if species_id:
+            self.fields['collections'].queryset = Collection.objects.filter(species=species_id).order_by('plant_id')
+        else:
+            self.fields['collections'].queryset = Collection.objects.all()
