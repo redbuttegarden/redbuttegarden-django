@@ -78,6 +78,10 @@
                             {% endif %}
                         </div>
                     </div>
+
+                    {% if in_bloom %}
+                        {% include 'plants/includes/blooming.html' %}
+                    {% endif %}
                 </div>
             </div>
 

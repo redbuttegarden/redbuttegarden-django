@@ -33,6 +33,10 @@
                     {% if collection.plant_date %}
                         <p><span class="fw-bold">Date Planted: </span>{{ collection.plant_date }}</p>
                     {% endif %}
+
+                    {% if in_bloom %}
+                        {% include 'plants/includes/blooming.html' %}
+                    {% endif %}
                 </div>
             </div>
             <div class="col-md-6 mt-3 mt-md-0">
