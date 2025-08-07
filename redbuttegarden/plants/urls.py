@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from plants import views
-from plants.feeds import GardenBloomFeed
+from plants.feeds import GardenBloomFeed, GardenBloomICalFeed
 
 router = DefaultRouter()
 router.register(r'families', views.FamilyViewSet)
@@ -55,5 +55,6 @@ urlpatterns = [
          name='feedback-thanks'),
     path('admin/snippets/filtered_collections/<int:species_id>/', views.get_filtered_collections, name='get_filtered_collections'),
     path('rss/', GardenBloomFeed(), name='bloom-rss'),
+    path('ical/', GardenBloomICalFeed(), name='bloom-ical'),
     path('', include(router.urls)),
 ]
