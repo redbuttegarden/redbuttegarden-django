@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def concert_page_changed(concert_page):
-    logger.info('Generating new iCal file with concerts from %s...', concert_page.title)
+    logger.debug('Generating new iCal file with concerts from %s...', concert_page.title)
     c = Calendar()
     concerts = concert_page.sort_concerts(concert_page.get_visible_concerts())
 
@@ -27,11 +27,11 @@ def concert_page_changed(concert_page):
 
         if concert['show_time']:
             event_start = datetime.datetime(year=concert.soonest_date.year,
-                                  month=concert.soonest_date.month,
-                                  day=concert.soonest_date.day,
-                                  hour=concert['show_time'].hour,
-                                  minute=concert['show_time'].minute,
-                                  tzinfo=concert.soonest_date.tzinfo)
+                                            month=concert.soonest_date.month,
+                                            day=concert.soonest_date.day,
+                                            hour=concert['show_time'].hour,
+                                            minute=concert['show_time'].minute,
+                                            tzinfo=concert.soonest_date.tzinfo)
             e.begin = event_start
             e.end = event_start + datetime.timedelta(hours=4)  # Assuming concerts last 4 hours
         else:
@@ -56,6 +56,7 @@ def concert_page_changed(concert_page):
         else:
             cal_file.writelines(c)
 
+    logger.debug('iCal file generated successfully: %s', f'concert_calendar_{concert_page.slug}.ics')
 
 
 def concert_published_handler(sender, **kwargs):
