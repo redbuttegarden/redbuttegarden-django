@@ -183,7 +183,7 @@ class ConcertBlock(blocks.StructBlock):
     )
     band_info = blocks.RichTextBlock(
         help_text=_('Provide the names of the bands/openers and any other info here. Text will be'
-                    ' centered.'))
+                    ' centered.'), blank=True, required=False)
     concert_dates = blocks.ListBlock(blocks.DateTimeBlock())
     gates_time = blocks.TimeBlock(default=datetime.time(hour=18), required=False, blank=True, null=True)
     show_time = blocks.TimeBlock(default=datetime.time(hour=19), required=False, blank=True, null=True)
