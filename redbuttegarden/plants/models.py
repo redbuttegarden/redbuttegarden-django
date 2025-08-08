@@ -1,3 +1,5 @@
+import urllib.parse
+
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -195,6 +197,6 @@ class BloomEvent(models.Model):
     def save(self, *args, **kwargs):
         if not self.url:
             if self.species:
-                self.url = f'/plants/plant-map/?scientific_name={self.species.full_name}'
+                self.url = f'https://redbuttegarden.org/plants/plant-map/?scientific_name={urllib.parse.quote(self.species.full_name)}'
 
         super().save(*args, **kwargs)

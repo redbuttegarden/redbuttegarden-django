@@ -2,7 +2,6 @@ import logging
 
 from django.contrib.syndication.views import Feed
 from django.template.loader import render_to_string
-from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 from concerts.models import ConcertPage
