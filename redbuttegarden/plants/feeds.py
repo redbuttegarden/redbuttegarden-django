@@ -32,8 +32,8 @@ class GardenBloomFeed(Feed):
         if item.description is None:
             return "No description available for this bloom event."
 
-        if len(description) > 200:
-            return description[:200] + '...'
+        if len(description) > 2000:
+            return description[:1997] + '...'
         else:
             return description
 
@@ -62,7 +62,21 @@ class GardenBloomICalFeed(ICalFeed):
         return item.title
 
     def item_description(self, item):
-        return item.description
+        description = item.description
+
+        if item.bloom_start:
+            description += f"\nBloom Start: {item.bloom_start.strftime('%B %d, %Y')}"
+        if item.bloom_end:
+            description += f"\nBloom End: {item.bloom_end.strftime('%B %d, %Y')}"
+        if item.url:
+            description += f"\nMore Info: {item.url}"
+        if item.description is None:
+            return "No description available for this bloom event."
+
+        if len(description) > 2000:
+            return description[:1997] + '...'
+        else:
+            return description
 
     def item_start_datetime(self, item):
         return item.bloom_start
