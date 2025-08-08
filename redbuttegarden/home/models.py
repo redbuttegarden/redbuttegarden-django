@@ -766,8 +766,11 @@ class HomePage(AbstractBase):
         if self.concert_page:
             concerts = self.concert_page.get_visible_concerts()
             concert_info = [
-                {"TicketURL": concert['ticket_url'] if not concert['sold_out'] else None, "Date": concert_date} for
-                concert in concerts for concert_date in concert['concert_dates']]
+                {
+                    "TicketURL": concert['ticket_url'] if not concert['sold_out'] else None,
+                    "Date": concert_date,
+                    "BandName": concert['band_name'],
+                } for concert in concerts for concert_date in concert['concert_dates']]
             context['concert_info'] = json.dumps(concert_info, default=str)
 
         # Get upcoming events; avoid circular import
