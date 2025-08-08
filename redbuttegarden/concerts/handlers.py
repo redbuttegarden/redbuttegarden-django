@@ -16,37 +16,49 @@ def concert_page_changed(concert_page):
     concerts = concert_page.sort_concerts(concert_page.get_visible_concerts())
 
     for concert in concerts:
-        e = Event()
-        band_info_html = str(concert['band_info'])
-        # Add spaces before HTML is stripped so text isn't mashed
-        band_info = strip_tags(band_info_html.replace('><', '> <'))
-        e.name = concert.band_name
-        e.description = strip_tags(band_info)
-        e.location = 'Red Butte Garden Amphitheatre'
-        e.url = concert['ticket_url']
+        for concert_date in concert['concert_dates']:
+            e = Event()
+            e.uid = f"{concert_page.slug}-{concert_date.strftime('%Y%m%d')}@redbuttegarden.org"
+            band_info_html = str(concert['band_info'])
+            # Add spaces before HTML is stripped so text isn't mashed
+            band_info = strip_tags(band_info_html.replace('><', '> <'))
+            e.name = concert['band_name'] or band_info
+            description = band_info
+            description += f"\nBuy Link: {concert['ticket_url']}"
+            if concert['gates_time']:
+                description += f"\nGates Open: {concert['gates_time'].strftime('%-I:%M %p')}"
+            if concert['show_time']:
+                description += f"\nShow Time: {concert['show_time'].strftime('%-I:%M %p')}"
 
-        if concert['show_time']:
-            event_start = datetime.datetime(year=concert.soonest_date.year,
-                                            month=concert.soonest_date.month,
-                                            day=concert.soonest_date.day,
-                                            hour=concert['show_time'].hour,
-                                            minute=concert['show_time'].minute,
-                                            tzinfo=concert.soonest_date.tzinfo)
-            e.begin = event_start
-            e.end = event_start + datetime.timedelta(hours=4)  # Assuming concerts last 4 hours
-        else:
-            # Start time to be determined
-            event_start = datetime.datetime(year=concert.soonest_date.year,
-                                            month=concert.soonest_date.month,
-                                            day=concert.soonest_date.day,
-                                            hour=0,
-                                            minute=0,
-                                            tzinfo=concert.soonest_date.tzinfo)
-            e.begin = event_start
-            e.end = event_start + datetime.timedelta(hours=24)
-            e.description = 'Concert Time TBD. Check back soon.'
+            e.location = 'Red Butte Garden Amphitheatre'
+            e.url = concert['ticket_url']
 
-        c.events.add(e)
+            if concert['show_time']:
+                event_start = datetime.datetime(year=concert_date.year,
+                                                month=concert_date.month,
+                                                day=concert_date.day,
+                                                hour=concert['show_time'].hour,
+                                                minute=concert['show_time'].minute,
+                                                tzinfo=concert_date.tzinfo)
+                e.begin = event_start
+                e.end = event_start + datetime.timedelta(hours=3)  # Assuming concerts last 3 hours
+            else:
+                # Start time to be determined
+                event_start = datetime.datetime(year=concert_date.year,
+                                                month=concert_date.month,
+                                                day=concert_date.day,
+                                                hour=0,
+                                                minute=0,
+                                                tzinfo=concert_date.tzinfo)
+                e.begin = event_start
+                e.end = event_start + datetime.timedelta(hours=24)
+                description += '\nConcert Time TBD. Check back soon.'
+
+            if len(description) > 2000:
+                description = description[:1997] + '...'
+            e.description = description
+
+            c.events.add(e)
 
     with default_storage.open(f'concert_calendar_{concert_page.slug}.ics', mode='w') as cal_file:
         if settings.STORAGES['default']['BACKEND'] == 'home.custom_storages.MediaStorage':
