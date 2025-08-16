@@ -1,3 +1,4 @@
+import logging
 import urllib.parse
 
 from django.contrib.postgres.fields import ArrayField
@@ -13,6 +14,8 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.models import Orderable
 
 models.CharField.register_lookup(Length)
+
+logger = logging.getLogger(__name__)
 
 
 class Family(models.Model):
@@ -198,16 +201,7 @@ class BloomEvent(models.Model):
         return self.title if self.title else f'Bloom Event for {self.species.full_name if self.species else "Unknown Species"}'
 
     def save(self, *args, **kwargs):
-        # If a title is not set, use the species name as the title
-        if not self.title and (self.species or self.collections.exists()):
-            if self.species:
-                self.title = f'Bloom Event for {self.species.full_name}'
-            elif self.collections.exists():
-                species_names = set(collection.species.full_name for collection in self.collections.all())
-                if len(species_names) == 1:
-                    self.title = f'Bloom Event for {species_names.pop()}'
-                else:
-                    self.title = f'Bloom Event for Multiple Species'
+        # Note that empty titles are instead handled by a m2m_changed signal so they can access the collections M2M field.
 
         # If a URL is not set, generate one based on the species
         if not self.url:
