@@ -67,7 +67,7 @@ def test_logout_view(normal_user):
     user = get_user(c)
     assert user.is_authenticated is True
 
-    response = c.post('/accounts/logout/')
+    response = c.post('/accounts/logout/', follow=True)
     assert response.status_code == 200
 
     user = get_user(c)

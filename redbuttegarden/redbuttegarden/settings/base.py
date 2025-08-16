@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'cas',  # Sometimes necessary to comment this app out to dump database
     'corsheaders',
     'django_tables2',
+    'drf_spectacular',
     'modelcluster',
     'rest_framework',
     'rest_framework.authtoken',
@@ -207,6 +208,7 @@ CAS_AUTO_CREATE_USER = False
 CAS_RESPONSE_CALLBACKS = (
     'custom_user.cas_handler.create_cas_user',
 )
+LOGOUT_REDIRECT_URL = '/'
 
 ADMINS = [('IT', os.environ.get('IT_EMAIL'))]
 DEFAULT_FROM_EMAIL = 'admin@redbuttegarden.org'
@@ -241,7 +243,19 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# DRF Spectacular
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Red Butte Garden & Arboretum API',
+    'DESCRIPTION': 'Internal RBG APIs.',
+    'VERSION': '1.0.0',
+    'SERVE_PUBLIC': False,
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAdminUser'],
+    'SERVE_AUTHENTICATION': ['rest_framework.authentication.SessionAuthentication'],
 }
 
 MAPBOX_API_TOKEN = "pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw"

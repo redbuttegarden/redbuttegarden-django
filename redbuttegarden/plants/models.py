@@ -1,8 +1,12 @@
+import logging
+import urllib.parse
+
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models.functions import Length
 from django.utils.dates import MONTHS
+from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import InlinePanel
@@ -10,6 +14,8 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.models import Orderable
 
 models.CharField.register_lookup(Length)
+
+logger = logging.getLogger(__name__)
 
 
 class Family(models.Model):
@@ -159,3 +165,47 @@ class Collection(models.Model):
 
     def __str__(self):
         return self.plant_id
+
+
+class BloomEvent(models.Model):
+    """
+    A model to represent a bloom event for a species and/or collections.
+    """
+    title = models.CharField(max_length=255, blank=True, null=True, help_text=_(
+        'Optional title to describe what\'s blooming. If left blank, the species name will be used.'))
+    description = models.TextField(blank=True, null=True, help_text=_(
+        'Optional description of what is blooming, where to see it and any other relevant info you think people might find interesting.'))
+    url = models.URLField(blank=True, null=True, help_text=_(
+        'Optionally link to a related Blooming Now post. If left blank and species is set a link to the plant map filtered to that species will be automatically generated.'))
+    species = models.ForeignKey(Species, on_delete=models.SET_NULL, blank=True, null=True)
+    collections = models.ManyToManyField(Collection, blank=True)
+    bloom_start = models.DateField(blank=True, null=True)
+    bloom_end = models.DateField(blank=True, null=True, help_text=_(
+        'If left blank, the bloom start date will be used as the end date when displayed on calendars.'))
+    area = models.ForeignKey(GardenArea, on_delete=models.SET_NULL, blank=True, null=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
+
+    panels = [
+        FieldPanel('title'),
+        FieldPanel('description'),
+        FieldPanel('url'),
+        FieldPanel('species'),
+        FieldPanel('collections'),
+        FieldPanel('bloom_start'),
+        FieldPanel('bloom_end'),
+        FieldPanel('area'),
+    ]
+
+    def __str__(self):
+        return self.title if self.title else f'Bloom Event for {self.species.full_name if self.species else "Unknown Species"}'
+
+    def save(self, *args, **kwargs):
+        # Note that empty titles are instead handled by a m2m_changed signal so they can access the collections M2M field.
+
+        # If a URL is not set, generate one based on the species
+        if not self.url:
+            if self.species:
+                self.url = f'https://redbuttegarden.org/plants/plant-map/?scientific_name={urllib.parse.quote(self.species.full_name)}'
+
+        super().save(*args, **kwargs)

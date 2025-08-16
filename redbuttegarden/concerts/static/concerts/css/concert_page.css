@@ -136,8 +136,9 @@
     display: none;
 }
 
+/* Past concerts - Adjusted to be less transparent to meet accessibility contrast guidelines */
 .past{
-    opacity:.5;
+    opacity:.7;
 }
 
 .buytickets {

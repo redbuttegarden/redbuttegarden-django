@@ -21,3 +21,12 @@
     margin-inline: auto;
     gap: 1em;
 }
+
+#blooming {
+    font-style: italic;
+
+    svg {
+        max-width: 35px;
+        height: auto;
+    }
+}

@@ -160,7 +160,8 @@ function handleConcertDay(currentMonth, currentDay) {
                 buyLink.id = "buyLink";
                 buyLink.setAttribute("href", concertInfo[i]["TicketURL"]);
                 buyLink.className = "fw-bold";
-                buyLink.textContent = "Buy tickets to today's show!";
+                // The BandName is not null, use that as the text content
+                buyLink.textContent = concertInfo[i]["BandName"] ? `Buy tickets to see ${concertInfo[i]["BandName"]}!` : "Buy tickets to today's show!";
                 if (hoursElem) {
                     hoursElem.after(buyLink);
                     console.log("Buy link added after hours element.");

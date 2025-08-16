@@ -101,9 +101,17 @@ class ImageLink(blocks.StructBlock):
         label='Title',
         max_length=200,
         required=False,
+        help_text=_('Visible text title that is overlayed on the image'),
     )
     url = blocks.URLBlock(
         label="URL"
+    )
+    url_title = blocks.CharBlock(
+        label='URL Title',
+        max_length=200,
+        required=False,
+        help_text=_(
+            'Screen reader title used to describe the link. This is not displayed visually but is important for accessibility.'),
     )
     image = ImageBlock()
 
@@ -758,8 +766,11 @@ class HomePage(AbstractBase):
         if self.concert_page:
             concerts = self.concert_page.get_visible_concerts()
             concert_info = [
-                {"TicketURL": concert['ticket_url'] if not concert['sold_out'] else None, "Date": concert_date} for
-                concert in concerts for concert_date in concert['concert_dates']]
+                {
+                    "TicketURL": concert['ticket_url'] if not concert['sold_out'] else None,
+                    "Date": concert_date,
+                    "BandName": concert['band_name'],
+                } for concert in concerts for concert_date in concert['concert_dates']]
             context['concert_info'] = json.dumps(concert_info, default=str)
 
         # Get upcoming events; avoid circular import
@@ -781,14 +792,24 @@ class HomePage(AbstractBase):
             url_validator = URLValidator()
             for image in social_media_images:
                 # Try to get permalink from image's description
-                permalink = image.description.split(' ')[0]
                 try:
+                    permalink = image.description.split(' ')[0]
                     url_validator(permalink)
+                except (IndexError,):
+                    logger.warning(f"Image {image.id} does not have a valid permalink in its description.")
+                    continue
                 except (ValidationError,) as e:
-                    logger.warning(f"Failed to validate URL: {permalink}")
+                    logger.warning(f"Failed to validate URL: {permalink}\n\n{e}")
                     continue
 
-                images_and_links.append({'image': image, 'url': permalink})
+                # Try to get the the caption from the image's description
+                try:
+                    caption = ' '.join(image.description.split(' ')[1:])
+                except IndexError:
+                    logger.warning(f"Image {image.id} does not have a caption in its description.")
+                    caption = None
+
+                images_and_links.append({'image': image, 'url': permalink, 'caption': caption})
 
             context['social_media_images_links'] = images_and_links
 

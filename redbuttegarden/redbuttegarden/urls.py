@@ -3,6 +3,7 @@ import os
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.contrib.sitemaps.views import sitemap
@@ -19,6 +20,7 @@ environment try to authenticate using CAS.
 if not os.environ.get('DJANGO_SETTINGS_MODULE') in ['redbuttegarden.settings.local',
                                                     'redbuttegarden.settings.testing']:
     import cas.views
+
     urlpatterns = [
         # CAS
         path('admin/login/', cas.views.login, name='login'),
@@ -41,9 +43,12 @@ urlpatterns += [
 
     path('search/', search_views.search, name='search'),
     path('api-auth/', include('rest_framework.urls')),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('accounts/', include('django.contrib.auth.urls')),
 ]
-
 
 if settings.DEBUG:
     import debug_toolbar

@@ -40,6 +40,12 @@ class Command(BaseCommand):
                 media_url = media_item["media_url"]
                 media_permalink = media_item["permalink"]
                 media_timestamp = media_item["timestamp"]
+                media_caption = media_item["caption"]
+
+                # Combine the parmalink and caption for the image description but restrict to 255 characters
+                media_description = f"{media_permalink} {media_caption}" if media_caption else media_permalink
+                if len(media_description) > 255:
+                    media_description = media_description[:252] + '...'
 
                 img_response = requests.get(media_thumbnail_url if media_thumbnail_url else media_url, stream=True,
                                             timeout=TIMEOUT)
@@ -52,7 +58,7 @@ class Command(BaseCommand):
                             title=img_title,
                             defaults={'file': ImageFile(image_data, name=img_title.strip() + '.jpg'),
                                       'collection': WagtailCollection.objects.get(name='Instagram Data'),
-                                      'description': media_permalink,
+                                      'description': media_description,
                                       'created_at': media_timestamp
                                       })
 
