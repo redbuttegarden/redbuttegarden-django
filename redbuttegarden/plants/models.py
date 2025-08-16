@@ -171,7 +171,7 @@ class BloomEvent(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True, help_text=_(
         'Optional title to describe what\'s blooming. If left blank, the species name will be used.'))
     description = models.TextField(blank=True, null=True, help_text=_(
-        'Optional description of what is blooming, where to see it and another other relevant info you think people might find interesting.'))
+        'Optional description of what is blooming, where to see it and any other relevant info you think people might find interesting.'))
     url = models.URLField(blank=True, null=True, help_text=_(
         'Optionally link to a related Blooming Now post. If left blank and species is set a link to the plant map filtered to that species will be automatically generated.'))
     species = models.ForeignKey(Species, on_delete=models.SET_NULL, blank=True, null=True)
