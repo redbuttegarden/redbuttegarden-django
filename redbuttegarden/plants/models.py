@@ -168,14 +168,17 @@ class BloomEvent(models.Model):
     """
     A model to represent a bloom event for a species and/or collections.
     """
-    title = models.CharField(max_length=255, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
+    title = models.CharField(max_length=255, blank=True, null=True, help_text=_(
+        'Optional title to describe what\'s blooming. If left blank, the species name will be used.'))
+    description = models.TextField(blank=True, null=True, help_text=_(
+        'Optional description of what is blooming, where to see it and another other relevant info you think people might find interesting.'))
     url = models.URLField(blank=True, null=True, help_text=_(
-        'Optionally link to a related Blooming Now post. If left blank and species is set a link to the plant map for filtered to that species will be automatically generated.'))
+        'Optionally link to a related Blooming Now post. If left blank and species is set a link to the plant map filtered to that species will be automatically generated.'))
     species = models.ForeignKey(Species, on_delete=models.SET_NULL, blank=True, null=True)
     collections = models.ManyToManyField(Collection, blank=True)
     bloom_start = models.DateField(blank=True, null=True)
-    bloom_end = models.DateField(blank=True, null=True, help_text=_('If left blank, the bloom start date will be used as the end date when displayed on calendars.'))
+    bloom_end = models.DateField(blank=True, null=True, help_text=_(
+        'If left blank, the bloom start date will be used as the end date when displayed on calendars.'))
     area = models.ForeignKey(GardenArea, on_delete=models.SET_NULL, blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
@@ -195,6 +198,18 @@ class BloomEvent(models.Model):
         return self.title if self.title else f'Bloom Event for {self.species.full_name if self.species else "Unknown Species"}'
 
     def save(self, *args, **kwargs):
+        # If a title is not set, use the species name as the title
+        if not self.title and (self.species or self.collections.exists()):
+            if self.species:
+                self.title = f'Bloom Event for {self.species.full_name}'
+            elif self.collections.exists():
+                species_names = set(collection.species.full_name for collection in self.collections.all())
+                if len(species_names) == 1:
+                    self.title = f'Bloom Event for {species_names.pop()}'
+                else:
+                    self.title = f'Bloom Event for Multiple Species'
+
+        # If a URL is not set, generate one based on the species
         if not self.url:
             if self.species:
                 self.url = f'https://redbuttegarden.org/plants/plant-map/?scientific_name={urllib.parse.quote(self.species.full_name)}'
