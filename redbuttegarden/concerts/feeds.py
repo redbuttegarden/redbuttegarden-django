@@ -26,7 +26,7 @@ class ConcertsFeed(Feed):
         return concert_page.sort_concerts(concerts)
 
     def item_title(self, item):
-        return item['band_name'] or 'Example Band Name'
+        return item['band_name'] or 'Band Name Not Set - Check Description For Details'
 
     def item_description(self, item):
         # Render the concert details using a template
