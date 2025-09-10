@@ -127,7 +127,9 @@ function displayOpenClosed(timeInfoDict) {
     let currentDate = new Date();
 
     // Check if the current time is between the open and close times
-    if (timeInfoDict && currentDate >= timeInfoDict.openDate && currentDate <= timeInfoDict.closeDate) {
+    // Also check if it's a concert day and before 5pm or not a concert day
+    if ((timeInfoDict && currentDate >= timeInfoDict.openDate && currentDate <= timeInfoDict.closeDate) &&
+        (concertDay && currentDate.getHours() < 17 || !concertDay)) {
         openClosedBubbleElem.className = "rbg-open";
         openClosedBubbleElem.textContent = "THE GARDEN IS OPEN";
     } else {
