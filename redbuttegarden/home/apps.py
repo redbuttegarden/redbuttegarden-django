@@ -13,6 +13,8 @@ class HomeConfig(AppConfig):
     def ready(self):
         from .handlers import general_published_handler, send_to_automate
         from .models import GeneralPage, TwoColumnGeneralPage
+        # Implicitly register signals by importing them
+        from . import signals
 
         page_published.connect(general_published_handler, sender=GeneralPage)
         page_published.connect(general_published_handler, sender=TwoColumnGeneralPage)
