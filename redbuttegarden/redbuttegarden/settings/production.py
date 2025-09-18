@@ -11,8 +11,7 @@ DEBUG = False
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ['0.0.0.0',
-                 'davlmcslie.execute-api.us-east-1.amazonaws.com',  # Newer AWS Account
+ALLOWED_HOSTS = ['davlmcslie.execute-api.us-east-1.amazonaws.com',  # Newer AWS Account
                  'd1mg1drmxhfql.cloudfront.net',
                  'redbuttegarden.org', 'www.redbuttegarden.org', 'train.redbuttegarden.org',
                  'dev-shop.redbuttegarden.org']
