@@ -24,7 +24,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     # This replaces the `WAGTAIL_USER_CUSTOM_FIELDS` setting.
     class Meta(UserCreationForm.Meta):
-        fields = UserEditForm.Meta.fields | {"title"}
+        fields = UserCreationForm.Meta.fields | {"title"}
 
 
 class NoStaffLoginForm(AuthenticationForm):
