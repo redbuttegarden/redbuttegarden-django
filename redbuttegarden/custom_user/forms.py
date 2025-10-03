@@ -23,7 +23,7 @@ class CustomUserCreationForm(UserCreationForm):
     title = forms.CharField(required=True, label=_('Title'))
 
     # This replaces the `WAGTAIL_USER_CUSTOM_FIELDS` setting.
-    class Meta(UserEditForm.Meta):
+    class Meta(UserCreationForm.Meta):
         fields = UserEditForm.Meta.fields | {"title"}
 
 
