@@ -176,7 +176,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django': {
+        'django.request': {
             'handlers': ['console'],
             'level': 'INFO',
         },

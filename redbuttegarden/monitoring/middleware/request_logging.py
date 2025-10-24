@@ -1,5 +1,7 @@
 import logging
 
+from ipware import get_client_ip
+
 logger = logging.getLogger("django.request")
 
 
@@ -8,19 +10,12 @@ class RequestLoggingMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        response = self.get_response(request)
+        ip, is_routable = get_client_ip(request)
+        ip = ip or "unknown"
 
         logger.info(
-            f"Request from IP: {get_client_ip(request)} | "
-            f"Method: {request.method} | Path: {request.path} | "
-            f"Status: {response.status_code}"
+            f"Request from IP: {ip} | Method: {request.method} | Path: {request.path} | User-Agent: {request.META.get('HTTP_USER_AGENT', 'unknown')}"
         )
 
+        response = self.get_response(request)
         return response
-
-
-def get_client_ip(request):
-    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-    if x_forwarded_for:
-        return x_forwarded_for.split(",")[0]
-    return request.META.get("REMOTE_ADDR")

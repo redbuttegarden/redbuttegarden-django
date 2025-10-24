@@ -88,7 +88,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     
-    'redbuttegarden.middleware.request_logging.RequestLoggingMiddleware',
+    'monitoring.middleware.request_logging.RequestLoggingMiddleware',
 
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
