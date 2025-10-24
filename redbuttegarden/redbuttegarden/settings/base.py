@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'events',
     'home',
     'journal',
+    'monitoring',
     'plants',
     'redbuttegarden.apps.CustomUsersAppConfig',
     'search',
@@ -86,6 +87,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    
+    'redbuttegarden.middleware.request_logging.RequestLoggingMiddleware',
 
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
