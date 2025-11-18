@@ -43,7 +43,7 @@ class SpeciesSerializer(serializers.ModelSerializer):
         fields = ['id', 'genus', 'name', 'full_name', 'subspecies', 'variety', 'subvariety', 'forma', 'subforma',
                   'cultivar', 'vernacular_name', 'habit', 'hardiness', 'water_regime', 'exposure', 'bloom_time',
                   'plant_size', 'flower_color', 'utah_native', 'plant_select', 'deer_resist', 'rabbit_resist',
-                  'bee_friend', 'high_elevation']
+                  'bee_friend', 'high_elevation', 'arborist_rec']
         extra_kwargs = {
             'name': {
                 'validators': []

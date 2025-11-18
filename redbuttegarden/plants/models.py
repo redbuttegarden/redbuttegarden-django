@@ -73,6 +73,7 @@ class Species(ClusterableModel):
     rabbit_resist = models.BooleanField(default=False)
     bee_friend = models.BooleanField(default=False)
     high_elevation = models.BooleanField(default=False)
+    arborist_rec = models.BooleanField(default=False)
 
     panels = [
         InlinePanel('species_images', label='Species Images'),
@@ -98,7 +99,8 @@ class Species(ClusterableModel):
         FieldPanel('deer_resist'),
         FieldPanel('rabbit_resist'),
         FieldPanel('bee_friend'),
-        FieldPanel('high_elevation')
+        FieldPanel('high_elevation'),
+        FieldPanel('arborist_rec')
     ]
 
     def __str__(self):
