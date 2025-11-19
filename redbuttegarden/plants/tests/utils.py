@@ -90,7 +90,7 @@ def get_species(genus, name='species', full_name='Genus species', subspecies='su
                 hardiness=None, water_regime='water regime', exposure='exposure',
                 bloom_time=None, plant_size='1\' h x 2" w', flower_color='color',
                 utah_native=True, plant_select=True, deer_resist=True, rabbit_resist=True,
-                bee_friend=True, high_elevation=True):
+                bee_friend=True, high_elevation=True, arborist_rec=True):
     if hardiness is None:
         hardiness = [1, 2, 3, 4]
     if bloom_time is None:
@@ -104,5 +104,6 @@ def get_species(genus, name='species', full_name='Genus species', subspecies='su
                                                plant_size=plant_size, flower_color=flower_color,
                                                utah_native=utah_native, plant_select=plant_select,
                                                deer_resist=deer_resist, rabbit_resist=rabbit_resist,
-                                               bee_friend=bee_friend, high_elevation=high_elevation)
+                                               bee_friend=bee_friend, high_elevation=high_elevation,
+                                               arborist_rec=arborist_rec)
     return species

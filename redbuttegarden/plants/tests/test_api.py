@@ -70,6 +70,7 @@ def collections_same_species_different_cultivars():
                 "rabbit_resist": False,
                 "bee_friend": False,
                 "high_elevation": False,
+                "arborist_rec": False
             },
             "garden": {
                 "area": "Garden Area",
@@ -116,6 +117,7 @@ def collections_same_species_different_cultivars():
                 "rabbit_resist": False,
                 "bee_friend": False,
                 "high_elevation": False,
+                "arborist_rec": False
             },
             "garden": {
                 "area": "Garden Area",
