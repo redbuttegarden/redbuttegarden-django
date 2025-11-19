@@ -1,91 +1,91 @@
 {% extends 'base.html' %}
 {% load static wagtailcore_tags wagtailimages_tags %}
 
-{% block body_class %}event-page{% endblock %}
+{% block body_class %}
+  event-page
+{% endblock %}
 
 {% block content %}
-    <!-- Begin First Column -->
-    <div class="row">
-        <div class="col-sm-3">
-            <!-- Event Picture-->
-            <div class="event-pic mt-2 mt-lg-4">
-                {% image page.thumbnail fill-300x300 %}
-            </div>
+  <!-- Begin First Column -->
+  <div class="row">
+    <div class="col-sm-3">
+      <!-- Event Picture -->
+      <div class="event-pic mt-2 mt-lg-4">
+        {% image page.thumbnail fill-300x300 %}
+      </div>
 
-            <div class="ev-info-header green mt-2 mt-lg-4">LOCATION:</div>
-            <div class="ev-location">
-                {{ page.location }}
-            </div>
+      <div class="ev-info-header green mt-2 mt-lg-4">LOCATION:</div>
+      <div class="ev-location">{{ page.location }}</div>
 
-            <!-- Registration Info -->
-            {% if page.additional_info %}
-                <div class="ev-info-header green mt-2 mt-lg-4">ADDITIONAL INFO:</div>
-                <div class="ev-member-sale">
-                    {{ page.additional_info|richtext }}
-                </div>
-            {% endif %}
+      <!-- Registration Info -->
+      {% if page.additional_info %}
+        <div class="ev-info-header green mt-2 mt-lg-4">ADDITIONAL INFO:</div>
+        <div class="ev-member-sale">{{ page.additional_info|richtext }}</div>
+      {% endif %}
 
-            <!-- Instructor Info -->
-            {% if page.instructor %}
-                <div class="ev-info-header green mt-2 mt-lg-4">INSTRUCTOR:</div>
-                <div>
-                    {{ page.instructor }}
-                </div>
-            {% endif %}
+      <!-- Instructor Info -->
+      {% if page.instructor %}
+        <div class="ev-info-header green mt-2 mt-lg-4">INSTRUCTOR:</div>
+        <div>{{ page.instructor }}</div>
+      {% endif %}
 
-            <!-- Price Info -->
-            {% if page.member_cost or page.public_cost %}
-                <div class="ev-info-header green mt-2 mt-lg-4">COST:</div>
-            {% endif %}
+      <!-- Price Info -->
+      {% if page.member_cost or page.public_cost %}
+        <div class="ev-info-header green mt-2 mt-lg-4">COST:</div>
+      {% endif %}
 
-            {% if page.member_cost %}
-                <div>
-                    <div class="inline"><strong>Garden Members:&nbsp;</strong></div>
-                    <div class="ev-member-cost">{{ page.member_cost }}</div>
-                </div>
-            {% endif %}
-
-            {% if page.public_cost %}
-                <div>
-                    <div class="inline"><strong>General Public:&nbsp;</strong></div>
-                    <div class="ev-public-cost"><span class="green fw-bold">{{ page.public_cost }}</span></div>
-                </div>
-            {% endif %}
+      {% if page.member_cost %}
+        <div>
+          <div class="inline">
+            <strong>Garden Members:&nbsp;</strong>
+          </div>
+          <div class="ev-member-cost">{{ page.member_cost }}</div>
         </div>
-        <!-- End First Column -->
+      {% endif %}
 
-        <!-- Begin Second Column -->
-        <div class="col-sm-9">
-            <h1 class="mt-5 mt-md-3">{{ page.title }}</h1>
-            <div class="ev-sub fs-5">{{ page.sub_heading }}</div>
-
-            <div class="ev-date fst-italic">{{ page.event_dates }}</div>
-
-            <div class="ev-desc">
-                <div>
-                    {% for block in page.body %}
-                        <div class="row">
-                            {% if block.block_type == 'image' %}
-                                {% image block.value original class="img-fluid" %}
-                            {% else %}
-                                {% include_block block %}
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-
-                    {% if page.policy.name %}
-                        <div class="row my-5">
-                            <p class="text-center">
-                                {% with policy_page=page.policy.policy_page.specific %}
-                                    <a href="{% pageurl policy_page %}">
-                                        {{ page.policy.link_text }}
-                                    </a>
-                                {% endwith %}
-                            </p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+      {% if page.public_cost %}
+        <div>
+          <div class="inline">
+            <strong>General Public:&nbsp;</strong>
+          </div>
+          <div class="ev-public-cost">
+            <span class="green fw-bold">{{ page.public_cost }}</span>
+          </div>
         </div>
+      {% endif %}
     </div>
+    <!-- End First Column -->
+
+    <!-- Begin Second Column -->
+    <div class="col-sm-9">
+      <h1 class="mt-5 mt-md-3">{{ page.title }}</h1>
+      <div class="ev-sub fs-5">{{ page.sub_heading }}</div>
+
+      <div class="ev-date fst-italic">{{ page.event_dates }}</div>
+
+      <div class="ev-desc">
+        <div>
+          {% for block in page.body %}
+            <div class="row">
+              {% if block.block_type == 'image' %}
+                {% image block.value original class='img-fluid' %}
+              {% else %}
+                {% include_block block %}
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          {% for policy in page.policies.all %}
+            <div class="row {% if forloop.first %}mt-5{% elif forloop.last %}mb-5{% else %}my-2{% endif %}">
+              <p class="text-center">
+                {% with policy_page=policy.policy_page.specific %}
+                  <a href="{% pageurl policy_page %}">{{ policy.link_text }}</a>
+                {% endwith %}
+              </p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

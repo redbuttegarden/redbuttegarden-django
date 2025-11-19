@@ -229,12 +229,11 @@ class EventPage(AbstractBase):
     notes = RichTextField(blank=True,
                           help_text="Notes will appear on the thumbnail image of the event on the event index page")
     body = StreamField(BLOCK_TYPES)
-    policy = models.ForeignKey(
+    policies = models.ManyToManyField(
         'events.PolicyLink',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
+        related_name='event_policies'
     )
     order_date = models.DateTimeField(default=timezone.now)  # Allow editors to control displayed order of pages
 
@@ -249,7 +248,7 @@ class EventPage(AbstractBase):
         FieldPanel('event_categories', widget=forms.CheckboxSelectMultiple),
         FieldPanel('notes'),
         FieldPanel('body'),
-        FieldPanel('policy', help_text=_("Optionally choose a policy link to include on the page"))
+        FieldPanel('policies', help_text=_("Optionally choose one or more policy links to include on the page"))
     ]
 
     promote_panels = AbstractBase.promote_panels + [
