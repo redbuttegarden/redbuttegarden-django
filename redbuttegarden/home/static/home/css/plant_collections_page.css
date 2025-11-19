@@ -1,0 +1,11 @@
+a.collection-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #196143;
+    color: #FFF;
+    height: 60px;
+    border: 1px solid black;
+    text-decoration: none;
+    margin: 5px 0;
+}

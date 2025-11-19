@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block extra_css %}
+    <link href="{% static 'home/css/plant_collections_page.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
     {% include 'includes/page_banner.html' with banner=page.banner %}
@@ -26,7 +30,7 @@
         {% if collections %}
             {% for collection in collections %}
                 <div class="row my-1 my-md-3">
-                    <div class="col-sm-6 d-flex align-items-center">
+                    <div class="col-md-6 d-flex align-items-center">
                         <a class="hover w-100" href="{{ collection.slideshow_link }}" target="_blank">
                             <div class="collectionswrap">
                                 {% image collection.image width-600 class="img-fluid w-100" %}
@@ -36,23 +40,44 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-md-6">
                         <div class="collectionswrap green">
                             <h4 class="text-center">{{ collection.title }}</h4>
                             {% include_block collection.text|richtext %}
                         </div>
                         <div class="row text-center">
-                            <div class="col-sm-6">
-                                <a class="btn apply-button hover" href="{{ collection.slideshow_link }}"
-                                   target="_blank">
-                                    View Our Slideshow
-                                </a>
-                            </div>
-                            <div class="col-sm-6">
-                                <a class="btn apply-button hover" href="{{ collection.collection_doc.file.url }}">
-                                    More Information
-                                </a>
-                            </div>
+                            {% if collection.title == "Arboretum Collection" %}
+                                <div class="col-sm-4">
+                                    <a class="btn collection-button hover" href="{{ collection.slideshow_link }}"
+                                    target="_blank">
+                                        View Our Slideshow
+                                    </a>
+                                </div>
+                                <div class="col-sm-4">
+                                    <a class="btn collection-button hover" href="{% url 'plants:top-trees' %}">
+                                        Top Tree Selections
+                                    </a>
+                                </div>
+                                <div class="col-sm-4">
+                                    <a class="btn collection-button hover" href="{{ collection.collection_doc.file.url }}">
+                                        More Information
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="col-sm-6">
+                                    <a class="btn collection-button hover" href="{{ collection.slideshow_link }}"
+                                    target="_blank">
+                                        View Our Slideshow
+                                    </a>
+                                </div>
+                                {% if collection.collection_doc %}
+                                    <div class="col-sm-6">
+                                        <a class="btn collection-button hover" href="{{ collection.collection_doc.file.url }}">
+                                            More Information
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
