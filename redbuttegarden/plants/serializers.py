@@ -123,7 +123,8 @@ class CollectionSerializer(serializers.ModelSerializer):
                                                        'plant_select': species_data['plant_select'],
                                                        'deer_resist': species_data['deer_resist'],
                                                        'bee_friend': species_data['bee_friend'],
-                                                       'high_elevation': species_data['high_elevation']
+                                                       'high_elevation': species_data['high_elevation'],
+                                                       'arborist_rec': species_data['arborist_rec']
                                                    })
 
         if location_data['longitude'] and location_data['latitude']:
