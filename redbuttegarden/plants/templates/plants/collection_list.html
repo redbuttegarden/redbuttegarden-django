@@ -9,6 +9,12 @@
 {% endblock %}
 
 {% block content %}
+    {% if additional_html %}
+        {% autoescape off %}
+            {{ additional_html }}
+        {% endautoescape %}
+    {% endif %}
+
     {% render_table table %}
 {% endblock %}
 

@@ -474,5 +474,12 @@ def top_trees(request):
     RequestConfig(request, paginate={"paginator_class": LazyPaginator}).configure(table)
     table.paginate(page=request.GET.get("page", 1), per_page=50)
 
-    context = {"table": table}
+    additional_html = """<p>This list highlights trees growing successfully at Red Butte Garden and Arboretum. These are species and cultivars that have proven their resilience and performance in our climate. Compiled by our Arborist and Horticulture Director, it is intended to serve as a practical guide for anyone choosing trees that will thrive in Utah. The trees are organized alphabetically by scientific name for easy reference.</p>
+<p>Whether you’re planning a new landscape or replacing an existing tree, we hope this resource makes the selection process easier and helps you feel confident in planting the right tree for your site.</p>
+<p>Click the botanical name to learn more about each tree.</p>"""
+
+    context = {
+        "additional_html": additional_html,
+        "table": table
+        }
     return render(request, "plants/collection_list.html", context)
