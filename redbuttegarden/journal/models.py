@@ -181,10 +181,17 @@ class JournalPage(AbstractBase):
             # Get the appropriate banner based on the current month
             season = get_season(date.today())
             banner_query = Image.objects.filter().search("what's blooming now banner " + season)
+
+            # Handle cases where 'autumn' banners have been renamed to Fall
+            if len(banner_query) == 0 and season == 'autumn':
+                banner_query = Image.objects.filter().search("what's blooming now banner fall")
+                
             try:
                 banner = banner_query[0]
                 self.banner = banner
             except IndexError as e:
+                logger.error('[!] Failed to find seasonal banner for Journal Page: ', e)
+            except TypeError as e:
                 logger.error('[!] Failed to find seasonal banner for Journal Page: ', e)
         if not self.authors.all():
             self.authors.add(self.owner)
