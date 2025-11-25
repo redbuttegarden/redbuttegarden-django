@@ -231,7 +231,6 @@ class EventPage(AbstractBase):
     body = StreamField(BLOCK_TYPES)
     policies = models.ManyToManyField(
         'events.PolicyLink',
-        null=True,
         blank=True,
         related_name='event_policies'
     )
