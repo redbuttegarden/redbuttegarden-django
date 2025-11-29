@@ -2,6 +2,7 @@ import logging
 
 from django import forms
 from django.db import models
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.fields import RichTextField
@@ -13,73 +14,104 @@ logger = logging.getLogger(__name__)
 
 class AbstractBase(Page):
     banner = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name="+",
     )
     thumbnail = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
-        help_text=_('You only need to add a thumbnail if this page is the child of a another page')
+        related_name="+",
+        help_text=_(
+            "You only need to add a thumbnail if this page is the child of a another page"
+        ),
     )
     custom_css = models.ForeignKey(
         get_document_model_string(),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name="+",
         help_text=_(
-            'Upload a CSS file to apply custom styling to this page. Note that editing an existing document will apply '
-            'the changes to ALL pages where the document is used'),
-        verbose_name='Custom CSS'
+            "Upload a CSS file to apply custom styling to this page. Note that editing an existing document will apply "
+            "the changes to ALL pages where the document is used"
+        ),
+        verbose_name="Custom CSS",
     )
-    dialog_display = models.BooleanField(help_text=_('Should this dialog be displayed?'), null=True, blank=True,
-                                         default=False)
-    dialog_title = models.CharField(help_text=_("Title for pop-up dialog box"),
-                                    max_length=100, null=True, blank=True)
+    dialog_display = models.BooleanField(
+        help_text=_("Should this dialog be displayed?"),
+        null=True,
+        blank=True,
+        default=False,
+    )
+    dialog_title = models.CharField(
+        help_text=_("Title for pop-up dialog box"),
+        max_length=100,
+        null=True,
+        blank=True,
+    )
     dialog_content = RichTextField(
-        help_text=_('Main content of the dialog box'),
-        null=True, blank=True
+        help_text=_("Main content of the dialog box"), null=True, blank=True
     )
-    dialog_style = models.CharField(choices=[
-        ('corner', 'Corner'),
-        ('full', 'Full Page')
-    ], null=True, blank=True, max_length=6)
+    dialog_style = models.CharField(
+        choices=[("corner", "Corner"), ("full", "Full Page")],
+        null=True,
+        blank=True,
+        max_length=6,
+    )
 
     class Meta:
         abstract = True
 
     content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            FieldPanel('banner'),
-            FieldPanel('thumbnail'),
-            FieldPanel('custom_css')
-        ], classname="collapsible"),
+        MultiFieldPanel(
+            [FieldPanel("banner"), FieldPanel("thumbnail"), FieldPanel("custom_css")],
+            classname="collapsible",
+        ),
     ]
 
     dialog_box_panels = [
-        FieldPanel('dialog_display', widget=forms.CheckboxInput),
-        FieldPanel('dialog_title'),
-        FieldPanel('dialog_content'),
-        FieldPanel('dialog_style')
+        FieldPanel("dialog_display", widget=forms.CheckboxInput),
+        FieldPanel("dialog_title"),
+        FieldPanel("dialog_content"),
+        FieldPanel("dialog_style"),
     ]
+
+    @cached_property
+    def canonical_page(self):
+        # For real alias pages, point back to the source; otherwise self
+        source = (
+            getattr(self, "alias_of", None)
+            or getattr(self, "get_alias_of", lambda: None)()
+        )
+        return source or self
+
+    @property
+    def canonical_url(self):
+        """
+        Absolute canonical URL as a string, suitable for <link rel="canonical">.
+        """
+        # full_url is Wagtail's absolute URL incl. scheme + domain
+        return self.canonical_page.full_url
 
     def get_context(self, request, *args, **kwargs):
         from events.models import EventIndexPage
+
         context = super(AbstractBase, self).get_context(request, *args, **kwargs)
-        main_event_slug = 'events'
+        main_event_slug = "events"
         try:
             main_events_page = EventIndexPage.objects.get(slug=main_event_slug)
-            context['main_event_page'] = main_events_page
+            context["main_event_page"] = main_events_page
         except EventIndexPage.DoesNotExist:
-            logger.error(f'[!] Event page with slug "{main_event_slug}" not found. Is it missing or was the slug '
-                         f'changed?')
-            context['main_event_page'] = None
+            logger.error(
+                f'[!] Event page with slug "{main_event_slug}" not found. Is it missing or was the slug '
+                f"changed?"
+            )
+            context["main_event_page"] = None
 
         return context
 
