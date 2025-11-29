@@ -96,6 +96,8 @@ def robots_txt(request):
         # Disallow known AI training bots,
         "User-agent: GPTBot",
         "Disallow: /",
+        "User-agent: ChatGPT-User",
+        "Disallow: /",
         "User-agent: CCBot",
         "Disallow: /",
         "User-agent: anthropic-ai",
