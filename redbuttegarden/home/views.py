@@ -10,20 +10,27 @@ logger = logging.getLogger(__name__)
 
 class RBGHoursViewSet(SnippetViewSet):
     model = RBGHours
-    icon = 'time'
+    icon = "time"
     inspect_view_enabled = True
     search_fields = (
-        'name', 'additional_message', 'additional_emphatic_mesg', 'garden_open_message', 'garden_closed_message')
+        "name",
+        "additional_message",
+        "additional_emphatic_mesg",
+        "garden_open_message",
+        "garden_closed_message",
+    )
 
 
 def latest_weather(request):
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
         weather = CurrentWeather.objects.first()
         if weather:
-            return JsonResponse({
-                'condition': weather.condition,
-                'temperature': weather.temperature,
-            })
+            return JsonResponse(
+                {
+                    "condition": weather.condition,
+                    "temperature": weather.temperature,
+                }
+            )
 
     return HttpResponse(status=204)
 
@@ -32,7 +39,7 @@ def get_hours(request, page_id: int):
     """
     Get the RGGHours objects associated with the given page ID.
     """
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
         try:
             page = HomePage.objects.get(id=page_id)
         except HomePage.DoesNotExist:
@@ -43,21 +50,29 @@ def get_hours(request, page_id: int):
             json_response = {}
             for idx, rbg_hours_orderable in enumerate(hours_orderables.all()):
                 json_response[idx] = {
-                    'name': rbg_hours_orderable.hours.name,
-                    'garden_open': rbg_hours_orderable.hours.garden_open.strftime(
-                        '%-H:%M') if rbg_hours_orderable.hours.garden_open else None,
-                    'garden_close': rbg_hours_orderable.hours.garden_close.strftime(
-                        '%-H:%M') if rbg_hours_orderable.hours.garden_close else None,
-                    'open_message': rbg_hours_orderable.hours.garden_open_message,
-                    'closed_message': rbg_hours_orderable.hours.garden_closed_message,
-                    'additional_message': rbg_hours_orderable.hours.additional_message,
-                    'additional_emphatic_mesg': rbg_hours_orderable.hours.additional_emphatic_mesg,
-                    'days_of_week': rbg_hours_orderable.hours.days_of_week,
-                    'months_of_year': rbg_hours_orderable.hours.months_of_year,
+                    "name": rbg_hours_orderable.hours.name,
+                    "garden_open": (
+                        rbg_hours_orderable.hours.garden_open.strftime("%-H:%M")
+                        if rbg_hours_orderable.hours.garden_open
+                        else None
+                    ),
+                    "garden_close": (
+                        rbg_hours_orderable.hours.garden_close.strftime("%-H:%M")
+                        if rbg_hours_orderable.hours.garden_close
+                        else None
+                    ),
+                    "open_message": rbg_hours_orderable.hours.garden_open_message,
+                    "closed_message": rbg_hours_orderable.hours.garden_closed_message,
+                    "additional_message": rbg_hours_orderable.hours.additional_message,
+                    "additional_emphatic_mesg": rbg_hours_orderable.hours.additional_emphatic_mesg,
+                    "days_of_week": rbg_hours_orderable.hours.days_of_week,
+                    "months_of_year": rbg_hours_orderable.hours.months_of_year,
                 }
             return JsonResponse(json_response)
         else:
-            logger.warning(f"Page with ID {page_id} does not have any RBGHours associated with it.")
+            logger.warning(
+                f"Page with ID {page_id} does not have any RBGHours associated with it."
+            )
 
     return HttpResponse(status=204)
 
@@ -65,46 +80,33 @@ def get_hours(request, page_id: int):
 def robots_txt(request):
     lines = [
         # Allow major search engine bots
-        "User - agent: Googlebot",
+        "User-agent: Googlebot",
         "Allow: /",
-
-        "User - agent: Bingbot",
+        "User-agent: Bingbot",
         "Allow: /",
-
-        "User - agent: Slurp",
+        "User-agent: Slurp",
         "Allow: /",
-
-        "User - agent: DuckDuckBot",
+        "User-agent: DuckDuckBot",
         "Allow: /",
-
-        "User - agent: Baiduspider",
+        "User-agent: Baiduspider",
         "Allow: /",
-
-        "User - agent: Yandex",
+        "User-agent: Yandex",
         "Allow: /",
-
         # Disallow known AI training bots,
-        "User - agent: GPTBot",
+        "User-agent: GPTBot",
         "Disallow: /",
-
-        "User - agent: CCBot",
+        "User-agent: CCBot",
         "Disallow: /",
-
-        "User - agent: anthropic - ai",
+        "User-agent: anthropic-ai",
         "Disallow: /",
-
-        "User - agent: ClaudeBot",
+        "User-agent: ClaudeBot",
         "Disallow: /",
-
-        "User - agent: facebookexternalhit",
+        "User-agent: facebookexternalhit",
         "Disallow: /",
-
-        "User - agent: Bytespider",
+        "User-agent: Bytespider",
         "Disallow: /",
-
-        "User - agent: Amazonbot",
+        "User-agent: Amazonbot",
         "Disallow: /",
-
         "User-agent: *",
         "Disallow: /admin/",
         "Disallow: /accounts/",
