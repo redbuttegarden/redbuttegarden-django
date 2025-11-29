@@ -1,0 +1,61 @@
+{% load static wagtailcore_tags %}
+
+{# --- Global schema.org JSON-LD (Organization + WebSite) --- #}
+{% with site=self.get_site %}
+  <script type="application/ld+json">
+    {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+        "@type": ["Organization", "TouristAttraction"],
+        "@id": "https://redbuttegarden.org/#organization",
+        "name": "{{ site.site_name|default:'Red Butte Garden & Arboretum'|escapejs }}",
+        "url": "https://redbuttegarden.org/",
+        "description": "Botanical garden, arboretum, and amphitheatre in Salt Lake City, Utah, operated by the University of Utah.",
+        "telephone": "+1-801-585-0556",
+        "email": "information@redbutte.utah.edu",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "300 Wakara Way",
+            "addressLocality": "Salt Lake City",
+            "addressRegion": "UT",
+            "postalCode": "84108",
+            "addressCountry": "US"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 40.765505,
+            "longitude": -111.823671
+        },
+        "sameAs": [
+            "https://instagram.com/redbuttegarden",
+            "https://www.pinterest.com/redbuttegarden/",
+            "https://www.youtube.com/@redbuttegarden",
+            "https://www.facebook.com/redbutte",
+            "https://www.yelp.com/biz/red-butte-garden-and-arboretum-salt-lake-city",
+            "https://en.wikipedia.org/wiki/Red_Butte_Garden_and_Arboretum"
+        ],
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{% static 'redbuttegarden/img/rbg-logo-new.webp' %}"
+        }
+        },
+        {
+        "@type": "WebSite",
+        "@id": "https://redbuttegarden.org/#website",
+        "url": "https://redbuttegarden.org/",
+        "name": "{{ site.site_name|default:'Red Butte Garden & Arboretum'|escapejs }}",
+        "publisher": {
+            "@id": "https://redbuttegarden.org/#organization"
+        },
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://redbuttegarden.org/search/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+        }
+    ]
+    }
+    </script>
+{% endwith %}
+{# --- /Global schema.org JSON-LD --- #}

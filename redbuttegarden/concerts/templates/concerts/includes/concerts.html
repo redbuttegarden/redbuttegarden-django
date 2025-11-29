@@ -98,5 +98,78 @@
                 </div>
             </div>
         </div>
+
+        {# --- schema.org MusicEvent JSON-LD for this concert --- #}
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "MusicEvent",
+
+            "name": "{{ concert.band_name|default:concert.band_info|striptags|truncatechars:120|escapejs }}",
+            "description": "{{ concert.band_info|striptags|truncatechars:280|escapejs }}",
+
+            "url": "{{ request.build_absolute_uri|escapejs }}",
+
+            {% image concert.band_img width-1200 as band_img_rend %}
+            "image": [
+            "{{ band_img_rend.url|escapejs }}"
+            ],
+
+            "startDate": "{{ concert.concert_dates.0|date:'c' }}",
+
+            "eventStatus": "https://schema.org/{% if concert.canceled %}EventCancelled{% elif concert.postponed %}EventPostponed{% else %}EventScheduled{% endif %}",
+
+            "eventAttendanceMode": "https://schema.org/{% if concert.virtual %}OnlineEventAttendanceMode{% else %}OfflineEventAttendanceMode{% endif %}",
+
+            {% if concert.virtual and concert.available_until %}
+            "endDate": "{{ concert.available_until|date:'c' }}",
+            {% endif %}
+
+            "location": {
+            {% if concert.virtual %}
+            "@type": "VirtualLocation",
+            "url": "{{ concert.ticket_url|escapejs }}"
+            {% else %}
+            "@type": "Place",
+            "name": "Red Butte Garden Amphitheatre",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "2188 Red Butte Canyon Rd",
+                "addressLocality": "Salt Lake City",
+                "addressRegion": "UT",
+                "postalCode": "84108",
+                "addressCountry": "US"
+            }
+            {% endif %}
+            },
+
+            "organizer": {
+            "@type": "Organization",
+            "name": "Red Butte Garden & Arboretum",
+            "url": "https://redbuttegarden.org/"
+            },
+
+            "performer": {
+            "@type": "MusicGroup",
+            "name": "{{ concert.band_name|default:concert.band_info|striptags|truncatechars:120|escapejs }}"
+            },
+
+            "offers": [{
+            "@type": "Offer",
+            "name": "General public ticket",
+            "price": "{{ concert.public_price|striptags|escapejs }}",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/{% if concert.canceled %}Discontinued{% elif concert.sold_out %}SoldOut{% elif concert.on_sale %}InStock{% else %}Reserved{% endif %}"
+            },
+            {
+            "@type": "Offer",
+            "name": "Garden member ticket",
+            "price": "{{ concert.member_price|striptags|escapejs }}",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/{% if concert.canceled %}Discontinued{% elif concert.sold_out %}SoldOut{% elif concert.on_sale %}InStock{% else %}Reserved{% endif %}"
+            }]
+        }
+        </script>
+        {# --- /schema.org MusicEvent JSON-LD --- #}
     {% endfor %}
 </div>

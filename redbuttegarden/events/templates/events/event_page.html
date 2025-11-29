@@ -89,3 +89,90 @@
     </div>
   </div>
 {% endblock %}
+
+{% block extra_js %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Event",
+
+    "name": "{{ page.title|escapejs }}",
+
+    "description": "{{ page.search_description|default:page.sub_heading|default:''|striptags|truncatechars:300|escapejs }}",
+
+    "url": "{{ request.build_absolute_uri|escapejs }}",
+
+    {% if page.thumbnail %}
+      {% image page.thumbnail fill-1200x630 as thumb %}
+      "image": [
+        "{{ thumb.url|escapejs }}"
+      ],
+    {% endif %}
+
+    {% if page.start_date %}
+    "startDate": "{{ page.start_date|date:'c' }}",
+    {% endif %}
+    {% if page.end_date %}
+    "endDate": "{{ page.end_date|date:'c' }}",
+    {% endif %}
+
+    "eventStatus": "https://schema.org/EventScheduled",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+
+    "location": {
+      "@type": "Place",
+      "name": "Red Butte Garden & Arboretum{% if page.location %} - {{ page.location|escapejs }}{% endif %}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "300 Wakara Way",
+        "addressLocality": "Salt Lake City",
+        "addressRegion": "UT",
+        "postalCode": "84108",
+        "addressCountry": "US"
+      }
+    },
+
+    "organizer": {
+      "@type": "Organization",
+      "name": "Red Butte Garden & Arboretum",
+      "url": "https://redbuttegarden.org/"
+    }
+
+    {% if page.instructor %}
+    ,
+    "performer": {
+      "@type": "Person",
+      "name": "{{ page.instructor|escapejs }}"
+    }
+    {% endif %}
+
+    {% if page.member_cost or page.public_cost %}
+    ,
+    "offers": [
+      {% if page.member_cost %}
+      {
+        "@type": "Offer",
+        "name": "Garden Members",
+        "price": "{{ page.member_cost|striptags|escapejs }}",
+        "priceCurrency": "USD"
+      }{% if page.public_cost %},{% endif %}
+      {% endif %}
+      {% if page.public_cost %}
+      {
+        "@type": "Offer",
+        "name": "General Public",
+        "price": "{{ page.public_cost|striptags|escapejs }}",
+        "priceCurrency": "USD"
+      }
+      {% endif %}
+    ]
+    {% endif %}
+
+    {% if page.event_dates %}
+    ,
+    "eventSchedule": "{{ page.event_dates|striptags|escapejs }}"
+    {% endif %}
+  }
+  </script>
+{# --- /Event schema.org JSON-LD --- #}
+{% endblock %}
