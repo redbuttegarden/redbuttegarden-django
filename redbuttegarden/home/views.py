@@ -1,6 +1,7 @@
 import logging
 
-from django.http import JsonResponse, HttpResponse
+from django.conf import settings
+from django.http import JsonResponse, HttpResponse, Http404
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from home.models import CurrentWeather, RBGHours, HomePage
@@ -114,3 +115,12 @@ def robots_txt(request):
         "Disallow: /*/api/",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
+def indexnow_key_file(request):
+    key = getattr(settings, "INDEXNOW_KEY", "")
+    if not key:
+        # Optional: hide misconfig instead of serving blank
+        raise Http404("IndexNow key not configured")
+
+    return HttpResponse(key, content_type="text/plain")

@@ -26,96 +26,90 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
-    'axe',
-    'concerts',
-    'custom_user',
-    'events',
-    'home',
-    'journal',
-    'monitoring',
-    'plants',
-    'redbuttegarden.apps.CustomUsersAppConfig',
-    'search',
-    'shop',
-
-    'wagtail.contrib.forms',
-    'wagtail.contrib.frontend_cache',
-    'wagtail.contrib.redirects',
-    'wagtail.contrib.routable_page',
-    'wagtail.contrib.search_promotions',
-    'wagtail.contrib.settings',
+    "axe",
+    "concerts",
+    "custom_user",
+    "events",
+    "home",
+    "journal",
+    "monitoring",
+    "plants",
+    "redbuttegarden.apps.CustomUsersAppConfig",
+    "search",
+    "shop",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.frontend_cache",
+    "wagtail.contrib.redirects",
+    "wagtail.contrib.routable_page",
+    "wagtail.contrib.search_promotions",
+    "wagtail.contrib.settings",
     "wagtail.contrib.table_block",
-    'wagtail.embeds',
-    'wagtail.sites',
-    'wagtail.snippets',
-    'wagtail.documents',
-    'wagtail.images',
-    'wagtail.search',
-    'wagtail.admin',
-    'wagtail',
-
-    'django_filters',
-    'cas',  # Sometimes necessary to comment this app out to dump database
-    'corsheaders',
-    'django_tables2',
-    'drf_spectacular',
-    'modelcluster',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'storages',
-    'taggit',
-    'wagtailaccessibility',
-
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sitemaps',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "django_filters",
+    "cas",  # Sometimes necessary to comment this app out to dump database
+    "corsheaders",
+    "django_tables2",
+    "drf_spectacular",
+    "modelcluster",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "storages",
+    "taggit",
+    "wagtailaccessibility",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.sitemaps",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.gzip.GZipMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    "django.middleware.gzip.GZipMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     # TODO - re-enable Django-CSP
-
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    
-    'monitoring.middleware.request_logging.RequestLoggingMiddleware',
-
-    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "monitoring.middleware.request_logging.RequestLoggingMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
-ROOT_URLCONF = 'redbuttegarden.urls'
+ROOT_URLCONF = "redbuttegarden.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(PROJECT_DIR, 'templates'),
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            os.path.join(PROJECT_DIR, "templates"),
         ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'wagtail.contrib.settings.context_processors.settings',
-                'concerts.context_processors.concert_donor_club_member',
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "wagtail.contrib.settings.context_processors.settings",
+                "concerts.context_processors.concert_donor_club_member",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'redbuttegarden.wsgi.application'
+WSGI_APPLICATION = "redbuttegarden.wsgi.application"
 
 
 # Password validation
@@ -123,16 +117,16 @@ WSGI_APPLICATION = 'redbuttegarden.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -140,9 +134,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'America/Denver'
+TIME_ZONE = "America/Denver"
 
 USE_I18N = True
 
@@ -153,112 +147,108 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, 'static'),
+    os.path.join(PROJECT_DIR, "static"),
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_URL = "/static/"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
 
 
-AUTH_USER_MODEL = 'custom_user.User'
+AUTH_USER_MODEL = "custom_user.User"
 
 
 # Wagtail settings
 WAGTAIL_SITE_NAME = "redbuttegarden"
 WAGTAILEMBEDS_RESPONSIVE_HTML = True
-WAGTAILIMAGES_MAX_UPLOAD_SIZE = 4.5 * 1024 * 1024  # i.e. 4.5MB - Needed to avoid hitting AWS API Gateway payload limits
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = (
+    4.5 * 1024 * 1024
+)  # i.e. 4.5MB - Needed to avoid hitting AWS API Gateway payload limits
 WAGTAILSEARCH_BACKENDS = {
-    'default': {
-        'BACKEND': 'wagtail.search.backends.database',
-        'SEARCH_CONFIG': 'english',
+    "default": {
+        "BACKEND": "wagtail.search.backends.database",
+        "SEARCH_CONFIG": "english",
     },
 }
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-WAGTAILADMIN_BASE_URL = 'https://redbuttegarden.org'
+WAGTAILADMIN_BASE_URL = "https://redbuttegarden.org"
 
 # Safe to do this as since our docs/images shouldn't contain sensitive info. Info: https://docs.wagtail.io/en/v2.8/reference/settings.html?highlight=images#documents
-WAGTAILDOCS_SERVE_METHOD = 'direct'
+WAGTAILDOCS_SERVE_METHOD = "direct"
 
 # Zappa settings to strip the stage name from urls (requires X_FORWARDED_HOST custom header in Cloudfront)
 USE_X_FORWARDED_HOST = True
-FORCE_SCRIPT_NAME = ''
+FORCE_SCRIPT_NAME = ""
 # So request.build_absolute_uri returns https
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # CAS
-MIDDLEWARE_CLASSES = (
-    'cas.middleware.CASMiddleware',
-)
+MIDDLEWARE_CLASSES = ("cas.middleware.CASMiddleware",)
 CAS_SERVER_URL = "https://go.utah.edu/cas/"
-WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
+WAGTAIL_FRONTEND_LOGIN_URL = "/accounts/login/"
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'cas.backends.CASBackend',
+    "django.contrib.auth.backends.ModelBackend",
+    "cas.backends.CASBackend",
 )
 CAS_LOGOUT_COMPLETELY = True
 CAS_PROVIDE_URL_TO_LOGOUT = True
 CAS_AUTO_CREATE_USER = False
-CAS_RESPONSE_CALLBACKS = (
-    'custom_user.cas_handler.create_cas_user',
-)
-LOGOUT_REDIRECT_URL = '/'
+CAS_RESPONSE_CALLBACKS = ("custom_user.cas_handler.create_cas_user",)
+LOGOUT_REDIRECT_URL = "/"
 
-ADMINS = [('IT', os.environ.get('IT_EMAIL'))]
-DEFAULT_FROM_EMAIL = 'admin@redbuttegarden.org'
-SERVER_EMAIL = os.environ.get('IT_EMAIL')
+ADMINS = [("IT", os.environ.get("IT_EMAIL"))]
+DEFAULT_FROM_EMAIL = "admin@redbuttegarden.org"
+SERVER_EMAIL = os.environ.get("IT_EMAIL")
 
 # This was setup to allow authentication for viewing VR Tours
-WAGTAIL_PASSWORD_REQUIRED_TEMPLATE = 'custom_user/password_required.html'
-LOGIN_URL = '/accounts/login'
-LOGIN_REDIRECT_URL = '/'
+WAGTAIL_PASSWORD_REQUIRED_TEMPLATE = "custom_user/password_required.html"
+LOGIN_URL = "/accounts/login"
+LOGIN_REDIRECT_URL = "/"
 
 # Prep for upgrade to Django 3.2
 # https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 MESSAGE_TAGS = {
-    messages.DEBUG: 'alert-info',
-    messages.INFO: 'alert-info',
-    messages.SUCCESS: 'alert-success',
-    messages.WARNING: 'alert-warning',
-    messages.ERROR: 'alert-danger',
+    messages.DEBUG: "alert-info",
+    messages.INFO: "alert-info",
+    messages.SUCCESS: "alert-success",
+    messages.WARNING: "alert-warning",
+    messages.ERROR: "alert-danger",
 }
 
 # Django REST Framework
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
     ],
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend'
-    ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # DRF Spectacular
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Red Butte Garden & Arboretum API',
-    'DESCRIPTION': 'Internal RBG APIs.',
-    'VERSION': '1.0.0',
-    'SERVE_PUBLIC': False,
-    'SERVE_INCLUDE_SCHEMA': False,
-    'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAdminUser'],
-    'SERVE_AUTHENTICATION': ['rest_framework.authentication.SessionAuthentication'],
+    "TITLE": "Red Butte Garden & Arboretum API",
+    "DESCRIPTION": "Internal RBG APIs.",
+    "VERSION": "1.0.0",
+    "SERVE_PUBLIC": False,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+    "SERVE_AUTHENTICATION": ["rest_framework.authentication.SessionAuthentication"],
 }
 
 MAPBOX_API_TOKEN = "pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw"
@@ -266,21 +256,26 @@ MAPBOX_API_TOKEN = "pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2Iwe
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap5.html"
 
 # hCaptcha
-HCAPTCHA_SITE_KEY = os.environ.get('HCAPTCHA_SITE_KEY')
-HCAPTCHA_SECRET_KEY = os.environ.get('HCAPTCHA_SECRET_KEY')
+HCAPTCHA_SITE_KEY = os.environ.get("HCAPTCHA_SITE_KEY")
+HCAPTCHA_SECRET_KEY = os.environ.get("HCAPTCHA_SECRET_KEY")
 
 # Dead simple chat
-DEAD_SIMPLE_CHAT_PRIVATE_KEY = os.environ.get('DEAD_SIMPLE_CHAT_PRIVATE_KEY', None)
+DEAD_SIMPLE_CHAT_PRIVATE_KEY = os.environ.get("DEAD_SIMPLE_CHAT_PRIVATE_KEY", None)
 
 # OpenWeather API
-OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY')
+OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY")
 
 # Facebook
-FB_API_TOKEN = os.environ.get('FB_API_TOKEN')
-FB_APP_ID = os.environ.get('FB_APP_ID')
-FB_CLIENT_ID = os.environ.get('FB_CLIENT_ID')
-INSTAGRAM_APP_ID = os.environ.get('INSTAGRAM_APP_ID')
+FB_API_TOKEN = os.environ.get("FB_API_TOKEN")
+FB_APP_ID = os.environ.get("FB_APP_ID")
+FB_CLIENT_ID = os.environ.get("FB_CLIENT_ID")
+INSTAGRAM_APP_ID = os.environ.get("INSTAGRAM_APP_ID")
 
 # Constant Contact
-CONSTANT_CONTACT_API_CLIENT_ID = os.environ.get('CONSTANT_CONTACT_API_CLIENT_ID')
-CONSTANT_CONTACT_API_CLIENT_SECRET = os.environ.get('CONSTANT_CONTACT_API_CLIENT_SECRET')
+CONSTANT_CONTACT_API_CLIENT_ID = os.environ.get("CONSTANT_CONTACT_API_CLIENT_ID")
+CONSTANT_CONTACT_API_CLIENT_SECRET = os.environ.get(
+    "CONSTANT_CONTACT_API_CLIENT_SECRET"
+)
+
+# IndexNow
+INDEXNOW_KEY = os.environ.get("INDEXNOW_KEY")
