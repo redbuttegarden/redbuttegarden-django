@@ -16,26 +16,39 @@
 {% block abnormal_content %}
     <div class="container-fluid p-4 p-lg-5">
         <div id="visitContainer" class="container-fluid mb-3 p-4 p-lg-5">
-            <div class="row">
-                <div id="visitInfoImg" class="d-flex col-12 col-lg-6 align-items-center p-0">
-                    <picture>
-                        <source srcset="{% static 'home/img/moose_creek.webp' %}">
-                        <img id="visitImage" src="{% static 'home/img/moose_creek.jpg' %}"
-                             alt="Photo of the water conservation garden">
-                    </picture>
+            <div class="row g-0 d-lg-flex">  <!-- allow equal-height columns on large screens -->    
+                <div id="visitInfoImg" class="col-12 col-lg-6 p-0">
+                    <div class="h-100">
+                        {% if page.visit_image %}
+                            {% picture page.visit_image format-{webp,jpeg} original class="w-100 h-100 object-fit-cover" %}
+                        {% else %}
+                            <picture class="w-100 h-100">
+                                <source srcset="{% static 'home/img/moose_creek.webp' %}">
+                                <img id="visitImage"
+                                    src="{% static 'home/img/moose_creek.jpg' %}"
+                                    alt="Photo of a moose sculpture within the creek running thru the water pavilion garden"
+                                    class="w-100 h-100 object-fit-cover">
+                            </picture>
+                        {% endif %}
+                    </div>
                 </div>
-                <div id="visitInfoText" class="col-12 col-lg-6 p-0">
-                    <div id="visitTextInner" class="d-flex flex-column justify-content-center h-100">
+
+                <div id="visitInfoText" class="col-12 col-lg-6 p-0 d-flex">
+                    <div id="visitTextInner" class="d-flex flex-column justify-content-center h-100 w-100">
                         <h1>Visit the Garden</h1>
                         <div id="hours"></div>
                         <div id="emphaticText" class="red fw-bold"></div>
                         <div id="visitText" class="fs-5 mt-4 mb-1"></div>
-                        <div id="hoursSectionText" class="fs-5 mt-4 mb-1">{{ page.hours_section_text|richtext }}</div>
+                        <div id="hoursSectionText" class="fs-5 mt-4 mb-1">
+                            {{ page.hours_section_text|richtext }}
+                        </div>
                         <a class="mt-4" href="{% slugurl 'plan-your-garden-visit' %}">Plan your visit here</a>
                     </div>
                 </div>
             </div>
         </div>
+
+
 
         <div id="iconLinkContainer" class="container-fluid mt-5 p-0">
             <div class="row text-center">
@@ -96,12 +109,16 @@
     <div id="whatsBloomingContainer" class="container-fluid my-5 p-0">
         <div class="row d-flex align-items-center">
             <div class="col-12 col-lg-6 p-0">
-                <picture>
-                    <source srcset="{% static 'home/img/whats_blooming.webp' %}">
-                    <img id="whatsBloomingImage" class="img-fluid w-100"
-                         src="{% static 'home/img/whats_blooming.jpg' %}"
-                         alt="Photo of a green bee visiting a red flower">
-                </picture>
+                {% if page.whats_blooming_now_image %}
+                    {% picture page.whats_blooming_now_image format-{webp,jpeg} original class="img-fluid w-100" %}
+                {% else %}
+                    <picture>
+                        <source srcset="{% static 'home/img/whats_blooming.webp' %}">
+                        <img id="whatsBloomingImage" class="img-fluid w-100"
+                            src="{% static 'home/img/whats_blooming.jpg' %}"
+                            alt="Photo of a green bee visiting a red flower">
+                    </picture>
+                {% endif %}
             </div>
             <div class="col-12 col-lg-6 p-0">
                 <div class="m-3 m-md-4 m-lg-5 p-3 p-md-4 p-lg-5">

@@ -19,6 +19,7 @@ from modelcluster.fields import ParentalKey
 from wagtail import blocks
 from wagtail.admin.panels import (
     FieldPanel,
+    FieldRowPanel,
     MultiFieldPanel,
     InlinePanel,
     PageChooserPanel,
@@ -893,6 +894,20 @@ class HomePage(AbstractBase):
         related_name="+",
         help_text=_("Set to this years concert Wagtail page to extract concert dates"),
     )
+    visit_image = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="home_page_visit_images",
+    )
+    whats_blooming_now_image = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="home_page_blooming_now_images",
+    )
 
     content_panels = Page.content_panels + [
         MultipleChooserPanel(
@@ -903,6 +918,18 @@ class HomePage(AbstractBase):
         ),
         FieldPanel("hours_section_text"),
         InlinePanel("event_slides", label=_("Slideshow Images")),
+        MultiFieldPanel(
+        [
+            FieldRowPanel(
+                [
+                    FieldPanel("visit_image"),
+                    FieldPanel("whats_blooming_now_image"),
+                ]
+            ),
+        ],
+        heading=_("Homepage Featured Images"),
+        help_text=_("Images used for Visit and What's Blooming sections."),
+    ),
         FieldPanel(
             "concert_page", permission="superuser"
         ),  # Arbitrary permission name; only superusers can access this

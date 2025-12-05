@@ -80,13 +80,6 @@ body.template-homepage {
 #visitContainer {
     #visitInfoImg {
         position: relative;
-        overflow: hidden;
-    }
-
-    img {
-        min-width: 100%;
-        max-width: 150%;
-        height: auto;
     }
 
     #visitInfoText {
