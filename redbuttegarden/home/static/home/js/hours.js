@@ -40,16 +40,22 @@ function processGardenHours(garden_open, garden_close) {
 
     let openTimeStr;
     let closeTimeStr;
+    let openHour12 = openHour === 0 ? 12 : openHour > 12 ? openHour - 12 : openHour;
+    let closeHour12 = closeHour === 0 ? 12 : closeHour > 12 ? closeHour - 12 : closeHour;
+
+    let openPeriod = openHour >= 12 ? "PM" : "AM";
+    let closePeriod = closeHour >= 12 ? "PM" : "AM";
+
     if (openMinute !== 0) {
-        openTimeStr = openHour > 12 ? (openHour - 12) + ":" + openMinute.toString().padStart(2, "0") + " PM" : openHour + ":" + openMinute.toString().padStart(2, "0") + " AM";
+        openTimeStr = `${openHour12}:${openMinute.toString().padStart(2, "0")} ${openPeriod}`;
     } else {
-        openTimeStr = openHour > 12 ? (openHour - 12) + " PM" : openHour + " AM";
+        openTimeStr = `${openHour12} ${openPeriod}`;
     }
 
     if (closeMinute !== 0) {
-        closeTimeStr = closeHour > 12 ? (closeHour - 12) + ":" + closeMinute.toString().padStart(2, "0") + " PM" : closeHour + ":" + closeMinute.toString().padStart(2, "0") + " AM";
+        closeTimeStr = `${closeHour12}:${closeMinute.toString().padStart(2, "0")} ${closePeriod}`;
     } else {
-        closeTimeStr = closeHour > 12 ? (closeHour - 12) + " PM" : closeHour + " AM";
+        closeTimeStr = `${closeHour12} ${closePeriod}`;
     }
 
     return {
