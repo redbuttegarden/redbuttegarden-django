@@ -1,0 +1,80 @@
+[
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 1,
+        "fields": {
+            "name": "Individual Garden 1",
+            "description": "One cardholder, standard daily admission for one guest.",
+            "cardholders_included": 1,
+            "admissions_allowed": 1,
+            "member_sale_ticket_allowance": 0,
+            "price": "65.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 2,
+        "fields": {
+            "name": "Individual Garden 2",
+            "description": "One cardholder, standard daily admission for one guest.",
+            "cardholders_included": 1,
+            "admissions_allowed": 2,
+            "member_sale_ticket_allowance": 2,
+            "price": "65.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 3,
+        "fields": {
+            "name": "Individual Experience 4",
+            "description": "One cardholder, standard daily admission for one guest.",
+            "cardholders_included": 1,
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 4,
+            "price": "65.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 4,
+        "fields": {
+            "name": "Individual Experience Plus 6",
+            "description": "One cardholder, standard daily admission for one guest.",
+            "cardholders_included": 1,
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 6,
+            "price": "65.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 5,
+        "fields": {
+            "name": "Dual Garden 2",
+            "description": "Two cardholders with admission privileges and limited member tickets.",
+            "cardholders_included": 2,
+            "admissions_allowed": 2,
+            "member_sale_ticket_allowance": 2,
+            "price": "95.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 6,
+        "fields": {
+            "name": "Dual Experience 4",
+            "description": "Two cardholders with admission privileges and limited member tickets.",
+            "cardholders_included": 2,
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 4,
+            "price": "95.00",
+            "active": true
+        }
+    }
+]

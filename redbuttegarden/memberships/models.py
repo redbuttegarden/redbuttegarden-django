@@ -25,6 +25,12 @@ class MembershipLevel(models.Model):
         help_text="Price of the membership level in USD."
     )
 
+    purchase_url = models.URLField(
+        max_length=500,
+        blank=True,
+        help_text="URL where this membership level can be purchased."
+    )
+
     active = models.BooleanField(default=True)  # if you ever retire a level
 
     class Meta:

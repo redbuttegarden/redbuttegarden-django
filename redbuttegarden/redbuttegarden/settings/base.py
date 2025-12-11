@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "events",
     "home",
     "journal",
+    "memberships",
     "monitoring",
     "plants",
     "redbuttegarden.apps.CustomUsersAppConfig",
