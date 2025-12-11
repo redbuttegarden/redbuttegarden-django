@@ -26,7 +26,7 @@ class MembershipSelectorForm(forms.Form):
 
     member_tickets = forms.IntegerField(
         min_value=0,
-        initial=0,
+        initial=2,
         label="Member-sale tickets",
         widget=forms.NumberInput(
             attrs={
