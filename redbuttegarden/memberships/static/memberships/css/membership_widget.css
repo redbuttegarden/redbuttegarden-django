@@ -1,0 +1,126 @@
+/* Brand button */
+.btn-rbg-primary {
+    background-color: var(--rbg-oak-green);
+    border-color: var(--rbg-oak-green);
+    color: #fff !important;
+    text-decoration: none !important;
+}
+
+.btn-rbg-primary:hover {
+    background-color: color-mix(in srgb, var(--rbg-oak-green) 85%, black 15%);
+    border-color: color-mix(in srgb, var(--rbg-oak-green) 85%, black 15%);
+}
+
+/* Card base style used across the page */
+.card-rbg {
+    border: 1px solid rgba(var(--rbg-dark-blue-rgb), 0.08);
+    box-shadow: 0 6px 18px rgba(var(--rbg-dark-blue-rgb), 0.03);
+}
+
+/* Priority list helpers */
+.priority-item {
+    cursor: grab;
+}
+
+.priority-item:active {
+    cursor: grabbing;
+}
+
+.priority-handle {
+    width: 36px;
+}
+
+.sr-only-focusable:focus {
+    position: static;
+    clip: auto;
+    width: auto;
+    height: auto;
+    overflow: visible;
+}
+
+/* ===== Highlighted membership (exact match) ===== */
+.highlight-wrapper {
+    margin-bottom: 2.5rem;
+}
+
+.highlight-message {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.7rem;
+    margin-bottom: 1rem;
+    background-color: var(--rbg-highlight-bg);
+    border: 1px solid var(--rbg-cactus-flower-yellow);
+    border-radius: 0.375rem;
+    color: var(--rbg-dark-blue);
+    font-size: 0.9rem;
+}
+
+.card-highlighted {
+    position: relative;
+    z-index: 1050;
+    border: 2px solid var(--rbg-cactus-flower-yellow);
+    background-color: var(--rbg-highlight-bg);
+    box-shadow: 0 12px 30px rgba(var(--rbg-dark-blue-rgb), 0.12);
+    overflow: visible;
+    animation: fadeInUp 0.35s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.badge-best-match {
+    background-color: var(--rbg-cactus-flower-yellow);
+    color: var(--rbg-dark-blue);
+}
+
+.results-row {
+    position: relative;
+    z-index: 1;
+}
+
+.results-row .card {
+    box-shadow: 0 6px 14px rgba(var(--rbg-dark-blue-rgb), 0.04);
+}
+
+/* Richtext inside cards */
+.card .rich-text p {
+    margin-bottom: 0.5rem;
+}
+
+.card .rich-text a {
+    text-decoration: underline;
+}
+
+/* Responsive tweaks */
+@media (max-width: 767.98px) {
+    .highlight-wrapper {
+        margin-bottom: 1.25rem;
+    }
+
+    .highlight-message {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .priority-handle {
+        width: 28px;
+    }
+}
+
+.btn:hover {
+    color: var(--rbg-cactus-flower-yellow);
+}
+
+h5 {
+    font-weight: inherit;
+}

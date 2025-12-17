@@ -67,12 +67,18 @@ def membership_suggest(request):
 
     results = [lvl for lvl, _ in scored[:5]]
 
+    highlighted = None
+    # If the top scoring membership exactly matches the users choices, set it as highlighted
+    if results[0].cardholders_included == cardholders and results[0].admissions_allowed == admissions and results[0].member_sale_ticket_allowance == tickets:
+        highlighted = results.pop(0)
+
     return render(
         request,
         "memberships/partials/_suggestions.html",
         {
             "form": form,
             "results": results,
+            "highlighted": highlighted,
             "requested": {
                 "cardholders": cardholders,
                 "admissions": admissions,

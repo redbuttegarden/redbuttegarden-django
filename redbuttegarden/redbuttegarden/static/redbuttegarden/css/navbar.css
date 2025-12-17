@@ -113,7 +113,7 @@ nav .navbar-collapse.collapse.show i.bi, nav .navbar-collapse.collapsing i.bi {
     font-size: 1.5rem;
 }
 
-.bi-search {
+nav .bi-search {
     position: absolute;
     color: white;
 }
