@@ -1,4 +1,5 @@
 from django.db import models
+from wagtail.fields import RichTextField
 
 
 class MembershipLevel(models.Model):
@@ -8,7 +9,9 @@ class MembershipLevel(models.Model):
     """
 
     name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True)
+    description = RichTextField(
+        blank=True, features=["link", "bold", "italic"]  # keep this minimal
+    )
 
     # Included cardholders (how many people are on the membership card)
     cardholders_included = models.PositiveSmallIntegerField(default=1)
@@ -20,15 +23,15 @@ class MembershipLevel(models.Model):
     member_sale_ticket_allowance = models.PositiveSmallIntegerField(default=0)
 
     price = models.DecimalField(
-        max_digits=7,   # supports up to 99,999.99
+        max_digits=7,  # supports up to 99,999.99
         decimal_places=2,
-        help_text="Price of the membership level in USD."
+        help_text="Price of the membership level in USD.",
     )
 
     purchase_url = models.URLField(
         max_length=500,
         blank=True,
-        help_text="URL where this membership level can be purchased."
+        help_text="URL where this membership level can be purchased.",
     )
 
     active = models.BooleanField(default=True)  # if you ever retire a level
