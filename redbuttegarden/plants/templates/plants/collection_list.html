@@ -87,15 +87,9 @@
   </script>
   <script>
     ;(function () {
-      // Ensure this runs after htmx is loaded. If htmx isn't defined, we'll log an error.
-      function debug(...args) {
-        if (window && window.console) console.log('[PLANTS HTMX]', ...args)
-      }
-    
-      // Keep a pending href that we want to push to history after the swap completes.
+      // Store pending URL to push after HTMX swap
       window._rbg_pending_htmx_push = null
     
-      // Delegated click handler for links inside #table-container
       document.body.addEventListener('click', function (e) {
         const a = e.target.closest('#table-container a')
         if (!a) return
@@ -103,90 +97,51 @@
         const href = a.getAttribute('href') || ''
         if (!href) return
     
-        // Do not intercept export links or explicit new-tab links
-        if (href.includes('_export=') || a.target === '_blank') {
-          debug('Not intercepting export/new-tab link:', href)
+        // Explicit opt-out
+        if (a.dataset && a.dataset.noHtmx === 'true') return
+    
+        // Never intercept exports, downloads, or new-tab links
+        if (href.includes('_export=') || a.target === '_blank' || a.hasAttribute('download')) {
           return
         }
     
-        // Prevent standard navigation
+        // Only intercept pagination or explicit opt-in links
+        const isPagination = !!a.closest('.pagination')
+        const hasPageParam = /[?&]page=\d+/.test(href)
+        const explicitOptIn = a.classList.contains('js-htmx-link')
+    
+        if (!isPagination && !hasPageParam && !explicitOptIn) {
+          // Normal navigation for content links
+          return
+        }
+    
+        // HTMX pagination handling
         e.preventDefault()
     
-        // Make sure htmx is available
         if (typeof window.htmx === 'undefined') {
-          debug('htmx is not defined; falling back to normal navigation for', href)
-          // fallback to normal navigation if htmx isn't available
           window.location.href = href
           return
         }
     
-        debug('Intercepted pagination/link click:', href)
-    
-        // Mark for history push after the swap completes
         window._rbg_pending_htmx_push = href
     
-        // Use htmx to fetch and swap the container; ask htmx to try to push URL too.
-        // We still implement a fallback via history.pushState in the afterSwap listener below.
-        try {
-          htmx.ajax('GET', href, {
-            target: '#table-container',
-            swap: 'outerHTML',
-            pushUrl: true
-          })
-        } catch (err) {
-          // If htmx.ajax threw for some reason, fall back to a fetch + swap (rare)
-          debug('htmx.ajax threw an error, falling back. Error:', err)
-          fetch(href, { credentials: 'same-origin' })
-            .then((resp) => resp.text())
-            .then((html) => {
-              // attempt to extract the #table-container from the response html
-              const parser = new DOMParser()
-              const doc = parser.parseFromString(html, 'text/html')
-              const newContainer = doc.querySelector('#table-container')
-              if (newContainer) {
-                const old = document.querySelector('#table-container')
-                old.replaceWith(newContainer)
-                debug('Fallback: swapped #table-container manually for', href)
-                // push URL manually
-                history.pushState({}, '', href)
-                window._rbg_pending_htmx_push = null
-              } else {
-                debug('Fallback: could not find #table-container in response; navigating normally.')
-                window.location.href = href
-              }
-            })
-            .catch((fetchErr) => {
-              debug('Fallback fetch error:', fetchErr)
-              window.location.href = href
-            })
-        }
+        htmx.ajax('GET', href, {
+          target: '#table-container',
+          swap: 'outerHTML',
+          pushUrl: true
+        })
       })
     
-      // After HTMX swaps content, push pending URL if any.
-      document.body.addEventListener('htmx:afterSwap', function (evt) {
-        // Only act when a pending href was set by our click handler
+      // Safety net: ensure URL is pushed after swap
+      document.body.addEventListener('htmx:afterSwap', function () {
         const pending = window._rbg_pending_htmx_push
         if (!pending) return
     
-        // Safety: if the swap replaced #table-container, then push the new URL
-        // also check that target id was table-container (evt.detail.elt may be the swapped element)
         try {
-          // pushState is safe and won't reload the page
           history.pushState({}, '', pending)
-          debug('Pushed URL to history after HTMX swap:', pending)
-        } catch (err) {
-          debug('history.pushState failed:', err)
         } finally {
           window._rbg_pending_htmx_push = null
         }
-      })
-    
-      // Optional: log when HTMX requests start/end for debugging
-      document.body.addEventListener('htmx:beforeRequest', function (evt) {
-        debug('htmx:beforeRequest', evt.detail.path || evt.detail.requestConfig || evt)
-      })
-      document.body.addEventListener('htmx:afterRequest', function (evt) {
-        debug('htmx:afterRequest', evt.detail.path || evt.detail.requestConfig || evt)
       })
     })()
   </script>
