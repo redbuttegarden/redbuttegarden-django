@@ -1,0 +1,25 @@
+{# This is a partial used by htmx. It must contain the same #table-container element ID expected by the main page. #}
+{% load render_table from django_tables2 %}
+
+<div id="table-container">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="small text-muted" aria-live="polite">
+      {% if table_start == 0 and table_end == 0 %}
+        Showing 0 items
+      {% else %}
+        {% if total_known and table_total is not None %}
+          Showing {{ table_start }}–{{ table_end }} of {{ table_total }}
+        {% else %}
+          Showing {{ table_start }}–{{ table_end }}+
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <div class="btn-group" role="group" aria-label="export">
+      <a class="btn btn-outline-secondary" href="?{{ querystring }}{% if querystring %}&{% endif %}_export=csv"><i class="bi bi-file-earmark-spreadsheet"></i> CSV</a>
+      <a class="btn btn-outline-secondary" href="?{{ querystring }}{% if querystring %}&{% endif %}_export=xlsx"><i class="bi bi-file-earmark-excel"></i> XLSX</a>
+    </div>
+  </div>
+
+  {% render_table table %}
+</div>
