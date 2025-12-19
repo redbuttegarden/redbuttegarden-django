@@ -7,7 +7,6 @@
 {% endblock %}
 
 {% block extra_css %}
-  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   <link href="{% static 'plants/css/collection_list.css' %}" rel="stylesheet" />
 {% endblock %}
 
@@ -21,6 +20,9 @@
   {# Filters form: method GET so URL contains filters; hx-get makes it an HTMX request #}
   {# inside plants/templates/plants/collection_list.html #}
   <form id="collection-filter-form" method="get" class="row g-2 align-items-end mb-3" hx-get="{{ request.path }}" hx-target="#table-container" hx-swap="outerHTML" hx-push-url="true" hx-trigger="keyup changed delay:500ms, submit">
+    {# ensure the view can detect this as an HTMX request even if headers are stripped by CloudFront #}
+    <input type="hidden" name="_hx" value="1" />
+
     {% for field in filter.form %}
       <div class="col-sm-6 col-md-4">
         <label for="{{ field.id_for_label }}" class="form-label small text-muted">{{ field.label }}</label>
@@ -45,6 +47,7 @@
 {% endblock %}
 
 {% block extra_js %}
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   <script src="{% static 'plants/js/name_styling.js' %}"></script>
   <script src="{% static 'plants/js/style_rows.js' %}"></script>
 

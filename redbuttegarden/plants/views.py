@@ -644,8 +644,15 @@ def top_trees(request):
         "per_page": per_page,
     }
 
-    # HTMX: return only the table fragment on HTMX requests
-    if request.headers.get("HX-Request") == "true":
-        return render(request, "plants/collection_list_table.html", context)
+    # Robust HTMX detection: header OR WSGI META OR explicit GET param fallback (_hx=1)
+    is_htmx = (
+        request.headers.get("HX-Request") == "true"
+        or request.META.get("HTTP_HX_REQUEST") == "true"
+        or request.GET.get("_hx") == "1"
+    )
+
+    if is_htmx:
+        response = render(request, "plants/collection_list_table.html", context)
+        return response
 
     return render(request, "plants/collection_list.html", context)
