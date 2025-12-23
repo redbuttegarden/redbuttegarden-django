@@ -1011,11 +1011,7 @@ class HomePage(AbstractBase):
         """
         Override default so we can also invalidate the cache of the API endpoint for getting RBGHours
         """
-        # Yield this page's URL
-        yield self.get_url()
-
-        # Yield the RBGHours API endpoint for the page
-        yield reverse("home:hours", args=[self.id])
+        return ["/", reverse("home:hours", args=[self.id])]
 
 
 class EventSlides(Orderable):
