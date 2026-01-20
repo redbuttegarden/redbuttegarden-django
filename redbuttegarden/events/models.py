@@ -6,7 +6,12 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
-from wagtail.admin.panels import FieldPanel, ObjectList, PageChooserPanel, TabbedInterface
+from wagtail.admin.panels import (
+    FieldPanel,
+    ObjectList,
+    PageChooserPanel,
+    TabbedInterface,
+)
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail import blocks
 from wagtail.blocks import PageChooserBlock
@@ -17,8 +22,15 @@ from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
 from home.abstract_models import AbstractBase
-from home.models import AlignedParagraphBlock, ButtonBlock, EmphaticText, GeneralPage, ImageLinkList, Heading, \
-    MultiColumnAlignedParagraphBlock
+from home.models import (
+    AlignedParagraphBlock,
+    ButtonBlock,
+    EmphaticText,
+    GeneralPage,
+    ImageLinkList,
+    Heading,
+    MultiColumnAlignedParagraphBlock,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -29,17 +41,20 @@ class EventCategory(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, max_length=80)
     parent = models.ForeignKey(
-        'self',
-        blank=True, null=True,
+        "self",
+        blank=True,
+        null=True,
         related_name="children",
-        help_text=_("Unlike tags, categories can have a hierarchy so they can be more specifically organized."),
-        on_delete=models.CASCADE
+        help_text=_(
+            "Unlike tags, categories can have a hierarchy so they can be more specifically organized."
+        ),
+        on_delete=models.CASCADE,
     )
 
     panels = [
-        FieldPanel('name'),
-        FieldPanel('slug'),
-        FieldPanel('parent'),
+        FieldPanel("name"),
+        FieldPanel("slug"),
+        FieldPanel("parent"),
     ]
 
     def __str__(self):
@@ -55,20 +70,25 @@ class PolicyLink(models.Model):
     """
     Model for maintaining links to policy pages that can be used on many pages
     """
-    name = models.CharField(max_length=100, help_text=_("Create a name for this policy"))
-    link_text = models.CharField(max_length=500, help_text=_("This text will link to the provided policy page"))
+
+    name = models.CharField(
+        max_length=100, help_text=_("Create a name for this policy")
+    )
+    link_text = models.CharField(
+        max_length=500, help_text=_("This text will link to the provided policy page")
+    )
     policy_page = models.ForeignKey(
-        'wagtailcore.Page',
+        "wagtailcore.Page",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name="+",
     )
 
     panels = [
-        FieldPanel('name'),
-        FieldPanel('link_text'),
-        PageChooserPanel('policy_page'),
+        FieldPanel("name"),
+        FieldPanel("link_text"),
+        PageChooserPanel("policy_page"),
     ]
 
     def __str__(self):
@@ -80,28 +100,28 @@ class PolicyLink(models.Model):
 
 class SingleListImage(blocks.StructBlock):
     image = ImageBlock(
-        label='Image',
+        label="Image",
     )
     title = blocks.CharBlock(
-        label='Title',
+        label="Title",
         max_length=200,
-        help_text=_("Displayed right of image in h2 tag, centered and uppercase")
+        help_text=_("Displayed right of image in h2 tag, centered and uppercase"),
     )
     sub_title = blocks.CharBlock(
-        label='Subtitle',
+        label="Subtitle",
         max_length=200,
-        help_text=_("Displayed under title, centered and green")
+        help_text=_("Displayed under title, centered and green"),
     )
     text = blocks.RichTextBlock(
-        label='Text',
+        label="Text",
         required=False,
-        help_text=_("Optional text to be displayed alongside image")
+        help_text=_("Optional text to be displayed alongside image"),
     )
     link_url = blocks.URLBlock(
-        label='Link URL',
+        label="Link URL",
         max_length=200,
         required=False,
-        help_text=_("If provided, the link will be applied to the image")
+        help_text=_("If provided, the link will be applied to the image"),
     )
 
 
@@ -109,55 +129,65 @@ class ListWithImagesBlock(blocks.StructBlock):
     list_items = blocks.ListBlock(
         SingleListImage(),
         label="List Item",
-        help_text=_("Images displayed with text to the right, all with a tan background")
+        help_text=_(
+            "Images displayed with text to the right, all with a tan background"
+        ),
     )
 
     class Meta:
-        template = 'events/list_with_images.html'
-        icon = 'fa-id-card-o'
+        template = "events/list_with_images.html"
+        icon = "fa-id-card-o"
 
 
 class ImageRow(blocks.StructBlock):
     images = blocks.ListBlock(ImageBlock())
 
     class Meta:
-        template = 'blocks/image_row.html'
+        template = "blocks/image_row.html"
 
 
 BLOCK_TYPES = [
-    ('button', ButtonBlock()),
-    ('green_heading', Heading(classname='full title',
-                              help_text=_('Text will be green and centered'))),
-    ('emphatic_text', EmphaticText(required=False, help_text="Red italic text")),
-    ('paragraph', AlignedParagraphBlock(required=True, classname='paragraph')),
-    ('multi_column_paragraph', MultiColumnAlignedParagraphBlock()),
-    ('image', ImageBlock()),
-    ('image_link_list', ImageLinkList()),
-    ('html', blocks.RawHTMLBlock(required=False)),
-    ('image_list', ListWithImagesBlock(required=False)),
-    ('image_row', ImageRow()),
+    ("button", ButtonBlock()),
+    (
+        "green_heading",
+        Heading(classname="full title", help_text=_("Text will be green and centered")),
+    ),
+    ("emphatic_text", EmphaticText(required=False, help_text="Red italic text")),
+    ("paragraph", AlignedParagraphBlock(required=True, classname="paragraph")),
+    ("multi_column_paragraph", MultiColumnAlignedParagraphBlock()),
+    ("image", ImageBlock()),
+    ("image_link_list", ImageLinkList()),
+    ("html", blocks.RawHTMLBlock(required=False)),
+    ("image_list", ListWithImagesBlock(required=False)),
+    ("image_row", ImageRow()),
 ]
 
 
 class EventIndexPage(RoutablePageMixin, AbstractBase):
     intro = RichTextField(blank=True)
-    body = StreamField(BLOCK_TYPES + [('page_link', PageChooserBlock())], blank=True)
-    order_date = models.DateTimeField(default=timezone.now)  # Allow editors to control displayed order of pages
+    body = StreamField(BLOCK_TYPES + [("page_link", PageChooserBlock())], blank=True)
+    order_date = models.DateTimeField(
+        default=timezone.now
+    )  # Allow editors to control displayed order of pages
 
     content_panels = AbstractBase.content_panels + [
-        FieldPanel('intro'),
-        FieldPanel('body', classname="full"),
+        FieldPanel("intro"),
+        FieldPanel("body", classname="full"),
     ]
 
     promote_panels = AbstractBase.promote_panels + [
-        FieldPanel('order_date'),
+        FieldPanel("order_date"),
     ]
 
-    subpage_types = ['events.EventPage', 'events.EventGeneralPage', 'events.EventIndexPage']
+    subpage_types = [
+        "events.EventPage",
+        "events.EventGeneralPage",
+        "events.EventIndexPage",
+    ]
 
     search_fields = AbstractBase.search_fields + [
-        index.SearchField('intro'),
-        index.SearchField('body'),
+        index.SearchField("intro"),
+        index.SearchField("body"),
     ]
 
     def get_event_items(self):
@@ -165,35 +195,44 @@ class EventIndexPage(RoutablePageMixin, AbstractBase):
         return Paginator(self.get_children().live(), 10)
 
     def get_cached_paths(self):
-        # Yield the main URL
-        yield '/'
+        """
+        As well as invalidating the URL of the EventIndexPage itself, also invalidate each of the results pages
 
-        # Yield one URL per page in the paginator to make sure all pages are purged
-        for page_number in range(1, self.get_event_items().num_pages + 1):
-            yield '/?page=' + str(page_number)
+        :param self: EventIndexPage
+        """
 
-    @route(r'^$')
+        return ["/"] + [
+            "/?page=" + str(page_number)
+            for page_number in range(1, self.get_event_items().num_pages + 1)
+        ]
+
+    @route(r"^$")
     def event_list(self, request, *args, **kwargs):
-        self.events = sorted(self.get_children().live(), key=lambda x: x.specific.order_date)
+        self.events = sorted(
+            self.get_children().live(), key=lambda x: x.specific.order_date
+        )
         return AbstractBase.serve(self, request, *args, **kwargs)
 
-    @route(r'^e-cat/(?P<event_category>[-\w]+)/$')
+    @route(r"^e-cat/(?P<event_category>[-\w]+)/$")
     def event_by_category(self, request, event_category, *args, **kwargs):
-        self.search_type = 'event-category'
+        self.search_type = "event-category"
         self.search_term = event_category
-        self.cat_title = event_category.replace('-', ' ').title()
+        self.cat_title = event_category.replace("-", " ").title()
         # We need to figure out which banner image to display based on the category
-        banner_search = Image.objects.search(self.cat_title + ' banner')
+        banner_search = Image.objects.search(self.cat_title + " banner")
         if banner_search:
             self.banner = banner_search[0]
         # We want to grab all events of the given category for each Page type that has event categories
         # We also want to exclude copies so we check the page has no alias
         events = []
-        event_pages = EventPage.objects.live().filter(event_categories__slug=event_category, alias_of__isnull=True)
+        event_pages = EventPage.objects.live().filter(
+            event_categories__slug=event_category, alias_of__isnull=True
+        )
         for event in event_pages:
             events.append(event)
-        event_general_pages = EventGeneralPage.objects.live().filter(event_categories__slug=event_category,
-                                                                     alias_of__isnull=True)
+        event_general_pages = EventGeneralPage.objects.live().filter(
+            event_categories__slug=event_category, alias_of__isnull=True
+        )
         for event in event_general_pages:
             events.append(event)
         self.events = sorted(events, key=lambda x: x.specific.order_date)
@@ -202,7 +241,7 @@ class EventIndexPage(RoutablePageMixin, AbstractBase):
     def get_context(self, request, *args, **kwargs):
         # Update context to include only published posts, ordered by order_date
         context = super().get_context(request, *args, **kwargs)
-        context['events'] = self.events
+        context["events"] = self.events
         return context
 
 
@@ -210,58 +249,75 @@ class EventPage(AbstractBase):
     # TODO - Delete image once all existing pages have a thumbnail set
     #   TODO - When that's done, you can also delete the save override which tries to set thumbnail to image
     image = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name="+",
     )
     location = models.CharField(max_length=100)
     additional_info = RichTextField(blank=True)
     instructor = models.CharField(max_length=100, blank=True)
-    member_cost = models.CharField(max_length=100, blank=True, null=True,
-                                   help_text="Accepts numbers or text. e.g. Free!")
-    public_cost = models.CharField(max_length=200, blank=True, null=True,
-                                   help_text="Accepts numbers or text. e.g. $35")
-    sub_heading = models.CharField(max_length=200, blank=True, help_text="e.g. 500,000 Blooming Bulbs")
+    member_cost = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Accepts numbers or text. e.g. Free!",
+    )
+    public_cost = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        help_text="Accepts numbers or text. e.g. $35",
+    )
+    sub_heading = models.CharField(
+        max_length=200, blank=True, help_text="e.g. 500,000 Blooming Bulbs"
+    )
     event_dates = models.CharField(max_length=200)
     event_categories = ParentalManyToManyField(EventCategory, blank=True)
-    notes = RichTextField(blank=True,
-                          help_text="Notes will appear on the thumbnail image of the event on the event index page")
+    notes = RichTextField(
+        blank=True,
+        help_text="Notes will appear on the thumbnail image of the event on the event index page",
+    )
     body = StreamField(BLOCK_TYPES)
     policies = models.ManyToManyField(
-        'events.PolicyLink',
-        blank=True,
-        related_name='event_policies'
+        "events.PolicyLink", blank=True, related_name="event_policies"
     )
-    order_date = models.DateTimeField(default=timezone.now)  # Allow editors to control displayed order of pages
+    order_date = models.DateTimeField(
+        default=timezone.now
+    )  # Allow editors to control displayed order of pages
 
     content_panels = AbstractBase.content_panels + [
-        FieldPanel('location'),
-        FieldPanel('additional_info'),
-        FieldPanel('instructor'),
-        FieldPanel('member_cost'),
-        FieldPanel('public_cost'),
-        FieldPanel('sub_heading'),
-        FieldPanel('event_dates'),
-        FieldPanel('event_categories', widget=forms.CheckboxSelectMultiple),
-        FieldPanel('notes'),
-        FieldPanel('body'),
-        FieldPanel('policies', help_text=_("Optionally choose one or more policy links to include on the page"))
+        FieldPanel("location"),
+        FieldPanel("additional_info"),
+        FieldPanel("instructor"),
+        FieldPanel("member_cost"),
+        FieldPanel("public_cost"),
+        FieldPanel("sub_heading"),
+        FieldPanel("event_dates"),
+        FieldPanel("event_categories", widget=forms.CheckboxSelectMultiple),
+        FieldPanel("notes"),
+        FieldPanel("body"),
+        FieldPanel(
+            "policies",
+            help_text=_(
+                "Optionally choose one or more policy links to include on the page"
+            ),
+        ),
     ]
 
     promote_panels = AbstractBase.promote_panels + [
-        FieldPanel('order_date'),
+        FieldPanel("order_date"),
     ]
 
-    parent_page_types = ['events.EventIndexPage', 'home.GeneralIndexPage']
+    parent_page_types = ["events.EventIndexPage", "home.GeneralIndexPage"]
 
     search_fields = AbstractBase.search_fields + [
-        index.SearchField('instructor'),
-        index.SearchField('sub_heading'),
-        index.SearchField('event_dates'),
-        index.SearchField('notes'),
-        index.SearchField('body'),
+        index.SearchField("instructor"),
+        index.SearchField("sub_heading"),
+        index.SearchField("event_dates"),
+        index.SearchField("notes"),
+        index.SearchField("body"),
     ]
 
     def get_cached_paths(self):
@@ -270,12 +326,9 @@ class EventPage(AbstractBase):
         to invalidate the event category view of any category to which
         this page belongs.
         """
-        yield '/'
-
-        for category in self.event_categories.all():
-            url = '/events/e-cat/' + category.slug
-            logger.info(f'Yielding {url} as cached path')
-            yield url
+        return ["/"] + [
+            "/events/e-cat/" + category.slug for category in self.event_categories.all()
+        ]
 
     def save(self, clean=True, user=None, log_action=False, **kwargs):
         if self.thumbnail is None:
@@ -286,35 +339,43 @@ class EventPage(AbstractBase):
 
 class EventGeneralPage(GeneralPage):
     event_dates = models.CharField(max_length=200)
-    notes = RichTextField(blank=True,
-                          help_text="Notes will appear on the thumbnail image of the event on the event index page")
-    image = GeneralPage.thumbnail  # just to match EventPage so the EventIndexPage template doesn't need to be changed
+    notes = RichTextField(
+        blank=True,
+        help_text="Notes will appear on the thumbnail image of the event on the event index page",
+    )
+    image = (
+        GeneralPage.thumbnail
+    )  # just to match EventPage so the EventIndexPage template doesn't need to be changed
     event_categories = ParentalManyToManyField(EventCategory, blank=True)
-    order_date = models.DateTimeField(default=timezone.now)  # Allow editors to control displayed order of pages
+    order_date = models.DateTimeField(
+        default=timezone.now
+    )  # Allow editors to control displayed order of pages
 
     content_panels = GeneralPage.content_panels + [
-        FieldPanel('event_dates'),
-        FieldPanel('event_categories', widget=forms.CheckboxSelectMultiple),
-        FieldPanel('notes'),
+        FieldPanel("event_dates"),
+        FieldPanel("event_categories", widget=forms.CheckboxSelectMultiple),
+        FieldPanel("notes"),
     ]
 
     promote_panels = AbstractBase.promote_panels + [
-        FieldPanel('order_date'),
+        FieldPanel("order_date"),
     ]
 
-    parent_page_types = ['events.EventIndexPage', 'home.GeneralIndexPage']
+    parent_page_types = ["events.EventIndexPage", "home.GeneralIndexPage"]
 
     search_fields = GeneralPage.search_fields + [
-        index.SearchField('event_dates'),
-        index.SearchField('notes')
+        index.SearchField("event_dates"),
+        index.SearchField("notes"),
     ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Content'),
-        ObjectList(AbstractBase.dialog_box_panels, heading='Dialog'),
-        ObjectList(promote_panels, heading='Promote'),
-        ObjectList(AbstractBase.settings_panels, heading='Settings'),
-    ])
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(AbstractBase.dialog_box_panels, heading="Dialog"),
+            ObjectList(promote_panels, heading="Promote"),
+            ObjectList(AbstractBase.settings_panels, heading="Settings"),
+        ]
+    )
 
     def get_cached_paths(self):
         """
@@ -322,9 +383,7 @@ class EventGeneralPage(GeneralPage):
         to invalidate the event category view of any category to which
         this page belongs.
         """
-        yield '/'
 
-        for category in self.event_categories.all():
-            url = '/events/e-cat/' + category.slug
-            logger.info(f'Yielding {url} as cached path')
-            yield url
+        return ["/"] + [
+            "/events/e-cat/" + category.slug for category in self.event_categories.all()
+        ]
