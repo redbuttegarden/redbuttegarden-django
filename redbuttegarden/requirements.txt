@@ -90,7 +90,7 @@ wagtail==7.0.3
 wagtail-accessibility==2.0.0
 webencodings==0.5.1
 Werkzeug==3.1.5
-wheel==0.45.1
+wheel==0.46.2
 Willow==1.11.0
 wsgi-request-logger==0.4.6
 xlrd==2.0.1
