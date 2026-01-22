@@ -5,14 +5,22 @@ from decimal import Decimal, InvalidOperation
 from django.utils.html import strip_tags
 from django.utils.timezone import is_aware
 
-PRICE_RE = re.compile(r'(?P<num>\d+(?:[.,]\d+)?)')
+PRICE_RE = re.compile(r"(?P<num>\d+(?:[.,]\d+)?)")
 
-def _as_iso(dt):
-    """Return ISO string for datetimes or None for falsy values."""
+
+def _as_iso(dt, date_only=False):
+    """
+    Return ISO representation for a datetime.
+    - If date_only is True, returns 'YYYY-MM-DD' (date-only).
+    - Otherwise returns full ISO (preserves timezone offset when present).
+    """
     if not dt:
         return None
-    # If the dt is timezone-aware, isoformat keeps offset; otherwise isoformat is fine.
+    if date_only:
+        # dt may be a date or datetime; ensure we use date()
+        return dt.date().isoformat()
     return dt.isoformat()
+
 
 def parse_amount_from_text(text):
     """
@@ -35,14 +43,20 @@ def parse_amount_from_text(text):
     except InvalidOperation:
         return None
 
-def _price_offer_dict(name_text=None, amount_decimal=None, display_text=None,
-                      purchase_url=None, valid_from=None, valid_through=None,
-                      currency="USD"):
+
+def _price_offer_dict(
+    name_text=None,
+    amount_decimal=None,
+    display_text=None,
+    purchase_url=None,
+    valid_from=None,
+    valid_through=None,
+    currency="USD",
+    date_only=False,
+):
     """
-    Build a JSON-serializable Offer dict following schema.org.
-    - If amount_decimal is provided, sets 'price' (string) and 'priceCurrency'.
-    - Otherwise attempts to preserve human text via priceSpecification.
-    - Adds url, validFrom, validThrough when provided.
+    Build an Offer dict. If date_only=True, validFrom/validThrough will be date-only
+    strings (YYYY-MM-DD); otherwise full ISO datetimes are used.
     """
     offer = {"@type": "Offer"}
 
@@ -50,13 +64,11 @@ def _price_offer_dict(name_text=None, amount_decimal=None, display_text=None,
         offer["url"] = purchase_url
 
     if valid_from:
-        offer["validFrom"] = _as_iso(valid_from)
+        offer["validFrom"] = _as_iso(valid_from, date_only=date_only)
     if valid_through:
-        # schema uses validThrough for end of availability
-        offer["validThrough"] = _as_iso(valid_through)
+        offer["validThrough"] = _as_iso(valid_through, date_only=date_only)
 
     if amount_decimal is not None:
-        # Use string representation for decimal (Google expects numeric string)
         offer["price"] = str(amount_decimal)
         offer["priceCurrency"] = currency
     else:
@@ -80,41 +92,58 @@ def _price_offer_dict(name_text=None, amount_decimal=None, display_text=None,
 
     return offer
 
+
 def build_structured_event_dict(page, request=None):
     """
-    Build a schema.org Event dict for a given EventPage-like object.
-    `page` must expose attributes referenced (title, search_description, sub_heading,
-    get_url(), thumbnail, start_datetime, end_datetime, instructor, member_cost,
-    member_cost_amount, public_cost, public_cost_amount, purchase_url, event_dates, order_date).
-    `request` is optional; if provided it will be used to build absolute URLs.
+    Build schema.org Event dict.
+    If both page.display_times_on_index and page.display_times_on_detail are False,
+    structured date/time values will be emitted as date-only (YYYY-MM-DD).
     """
-    # base event
+    # determine whether to emit times in the JSON-LD:
+    # If either flag is True, include times; only omit times if BOTH are False.
+    display_index = getattr(page, "display_times_on_index", False)
+    display_detail = getattr(page, "display_times_on_detail", False)
+    include_times = bool(display_index or display_detail)
+    date_only = not include_times
+
     data = {
         "@context": "https://schema.org",
         "@type": "Event",
         "name": page.title,
-        "description": strip_tags(getattr(page, "search_description", None) or getattr(page, "sub_heading", "") or "")[:300],
-        # prefer absolute URL if request provided
-        "url": (request.build_absolute_uri(page.get_url()) if request is not None else page.get_url()),
+        "description": strip_tags(
+            getattr(page, "search_description", None)
+            or getattr(page, "sub_heading", "")
+            or ""
+        )[:300],
+        "url": (
+            request.build_absolute_uri(page.get_url())
+            if request is not None
+            else page.get_url()
+        ),
         "eventStatus": "https://schema.org/EventScheduled",
         "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
         "location": {
             "@type": "Place",
-            "name": "Red Butte Garden & Arboretum" + (f" - {getattr(page, 'location', '')}" if getattr(page, "location", None) else ""),
+            "name": "Red Butte Garden & Arboretum"
+            + (
+                f" - {getattr(page, 'location', '')}"
+                if getattr(page, "location", None)
+                else ""
+            ),
             "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "300 Wakara Way",
                 "addressLocality": "Salt Lake City",
                 "addressRegion": "UT",
                 "postalCode": "84108",
-                "addressCountry": "US"
-            }
+                "addressCountry": "US",
+            },
         },
         "organizer": {
             "@type": "Organization",
             "name": "Red Butte Garden & Arboretum",
-            "url": "https://redbuttegarden.org/"
-        }
+            "url": "https://redbuttegarden.org/",
+        },
     }
 
     # image (try to include rendition; skip on failure)
@@ -127,42 +156,69 @@ def build_structured_event_dict(page, request=None):
                 img_url = request.build_absolute_uri(img_url)
             data["image"] = [img_url]
     except Exception:
-        # don't fail building schema if rendition fails
         pass
 
-    # start / end date
+    # start / end date: use date_only flag when serializing
     if getattr(page, "start_datetime", None):
-        data["startDate"] = _as_iso(page.start_datetime)
+        data["startDate"] = _as_iso(page.start_datetime, date_only=date_only)
     if getattr(page, "end_datetime", None):
-        data["endDate"] = _as_iso(page.end_datetime)
+        data["endDate"] = _as_iso(page.end_datetime, date_only=date_only)
 
     # performer
     if getattr(page, "instructor", None):
         data["performer"] = {"@type": "Person", "name": page.instructor}
 
-    # offers - build offers array conditionally
+    # offers - use date_only for validFrom/validThrough as well
     offers = []
-    # Member offer
-    if (getattr(page, "member_cost_amount", None) is not None) or getattr(page, "member_cost", None):
-        offers.append(_price_offer_dict(
-            name_text="Garden Members",
-            amount_decimal=getattr(page, "member_cost_amount", None),
-            display_text=getattr(page, "member_cost", None),
-            purchase_url=(getattr(page, "purchase_url", None) or (request.build_absolute_uri(page.get_url()) if request is not None else None)),
-            valid_from=(getattr(page, "start_datetime", None) or getattr(page, "order_date", None)),
-            valid_through=getattr(page, "end_datetime", None),
-        ))
+    if (getattr(page, "member_cost_amount", None) is not None) or getattr(
+        page, "member_cost", None
+    ):
+        offers.append(
+            _price_offer_dict(
+                name_text="Garden Members",
+                amount_decimal=getattr(page, "member_cost_amount", None),
+                display_text=getattr(page, "member_cost", None),
+                purchase_url=(
+                    getattr(page, "purchase_url", None)
+                    or (
+                        request.build_absolute_uri(page.get_url())
+                        if request is not None
+                        else None
+                    )
+                ),
+                valid_from=(
+                    getattr(page, "start_datetime", None)
+                    or getattr(page, "order_date", None)
+                ),
+                valid_through=getattr(page, "end_datetime", None),
+                date_only=date_only,
+            )
+        )
 
-    # Public offer
-    if (getattr(page, "public_cost_amount", None) is not None) or getattr(page, "public_cost", None):
-        offers.append(_price_offer_dict(
-            name_text="General Public",
-            amount_decimal=getattr(page, "public_cost_amount", None),
-            display_text=getattr(page, "public_cost", None),
-            purchase_url=(getattr(page, "purchase_url", None) or (request.build_absolute_uri(page.get_url()) if request is not None else None)),
-            valid_from=(getattr(page, "start_datetime", None) or getattr(page, "order_date", None)),
-            valid_through=getattr(page, "end_datetime", None),
-        ))
+    if (getattr(page, "public_cost_amount", None) is not None) or getattr(
+        page, "public_cost", None
+    ):
+        offers.append(
+            _price_offer_dict(
+                name_text="General Public",
+                amount_decimal=getattr(page, "public_cost_amount", None),
+                display_text=getattr(page, "public_cost", None),
+                purchase_url=(
+                    getattr(page, "purchase_url", None)
+                    or (
+                        request.build_absolute_uri(page.get_url())
+                        if request is not None
+                        else None
+                    )
+                ),
+                valid_from=(
+                    getattr(page, "start_datetime", None)
+                    or getattr(page, "order_date", None)
+                ),
+                valid_through=getattr(page, "end_datetime", None),
+                date_only=date_only,
+            )
+        )
 
     if offers:
         data["offers"] = offers
@@ -173,9 +229,14 @@ def build_structured_event_dict(page, request=None):
 
     return data
 
+
 def build_structured_event_json(page, request=None):
     """
     Return a JSON string suitable for embedding in an ld+json script tag.
     Uses default=str so datetimes/decimals are serialized to strings.
     """
-    return json.dumps(build_structured_event_dict(page, request=request), default=str, ensure_ascii=False)
+    return json.dumps(
+        build_structured_event_dict(page, request=request),
+        default=str,
+        ensure_ascii=False,
+    )

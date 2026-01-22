@@ -86,22 +86,35 @@
 
       {# Display the legacy event_dates if present; otherwise show structured start/end datetimes #}
       <div class="ev-date fst-italic">
-        {% if page.event_dates|default:""|length %}
-          {{ page.event_dates }}
-        {% elif page.start_datetime %}
-          {# Use localtime for nicer display #}
-          {% localtime on %}
-            {{ page.start_datetime|date:"F j, Y" }}
-            {% if page.start_datetime|time %} · {{ page.start_datetime|time:"g:i A" }}{% endif %}
-            {% if page.end_datetime %}
-              – {% if page.end_datetime|date:"F j, Y" != page.start_datetime|date:"F j, Y" %}
-                {{ page.end_datetime|date:"F j, Y" }} {% if page.end_datetime|time %}&nbsp;{% endif %}
-              {% endif %}
-              {% if page.end_datetime|time %}{{ page.end_datetime|time:"g:i A" }}{% endif %}
+      {% if page.event_dates|default:""|length %}
+        {{ page.event_dates }}
+      {% elif page.start_datetime %}
+        {% localtime on %}
+          {# Always show date #}
+          {{ page.start_datetime|date:"F j" }}
+          {# Times only if editor enabled them for detail pages #}
+          {% if page.display_times_on_detail %}
+            {% if page.start_datetime|time %}
+              · {{ page.start_datetime|time:"g:i A" }}
             {% endif %}
-          {% endlocaltime %}
-        {% endif %}
-      </div>
+          {% endif %}
+
+          {% if page.end_datetime %}
+            &nbsp;–&nbsp;
+            {# If end date differs from start date, show full end date #}
+            {% if page.end_datetime|date:"F j, Y" != page.start_datetime|date:"F j, Y" %}
+              {{ page.end_datetime|date:"F j, Y" }}
+              {% if page.display_times_on_detail and page.end_datetime|time %} · {{ page.end_datetime|time:"g:i A" }}{% endif %}
+            {% else %}
+              {# Same day: show end time only when display_times_on_detail True #}
+              {% if page.display_times_on_detail and page.end_datetime|time %}
+                {{ page.end_datetime|time:"g:i A" }}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        {% endlocaltime %}
+      {% endif %}
+    </div>
 
       <div class="ev-desc">
         <div>

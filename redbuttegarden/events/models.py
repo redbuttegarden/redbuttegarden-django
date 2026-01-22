@@ -302,6 +302,16 @@ class EventPage(AbstractBase):
         blank=True,
         help_text="Structured end date/time. Optional — helpful for search engines and calendar integrations.",
     )
+    display_times_on_index = models.BooleanField(
+        default=False,
+        verbose_name="Display times on event index page thumbnail",
+        help_text="Show start/end times (e.g. 9 AM) on the event index page thumbnail (thumbnail space is limited; default off)."
+    )
+    display_times_on_detail = models.BooleanField(
+        default=True,
+        verbose_name="Display times on detail page",
+        help_text="Show start/end times on the event detail page (default on). Turn off to display dates only."
+    )
     event_categories = ParentalManyToManyField(EventCategory, blank=True)
     notes = RichTextField(
         blank=True,
@@ -336,6 +346,8 @@ class EventPage(AbstractBase):
                     help_text="Structured start date/time.",
                 ),
                 FieldPanel("end_datetime", help_text="Structured end date/time."),
+                FieldPanel("display_times_on_index"),
+                FieldPanel("display_times_on_detail"),
                 FieldRowPanel(
                     [
                         FieldPanel(
@@ -351,10 +363,7 @@ class EventPage(AbstractBase):
                     ],
                     heading="Structured prices",
                 ),
-                FieldPanel(
-                    "purchase_url",
-                    help_text="Optional ticket/registration URL. If provided it will be used for the offer 'url' field in structured data.",
-                ),
+                FieldPanel("purchase_url"),
             ],
             heading="Structured event data (for search engines)",
             classname="collapsible",
