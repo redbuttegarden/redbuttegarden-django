@@ -47,9 +47,9 @@
           <div class="inline"><strong>Garden Members:&nbsp;</strong></div>
           <div class="ev-member-cost">
             {% if page.member_cost_amount|floatformat:2 == "0.00" %}
-              Free
+              <span class="green fw-bold">Free</span>
             {% else %}
-              ${{ page.member_cost_amount|floatformat:2 }}
+              <span class="green fw-bold">${{ page.member_cost_amount|floatformat:2 }}</span>
             {% endif %}
           </div>
         </div>
@@ -60,7 +60,7 @@
         <div>
           <div class="inline"><strong>General Public:&nbsp;</strong></div>
           <div class="ev-public-cost">
-            <span class="green fw-bold">{{ page.public_cost }}</span>
+            {{ page.public_cost }}
           </div>
         </div>
       {% elif page.public_cost_amount is not None %}
@@ -70,7 +70,7 @@
             {% if page.public_cost_amount|floatformat:2 == "0.00" %}
               Free
             {% else %}
-              <span class="green fw-bold">${{ page.public_cost_amount|floatformat:2 }}</span>
+              ${{ page.public_cost_amount|floatformat:2 }}
             {% endif %}
           </div>
         </div>
