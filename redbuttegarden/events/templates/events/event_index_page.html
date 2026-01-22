@@ -36,7 +36,7 @@
                         {{ event.end_datetime|date:"M j, Y" }}
                         {% else %}
                         {# same day - show nothing (end date same as start) unless times are enabled #}
-                        {% if event.display_times_on_list %}
+                        {% if event.display_times_on_index %}
                             {# show end time only if the editor explicitly enabled times for list #}
                             {{ event.end_datetime|time:"g:i A" }}
                         {% endif %}
@@ -44,7 +44,7 @@
                     {% endif %}
 
                     {# Optional: if the editor wants times on the thumbnail (off by default) #}
-                    {% if event.display_times_on_list and event.start_datetime %}
+                    {% if event.display_times_on_index and event.start_datetime %}
                         {# show start time on a second line (or inline) if desired; adjust styling accordingly #}
                         <div class="eventdate-time">
                         {{ event.start_datetime|time:"g:i A" }}
