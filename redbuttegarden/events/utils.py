@@ -146,16 +146,36 @@ def build_structured_event_dict(page, request=None):
         },
     }
 
-    # image (try to include rendition; skip on failure)
+    # image: provide multiple sizes / aspect ratios for rich results
     try:
         thumbnail = getattr(page, "thumbnail", None)
         if thumbnail:
-            rendition = thumbnail.get_rendition("fill-1200x630")
-            img_url = rendition.url
-            if request is not None:
-                img_url = request.build_absolute_uri(img_url)
-            data["image"] = [img_url]
+            image_urls = []
+
+            rendition_specs = [
+                "fill-1920x1080",  # 16:9 (preferred by Google)
+                "fill-1200x675",   # 16:9 fallback
+                "fill-1600x1200",  # 4:3
+                "fill-1200x1200",  # 1:1
+            ]
+
+            for spec in rendition_specs:
+                try:
+                    rendition = thumbnail.get_rendition(spec)
+                    url = rendition.url
+                    if request is not None:
+                        url = request.build_absolute_uri(url)
+                    image_urls.append(url)
+                except Exception:
+                    # skip individual rendition failures
+                    continue
+
+            if image_urls:
+                # Remove duplicate urls for smaller images
+                image_urls = list(dict.fromkeys(image_urls))
+                data["image"] = image_urls
     except Exception:
+        # never allow schema generation to fail due to image issues
         pass
 
     # start / end date: use date_only flag when serializing
