@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static wagtailcore_tags wagtailimages_tags %}
+{% load static tz wagtailcore_tags wagtailimages_tags %}
 
 {% block body_class %}
   event-page
@@ -11,7 +11,9 @@
     <div class="col-sm-3">
       <!-- Event Picture -->
       <div class="event-pic mt-2 mt-lg-4">
-        {% image page.thumbnail fill-300x300 %}
+        {% if page.thumbnail %}
+          {% image page.thumbnail fill-300x300 %}
+        {% endif %}
       </div>
 
       <div class="ev-info-header green mt-2 mt-lg-4">LOCATION:</div>
@@ -29,30 +31,51 @@
         <div>{{ page.instructor }}</div>
       {% endif %}
 
-      <!-- Price Info -->
-      {% if page.member_cost or page.public_cost %}
+      <!-- Price Info: show header if any legacy or structured price is present -->
+      {% if page.member_cost or page.public_cost or page.member_cost_amount or page.public_cost_amount %}
         <div class="ev-info-header green mt-2 mt-lg-4">COST:</div>
       {% endif %}
 
+      {# Garden Members price: display legacy text, else structured numeric amount #}
       {% if page.member_cost %}
         <div>
-          <div class="inline">
-            <strong>Garden Members:&nbsp;</strong>
-          </div>
+          <div class="inline"><strong>Garden Members:&nbsp;</strong></div>
           <div class="ev-member-cost">{{ page.member_cost }}</div>
+        </div>
+      {% elif page.member_cost_amount is not None %}
+        <div>
+          <div class="inline"><strong>Garden Members:&nbsp;</strong></div>
+          <div class="ev-member-cost">
+            {% if page.member_cost_amount|floatformat:2 == "0.00" %}
+              Free
+            {% else %}
+              ${{ page.member_cost_amount|floatformat:2 }}
+            {% endif %}
+          </div>
         </div>
       {% endif %}
 
+      {# General Public price: display legacy text, else structured numeric amount #}
       {% if page.public_cost %}
         <div>
-          <div class="inline">
-            <strong>General Public:&nbsp;</strong>
-          </div>
+          <div class="inline"><strong>General Public:&nbsp;</strong></div>
           <div class="ev-public-cost">
             <span class="green fw-bold">{{ page.public_cost }}</span>
           </div>
         </div>
+      {% elif page.public_cost_amount is not None %}
+        <div>
+          <div class="inline"><strong>General Public:&nbsp;</strong></div>
+          <div class="ev-public-cost">
+            {% if page.public_cost_amount|floatformat:2 == "0.00" %}
+              Free
+            {% else %}
+              <span class="green fw-bold">${{ page.public_cost_amount|floatformat:2 }}</span>
+            {% endif %}
+          </div>
+        </div>
       {% endif %}
+
     </div>
     <!-- End First Column -->
 
@@ -61,7 +84,24 @@
       <h1 class="mt-5 mt-md-3">{{ page.title }}</h1>
       <div class="ev-sub fs-5">{{ page.sub_heading }}</div>
 
-      <div class="ev-date fst-italic">{{ page.event_dates }}</div>
+      {# Display the legacy event_dates if present; otherwise show structured start/end datetimes #}
+      <div class="ev-date fst-italic">
+        {% if page.event_dates|default:""|length %}
+          {{ page.event_dates }}
+        {% elif page.start_datetime %}
+          {# Use localtime for nicer display #}
+          {% localtime on %}
+            {{ page.start_datetime|date:"F j, Y" }}
+            {% if page.start_datetime|time %} · {{ page.start_datetime|time:"g:i A" }}{% endif %}
+            {% if page.end_datetime %}
+              – {% if page.end_datetime|date:"F j, Y" != page.start_datetime|date:"F j, Y" %}
+                {{ page.end_datetime|date:"F j, Y" }} {% if page.end_datetime|time %}&nbsp;{% endif %}
+              {% endif %}
+              {% if page.end_datetime|time %}{{ page.end_datetime|time:"g:i A" }}{% endif %}
+            {% endif %}
+          {% endlocaltime %}
+        {% endif %}
+      </div>
 
       <div class="ev-desc">
         <div>
@@ -90,89 +130,9 @@
   </div>
 {% endblock %}
 
+
 {% block extra_js %}
 <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Event",
-
-    "name": "{{ page.title|escapejs }}",
-
-    "description": "{{ page.search_description|default:page.sub_heading|default:''|striptags|truncatechars:300|escapejs }}",
-
-    "url": "{{ request.build_absolute_uri|escapejs }}",
-
-    {% if page.thumbnail %}
-      {% image page.thumbnail fill-1200x630 as thumb %}
-      "image": [
-        "{{ thumb.url|escapejs }}"
-      ],
-    {% endif %}
-
-    {% if page.start_date %}
-    "startDate": "{{ page.start_date|date:'c' }}",
-    {% endif %}
-    {% if page.end_date %}
-    "endDate": "{{ page.end_date|date:'c' }}",
-    {% endif %}
-
-    "eventStatus": "https://schema.org/EventScheduled",
-    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-
-    "location": {
-      "@type": "Place",
-      "name": "Red Butte Garden & Arboretum{% if page.location %} - {{ page.location|escapejs }}{% endif %}",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "300 Wakara Way",
-        "addressLocality": "Salt Lake City",
-        "addressRegion": "UT",
-        "postalCode": "84108",
-        "addressCountry": "US"
-      }
-    },
-
-    "organizer": {
-      "@type": "Organization",
-      "name": "Red Butte Garden & Arboretum",
-      "url": "https://redbuttegarden.org/"
-    }
-
-    {% if page.instructor %}
-    ,
-    "performer": {
-      "@type": "Person",
-      "name": "{{ page.instructor|escapejs }}"
-    }
-    {% endif %}
-
-    {% if page.member_cost or page.public_cost %}
-    ,
-    "offers": [
-      {% if page.member_cost %}
-      {
-        "@type": "Offer",
-        "name": "Garden Members",
-        "price": "{{ page.member_cost|striptags|escapejs }}",
-        "priceCurrency": "USD"
-      }{% if page.public_cost %},{% endif %}
-      {% endif %}
-      {% if page.public_cost %}
-      {
-        "@type": "Offer",
-        "name": "General Public",
-        "price": "{{ page.public_cost|striptags|escapejs }}",
-        "priceCurrency": "USD"
-      }
-      {% endif %}
-    ]
-    {% endif %}
-
-    {% if page.event_dates %}
-    ,
-    "eventSchedule": "{{ page.event_dates|striptags|escapejs }}"
-    {% endif %}
-  }
-  </script>
-{# --- /Event schema.org JSON-LD --- #}
+{{ structured_event_json|safe }}
+</script>
 {% endblock %}
