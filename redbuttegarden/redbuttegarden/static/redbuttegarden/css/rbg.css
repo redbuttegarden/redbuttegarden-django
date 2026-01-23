@@ -248,6 +248,11 @@ a:hover {
     color: white;
 }
 
+/* Bootstrap-compat shim for legacy 'in' class */
+.fade.in { opacity: 1; transition: opacity 0.15s linear; }
+.popover.fade.in { opacity: 1; }
+
+
 /**********************************************************/
 /*************  Begin CSS for membership page *************/
 /**********************************************************/
