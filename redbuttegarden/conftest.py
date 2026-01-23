@@ -9,6 +9,7 @@ from django.utils import timezone
 from rest_framework.test import APIRequestFactory
 
 from concerts.models import Concert, ConcertDonorClubMember, Ticket, ConcertDonorClubPackage
+from plants.models import Family, Genus, Species
 
 
 @pytest.fixture
@@ -165,3 +166,19 @@ def drf_client_with_user(create_api_user_and_token):
     client = APIClient()
     client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
     return client
+
+@pytest.fixture
+def family():
+    family, _ = Family.objects.get_or_create(name='Family')
+    return family
+
+@pytest.fixture
+def genus(family):
+    genus, _ = Genus.objects.get_or_create(family=family, name='Genus')
+    return genus
+
+@pytest.fixture
+def species(genus):
+    species, _ = Species.objects.get_or_create(genus=genus, name='species', full_name='Genus species',
+                                               vernacular_name='vernacular_name')
+    return species
