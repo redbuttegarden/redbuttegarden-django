@@ -78,6 +78,8 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "django.middleware.http.ConditionalGetMiddleware",  # supports 304s
+    "redbuttegarden.middleware.HtmlCacheControlMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
