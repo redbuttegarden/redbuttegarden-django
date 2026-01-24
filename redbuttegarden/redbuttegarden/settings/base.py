@@ -78,15 +78,12 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # compute ETag/Last-Modified and support conditional GETs (should be before HtmlCacheControl)
-    "django.middleware.http.ConditionalGetMiddleware",
-    # Put the ETag-forcing middleware AFTER ConditionalGet (so on response it runs BEFORE it)
     "redbuttegarden.middleware.EnsureRenderedAndSetETagMiddleware",
     # CSRF normally runs after Common and Session but before Authentication (recommended)
     "django.middleware.csrf.CsrfViewMiddleware",
     # Authentication must run before any middleware that depends on request.user
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    # Your combined middleware that reads request.user and sets Cache-Control
+    # Combined middleware that reads request.user and sets Cache-Control
     "redbuttegarden.middleware.HtmlCacheControlMiddleware",
     # messages / clickjacking etc.
     "django.contrib.messages.middleware.MessageMiddleware",
