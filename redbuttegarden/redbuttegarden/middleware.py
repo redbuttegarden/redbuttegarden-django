@@ -1,57 +1,68 @@
 import hashlib
+import logging
 
 from django.utils.http import quote_etag
 from django.template.response import TemplateResponse
 from django.utils.deprecation import MiddlewareMixin
 from typing import Optional
 
+logger = logging.getLogger("etag-diagnostic")
+
 
 class EnsureRenderedAndSetETagMiddleware(MiddlewareMixin):
-    """
-    Render TemplateResponse objects early and set an ETag for non-streaming
-    responses that don't already have one.
-
-    Uses SHA1 of response.content (uncompressed) for ETag.
-    Skips streaming responses and responses that already have ETag/Last-Modified.
-    """
-
     def _compute_etag(self, content: bytes) -> str:
         digest = hashlib.sha1(content).hexdigest()
         return quote_etag(digest)
 
     def process_template_response(self, request, response):
-        # Ensure TemplateResponse is rendered so we can compute ETag from final body.
         if isinstance(response, TemplateResponse) and not response.is_rendered:
             response.render()
         return response
 
     def process_response(self, request, response):
-        # Only for non-streaming responses with bodies
+        # Log incoming conditional headers we care about
+        inm = request.META.get("HTTP_IF_NONE_MATCH")
+        ims = request.META.get("HTTP_IF_MODIFIED_SINCE")
+        logger.info(
+            "ETagDiag: Incoming If-None-Match=%r If-Modified-Since=%r", inm, ims
+        )
+
+        # Inspect response before we set anything
+        try:
+            has_etag_before = response.has_header("ETag")
+        except Exception:
+            has_etag_before = False
+        logger.info(
+            "ETagDiag: before: has_etag=%s status=%s",
+            has_etag_before,
+            getattr(response, "status_code", None),
+        )
+
+        # Normal behavior: skip streaming or non-body responses
         try:
             content = getattr(response, "content", None)
         except Exception:
             content = None
-
-        if content is None:
+        if content is None or getattr(response, "streaming", False):
+            logger.info("ETagDiag: skipping (no content or streaming).")
             return response
 
-        if getattr(response, "streaming", False):
-            return response
-
-        # Respect an existing validator set by view/middleware
         if response.has_header("ETag") or response.has_header("Last-Modified"):
+            logger.info("ETagDiag: response already had validator; leaving it.")
             return response
 
-        # Only on successful/resolvable responses
         if response.status_code not in (200, 203, 206):
+            logger.info(
+                "ETagDiag: status not suitable for ETag: %s", response.status_code
+            )
             return response
 
         try:
             etag = self._compute_etag(content)
             response["ETag"] = etag
-        except Exception:
-            # Be conservative: don't fail the request if hashing fails
-            pass
+            logger.info("ETagDiag: computed and set ETag=%r", etag)
+        except Exception as exc:
+            logger.exception("ETagDiag: failed to compute ETag: %s", exc)
 
         return response
 
