@@ -78,16 +78,22 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.http.ConditionalGetMiddleware",  # supports 304s
-    "redbuttegarden.middleware.HtmlCacheControlMiddleware",
+    # compute ETag/Last-Modified and support conditional GETs (should be before HtmlCacheControl)
+    "django.middleware.http.ConditionalGetMiddleware",
+    # CSRF normally runs after Common and Session but before Authentication (recommended)
     "django.middleware.csrf.CsrfViewMiddleware",
+    # Authentication must run before any middleware that depends on request.user
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Your combined middleware that reads request.user and sets Cache-Control
+    "redbuttegarden.middleware.HtmlCacheControlMiddleware",
+    # messages / clickjacking etc.
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # Monitoring / logging
+    # Monitoring / logging etc (keep these after auth so they can log user info if desired)
     "monitoring.middleware.request_logging.RequestLoggingMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
+
 
 ROOT_URLCONF = "redbuttegarden.urls"
 
