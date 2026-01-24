@@ -6,7 +6,7 @@ from django.template.response import TemplateResponse
 from django.utils.deprecation import MiddlewareMixin
 from typing import Optional
 
-logger = logging.getLogger("etag-diagnostic")
+logger = logging.getLogger("django.request")
 
 
 class EnsureRenderedAndSetETagMiddleware(MiddlewareMixin):
