@@ -80,6 +80,8 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     # compute ETag/Last-Modified and support conditional GETs (should be before HtmlCacheControl)
     "django.middleware.http.ConditionalGetMiddleware",
+    # Put the ETag-forcing middleware AFTER ConditionalGet (so on response it runs BEFORE it)
+    "redbuttegarden.middleware.EnsureRenderedAndSetETagMiddleware",
     # CSRF normally runs after Common and Session but before Authentication (recommended)
     "django.middleware.csrf.CsrfViewMiddleware",
     # Authentication must run before any middleware that depends on request.user
