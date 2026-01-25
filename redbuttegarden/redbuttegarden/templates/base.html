@@ -78,7 +78,24 @@
     <!-- End Google Tag Manager (noscript) -->
 {% endif %}
 
-{% include 'includes/navbar.html' %}
+<div id="rbg-nav"
+     data-fragment-url="{% url 'home:nav-fragment' %}"
+     aria-live="polite"
+     aria-label="Primary navigation">
+    {# Minimal skeleton so layout doesn't jump; keep core, non-user-specific items here #}
+    <a id="logo" class="ps-2 ps-lg-5 py-2" href="/">
+        <picture>
+            <source srcset="{% static 'redbuttegarden/img/rbg-logo-new.webp' %}" type="image/webp">
+            <img src="{% static 'redbuttegarden/img/rbg-logo-new.png' %}"
+                 alt="Red Butte Garden" title="RBG Logo" width="285" height="50"/>
+        </picture>
+    </a>
+</div>
+
+<noscript>
+  {# Graceful fallback for no-JS users: static, non-personal nav (keeps caching benefits) #}
+  {% include 'includes/navbar_noscript.html' %}
+</noscript>
 
 {% block messages %}
     {% if messages %}
@@ -145,6 +162,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+<script src="{% static 'redbuttegarden/js/nav-fragment.js' %}"></script>
 <script src="{% static 'redbuttegarden/js/navbar.js' %}"></script>
 <script src="{% static 'search/js/search.js' %}"></script>
 <script src="{% static 'redbuttegarden/js/rbg.js' %}"></script>

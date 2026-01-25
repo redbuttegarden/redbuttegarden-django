@@ -5,6 +5,7 @@ from . import views
 
 app_name = "home"
 urlpatterns = [
+    path("nav-fragment/", views.nav_fragment, name="nav-fragment"),
     path("api/latest-weather/", views.latest_weather, name="latest-weather"),
     path("api/hours/<int:page_id>", views.get_hours, name="hours"),
     path("robots.txt", views.robots_txt, name="robots-txt"),

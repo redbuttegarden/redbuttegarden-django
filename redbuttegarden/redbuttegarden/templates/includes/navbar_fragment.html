@@ -1,0 +1,261 @@
+{% load static wagtailcore_tags wagtailroutablepage_tags %}
+
+<nav class="navbar navbar-expand-xl">
+  <div class="container-fluid p-0">
+    <a id="logo" class="ps-2 ps-lg-5 py-2" href="/">
+      <picture>
+        <source srcset="{% static 'redbuttegarden/img/rbg-logo-new.webp' %}" type="image/webp" />
+        <img src="{% static 'redbuttegarden/img/rbg-logo-new.png' %}" alt="Red Butte Garden" title="RBG Logo" width="285" height="50" />
+      </picture>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#rbgNavbar" aria-controls="rbgNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-dark navbar-toggler-icon"></span></button>
+
+    <div id="rbgNavbar" class="collapse navbar-collapse p-2">
+      <div id="navLinks">
+        <form id="navSearch" class="d-flex align-items-center" role="search">
+          <i class="bi bi-search"></i>
+          <input class="form-control ps-4" type="search" placeholder="Search" aria-label="Search" />
+        </form>
+
+        <ul class="navbar-nav me-auto m-2 mb-lg-0">
+          <li class="nav-item dropdown px-0 px-lg-2">
+            <a class="nav-link dropdown-toggle underline" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Visit
+              <i class="bi bi-chevron-down"></i>
+            </a>
+            <ul class="dropdown-menu pe-5 pb-3">
+              <li>
+                <a class="dropdown-item" title="Link to info page for visiting the garden while following COVID-19 guidelines" href="{% slugurl 'plan-your-garden-visit' %}">Plan Your Visit</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Link to general information page with prices, hours, directions, etcetera" href="{% slugurl 'general-info' %}">General Info</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Link to page about Red Butte Garden including mission statement and brief history" href="{% slugurl 'about-us' %}">About Us</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Link to page with maps of the garden" href="{% slugurl 'garden-maps' %}">Garden Maps</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Link to page discribing our garden gift shop" href="{% slugurl 'gift-shop' %}">Gift Shop</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Link to page listing free admission days and free events" href="{% slugurl 'free-garden-events' %}">Free Days &amp; Events</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Link to page descriping how to schedule private garden tours" href="{% slugurl 'garden-tours' %}">Garden Tours</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Link to our poetry box map, poetry walk info, and contest" href="{% slugurl 'poetry' %}">Poetry in the Garden</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Link to page with info about our themed gardens" href="{% slugurl 'themed-gardens' %}">Themed Gardens</a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown px-0 px-lg-2">
+            <a class="nav-link dropdown-toggle underline" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Collections & Gardening
+              <i class="bi bi-chevron-down"></i>
+            </a>
+            <ul class="dropdown-menu pe-5 pb-3">
+              <li>
+                <a class="dropdown-item" title="Link to map displaying plant location in the garden" href="{% url 'plants:plant-map' %}">Interactive Plant Map</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Filter our plant collections to be displayed on the plant map based on given search criteria" href="{% url 'plants:collection-search' %}">Search Our Plant Collections</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Link to slideshows and descriptions of our various plant collections" href="{% slugurl 'plant-collections' %}">Plant Collections Information</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Tips and tricks for doing your own gardening" href="{% slugurl 'gardening-information' %}">Gardening Information</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Desciptions of what's going on in our Conservation Department" href="{% slugurl 'conservation-research' %}">Conservation Research</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="A blog for keeping up with blooms at the garden" href="{% slugurl 'whats-blooming-now' %}">What's Blooming Now Blog</a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown px-0 px-lg-2">
+            <a class="nav-link dropdown-toggle underline" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Events
+              <i class="bi bi-chevron-down"></i>
+            </a>
+            <ul class="dropdown-menu pe-5 pb-3">
+              <li>
+                <a class="dropdown-item" title="Event Calendar" href="{% slugurl 'calendar' %}">Event Calendar</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Link to page listing concert schedules and general information" href="{% slugurl 'concerts' %}">Outdoor Concert Series</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Event index page for Friends & Family Night event series" href="{% slugurl 'friends-and-family-night' %}">Friends & Family Nights</a>
+              </li>
+              {# main_event_page set in nav_fragment view #}
+              {% if main_event_page %}
+                <li>
+                  <a class="dropdown-item" title="Info for current and upcoming art displays at the garden" href="{% routablepageurl main_event_page 'event_by_category' 'art-exhibits' %}">Art Exhibits</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" title="Links to events going on during the Spring season" href="{% routablepageurl main_event_page 'event_by_category' 'spring-events' %}">Spring Events</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" title="Links to events going on during the Summer season" href="{% routablepageurl main_event_page 'event_by_category' 'summer-events' %}">Summer Events</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" title="Links to events going on during the Fall season" href="{% routablepageurl main_event_page 'event_by_category' 'fall-events' %}">Fall Events</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" title="Links to events going on during the Winter season" href="{% routablepageurl main_event_page 'event_by_category' 'winter-events' %}">Winter Events</a>
+                </li>
+              {% else %}
+                {# in case main_event_page context processing fails (e.g. events wagtail page is deleted or slug renamed) #}
+                <li>
+                  <a class="dropdown-item" title="Info for current and upcoming art displays at the garden" href="/events/e-cat/art-exhibits/">Art Exhibits</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" title="Links to events going on during the Spring season" href="/events/e-cat/spring-events/">Spring Events</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" title="Links to events going on during the Summer season" href="/events/e-cat/summer-events/">Summer Events</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" title="Links to events going on during the Fall season" href="/events/e-cat/fall-events/">Fall Events</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" title="Links to events going on during the Winter season" href="/events/e-cat/winter-events/">Winter Events</a>
+                </li>
+              {% endif %}
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown px-0 px-lg-2">
+            <a class="nav-link dropdown-toggle underline" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Education
+              <i class="bi bi-chevron-down"></i>
+            </a>
+            <ul class="dropdown-menu pe-5 pb-3">
+              <li>
+                <a class="dropdown-item" title="Educational activities for adults" href="{% slugurl 'adult-education' %}">Classes &amp; Workshops For Adults</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Classes for kids" href="{% slugurl 'kids-classes' %}">Summer Camp &amp; Classes For Kids</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Info for teachers and students" href="{% slugurl 'teachers-and-students' %}">Teachers &amp; Students</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="List of activities to bust that boredom" href="{% slugurl 'boredom-busters' %}">Boredom Busters</a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown px-0 px-md-2 px-lg-3">
+            <a class="nav-link dropdown-toggle underline" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Get Involved
+              <i class="bi bi-chevron-down"></i>
+            </a>
+            <ul class="dropdown-menu pe-5 pb-3">
+              <li>
+                <a class="dropdown-item" title="Various volunteer opportunities at the garden" href="{% slugurl 'volunteer' %}">Volunteer</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Link to donate to Red Butte Garden" href="{% include 'includes/give-link.html' %}">Give</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Become a Red Butte Garden member today!" href="{% slugurl 'memberships' %}">Membership</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Learn about supporting the Garden as a Cottam Club member" href="{% slugurl 'cottam-club' %}">Join Cottam Club</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Options for giving in memoriam" href="{% slugurl 'memorials-and-tributes' %}">Memorials &amp; Tributes</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Legacy giving as a way to donate to the garden" href="{% slugurl 'legacy-giving' %}">Legacy Giving</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Become a corporate sponsor" href="{% slugurl 'corporate-sponsors' %}">Corporate Sponsorship</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Join the Red Butte Garden team" href="{% slugurl 'employment' %}">Employment</a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown px-0 px-lg-2">
+            <a class="nav-link dropdown-toggle underline" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Private Events
+              <i class="bi bi-chevron-down"></i>
+            </a>
+            <ul class="dropdown-menu pe-5 pb-3">
+              <li>
+                <a class="dropdown-item" title="Hold your wedding or reception at the garden" href="{% slugurl 'weddings-receptions' %}">Weddings &amp; Receptions</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Event space for corporate events and private parties" href="{% slugurl 'corporate-events-private-parties' %}">Corporate Events &amp; Private Parties</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Descriptions of the various areas available for rental" href="{% slugurl 'rental-sites' %}">Rental Sites</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Calendar displaying rental availability" href="{% slugurl 'rental-availability' %}">Rental Availability</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Cost information for renting and catering" href="{% slugurl 'rental-rates-catering' %}">Rental Pricing &amp; Catering</a>
+              </li>
+              <li>
+                <a class="dropdown-item" title="Our policy for photography at the garden" href="{% slugurl 'photo-policy' %}">Photo Policy</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <ul id="topLinks" class="navbar-nav me-5 pe-5">
+        {% if is_concert_donor_club_member %}
+          <li class="nav-item px-2">
+            <a class="nav-link underline" title="Concert Club Portal" href="{% slugurl 'concert-club-portal' %}">CDC PORTAL</a>
+          </li>
+        {% endif %}
+
+        <li class="nav-item px-2">
+          <a class="nav-link underline" title="Membership page" href="{% slugurl 'memberships' %}">JOIN</a>
+        </li>
+        <li class="nav-item px-2">
+          <a class="nav-link underline" title="Donate page" href="{% include 'includes/give-link.html' %}">GIVE</a>
+        </li>
+        <li class="nav-item px-2">
+          <a class="nav-link underline" title="Volunteer page" href="{% slugurl 'volunteer' %}">VOLUNTEER</a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+          <li class="nav-item px-2">
+            <form id="rbgLogoutForm" method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit">
+                {% if perms.wagtailadmin.access_admin %}
+                  RBG
+                {% else %}
+                  CDC
+                {% endif %}LOGOUT
+              </button>
+            </form>
+          </li>
+        {% else %}
+          <li class="nav-item px-2">
+            <a class="nav-link underline" href="{% url 'login' %}">Log in</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+{% include 'includes/search-modal.html' %}

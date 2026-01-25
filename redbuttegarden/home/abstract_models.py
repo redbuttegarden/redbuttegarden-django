@@ -98,23 +98,6 @@ class AbstractBase(Page):
         # full_url is Wagtail's absolute URL incl. scheme + domain
         return self.canonical_page.full_url
 
-    def get_context(self, request, *args, **kwargs):
-        from events.models import EventIndexPage
-
-        context = super(AbstractBase, self).get_context(request, *args, **kwargs)
-        main_event_slug = "events"
-        try:
-            main_events_page = EventIndexPage.objects.get(slug=main_event_slug)
-            context["main_event_page"] = main_events_page
-        except EventIndexPage.DoesNotExist:
-            logger.error(
-                f'[!] Event page with slug "{main_event_slug}" not found. Is it missing or was the slug '
-                f"changed?"
-            )
-            context["main_event_page"] = None
-
-        return context
-
     def save(self, clean=True, user=None, log_action=False, **kwargs):
         """
         If this page is new and it's parent is aliased, created an

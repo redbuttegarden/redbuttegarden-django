@@ -2,6 +2,8 @@ import logging
 
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse, Http404
+from django.shortcuts import render
+from django.views.decorators.http import require_GET
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from home.models import CurrentWeather, RBGHours, HomePage
@@ -20,6 +22,29 @@ class RBGHoursViewSet(SnippetViewSet):
         "garden_open_message",
         "garden_closed_message",
     )
+
+
+@require_GET
+def nav_fragment(request):
+    """
+    Returns the personalized navbar fragment.
+    This view runs with the full request context (so context processors apply).
+    It must be called with credentials (cookies).
+    """
+    from events.models import EventIndexPage
+
+    context = {}
+    main_event_slug = "events"
+    try:
+        main_events_page = EventIndexPage.objects.get(slug=main_event_slug)
+        context["main_event_page"] = main_events_page
+    except EventIndexPage.DoesNotExist:
+        logger.error(
+            f'[!] Event page with slug "{main_event_slug}" not found. Is it missing or was the slug '
+            f"changed?"
+        )
+        context["main_event_page"] = None
+    return render(request, "includes/navbar_fragment.html", status=200, context=context)
 
 
 def latest_weather(request):
