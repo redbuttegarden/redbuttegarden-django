@@ -19,3 +19,18 @@ class StaticStorage(ManifestFilesMixin, S3Boto3Storage):
     bucket_name = settings.STATIC_BUCKET
     location = 'static'
     file_overwrite = True
+
+    def get_object_parameters(self, name):
+        params = super().get_object_parameters(name) or {}
+
+        key = name.lower()
+
+        # The manifest filename produced by ManifestStaticFilesStorage
+        if key.endswith('staticfiles.json') or key.endswith('/staticfiles.json'):
+            params.update({
+                'CacheControl': 'no-cache, must-revalidate, max-age=0',
+            })
+        elif '.'.join(key.split('.')[-2:]).isalnum():  # example pattern
+            params.setdefault('CacheControl', 'max-age=31536000, public, immutable')
+
+        return params

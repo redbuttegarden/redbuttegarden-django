@@ -2,23 +2,150 @@
 {% load static %}
 {% load render_table from django_tables2 %}
 
-{% block title %}Living Collections{% endblock %}
+{% block title %}
+  Living Collections
+{% endblock %}
 
 {% block extra_css %}
-    <link href="{% static 'plants/css/collection_list.css' %}" rel="stylesheet">
+  <link href="{% static 'plants/css/collection_list.css' %}" rel="stylesheet" />
 {% endblock %}
 
 {% block content %}
-    {% if additional_html %}
-        {% autoescape off %}
-            {{ additional_html }}
-        {% endautoescape %}
-    {% endif %}
+  {% if additional_html %}
+    {% autoescape off %}
+      {{ additional_html }}
+    {% endautoescape %}
+  {% endif %}
 
-    {% render_table table %}
+  {# Filters form: method GET so URL contains filters; hx-get makes it an HTMX request #}
+  {# inside plants/templates/plants/collection_list.html #}
+  <form id="collection-filter-form" method="get" class="row g-2 align-items-end mb-3" hx-get="{{ request.path }}" hx-target="#table-container" hx-swap="outerHTML" hx-push-url="true" hx-trigger="keyup changed delay:500ms, submit">
+    {# ensure the view can detect this as an HTMX request even if headers are stripped by CloudFront #}
+    <input type="hidden" name="_hx" value="1" />
+
+    {% for field in filter.form %}
+      <div class="col-sm-6 col-md-4">
+        <label for="{{ field.id_for_label }}" class="form-label small text-muted">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <div class="form-text">{{ field.help_text }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a href="{{ request.path }}" class="btn btn-outline-secondary">Clear</a>
+    </div>
+  </form>
+
+  {# Table container — htmx will replace this container with the fragment #}
+  <div id="table-container">
+    {# initial server-rendered table (non-HTMX) - reuse same fragment for consistency #}
+    {% include 'plants/collection_list_table.html' %}
+  </div>
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'plants/js/name_styling.js' %}"></script>
-    <script src="{% static 'plants/js/style_rows.js' %}"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <script src="{% static 'plants/js/name_styling.js' %}"></script>
+  <script src="{% static 'plants/js/style_rows.js' %}"></script>
+
+  {# Small DOM helper: add bootstrap form-control classes to filter inputs/selects/textarea if they don't have them. #}
+  <script>
+    ;(function () {
+      function addFormControl() {
+        const container = document.getElementById('collection-filter-form')
+        if (!container) return
+        const controls = container.querySelectorAll('input[type="text"], input[type="search"], select, textarea')
+        controls.forEach(function (el) {
+          if (!el.classList.contains('form-control')) {
+            el.classList.add('form-control')
+          }
+        })
+        // style checkboxes/radios if present
+        const bools = container.querySelectorAll('input[type="checkbox"], input[type="radio"]')
+        bools.forEach(function (el) {
+          if (!el.classList.contains('form-check-input')) {
+            el.classList.add('form-check-input')
+            // wrap with label if needed could be more work
+          }
+        })
+        // style the submit/clear buttons (if not already)
+        const buttons = container.querySelectorAll('button[type="submit"], a.btn')
+        buttons.forEach(function (b) {
+          if (!b.classList.contains('btn')) {
+            b.classList.add('btn', 'btn-primary')
+          }
+        })
+      }
+    
+      // run on load and also when htmx swaps content (to ensure new inputs are styled)
+      document.addEventListener('DOMContentLoaded', addFormControl)
+      document.body.addEventListener('htmx:afterSwap', function (evt) {
+        // if swap replaced the filter form or table, re-apply styles
+        addFormControl()
+      })
+    })()
+  </script>
+  <script>
+    ;(function () {
+      // Store pending URL to push after HTMX swap
+      window._rbg_pending_htmx_push = null
+    
+      document.body.addEventListener('click', function (e) {
+        const a = e.target.closest('#table-container a')
+        if (!a) return
+    
+        const href = a.getAttribute('href') || ''
+        if (!href) return
+    
+        // Explicit opt-out
+        if (a.dataset && a.dataset.noHtmx === 'true') return
+    
+        // Never intercept exports, downloads, or new-tab links
+        if (href.includes('_export=') || a.target === '_blank' || a.hasAttribute('download')) {
+          return
+        }
+    
+        // Only intercept pagination or explicit opt-in links
+        const isPagination = !!a.closest('.pagination')
+        const hasPageParam = /[?&]page=\d+/.test(href)
+        const explicitOptIn = a.classList.contains('js-htmx-link')
+    
+        if (!isPagination && !hasPageParam && !explicitOptIn) {
+          // Normal navigation for content links
+          return
+        }
+    
+        // HTMX pagination handling
+        e.preventDefault()
+    
+        if (typeof window.htmx === 'undefined') {
+          window.location.href = href
+          return
+        }
+    
+        window._rbg_pending_htmx_push = href
+    
+        htmx.ajax('GET', href, {
+          target: '#table-container',
+          swap: 'outerHTML',
+          pushUrl: true
+        })
+      })
+    
+      // Safety net: ensure URL is pushed after swap
+      document.body.addEventListener('htmx:afterSwap', function () {
+        const pending = window._rbg_pending_htmx_push
+        if (!pending) return
+    
+        try {
+          history.pushState({}, '', pending)
+        } finally {
+          window._rbg_pending_htmx_push = null
+        }
+      })
+    })()
+  </script>
 {% endblock %}

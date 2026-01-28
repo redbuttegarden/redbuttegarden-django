@@ -74,19 +74,26 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-    # TODO - re-enable Django-CSP
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "redbuttegarden.middleware.EnsureRenderedAndSetETagMiddleware",
+    # CSRF normally runs after Common and Session but before Authentication (recommended)
     "django.middleware.csrf.CsrfViewMiddleware",
+    # Authentication must run before any middleware that depends on request.user
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Combined middleware that reads request.user and sets Cache-Control
+    "redbuttegarden.middleware.HtmlCacheControlMiddleware",
+    # messages / clickjacking etc.
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
+    # Monitoring / logging etc (keep these after auth so they can log user info if desired)
     "monitoring.middleware.request_logging.RequestLoggingMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
+
 
 ROOT_URLCONF = "redbuttegarden.urls"
 
