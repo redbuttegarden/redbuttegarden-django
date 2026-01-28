@@ -12,6 +12,10 @@ class MembershipLevel(models.Model):
     description = RichTextField(
         blank=True, features=["link", "bold", "italic"]  # keep this minimal
     )
+    tooltip = RichTextField(
+        blank=True, features=["link", "bold", "italic"], 
+        help_text="Displayed on hover"
+    )
 
     # Included cardholders (how many people are on the membership card)
     cardholders_included = models.PositiveSmallIntegerField(default=1)
