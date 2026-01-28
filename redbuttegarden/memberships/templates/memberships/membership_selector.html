@@ -47,55 +47,6 @@
                 </div>
               </div>
 
-              <!-- Sortable priorities -->
-              <div class="mb-4">
-                <h2 class="h6">Drag to set priority</h2>
-                <p class="text-muted small mb-2">Top = highest priority.</p>
-
-                <ul id="priority-list" class="list-group" role="list" aria-label="Priority list">
-                  <li class="list-group-item d-flex align-items-center priority-item" role="listitem" draggable="true" data-key="tickets" aria-grabbed="false">
-                    <span class="priority-handle me-3 text-muted" aria-hidden="true"><i class="bi bi-grip-vertical"></i></span>
-                    <div class="flex-grow-1">
-                      <div class="fw-semibold">Tickets</div>
-                      <div class="small text-muted">Member-sale ticket allowance</div>
-                    </div>
-                    <div class="ms-3">
-                      <button type="button" class="btn btn-sm btn-outline-secondary me-1 btn-move-up" aria-label="Move Tickets up"><i class="bi bi-arrow-up"></i></button>
-                      <button type="button" class="btn btn-sm btn-outline-secondary btn-move-down" aria-label="Move Tickets down"><i class="bi bi-arrow-down"></i></button>
-                    </div>
-                  </li>
-
-                  <li class="list-group-item d-flex align-items-center priority-item" role="listitem" draggable="true" data-key="admissions" aria-grabbed="false">
-                    <span class="priority-handle me-3 text-muted" aria-hidden="true"><i class="bi bi-grip-vertical"></i></span>
-                    <div class="flex-grow-1">
-                      <div class="fw-semibold">Admissions</div>
-                      <div class="small text-muted">How many people can enter per visit</div>
-                    </div>
-                    <div class="ms-3">
-                      <button type="button" class="btn btn-sm btn-outline-secondary me-1 btn-move-up" aria-label="Move Admissions up"><i class="bi bi-arrow-up"></i></button>
-                      <button type="button" class="btn btn-sm btn-outline-secondary btn-move-down" aria-label="Move Admissions down"><i class="bi bi-arrow-down"></i></button>
-                    </div>
-                  </li>
-
-                  <li class="list-group-item d-flex align-items-center priority-item" role="listitem" draggable="true" data-key="cardholders" aria-grabbed="false">
-                    <span class="priority-handle me-3 text-muted" aria-hidden="true"><i class="bi bi-grip-vertical"></i></span>
-                    <div class="flex-grow-1">
-                      <div class="fw-semibold">Cardholders</div>
-                      <div class="small text-muted">How many names appear on the membership card</div>
-                    </div>
-                    <div class="ms-3">
-                      <button type="button" class="btn btn-sm btn-outline-secondary me-1 btn-move-up" aria-label="Move Cardholders up"><i class="bi bi-arrow-up"></i></button>
-                      <button type="button" class="btn btn-sm btn-outline-secondary btn-move-down" aria-label="Move Cardholders down"><i class="bi bi-arrow-down"></i></button>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-
-              {# Hidden weight inputs (submitted to server) #}
-              <div class="visually-hidden">{{ form.admissions_weight }}
-                {{ form.cardholders_weight }}
-                {{ form.tickets_weight }}</div>
-
               <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-rbg-primary"><i class="bi bi-search me-2"></i>Find best match</button>
               </div>

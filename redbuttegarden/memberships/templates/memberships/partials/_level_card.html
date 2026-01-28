@@ -1,0 +1,39 @@
+{% load wagtailcore_tags %}
+
+<div class="col-md-6">
+  <div class="card h-100" data-bs-toggle="tooltip" data-bs-html="true" title="{{ level.tooltip }}">
+    <div class="card-body d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          {% if badge %}
+            <span class="badge bg-secondary mb-1">{{ badge }}</span>
+          {% endif %}
+          <h5 class="card-title mb-0">{{ level.name }}</h5>
+          <small class="rich-text text-muted">{{ level.description|default:'No description'|richtext }}</small>
+        </div>
+        <div class="text-end">
+          <div class="h5 mb-0" style="color:var(--rbg-oak-green)">${{ level.price }}</div>
+          <div class="small text-muted">price</div>
+        </div>
+      </div>
+
+      <ul class="list-unstyled mb-3">
+        <li>
+          <i class="bi bi-person-fill me-2"></i>Cardholders: <strong>{{ level.cardholders_included }}</strong>
+        </li>
+        <li>
+          <i class="bi bi-people-fill me-2"></i>Admissions: <strong>{{ level.admissions_allowed }}</strong>
+        </li>
+        <li>
+          <i class="bi bi-ticket-perforated-fill me-2"></i>Member tickets: <strong>{{ level.member_sale_ticket_allowance }}</strong>
+        </li>
+      </ul>
+
+      <div class="mt-auto">
+        <a href="{{ level.purchase_url }}" class="btn btn-rbg-primary w-100" target="_blank" rel="noopener noreferrer">
+          <i class="bi bi-cart-fill me-2"></i>Buy this level
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
