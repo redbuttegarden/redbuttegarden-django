@@ -2,24 +2,40 @@
 
 <div class="card card-rbg">
   <div class="card-body">
-    {% if form.errors %}
+    {# show non-field errors first (these are messages added with form.add_error(None, ...)) #}
+    {# non-field (general) errors first #}
+    {% if form.non_field_errors %}
       <div class="alert alert-danger" role="alert">
-        <h6 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> Fix the following</h6>
+        <h6 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> Need to adjust selections</h6>
         <ul class="mb-0">
-          {% for field, errors in form.errors.items %}
-            <li>
-              <strong>{{ field }}:</strong> {{ errors|join:', ' }}
-            </li>
+          {% for err in form.non_field_errors %}
+            <li>{{ err }}</li>
           {% endfor %}
         </ul>
       </div>
     {% endif %}
 
-    {% if results %}
+    {# field-level errors: only render if at least one real field has errors #}
+    {% if form.errors.cardholders or form.errors.admissions or form.errors.member_tickets %}
+      <div class="alert alert-danger" role="alert">
+        <h6 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> Fix the following</h6>
+        <ul class="mb-0">
+          {% for name, errs in form.errors.items %}
+            {% if name != '__all__' %}
+              <li>
+                <strong>{{ form.name.label }}:</strong> {{ errs|join:', ' }}
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if results or highlighted %}
       <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
           <h3 class="h6 mb-0">Best matches</h3>
-          <p class="text-muted mb-0">Top results based on your inputs and priorities.</p>
+          <p class="text-muted mb-0">Top results based on your inputs.</p>
         </div>
       </div>
 
@@ -76,40 +92,20 @@
       {% endif %}
 
       <div class="row g-3">
+        {# Render all exact results the same way via include #}
         {% for level in results %}
-          <div class="col-md-6">
-            <div class="card h-100" data-bs-toggle="tooltip" data-bs-html="true" title="{{ level.tooltip }}">
-              <div class="card-body d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <div>
-                    <h5 class="card-title mb-0">{{ level.name }}</h5>
-                    <small class="rich-text text-muted">{{ level.description|default:'No description'|richtext }}</small>
-                  </div>
-                  <div class="text-end">
-                    <div class="h5 mb-0" style="color:var(--rbg-oak-green)">${{ level.price }}</div>
-                    <div class="small text-muted">price</div>
-                  </div>
-                </div>
-
-                <ul class="list-unstyled mb-3">
-                  <li>
-                    <i class="bi bi-person-fill me-2"></i>Cardholders: <strong>{{ level.cardholders_included }}</strong>
-                  </li>
-                  <li>
-                    <i class="bi bi-people-fill me-2"></i>Admissions: <strong>{{ level.admissions_allowed }}</strong>
-                  </li>
-                  <li>
-                    <i class="bi bi-ticket-perforated-fill me-2"></i>Member tickets: <strong>{{ level.member_sale_ticket_allowance }}</strong>
-                  </li>
-                </ul>
-
-                <div class="mt-auto">
-                  <a href="{{ level.purchase_url }}" class="btn btn-rbg-primary w-100" target="_blank" rel="noopener noreferrer"><i class="bi bi-cart-fill me-2"></i>Buy this level</a>
-                </div>
-              </div>
-            </div>
-          </div>
+          {% include 'memberships/partials/_level_card.html' with level=level %}
         {% endfor %}
+
+        {# If there's a downsell option (cheaper), render it in the same style but with a badge #}
+        {% if downsell %}
+          {% include 'memberships/partials/_level_card.html' with level=downsell badge='Downsell' %}
+        {% endif %}
+
+        {# If there's an upsell option (more expensive), render it similarly #}
+        {% if upsell %}
+          {% include 'memberships/partials/_level_card.html' with level=upsell badge='Upsell' %}
+        {% endif %}
       </div>
     {% else %}
       <div class="text-center py-5">
@@ -126,8 +122,6 @@
         <strong>{{ requested.admissions }}</strong> admissions, and
         <strong>{{ requested.tickets }}</strong> tickets.
       </div>
-
-      <div class="small text-muted">Change priority by dragging the items in the list above.</div>
     </div>
   </div>
 </div>
