@@ -1,38 +1,54 @@
 document.addEventListener('DOMContentLoaded', function () {
     const el = document.getElementById('rbg-nav');
     if (!el) return;
+
     const url = el.dataset.fragmentUrl;
     if (!url) return;
 
-    // Use fetch with credentials so cookies are sent
     fetch(url, {
         method: 'GET',
         credentials: 'same-origin',
-        headers: {
-            'Accept': 'text/html'
-        }
-    }).then(function (resp) {
-        if (!resp.ok) throw resp;
-        return resp.text();
-    }).then(function (html) {
-        // Inject fragment HTML
-        el.innerHTML = html;
+        headers: { 'Accept': 'text/html' }
+    })
+        .then(resp => resp.ok ? resp.text() : Promise.reject(resp.status))
+        .then(function (html) {
+            el.innerHTML = html;
 
-        // Re-initialize Bootstrap collapse toggles to ensure they work after injection
-        try {
-            var collapseEl = el.querySelector('.collapse');
-            if (collapseEl) {
-                // If using bootstrap 5, no explicit re-init is required for markup-driven toggles,
-                // but ensure event listeners exist by re-attaching toggle buttons if needed.
-                // Optionally do nothing; modern bootstrap initializes on click.
+            el.innerHTML = html;
+
+            // Initialize bootstrap components inside the fragment (idempotent)
+            if (window.bootstrap) {
+                // Initialize collapse instances
+                el.querySelectorAll('.collapse').forEach(collapseEl => {
+                    if (!collapseEl.dataset.bsInitialized) {
+                        new bootstrap.Collapse(collapseEl, { toggle: false });
+                        collapseEl.dataset.bsInitialized = 'true';
+                    }
+                });
+
+                // Initialize modal(s) - do not auto-show them
+                el.querySelectorAll('.modal').forEach(modalEl => {
+                    if (!modalEl.dataset.bsInitializedModal) {
+                        // create instance but don't show
+                        new bootstrap.Modal(modalEl, {});
+                        modalEl.dataset.bsInitializedModal = 'true';
+                    }
+                });
+
+                // Init dropdowns optionally
+                el.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(dd => {
+                    if (!dd.dataset.bsDropdownInit) {
+                        new bootstrap.Dropdown(dd);
+                        dd.dataset.bsDropdownInit = 'true';
+                    }
+                });
             }
-        } catch (e) {
-            console.warn('nav fragment init error', e);
-        }
 
-        // Optionally init search modal or other JS behaviors inside the fragment
-    }).catch(function (err) {
-        // Keep the skeleton if fragment fails
-        console.warn('Failed to fetch nav fragment', err);
-    });
+            // Call initializers (navbar + search), if present
+            if (window.initNavbar) window.initNavbar();
+            if (window.initSearch) window.initSearch();
+        })
+        .catch(err => {
+            console.warn('Failed to load nav fragment', err);
+        });
 });

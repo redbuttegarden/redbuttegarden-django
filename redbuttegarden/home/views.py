@@ -44,7 +44,19 @@ def nav_fragment(request):
             f"changed?"
         )
         context["main_event_page"] = None
-    return render(request, "includes/navbar_fragment.html", status=200, context=context)
+
+    response = render(
+        request, "includes/navbar_fragment.html", status=200, context=context
+    )
+    if request.user.is_authenticated:
+        # Per-user content → must not be shared
+        response["Cache-Control"] = "private, no-cache, must-revalidate, max-age=0"
+        response["Vary"] = "Cookie"
+    else:
+        # Anonymous users → safe to cache briefly at edge & browser
+        response["Cache-Control"] = "public, max-age=300, s-maxage=300, must-revalidate"
+
+    return response
 
 
 def latest_weather(request):
