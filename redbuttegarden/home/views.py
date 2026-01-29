@@ -3,9 +3,12 @@ import logging
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import render
+from django.utils.cache import patch_vary_headers
 from django.views.decorators.http import require_GET
 from wagtail.snippets.views.snippets import SnippetViewSet
 
+from concerts.models import ConcertDonorClubMember
+from events.models import EventIndexPage
 from home.models import CurrentWeather, RBGHours, HomePage
 
 logger = logging.getLogger(__name__)
@@ -26,34 +29,34 @@ class RBGHoursViewSet(SnippetViewSet):
 
 @require_GET
 def nav_fragment(request):
-    """
-    Returns the personalized navbar fragment.
-    This view runs with the full request context (so context processors apply).
-    It must be called with credentials (cookies).
-    """
-    from events.models import EventIndexPage
-
+    """Return personalized navbar fragment. Context MUST be complete before render()."""
     context = {}
     main_event_slug = "events"
+
     try:
-        main_events_page = EventIndexPage.objects.get(slug=main_event_slug)
-        context["main_event_page"] = main_events_page
+        context["main_event_page"] = EventIndexPage.objects.get(slug=main_event_slug)
     except EventIndexPage.DoesNotExist:
         logger.error(
-            f'[!] Event page with slug "{main_event_slug}" not found. Is it missing or was the slug '
-            f"changed?"
+            f'Event page with slug "{main_event_slug}" not found. Is it missing or was the slug changed?'
         )
         context["main_event_page"] = None
 
-    response = render(
-        request, "includes/navbar_fragment.html", status=200, context=context
-    )
     if request.user.is_authenticated:
-        # Per-user content → must not be shared
-        response["Cache-Control"] = "private, no-cache, must-revalidate, max-age=0"
-        response["Vary"] = "Cookie"
+        context["is_concert_donor_club_member"] = ConcertDonorClubMember.objects.filter(
+            user=request.user, active=True
+        ).exists()
     else:
-        # Anonymous users → safe to cache briefly at edge & browser
+        context["is_concert_donor_club_member"] = False
+
+    response = render(
+        request, "includes/navbar_fragment.html", context=context, status=200
+    )
+
+    # caching headers
+    if request.user.is_authenticated:
+        response["Cache-Control"] = "private, no-cache, must-revalidate, max-age=0"
+        patch_vary_headers(response, ("Cookie",))
+    else:
         response["Cache-Control"] = "public, max-age=300, s-maxage=300, must-revalidate"
 
     return response
