@@ -74,21 +74,28 @@ class EnsureRenderedAndSetETagMiddleware(MiddlewareMixin):
         return response
 
 
-
-class HtmlCacheControlMiddleware:
+class HtmlCacheControlMiddleware(MiddlewareMixin):
     """
-    Single middleware to:
-      - Force HTML to be revalidated by browsers (no-cache, max-age=0).
-      - For authenticated users, mark HTML as private so shared caches don't serve it.
-    Works with ConditionalGetMiddleware which adds ETag/Last-Modified for efficient 304 responses.
+    Middleware to set sane Cache-Control for HTML responses.
+
+    With personalization moved to a client-side fragment, the main HTML should be
+    cacheable at shared caches (CloudFront) and revalidation-friendly (ETag/304).
+    This middleware:
+      - Leaves responses that already include explicit 'no-store'/'private'
+        or a non-zero max-age alone.
+      - For HTML responses without explicit restrictive headers, sets a
+        public revalidation-friendly Cache-Control that allows shared caches to cache
+        and use s-maxage for CDN TTL while still allowing conditional GET revalidation.
+      - Does NOT set Vary: Cookie for main HTML. Per-user fragments should set Vary/Cookie.
     """
 
-    # desired header values
-    ANON_CACHE_CTRL = "no-cache, must-revalidate, max-age=0, proxy-revalidate"
-    AUTH_CACHE_CTRL = "private, no-cache, must-revalidate, max-age=0"
-
-    def __init__(self, get_response):
-        self.get_response = get_response
+    # Default we will apply if nothing more restrictive exists
+    # - max-age=0 encourages revalidation
+    # - s-maxage gives CDNs a small TTL to absorb traffic (tune as needed)
+    # - must-revalidate/proxy-revalidate allow proper revalidation semantics
+    DEFAULT_CACHE_CTRL = (
+        "public, max-age=0, s-maxage=60, must-revalidate, proxy-revalidate"
+    )
 
     def _media_type(self, response) -> Optional[str]:
         content_type = response.get("Content-Type", "")
@@ -101,39 +108,41 @@ class HtmlCacheControlMiddleware:
         if media_type != "text/html":
             return response
 
-        # If there's already a Cache-Control and it's more restrictive than what we'd set,
-        # prefer the existing header. We treat presence of 'no-store' or 'private' as authoritative.
+        # Respect explicit unsafe headers from view/origin:
         existing_cc = (response.get("Cache-Control") or "").lower()
 
-        # Decide header to apply
-        try:
-            is_auth = bool(request.user and request.user.is_authenticated)
-        except Exception:
-            is_auth = False
+        # If response explicitly forbids caching or is already private, do not overwrite.
+        # Treat presence of 'no-store' or 'private' or an explicit positive max-age as authoritative.
+        if existing_cc:
+            # If the existing header already contains s-maxage or public or max-age, keep it.
+            # We only override when no restrictive flags exist and header is empty/unspecified.
+            if ("no-store" in existing_cc) or ("private" in existing_cc):
+                return response
+            if (
+                "max-age" in existing_cc
+                or "s-maxage" in existing_cc
+                or "public" in existing_cc
+            ):
+                return response
 
-        target_cc = self.AUTH_CACHE_CTRL if is_auth else self.ANON_CACHE_CTRL
+        # No explicit policy from upstream: set our default Cache-Control for main HTML.
+        response["Cache-Control"] = self.DEFAULT_CACHE_CTRL
 
-        # If existing header contains 'no-store' or 'private' or 'max-age=0' we won't overwrite
-        # (assume the response author knows better). Otherwise set/replace it.
-        if not existing_cc or (
-            "no-store" not in existing_cc
-            and "private" not in existing_cc
-            and "max-age=0" not in existing_cc
-        ):
-            response["Cache-Control"] = target_cc
-
-        # For authenticated responses ensure Vary includes Cookie (don't clobber existing Vary)
-        if is_auth:
-            vary = response.get("Vary")
-            if vary:
-                # append Cookie if not already present (respect case/spacing)
-                vary_values = [v.strip() for v in vary.split(",") if v.strip()]
-                if "Cookie" not in vary_values and "cookie" not in [
-                    v.lower() for v in vary_values
-                ]:
-                    vary_values.append("Cookie")
-                    response["Vary"] = ", ".join(vary_values)
+        # Ensure we do NOT set Vary: Cookie for the main HTML.
+        # If a view accidentally set Vary: Cookie for HTML, we prefer to remove it here
+        # because fragment approach uses separate endpoint to vary by cookie.
+        vary = response.get("Vary")
+        if vary:
+            # remove Cookie from Vary if present (preserve other tokens)
+            parts = [v.strip() for v in vary.split(",") if v.strip()]
+            parts = [p for p in parts if p.lower() != "cookie"]
+            if parts:
+                response["Vary"] = ", ".join(parts)
             else:
-                response["Vary"] = "Cookie"
+                # remove Vary header entirely if empty
+                try:
+                    del response["Vary"]
+                except KeyError:
+                    pass
 
         return response
