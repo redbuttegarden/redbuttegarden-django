@@ -580,7 +580,6 @@ def top_trees(request):
         if page_for_pagination < 1:
             page_for_pagination = 1
 
-    # call paginate safely; handle any Paginator exceptions defensively
     try:
         table.paginate(page=page_for_pagination, per_page=per_page)
     except (PageNotAnInteger, EmptyPage) as exc:
@@ -588,7 +587,6 @@ def top_trees(request):
         # fallback to page 1
         table.paginate(page=1, per_page=per_page)
     except Exception as exc:
-        # extremely defensive: avoid an uncaught 500 from weird paginator implementations
         logger.exception("Unexpected paginator error for page=%r", raw_page)
         table.paginate(page=1, per_page=per_page)
 
@@ -613,10 +611,8 @@ def top_trees(request):
                 table_total = maybe_count
                 total_known = True
         except Exception:
-            # ignore - keep total_unknown behavior
             pass
 
-    # --- compute start/end robustly ---
     # If no rows at all:
     current_page_count = 0
     if getattr(table, "rows", None) is not None:
@@ -644,7 +640,6 @@ def top_trees(request):
     querydict.pop("_export", None)
     querystring = querydict.urlencode()
 
-    # full original additional_html content — restored in full
     additional_html = """<p>This list highlights trees growing successfully at Red Butte Garden and Arboretum. These are species and cultivars that have proven their resilience and performance in our climate. Compiled by our Arborist and Horticulture Director, it is intended to serve as a practical guide for anyone choosing trees that will thrive in Utah. The trees are organized alphabetically by scientific name for easy reference.</p>
 <p>Whether you’re planning a new landscape or replacing an existing tree, we hope this resource makes the selection process easier and helps you feel confident in planting the right tree for your site.</p>
 <p>Click the botanical name to learn more about each tree.</p>
