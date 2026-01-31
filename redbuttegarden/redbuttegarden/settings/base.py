@@ -78,14 +78,21 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "redbuttegarden.middleware.EnsureRenderedAndSetETagMiddleware",
+    # CSRF normally runs after Common and Session but before Authentication (recommended)
     "django.middleware.csrf.CsrfViewMiddleware",
+    # Authentication must run before any middleware that depends on request.user
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Combined middleware that reads request.user and sets Cache-Control
+    "redbuttegarden.middleware.HtmlCacheControlMiddleware",
+    # messages / clickjacking etc.
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # Monitoring / logging
+    # Monitoring / logging etc (keep these after auth so they can log user info if desired)
     "monitoring.middleware.request_logging.RequestLoggingMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
+
 
 ROOT_URLCONF = "redbuttegarden.urls"
 
@@ -171,6 +178,7 @@ WAGTAILEMBEDS_RESPONSIVE_HTML = True
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = (
     4.5 * 1024 * 1024
 )  # i.e. 4.5MB - Needed to avoid hitting AWS API Gateway payload limits
+WAGTAILIMAGES_MAX_IMAGE_PIXELS = 89478485
 WAGTAILSEARCH_BACKENDS = {
     "default": {
         "BACKEND": "wagtail.search.backends.database",

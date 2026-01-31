@@ -10,8 +10,6 @@ from rest_framework.test import APIClient
 from wagtail.models import Collection as WagtailCollection
 
 from plants.models import Collection
-# noinspection PyUnresolvedReferences
-from .utils import family, genus, species
 
 
 @pytest.mark.django_db

@@ -18,7 +18,6 @@
   {% endif %}
 
   {# Filters form: method GET so URL contains filters; hx-get makes it an HTMX request #}
-  {# inside plants/templates/plants/collection_list.html #}
   <form id="collection-filter-form" method="get" class="row g-2 align-items-end mb-3" hx-get="{{ request.path }}" hx-target="#table-container" hx-swap="outerHTML" hx-push-url="true" hx-trigger="keyup changed delay:500ms, submit">
     {# ensure the view can detect this as an HTMX request even if headers are stripped by CloudFront #}
     <input type="hidden" name="_hx" value="1" />
