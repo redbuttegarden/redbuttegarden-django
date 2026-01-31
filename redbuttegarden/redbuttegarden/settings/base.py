@@ -178,6 +178,7 @@ WAGTAILEMBEDS_RESPONSIVE_HTML = True
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = (
     4.5 * 1024 * 1024
 )  # i.e. 4.5MB - Needed to avoid hitting AWS API Gateway payload limits
+WAGTAILIMAGES_MAX_IMAGE_PIXELS = 89478485
 WAGTAILSEARCH_BACKENDS = {
     "default": {
         "BACKEND": "wagtail.search.backends.database",
