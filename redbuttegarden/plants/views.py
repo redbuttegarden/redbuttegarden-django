@@ -1,12 +1,13 @@
 import logging
-from urllib.parse import urlencode
-
+import re
 import requests
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
+from django.core.paginator import PageNotAnInteger, EmptyPage
 from django.db import IntegrityError
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.middleware.csrf import get_token
@@ -15,6 +16,7 @@ from django.utils import timezone
 from geojson import dumps
 from requests import HTTPError
 from rest_framework import generics, viewsets, status
+from urllib.parse import urlencode
 from django.shortcuts import render, get_object_or_404, redirect
 from django_tables2.config import RequestConfig
 from django_tables2.export.export import TableExport
@@ -566,15 +568,30 @@ def top_trees(request):
     per_page = 50  # choose your page size
     table = TopTreesSpeciesTable(f.qs)
     RequestConfig(request, paginate={"paginator_class": LazyPaginator}).configure(table)
-    table.paginate(page=request.GET.get("page", 1), per_page=per_page)
 
-    # --- determine current page number ---
+    raw_page = request.GET.get("page", "1")
+    if not re.fullmatch(r"\d+", str(raw_page)):
+        logger.warning(
+            "Invalid page param: %r from %s", raw_page, request.META.get("REMOTE_ADDR")
+        )
+        page_for_pagination = 1
+    else:
+        page_for_pagination = int(raw_page)
+        if page_for_pagination < 1:
+            page_for_pagination = 1
+
     try:
-        page_number = int(request.GET.get("page", 1))
-        if page_number < 1:
-            page_number = 1
-    except (ValueError, TypeError):
-        page_number = 1
+        table.paginate(page=page_for_pagination, per_page=per_page)
+    except (PageNotAnInteger, EmptyPage) as exc:
+        logger.warning("Paginator fallback for page=%r: %s", raw_page, exc)
+        # fallback to page 1
+        table.paginate(page=1, per_page=per_page)
+    except Exception as exc:
+        logger.exception("Unexpected paginator error for page=%r", raw_page)
+        table.paginate(page=1, per_page=per_page)
+
+    # --- determine current page number (can reuse page_for_pagination) ---
+    page_number = page_for_pagination
 
     # --- Try to determine total count (may be expensive) ---
     total_known = True
@@ -594,10 +611,8 @@ def top_trees(request):
                 table_total = maybe_count
                 total_known = True
         except Exception:
-            # ignore - keep total_unknown behavior
             pass
 
-    # --- compute start/end robustly ---
     # If no rows at all:
     current_page_count = 0
     if getattr(table, "rows", None) is not None:
@@ -625,7 +640,6 @@ def top_trees(request):
     querydict.pop("_export", None)
     querystring = querydict.urlencode()
 
-    # full original additional_html content — restored in full
     additional_html = """<p>This list highlights trees growing successfully at Red Butte Garden and Arboretum. These are species and cultivars that have proven their resilience and performance in our climate. Compiled by our Arborist and Horticulture Director, it is intended to serve as a practical guide for anyone choosing trees that will thrive in Utah. The trees are organized alphabetically by scientific name for easy reference.</p>
 <p>Whether you’re planning a new landscape or replacing an existing tree, we hope this resource makes the selection process easier and helps you feel confident in planting the right tree for your site.</p>
 <p>Click the botanical name to learn more about each tree.</p>
