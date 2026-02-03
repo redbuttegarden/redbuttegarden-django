@@ -387,6 +387,7 @@ class EventPage(AbstractBase):
             heading="Legacy event fields (use only when necessary)",
             classname="collapsed",  # collapsed by default so editors don't default to these
         ),
+        FieldPanel("event_categories"),
         FieldPanel("location"),
         FieldPanel("additional_info"),
         FieldPanel("instructor"),
