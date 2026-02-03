@@ -13,7 +13,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: define the correct hosts in production!
 ALLOWED_HOSTS = ['davlmcslie.execute-api.us-east-1.amazonaws.com',  # Newer AWS Account
                  'd1mg1drmxhfql.cloudfront.net',
-                 'redbuttegarden.org', 'www.redbuttegarden.org', 'train.redbuttegarden.org',
+                 'redbuttegarden.org', 'train.redbuttegarden.org',
                  'dev-shop.redbuttegarden.org']
 
 BASE_URL = 'https://redbuttegarden.org'
@@ -62,20 +62,9 @@ STORAGES = {
 }
 
 WAGTAILFRONTENDCACHE = {
-    'mainsite': {
-        'BACKEND': 'home.custom_cache_backend.CustomCloudfrontBackend',
+    'cloudfront': {
+        'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudfrontBackend',
         'DISTRIBUTION_ID': 'E3VPUBUC4O7PM0',
-        'HOSTNAMES': ['redbuttegarden.org']
-    },
-    'wwwsite': {
-        'BACKEND': 'home.custom_cache_backend.CustomCloudfrontBackend',
-        'DISTRIBUTION_ID': 'E3VPUBUC4O7PM0',
-        'HOSTNAMES': ['www.redbuttegarden.org']
-    },
-    'training': {
-        'BACKEND': 'home.custom_cache_backend.CustomCloudfrontBackend',
-        'DISTRIBUTION_ID': 'ESBVN4MRCUVZJ',
-        'HOSTNAMES': ['train.redbuttegarden.org']
     },
 }
 
@@ -83,7 +72,6 @@ WAGTAILFRONTENDCACHE = {
 CSP_DEFAULT_SRC = ("'self'",
                    "'unsafe-inline'",
                    'redbuttegarden.org',
-                   'www.redbuttegarden.org',
                    'train.redbuttegarden.org',
                    'd1mg1drmxhfql.cloudfront.net',
                    'aflamznow5.execute-api.us-west-2.amazonaws.com',
@@ -92,7 +80,6 @@ CSP_DEFAULT_SRC = ("'self'",
 CSP_STYLE_SRC = ("'self'",
                  "'unsafe-inline'",
                  'redbuttegarden.org',
-                 'www.redbuttegarden.org',
                  'train.redbuttegarden.org',
                  'd1mg1drmxhfql.cloudfront.net',
                  'fonts.googleapis.com',
@@ -136,13 +123,11 @@ CSP_IMG_SRC = ("'self'",
 
 CORS_ALLOWED_ORIGINS = [
     'redbuttegarden.org',
-    'www.redbuttegarden.org',
     'train.redbuttegarden.org',
     'davlmcslie.execute-api.us-east-1.amazonaws.com',
     'https://rbg-web-code.s3.amazonaws.com',
     'https://rbg-web-static.s3.amazonaws.com',
     'd1mg1drmxhfql.cloudfront.net',
-    'http://0.0.0.0:8000',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
