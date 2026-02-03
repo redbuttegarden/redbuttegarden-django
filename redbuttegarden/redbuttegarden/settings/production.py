@@ -170,10 +170,20 @@ LOGGING = {
         },
     },
     'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['ignore_disallowed_host'],
+            'include_html': True,
+        },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'console',
         },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
     },
     'loggers': {
         'django.request': {

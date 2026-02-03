@@ -26,6 +26,7 @@ def event_page_changed(event_page):
 
     # Also purge event page category paths
     category_paths = [f"/events/e-cat/{category.slug}/" for category in event_page.event_categories.all()]
+    logger.info(f"Invalidating category paths: {category_paths}")
     batch.add_urls(category_paths)
 
     # Purge all the event indexes we found in a single request
