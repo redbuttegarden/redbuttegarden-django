@@ -24,6 +24,10 @@ def event_page_changed(event_page):
             logger.info(f'Adding {event_index} to purge list')
             batch.add_page(event_index)
 
+    # Also purge event page category paths
+    category_paths = [f"/events/e-cat/{category.slug}/" for category in event_page.event_categories.all()]
+    batch.add_urls[category_paths]
+
     # Purge all the event indexes we found in a single request
     logger.info('Purging!')
     batch.purge()

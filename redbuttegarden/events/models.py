@@ -499,19 +499,7 @@ class EventPage(AbstractBase):
         super().save(*args, **kwargs)
 
     def get_cached_paths(self):
-        """
-        Invalidate this page and any related event category pages.
-        """
-        site_id, root_url, page_path = self.get_url_parts()
-
-        paths = [page_path]
-
-        paths += [
-            f"/events/e-cat/{category.slug}/"
-            for category in self.event_categories.all()
-        ]
-
-        return paths
+        yield "/"
 
 
 
@@ -556,12 +544,4 @@ class EventGeneralPage(GeneralPage):
     )
 
     def get_cached_paths(self):
-        """
-        In addition to overriding the URL of this page, we also need
-        to invalidate the event category view of any category to which
-        this page belongs.
-        """
-
-        return ["/"] + [
-            "/events/e-cat/" + category.slug for category in self.event_categories.all()
-        ]
+        yield "/"
