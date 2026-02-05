@@ -1,4 +1,5 @@
 import logging
+import re
 
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import JsonResponse
@@ -9,6 +10,8 @@ from wagtail.contrib.search_promotions.models import Query
 
 logger = logging.getLogger(__name__)
 
+CONTROL_CHARS = re.compile(r"[\x00-\x1f\x7f]")
+
 
 def search(request):
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
@@ -16,8 +19,19 @@ def search(request):
     search_query = request.GET.get('q', None)
     page_number = request.GET.get('page', 1)
 
+    # build query_prefix preserving all current GET params except 'page'
+    params = request.GET.copy()
+    params.pop('page', None)
+    query_prefix = params.urlencode()
+    if query_prefix:
+        # add trailing ampersand so include can just append page=...
+        query_prefix = query_prefix + '&'
+
+
     # Search
     if search_query:
+        search_query = CONTROL_CHARS.sub("", search_query).strip() or None
+        logger.debug(f"Search query: {search_query}")
         search_results = Page.objects.live().public().search(search_query)
         query = Query.get(search_query)
 
@@ -58,4 +72,5 @@ def search(request):
     return render(request, 'search/search.html', {
         'search_query': search_query,
         'search_results': paginated_results,
+        'query_prefix': query_prefix,
     })

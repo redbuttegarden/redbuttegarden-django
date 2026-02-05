@@ -1,35 +1,52 @@
 <nav role="navigation" aria-label="Pagination navigation">
-    <ul class="pagination justify-content-center my-3">
-        {% if subpages.has_previous %}
-            <li class="page-item">
-                <a href="?page={{ subpages.previous_page_number }}" class="page-link previous arrows">previous</a>
-            </li>
+  <ul class="pagination justify-content-center my-3">
+    {# Previous #}
+    {% if subpages.has_previous %}
+      <li class="page-item">
+        {% if query_prefix %}
+          <a href="?{{ query_prefix }}page={{ subpages.previous_page_number }}" class="page-link previous arrows">previous</a>
+        {% elif query %}
+          <a href="?q={{ query|urlencode }}&page={{ subpages.previous_page_number }}" class="page-link previous arrows">previous</a>
         {% else %}
-            <li class="page-item disabled">
-                <a class="page-link">previous</a>
-            </li>
+          <a href="?page={{ subpages.previous_page_number }}" class="page-link previous arrows">previous</a>
         {% endif %}
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">previous</span></li>
+    {% endif %}
 
-        {% for i in subpages.paginator.page_range %}
-            {% if subpages.number == i %}
-                <li class="page-item active" aria-current="page">
-                    <a class="page-link" href="#">{{ i }}</a>
-                </li>
-            {% else %}
-                <li class="page-item">
-                    <a href="?page={{ query_string|urlencode }}{{ i }}" class="page-link">{{ i }}</a>
-                </li>
-            {% endif %}
-        {% endfor %}
+    {# Pages #}
+    {% for i in subpages.paginator.page_range %}
+      {% if subpages.number == i %}
+        <li class="page-item active" aria-current="page">
+          <span class="page-link">{{ i }}</span>
+        </li>
+      {% else %}
+        <li class="page-item">
+          {% if query_prefix %}
+            <a href="?{{ query_prefix }}page={{ i }}" class="page-link">{{ i }}</a>
+          {% elif query %}
+            <a href="?q={{ query|urlencode }}&page={{ i }}" class="page-link">{{ i }}</a>
+          {% else %}
+            <a href="?page={{ i }}" class="page-link">{{ i }}</a>
+          {% endif %}
+        </li>
+      {% endif %}
+    {% endfor %}
 
-        {% if subpages.has_next %}
-            <li class="page-item">
-                <a href="?page={{ subpages.next_page_number }}" class="page-link next arrows">next</a>
-            </li>
+    {# Next #}
+    {% if subpages.has_next %}
+      <li class="page-item">
+        {% if query_prefix %}
+          <a href="?{{ query_prefix }}page={{ subpages.next_page_number }}" class="page-link next arrows">next</a>
+        {% elif query %}
+          <a href="?q={{ query|urlencode }}&page={{ subpages.next_page_number }}" class="page-link next arrows">next</a>
         {% else %}
-            <li class="page-item disabled">
-                <a class="page-link">next</a>
-            </li>
+          <a href="?page={{ subpages.next_page_number }}" class="page-link next arrows">next</a>
         {% endif %}
-    </ul>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">next</span></li>
+    {% endif %}
+  </ul>
 </nav>
