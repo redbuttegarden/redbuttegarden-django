@@ -2,11 +2,9 @@ from django.db import models
 from wagtail.admin.panels import (
     FieldPanel,
 )
-from wagtail.models import Page
 from wagtail.fields import RichTextField, StreamField
-from wagtail import blocks
 from wagtail.search import index
-from .blocks import LinkedCarouselBlock
+from .blocks import LinkedCarouselBlock, PricingCardBlock
 
 from home.abstract_models import AbstractBase
 
@@ -59,7 +57,11 @@ class MembershipPage(AbstractBase):
     body = StreamField(
         [
             ("carousel", LinkedCarouselBlock()),
+            ("pricing_card", PricingCardBlock()),
         ],
+        block_counts={
+            "pricing_card": {"max_num": 1},
+        },
     )
 
     content_panels = AbstractBase.content_panels + [
