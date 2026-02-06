@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block extra_css %}
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <link href="{% static 'memberships/css/pricing_card.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
   {% include 'includes/page_banner.html' with banner=page.banner %}

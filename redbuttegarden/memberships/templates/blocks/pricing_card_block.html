@@ -1,0 +1,52 @@
+<div class="pricing-card my-2" role="region" aria-label="{{ self.heading }}">
+  <h2 class="pricing-card__heading">{{ self.heading }}</h2>
+
+  <div class="pricing-card__rows">
+    <div class="pricing-card__row">
+      <div class="pricing-card__label">First Cardholder:</div>
+      <div class="pricing-card__price">${{ self.first_cardholder_price }}</div>
+    </div>
+
+    <div class="pricing-card__row">
+      <div class="pricing-card__label">Additional Cardholder:</div>
+      <div class="pricing-card__price">${{ self.additional_cardholder_price }}</div>
+      <div class="pricing-card__desc"><em>(Maximum {{ self.additional_cardholder_max }})</em></div>
+    </div>
+
+    <div class="pricing-card__row">
+      <div class="pricing-card__label">Additional Admission Guest Entry for each Garden Visit:</div>
+      <div class="pricing-card__price">${{ self.guest_admission_price }}</div>
+      <div class="pricing-card__desc"><em>(Maximum Guests cannot exceed {{ self.guest_admission_max }})</em></div>
+    </div>
+  </div>
+
+  <div class="pricing-card__concert">
+    <div class="pricing-card__concert-heading">Concert Access Options*:</div>
+
+    {% if self.two_tickets_included %}
+      <div class="pricing-card__concert-row"><strong>Two tickets per show:</strong> included in all levels except “Garden 1”</div>
+    {% endif %}
+
+    {% if self.four_tickets_price %}
+      <div class="pricing-card__concert-row">
+        <strong>Increase to Four tickets per show:</strong> ${{ self.four_tickets_price }}
+        {% if self.four_tickets_qualifier %}
+          <div class="pricing-card__concert-qualifier"><em>Who qualifies: {{ self.four_tickets_qualifier }}</em></div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if self.six_tickets_price %}
+      <div class="pricing-card__concert-row">
+        <strong>Increase to Six tickets per show:</strong> ${{ self.six_tickets_price }}
+        {% if self.six_tickets_qualifier %}
+          <div class="pricing-card__concert-qualifier"><em>Who qualifies: {{ self.six_tickets_qualifier }}</em></div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% if self.footer_note %}
+    <div class="pricing-card__footer"><em>{{ self.footer_note }}</em></div>
+  {% endif %}
+</div>
