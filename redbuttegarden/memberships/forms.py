@@ -13,7 +13,7 @@ class MembershipSelectorForm(forms.Form):
 
     admissions = forms.IntegerField(
         min_value=1,
-        initial=1,
+        initial=2,
         label="Admissions per visit",
         widget=forms.NumberInput(
             attrs={

@@ -288,3 +288,8 @@ CONSTANT_CONTACT_API_CLIENT_SECRET = os.environ.get(
 
 # IndexNow
 INDEXNOW_KEY = os.environ.get("INDEXNOW_KEY")
+
+# Temporary basic auth just to hide pages under development
+MEMBERS_BASIC_AUTH_ENABLED = os.environ.get('MEMBERS_BASIC_AUTH_ENABLED', True)
+MEMBERS_BASIC_AUTH_USERNAME = os.environ.get('MEMBERS_BASIC_AUTH_USERNAME')
+MEMBERS_BASIC_AUTH_PASSWORD = os.environ.get('MEMBERS_BASIC_AUTH_PASSWORD')

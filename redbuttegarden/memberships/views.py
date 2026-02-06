@@ -1,16 +1,19 @@
 from django.db.models import Min, Max
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
+from .decorators import basic_auth_required
 from .forms import MembershipSelectorForm
 from .models import MembershipLevel
 
 
+@basic_auth_required
 @require_http_methods(["GET"])
 def membership_selector_page(request):
     form = MembershipSelectorForm()
     return render(request, "memberships/membership_selector.html", {"form": form})
 
 
+@basic_auth_required
 @require_http_methods(["POST"])
 def membership_suggest(request):
     form = MembershipSelectorForm(request.POST)
