@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
-from wagtail.blocks import PageChooserBlock, StructBlock, CharBlock, DecimalBlock, IntegerBlock, BooleanBlock
+from wagtail.blocks import PageChooserBlock, StructBlock, CharBlock, DecimalBlock, IntegerBlock, BooleanBlock, RichTextBlock
 
 
 class LinkedCarouselSlideBlock(blocks.StructBlock):
@@ -32,7 +32,7 @@ class LinkedCarouselBlock(blocks.ListBlock):
 
 class PricingCardBlock(StructBlock):
     heading = CharBlock(
-        required=True,
+        required=False,
         default="Flexible Options for your Unique Situation",
         help_text="Main heading for the card"
     )
@@ -85,9 +85,30 @@ class PricingCardBlock(StructBlock):
         help_text='Who qualifies for the 6-ticket upgrade (e.g. "Experience Plus level memberships with 6 or more total visitors")'
     )
 
-    footer_note = CharBlock(
+    concert_access_footer_note = CharBlock(
         required=False,
         help_text="Small italic footer note (e.g. '*An upgraded Concert Access Level does not guarantee ticket availability.')"
+    )
+
+    membership_level_benefits_text = RichTextBlock(
+        required=False,
+        help_text="Explanation of membership level benefits"
+    )
+    cardholder_level_benefits_text = RichTextBlock(
+        required=False,
+        help_text="Explanation of cardholder level benefits"
+    )
+    primary_member_text = RichTextBlock(
+        required=False,
+        help_text="Explanation of primary member benefits"
+    )
+    additional_cardholders_text = RichTextBlock(
+        required=False,
+        help_text="Explanation of additional cardholders"
+    )
+    guests_text = RichTextBlock(
+        required=False,
+        help_text="Explanation of guest benefits"
     )
 
     def clean(self, value):
