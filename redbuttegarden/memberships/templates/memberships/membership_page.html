@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+  {% include 'includes/page_banner.html' with banner=page.banner %}
+
+  {% for block in page.body %}
+    {% include_block block with id=block.id %}
+  {% endfor %}
+{% endblock %}

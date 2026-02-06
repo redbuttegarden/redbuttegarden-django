@@ -1,5 +1,14 @@
 from django.db import models
-from wagtail.fields import RichTextField
+from wagtail.admin.panels import (
+    FieldPanel,
+)
+from wagtail.models import Page
+from wagtail.fields import RichTextField, StreamField
+from wagtail import blocks
+from wagtail.search import index
+from .blocks import LinkedCarouselBlock
+
+from home.abstract_models import AbstractBase
 
 
 class MembershipLevel(models.Model):
@@ -13,8 +22,7 @@ class MembershipLevel(models.Model):
         blank=True, features=["link", "bold", "italic"]  # keep this minimal
     )
     tooltip = RichTextField(
-        blank=True, features=["link", "bold", "italic"], 
-        help_text="Displayed on hover"
+        blank=True, features=["link", "bold", "italic"], help_text="Displayed on hover"
     )
 
     # Included cardholders (how many people are on the membership card)
@@ -45,3 +53,19 @@ class MembershipLevel(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class MembershipPage(AbstractBase):
+    body = StreamField(
+        [
+            ("carousel", LinkedCarouselBlock()),
+        ],
+    )
+
+    content_panels = AbstractBase.content_panels + [
+        FieldPanel("body"),
+    ]
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField("body"),
+    ]
