@@ -2,14 +2,21 @@
 {% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block extra_css %}
-    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-    <link href="{% static 'memberships/css/pricing_card.css' %}" rel="stylesheet">
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <link href="{% static 'memberships/css/membership_page.css' %}" rel="stylesheet" />
+  <link href="{% static 'memberships/css/pricing_card.css' %}" rel="stylesheet" />
 {% endblock %}
 
 {% block content %}
   {% include 'includes/page_banner.html' with banner=page.banner %}
 
   {% for block in page.body %}
-    {% include_block block with id=block.id %}
+    {% if block.block_type == 'button' %}
+      <div class="large-button">
+        {% include_block block %}
+      </div>
+    {% else %}
+      {% include_block block with id=block.id %}
+    {% endif %}
   {% endfor %}
 {% endblock %}
