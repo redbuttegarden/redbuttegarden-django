@@ -1,109 +1,343 @@
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags humanize %}
 
-<div class="pricing-card my-2" role="region" aria-label="{{ self.heading }}">
-  {% if self.heading %}
-    <h2 class="pricing-card__heading">{{ self.heading }}</h2>
-  {% endif %}
-
-  <div class="pricing-card__rows">
-    <h3 class="pricing-card__subheading">Membership Prices</h3>
-
-    <div class="pricing-card__row">
-      <div class="pricing-card__label">First Cardholder:</div>
-      <div class="pricing-card__price">${{ self.first_cardholder_price }}</div>
-    </div>
-
-    <div class="pricing-card__row">
-      <div class="pricing-card__label">Additional Cardholder:</div>
-      <div class="pricing-card__price">${{ self.additional_cardholder_price }}</div>
-      <div class="pricing-card__desc">
-        <em>(Maximum {{ self.additional_cardholder_max }})</em>
-      </div>
-    </div>
-
-    <div class="pricing-card__row">
-      <div class="pricing-card__label">Additional Admission Guest Entry for each Garden Visit:</div>
-      <div class="pricing-card__price">${{ self.guest_admission_price }}</div>
-      <div class="pricing-card__desc">
-        <em>(Maximum Guests cannot exceed {{ self.guest_admission_max }})</em>
-      </div>
-    </div>
-  </div>
-
-  <div class="pricing-card__concert">
-    <div class="pricing-card__concert-heading">Concert Access Options*:</div>
-
-    {% if self.two_tickets_included %}
-      <div class="pricing-card__concert-row">
-        <strong>Two tickets per show:</strong> included in all levels except “Garden 1”
-      </div>
+{% with d=self.display %}
+  <section
+    class="{{ pricing_card_wrapper_classes }}"
+    style="{{ pricing_card_style_vars }}"
+    {% if d.anchor_id %}id="{{ d.anchor_id }}"{% endif %}
+    role="region"
+    {% if self.heading and d.show_heading %}
+      aria-labelledby="{{ pricing_card_heading_id }}"
+    {% else %}
+      aria-label="Membership pricing"
     {% endif %}
+  >
+    <div class="{{ pricing_card_card_classes }}">
 
-    {% if self.four_tickets_price %}
-      <div class="pricing-card__concert-row">
-        <strong>Increase to Four tickets per show:</strong> ${{ self.four_tickets_price }}
-        {% if self.four_tickets_qualifier %}
-          <div class="pricing-card__concert-qualifier">
-            <em>Who qualifies: {{ self.four_tickets_qualifier }}</em>
-          </div>
+      {% if self.heading and d.show_heading and d.heading_placement == "header" %}
+        <div class="card-header">
+          <h2
+            id="{{ pricing_card_heading_id }}"
+            class="pricing-card__heading h5 mb-0 text-{{ d.heading_align }}"
+          >
+            {{ self.heading }}
+          </h2>
+        </div>
+      {% endif %}
+
+      <div class="card-body {{ pricing_card_body_padding }} text-{{ d.text_align }}">
+
+        {% if self.heading and d.show_heading and d.heading_placement == "body" %}
+          <h2
+            id="{{ pricing_card_heading_id }}"
+            class="pricing-card__heading h5 card-title mb-3 text-{{ d.heading_align }}"
+          >
+            {{ self.heading }}
+          </h2>
         {% endif %}
-      </div>
-    {% endif %}
 
-    {% if self.six_tickets_price %}
-      <div class="pricing-card__concert-row">
-        <strong>Increase to Six tickets per show:</strong> ${{ self.six_tickets_price }}
-        {% if self.six_tickets_qualifier %}
-          <div class="pricing-card__concert-qualifier">
-            <em>Who qualifies: {{ self.six_tickets_qualifier }}</em>
+        {# ---------------- Prices ---------------- #}
+        {% if d.show_prices_section %}
+          {% if d.prices_heading %}
+            <h3 class="pricing-card__section-title h6 text-uppercase fw-semibold mb-2">
+              {{ d.prices_heading }}
+            </h3>
+          {% endif %}
+
+          <div class="vstack gap-2">
+
+            <div class="d-flex gap-1">
+              <div class="fw-semibold">First Cardholder:</div>
+              <div class="fw-semibold">
+                ${{ self.first_cardholder_price|floatformat:0|intcomma }}
+              </div>
+            </div>
+
+            <div class="d-flex gap-1">
+              <div>
+                <div class="fw-semibold">Additional Cardholder:</div>
+                {% if d.show_maximums and self.additional_cardholder_max %}
+                  <div class="small fst-italic pricing-card__muted">
+                    (Maximum {{ self.additional_cardholder_max }})
+                  </div>
+                {% endif %}
+              </div>
+              <div class="fw-semibold">
+                ${{ self.additional_cardholder_price|floatformat:0|intcomma }}
+              </div>
+            </div>
+
+            <div class="d-flex gap-1">
+              <div>
+                <div class="fw-semibold">Additional Admission Guest Entry for each Garden Visit:</div>
+                {% if d.show_maximums and self.guest_admission_max %}
+                  <div class="small fst-italic pricing-card__muted">
+                    (Maximum guests cannot exceed {{ self.guest_admission_max }})
+                  </div>
+                {% endif %}
+              </div>
+              <div class="fw-semibold">
+                ${{ self.guest_admission_price|floatformat:0|intcomma }}
+              </div>
+            </div>
+
           </div>
+
+          {% if d.show_dividers %}<hr class="my-3">{% endif %}
         {% endif %}
-      </div>
-    {% endif %}
-  </div>
 
-  {% if self.concert_access_footer_note %}
-    <div class="pricing-card__footer">
-      <em>{{ self.concert_access_footer_note }}</em>
+        {# ---------------- Concert ---------------- #}
+        {% if d.show_concert_section %}
+          {% if d.concert_heading %}
+            <h3 class="pricing-card__section-title h6 text-uppercase fw-semibold mb-2">
+              {{ d.concert_heading }}
+            </h3>
+          {% endif %}
+
+          <div class="vstack gap-2">
+            {% if self.two_tickets_included %}
+              <div>
+                <strong>Two tickets per show:</strong>
+                included in all levels except “Garden 1”
+              </div>
+            {% endif %}
+
+            {% if self.four_tickets_price %}
+              <div>
+                <strong>Increase to Four tickets per show:</strong>
+                ${{ self.four_tickets_price|floatformat:0|intcomma }}
+                {% if self.four_tickets_qualifier %}
+                  <div class="small fst-italic pricing-card__muted">
+                    Who qualifies: {{ self.four_tickets_qualifier }}
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {% if self.six_tickets_price %}
+              <div>
+                <strong>Increase to Six tickets per show:</strong>
+                ${{ self.six_tickets_price|floatformat:0|intcomma }}
+                {% if self.six_tickets_qualifier %}
+                  <div class="small fst-italic pricing-card__muted">
+                    Who qualifies: {{ self.six_tickets_qualifier }}
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+
+          {% if self.concert_access_footer_note %}
+            <p class="small fst-italic mt-2 mb-0 pricing-card__muted">
+              {{ self.concert_access_footer_note }}
+            </p>
+          {% endif %}
+
+          {% if d.show_dividers %}<hr class="my-3">{% endif %}
+        {% endif %}
+
+        {# ---------------- Definitions ---------------- #}
+        {% if d.show_definitions_section and has_definitions %}
+        <div class="pricing-card__definitions">
+          {% if d.definitions_heading %}
+            <h3 class="pricing-card__section-title h6 text-uppercase fw-semibold mb-2">
+              {{ d.definitions_heading }}
+            </h3>
+          {% endif %}
+
+          {% if d.definitions_layout == "accordion" %}
+            <div class="pricing-card__accordion accordion accordion-flush" id="{{ pricing_card_accordion_id }}">
+
+              {% if self.membership_level_benefits_text %}
+                <div class="accordion-item pricing-card__accordion-item">
+                  <h4 class="accordion-header" id="{{ pricing_card_accordion_id }}-h1">
+                    <button
+                      class="accordion-button collapsed pricing-card__accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#{{ pricing_card_accordion_id }}-c1"
+                      aria-expanded="false"
+                      aria-controls="{{ pricing_card_accordion_id }}-c1"
+                    >
+                      Membership Level Benefits
+                    </button>
+                  </h4>
+                  <div
+                    id="{{ pricing_card_accordion_id }}-c1"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="{{ pricing_card_accordion_id }}-h1"
+                    data-bs-parent="#{{ pricing_card_accordion_id }}"
+                  >
+                    <div class="accordion-body pricing-card__accordion-body rich-text">
+                      {{ self.membership_level_benefits_text|richtext }}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+              {% if self.cardholder_level_benefits_text %}
+                <div class="accordion-item pricing-card__accordion-item">
+                  <h4 class="accordion-header" id="{{ pricing_card_accordion_id }}-h2">
+                    <button
+                      class="accordion-button collapsed pricing-card__accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#{{ pricing_card_accordion_id }}-c2"
+                      aria-expanded="false"
+                      aria-controls="{{ pricing_card_accordion_id }}-c2"
+                    >
+                      Cardholder Level Benefits
+                    </button>
+                  </h4>
+                  <div
+                    id="{{ pricing_card_accordion_id }}-c2"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="{{ pricing_card_accordion_id }}-h2"
+                    data-bs-parent="#{{ pricing_card_accordion_id }}"
+                  >
+                    <div class="accordion-body pricing-card__accordion-body rich-text">
+                      {{ self.cardholder_level_benefits_text|richtext }}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+              {% if self.primary_member_text %}
+                <div class="accordion-item pricing-card__accordion-item">
+                  <h4 class="accordion-header" id="{{ pricing_card_accordion_id }}-h3">
+                    <button
+                      class="accordion-button collapsed pricing-card__accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#{{ pricing_card_accordion_id }}-c3"
+                      aria-expanded="false"
+                      aria-controls="{{ pricing_card_accordion_id }}-c3"
+                    >
+                      Primary Member
+                    </button>
+                  </h4>
+                  <div
+                    id="{{ pricing_card_accordion_id }}-c3"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="{{ pricing_card_accordion_id }}-h3"
+                    data-bs-parent="#{{ pricing_card_accordion_id }}"
+                  >
+                    <div class="accordion-body pricing-card__accordion-body rich-text">
+                      {{ self.primary_member_text|richtext }}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+              {% if self.additional_cardholders_text %}
+                <div class="accordion-item pricing-card__accordion-item">
+                  <h4 class="accordion-header" id="{{ pricing_card_accordion_id }}-h4">
+                    <button
+                      class="accordion-button collapsed pricing-card__accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#{{ pricing_card_accordion_id }}-c4"
+                      aria-expanded="false"
+                      aria-controls="{{ pricing_card_accordion_id }}-c4"
+                    >
+                      Additional Cardholders
+                    </button>
+                  </h4>
+                  <div
+                    id="{{ pricing_card_accordion_id }}-c4"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="{{ pricing_card_accordion_id }}-h4"
+                    data-bs-parent="#{{ pricing_card_accordion_id }}"
+                  >
+                    <div class="accordion-body pricing-card__accordion-body rich-text">
+                      {{ self.additional_cardholders_text|richtext }}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+              {% if self.guests_text %}
+                <div class="accordion-item pricing-card__accordion-item">
+                  <h4 class="accordion-header" id="{{ pricing_card_accordion_id }}-h5">
+                    <button
+                      class="accordion-button collapsed pricing-card__accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#{{ pricing_card_accordion_id }}-c5"
+                      aria-expanded="false"
+                      aria-controls="{{ pricing_card_accordion_id }}-c5"
+                    >
+                      Guests
+                    </button>
+                  </h4>
+                  <div
+                    id="{{ pricing_card_accordion_id }}-c5"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="{{ pricing_card_accordion_id }}-h5"
+                    data-bs-parent="#{{ pricing_card_accordion_id }}"
+                  >
+                    <div class="accordion-body pricing-card__accordion-body rich-text">
+                      {{ self.guests_text|richtext }}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+            </div>
+          {% else %}
+            <div class="vstack gap-3">
+              {% if self.membership_level_benefits_text %}
+                <div>
+                  <div class="fw-semibold">Membership Level Benefits</div>
+                  <div class="rich-text">{{ self.membership_level_benefits_text|richtext }}</div>
+                </div>
+              {% endif %}
+              {% if self.cardholder_level_benefits_text %}
+                <div>
+                  <div class="fw-semibold">Cardholder Level Benefits</div>
+                  <div class="rich-text">{{ self.cardholder_level_benefits_text|richtext }}</div>
+                </div>
+              {% endif %}
+              {% if self.primary_member_text %}
+                <div>
+                  <div class="fw-semibold">Primary Member</div>
+                  <div class="rich-text">{{ self.primary_member_text|richtext }}</div>
+                </div>
+              {% endif %}
+              {% if self.additional_cardholders_text %}
+                <div>
+                  <div class="fw-semibold">Additional Cardholders</div>
+                  <div class="rich-text">{{ self.additional_cardholders_text|richtext }}</div>
+                </div>
+              {% endif %}
+              {% if self.guests_text %}
+                <div>
+                  <div class="fw-semibold">Guests</div>
+                  <div class="rich-text">{{ self.guests_text|richtext }}</div>
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        {# ---------------- CTA ---------------- #}
+        {% if self.cta and self.cta.text %}
+          {% firstof self.cta.page.url self.cta.url as cta_href %}
+          {% if cta_href %}
+            <div class="mt-3">
+              <a
+                class="btn btn-{{ self.cta.style }}{% if self.cta.full_width %} w-100{% endif %}"
+                href="{{ cta_href }}"
+                {% if self.cta.new_tab %}target="_blank" rel="noopener"{% endif %}
+              >
+                {{ self.cta.text }}
+              </a>
+            </div>
+          {% endif %}
+        {% endif %}
+
+      </div>
     </div>
-  {% endif %}
-
-  <div class="pricing-card__rows">
-    <h3 class="pricing-card__subheading">Membership Definitions</h3>
-
-    {% if self.membership_level_benefits_text %}
-      <div class="pricing-card__row">
-        <div class="pricing-card__label">Membership Level Benefits</div>
-        <div class="pricing-card__text">{{ self.membership_level_benefits_text|richtext }}</div>
-      </div>
-    {% endif %}
-
-    {% if self.cardholder_level_benefits_text %}
-      <div class="pricing-card__row">
-        <div class="pricing-card__label">Cardholder Level Benefits</div>
-        <div class="pricing-card__text">{{ self.cardholder_level_benefits_text|richtext }}</div>
-      </div>
-    {% endif %}
-
-    {% if self.primary_member_text %}
-      <div class="pricing-card__row">
-        <div class="pricing-card__label">Primary Member</div>
-        <div class="pricing-card__text">{{ self.primary_member_text|richtext }}</div>
-      </div>
-    {% endif %}
-
-    {% if self.additional_cardholders_text %}
-      <div class="pricing-card__row">
-        <div class="pricing-card__label">Additional Cardholders</div>
-        <div class="pricing-card__text">{{ self.additional_cardholders_text|richtext }}</div>
-      </div>
-    {% endif %}
-
-    {% if self.guests_text %}
-      <div class="pricing-card__row">
-        <div class="pricing-card__label">Guests</div>
-        <div class="pricing-card__text">{{ self.guests_text|richtext }}</div>
-      </div>
-    {% endif %}
-  </div>
-</div>
+  </section>
+{% endwith %}
