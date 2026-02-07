@@ -1,102 +1,91 @@
 /* Card container */
-.pricing-card{
-  background: #dff3ef; /* pale mint / light cyan-ish background */
-  border: 10px solid #004b3a; /* thick dark green border */
-  border-radius: 16px;
+.pricing-card {
+  /* fallbacks preserve your current design */
+  background: var(--pricing-card-bg, #dff3ef);
+  border: var(--pricing-card-border-width, 10px) solid var(--pricing-card-border, #004b3a);
+  border-radius: var(--pricing-card-radius, 16px);
   padding: 28px;
   max-width: 840px;
   box-sizing: border-box;
-  color: #083426; /* dark green-ish text */
+  color: var(--pricing-card-text, black);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* If you're using Bootstrap's .card inside, keep Bootstrap background controllable too */
+.card {
+  --bs-card-bg: var(--pricing-card-bg, var(--rbg-conifer-green));
+}
+
+.card-body {
+  color: var(--pricing-card-text, black);
+}
+
 /* Heading */
-.pricing-card__heading{
-  font-size: 1.6rem; /* large heading */
+.pricing-card__heading {
+  font-size: 1.6rem;
   margin: 0 0 18px 0;
   font-weight: 800;
-  color: #072d22;
+  color: var(--pricing-card-heading, #072d22);
 }
 
-/* Rows */
-.pricing-card__rows{
-  margin-bottom: 18px;
-}
-
-.pricing-card__row{
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.pricing-card__label{
-  font-weight: 700;
-  font-size: 1rem;
-}
-
-.pricing-card__price{
-  font-weight: 700;
-  font-size: 1rem;
-}
-
-/* Helper text appears on its own line */
-.pricing-card__desc{
-  flex-basis: 100%;
-  margin-top: 4px;
-  font-style: italic;
+/* Helper text / muted text could also be variable-driven if you want */
+.pricing-card__desc,
+.pricing-card__concert-qualifier,
+.pricing-card__footer {
   color: rgba(3, 36, 34, 0.75);
-  font-size: 0.95rem;
 }
 
-/* Small italic help text under rows */
-.pricing-card__desc{
-  clear: both;
-  margin-top: 6px;
-  font-style: italic;
-  color: rgba(3, 36, 34, 0.75);
-  font-size: 0.95rem;
+.pricing-card .accordion {
+  --bs-accordion-bg: var(--pricing-accordion-bg, #fff);
+  --bs-accordion-btn-bg: var(--pricing-accordion-btn-bg, #fff);
+  --bs-accordion-border-color: var(--pricing-accordion-border, rgba(0, 0, 0, .125));
+  --bs-accordion-color: var(--pricing-card-text, #083426);
+  --bs-accordion-btn-color: var(--pricing-card-text, #083426);
+  --bs-accordion-active-bg: var(--pricing-accordion-bg, #fff);
+  --bs-accordion-active-color: var(--pricing-card-text, #083426);
 }
 
-/* Concert section */
-.pricing-card__concert{
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(3,36,34,0.07);
+/* Ensure the section sets the default text color + Bootstrap text variables */
+.pricing-card {
+  color: var(--pricing-card-text, #083426);
+
+  /* Make Bootstrap utilities inside this section follow your chosen text */
+  --bs-body-color: var(--pricing-card-text, #083426);
+  --bs-emphasis-color: var(--pricing-card-text, #083426);
+
+  /* What .text-body-secondary uses */
+  --bs-secondary-color: color-mix(in srgb,
+      var(--pricing-card-text, #083426) 70%,
+      transparent);
 }
 
-.pricing-card__concert-heading{
-  font-weight: 700;
-  margin-bottom: 8px;
-  font-size: 1rem;
+/* Bootstrap cards use --bs-card-color for most text */
+.pricing-card .card {
+  color: var(--pricing-card-text, #083426);
+  --bs-card-color: var(--pricing-card-text, #083426);
 }
 
-.pricing-card__concert-row{
-  margin-bottom: 8px;
-  font-size: 0.98rem;
+/* Definitions section uses the selected text color */
+.pricing-card__definitions {
+  color: var(--pricing-card-text, black);
 }
 
-.pricing-card__concert-qualifier{
-  margin-top: 4px;
-  font-style: italic;
-  color: rgba(3,36,34,0.7);
-  font-size: 0.95rem;
+/* Accordion can be stubborn because Bootstrap uses variables */
+.pricing-card__definitions .accordion {
+  --bs-accordion-color: var(--pricing-card-text, #083426);
+  --bs-accordion-btn-color: var(--pricing-card-text, #083426);
 }
 
-/* Footer note */
-.pricing-card__footer{
-  margin-top: 14px;
-  font-style: italic;
-  color: rgba(3,36,34,0.8);
-  font-size: 0.92rem;
+a.btn {
+  text-decoration: none;
 }
 
-/* Small screens: make price appear under label */
-@media (max-width: 520px){
-  .pricing-card__price{
-    float: none;
-    display: block;
-    margin-top: 6px;
-  }
+a.btn-primary {
+  --bs-btn-bg: var(--rbg-oak-green);
+  color: white;
+}
+
+a.btn-secondary {
+  --bs-btn-bg: var(--rbg-conifer-green);
+  color: black;
 }
