@@ -11,19 +11,42 @@ from .blocks import LinkedCarouselBlock, PricingCardBlock
 
 from home.abstract_models import AbstractBase
 from home.models import (
-    AlignedParagraphBlock, 
-    ButtonBlock, 
+    AlignedParagraphBlock,
+    ButtonBlock,
     ButtonListDropdownInfo,
-    EmphaticText, 
-    Heading, 
+    EmphaticText,
+    Heading,
     HeadingBlock,
     ImageInfoList,
     ImageLinkList,
     ImageListCardInfo,
     ImageListDropdownInfo,
     MultiColumnAlignedParagraphBlock,
-    ThreeColumnDropdownInfoPanel
+    ThreeColumnDropdownInfoPanel,
 )
+
+
+class MembershipLabel(models.Model):
+    """
+    Allow labels used by Membership Levels to be user editable
+    """
+
+    name = models.CharField(help_text="Name for this label group")
+    cardholder_label = models.CharField(
+        help_text="Label used for cardholders, e.g. 'Cardholders'"
+    )
+    admissions_label = models.CharField(
+        help_text="Label used for admissions, e.g. 'Guests per visit'"
+    )
+    member_tickets_label = models.CharField(
+        help_text="Label for member tickets, e.g. 'Member concert tickets'"
+    )
+
+    def __repr__(self) -> str:
+        return self.name
+    
+    def __str__(self) -> str:
+        return self.name
 
 
 class MembershipLevel(models.Model):
@@ -32,6 +55,7 @@ class MembershipLevel(models.Model):
     Encodes the entitlements for memberships of this level.
     """
 
+    labels = models.ForeignKey(MembershipLabel, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100, unique=True)
     description = RichTextField(
         blank=True, features=["link", "bold", "italic"]  # keep this minimal

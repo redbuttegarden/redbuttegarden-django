@@ -57,6 +57,20 @@
                       <span class="badge badge-best-match mb-1"><i class="bi bi-star-fill me-1"></i>Best Match</span>
 
                       <h5 class="card-title mb-0">{{ highlighted.name }}</h5>
+                      <ul class="list-unstyled mb-3">
+                        <li>
+                          <i class="bi bi-person-fill me-2"></i>
+                          {{ highlighted.labels.cardholder_label }}: <strong>{{ highlighted.cardholders_included }}</strong>
+                        </li>
+                        <li>
+                          <i class="bi bi-people-fill me-2"></i>
+                          {{ highlighted.labels.admissions_label }}: <strong>{{ highlighted.admissions_allowed }}</strong>
+                        </li>
+                        <li>
+                          <i class="bi bi-ticket-perforated-fill me-2"></i>
+                          {{ highlighted.labels.member_tickets_label }}: <strong>{{ highlighted.member_sale_ticket_allowance }}</strong>
+                        </li>
+                      </ul>
                       <small class="rich-text text-muted">{{ highlighted.description|default:'No description'|richtext }}</small>
                     </div>
 
@@ -65,21 +79,6 @@
                       <div class="small text-muted">price</div>
                     </div>
                   </div>
-
-                  <ul class="list-unstyled mb-3">
-                    <li>
-                      <i class="bi bi-person-fill me-2"></i>
-                      Cardholders: <strong>{{ highlighted.cardholders_included }}</strong>
-                    </li>
-                    <li>
-                      <i class="bi bi-people-fill me-2"></i>
-                      Admissions: <strong>{{ highlighted.admissions_allowed }}</strong>
-                    </li>
-                    <li>
-                      <i class="bi bi-ticket-perforated-fill me-2"></i>
-                      Member tickets: <strong>{{ highlighted.member_sale_ticket_allowance }}</strong>
-                    </li>
-                  </ul>
 
                   <div class="mt-auto">
                     <a href="{{ highlighted.purchase_url }}" class="btn btn-rbg-primary w-100" target="_blank" rel="noopener noreferrer"><i class="bi bi-cart-fill me-2"></i>Buy this level</a>
