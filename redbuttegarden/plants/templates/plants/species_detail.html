@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static wagtailimages_tags %}
 
+{% block title %}Red Butte Garden | {{ species.vernacular_name }}{% endblock %}
+
 {% block extra_css %}
     <link href="{% static 'plants/css/species_detail.css' %}" rel="stylesheet">
     <link href="{% static 'plants/css/image_modal.css' %}" rel="stylesheet">
