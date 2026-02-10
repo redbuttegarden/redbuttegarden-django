@@ -122,7 +122,7 @@ class ImageLink(blocks.StructBlock):
     url_title = blocks.CharBlock(
         label="URL Title",
         max_length=200,
-        required=False,
+        required=True,
         help_text=_(
             "Screen reader title used to describe the link. This is not displayed visually but is important for accessibility."
         ),
