@@ -27,20 +27,22 @@ class MembershipSelectorForm(forms.Form):
                 "class": "form-control",
                 "min": "1",
                 "max": "8",
-                "aria-label": "Admissions per visit",
+                "aria-label": "Additional Admission Guest Entry",
             }
         ),
     )
 
     member_tickets = forms.IntegerField(
         min_value=0,
+        max_value=6,
         initial=2,
-        label="Member-sale tickets",
+        label="Concert Series Pre-Sale Member Tickets",
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
                 "min": "0",
-                "aria-label": "Member-sale tickets",
+                "max": "6",
+                "aria-label": "Concert Series Pre-Sale Member Tickets",
             }
         ),
     )
