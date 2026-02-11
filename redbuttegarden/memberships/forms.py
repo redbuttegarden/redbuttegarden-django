@@ -4,6 +4,7 @@ from django import forms
 class MembershipSelectorForm(forms.Form):
     cardholders = forms.IntegerField(
         min_value=1,
+        max_value=3,
         initial=1,
         label="Cardholders",
         widget=forms.NumberInput(
