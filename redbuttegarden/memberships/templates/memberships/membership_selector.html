@@ -16,7 +16,7 @@
       <div class="col-lg-9">
         <div class="card card-rbg mb-4">
           <div class="card-body">
-            <h1 class="h4 mb-1" style="color:var(--rbg-dark-blue)">Find the best membership for you</h1>
+            <h1 class="h4 mb-1" style="color:var(--rbg-dark-blue)">{{ cfg.page_header_text|default:'Find the best membership for you' }}</h1>
           </div>
         </div>
 
@@ -25,22 +25,36 @@
             <form method="post" action="{% url 'members:membership_suggest' %}" hx-post="{% url 'members:membership_suggest' %}" hx-target="#suggestions" hx-swap="innerHTML">
               {% csrf_token %}
 
-              <!-- Needs -->
               <div class="mb-4">
-                <h2 class="h6">Your needs</h2>
-                <div class="row g-3">
+                <h2 class="h6">{{ cfg.widget_header_text|default:'Your needs' }}</h2>
+                <div class="row g-3 align-items-end">
                   <div class="col-md-4">
-                    <label class="form-label" for="{{ form.cardholders.id_for_label }}">{{ form.cardholders.label }}</label>
+                    <div class="d-flex align-items-center gap-2">
+                      <label class="form-label mb-0" for="{{ form.cardholders.id_for_label }}">{{ form.cardholders.label }}</label>
+
+                      <span class="help-hover" role="button" tabindex="0" aria-label="Help for {{ form.cardholders.label }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ cfg.cardholder_help_hover|default:'' }}">?</span>
+                    </div>
+
                     {{ form.cardholders }}
                   </div>
 
                   <div class="col-md-4">
-                    <label class="form-label" for="{{ form.admissions.id_for_label }}">{{ form.admissions.label }}</label>
+                    <div class="d-flex align-items-center gap-2">
+                      <label class="form-label mb-0" for="{{ form.admissions.id_for_label }}">{{ form.admissions.label }}</label>
+
+                      <span class="help-hover" role="button" tabindex="0" aria-label="Help for {{ form.admissions.label }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ cfg.admissions_help_hover|default:'' }}">?</span>
+                    </div>
+
                     {{ form.admissions }}
                   </div>
 
                   <div class="col-md-4">
-                    <label class="form-label" for="{{ form.member_tickets.id_for_label }}">{{ form.member_tickets.label }}</label>
+                    <div class="d-flex align-items-center gap-2">
+                      <label class="form-label mb-0" for="{{ form.member_tickets.id_for_label }}">{{ form.member_tickets.label }}</label>
+
+                      <span class="help-hover" role="button" tabindex="0" aria-label="Help for {{ form.member_tickets.label }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ cfg.member_tickets_help_hover|default:'' }}">?</span>
+                    </div>
+
                     {{ form.member_tickets }}
                   </div>
                 </div>
@@ -72,5 +86,4 @@
   <!-- HTMX -->
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   <script src="{% static 'memberships/js/membership_widget.js' %}"></script>
-  
 {% endblock %}

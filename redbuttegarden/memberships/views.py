@@ -3,14 +3,18 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 from .decorators import basic_auth_required
 from .forms import MembershipSelectorForm
-from .models import MembershipLevel
+from .models import MembershipWidgetConfig, MembershipLevel
 
 
 @basic_auth_required
 @require_http_methods(["GET"])
 def membership_selector_page(request):
-    form = MembershipSelectorForm()
-    return render(request, "memberships/membership_selector.html", {"form": form})
+    cfg = MembershipWidgetConfig.get_solo()
+    form = MembershipSelectorForm(cfg=cfg)
+    
+    return render(
+        request, "memberships/membership_selector.html", {"cfg": cfg, "form": form}
+    )
 
 
 @basic_auth_required

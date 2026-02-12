@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import (
@@ -26,12 +27,73 @@ from home.models import (
 )
 
 
+class MembershipWidgetConfig(models.Model):
+    page_header_text = models.CharField(
+        help_text="Header text at top of page",
+        default="Find the best membership for you",
+    )
+    widget_header_text = models.CharField(
+        help_text="Header text above membership widget form inputs",
+        default="Your needs",
+    )
+
+    cardholder_label = models.CharField(
+        help_text="Label used for cardholders", default="Cardholders"
+    )
+    admissions_label = models.CharField(
+        help_text="Label used for admissions",
+        default="Additional Admission Guest Entry",
+    )
+    member_tickets_label = models.CharField(
+        help_text="Label for member tickets",
+        default="Concert Series Pre-Sale Member Tickets",
+    )
+
+    cardholder_help_hover = models.CharField(
+        help_text="Help text to appear when hovering over question mark beside cardholder entry field"
+    )
+    admissions_help_hover = models.CharField(
+        help_text="Help text to appear when hovering over question mark beside admissions entry field"
+    )
+    member_tickets_help_hover = models.CharField(
+        help_text="Help text to appear when hovering over question mark beside member tickets entry field"
+    )
+
+    panels = [
+        FieldPanel("widget_header_text"),
+        FieldPanel("cardholder_help_hover"),
+        FieldPanel("admissions_help_hover"),
+        FieldPanel("member_tickets_help_hover"),
+    ]
+
+    class Meta:
+        verbose_name = "Membership widget configuration"
+        verbose_name_plural = "Membership widget configuration"
+
+    def clean(self):
+        super().clean()
+        # Enforce singleton: only one instance allowed
+        if not self.pk and MembershipWidgetConfig.objects.exists():
+            raise ValidationError(
+                "Only one MembershipWidgetConfig instance is allowed."
+            )
+
+    def __str__(self):
+        return "Membership widget configuration"
+
+    @classmethod
+    def get_solo(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+
 class MembershipLabel(models.Model):
     """
     Allow labels used by Membership Levels to be user editable
     """
 
     name = models.CharField(help_text="Name for this label group")
+
     cardholder_label = models.CharField(
         help_text="Label used for cardholders, e.g. 'Cardholders'"
     )
@@ -44,7 +106,7 @@ class MembershipLabel(models.Model):
 
     def __repr__(self) -> str:
         return self.name
-    
+
     def __str__(self) -> str:
         return self.name
 
