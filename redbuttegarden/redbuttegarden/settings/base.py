@@ -261,7 +261,7 @@ SPECTACULAR_SETTINGS = {
     "SERVE_AUTHENTICATION": ["rest_framework.authentication.SessionAuthentication"],
 }
 
-MAPBOX_API_TOKEN = "pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw"
+MAPBOX_API_TOKEN = os.environ.get("MAPBOX_API_TOKEN", None)
 
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap5.html"
 
