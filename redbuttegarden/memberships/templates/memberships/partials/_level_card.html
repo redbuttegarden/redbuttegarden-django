@@ -29,6 +29,11 @@
       </div>
 
       <div class="mt-auto">
+        {% if level.charitable_gift_amount %}
+          <p class="mt-3 mb-2">
+            Charitable Gift Amount: <strong>${{ level.charitable_gift_amount }}</strong>
+          </p>
+        {% endif %}
         <a href="{{ level.purchase_url }}" class="btn btn-rbg-primary w-100" target="_blank" rel="noopener noreferrer"><i class="bi bi-cart-fill me-2"></i>Buy this level</a>
       </div>
     </div>

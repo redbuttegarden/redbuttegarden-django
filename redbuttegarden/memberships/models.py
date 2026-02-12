@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -59,11 +60,25 @@ class MembershipWidgetConfig(models.Model):
         help_text="Help text to appear when hovering over question mark beside member tickets entry field"
     )
 
+    presale_qualification_error_message_template = models.TextField(
+        default=(
+            "To qualify for Red Butte Garden Outdoor Concert Member Presale access at the {tickets} "
+            "ticket level, please add a combination of cardholders and guests that is equal to or "
+            "greater than {tickets}."
+        ),
+        help_text="Use {tickets} as a placeholder. Example output will replace {tickets} with 2, 4, or 6.",
+    )
+
     panels = [
+        FieldPanel("page_header_text"),
         FieldPanel("widget_header_text"),
+        FieldPanel("cardholder_label"),
+        FieldPanel("admissions_label"),
+        FieldPanel("member_tickets_label"),
         FieldPanel("cardholder_help_hover"),
         FieldPanel("admissions_help_hover"),
         FieldPanel("member_tickets_help_hover"),
+        FieldPanel("presale_qualification_error_message_template")
     ]
 
     class Meta:
@@ -139,6 +154,13 @@ class MembershipLevel(models.Model):
         max_digits=7,  # supports up to 99,999.99
         decimal_places=2,
         help_text="Price of the membership level in USD.",
+    )
+
+    charitable_gift_amount = models.DecimalField(
+        max_digits=7,  # supports up to 99,999.99
+        decimal_places=2,
+        help_text="Charitable gift amount in USD.",
+        default=Decimal(0),
     )
 
     purchase_url = models.URLField(

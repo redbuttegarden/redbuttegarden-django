@@ -20,18 +20,18 @@
       <div class="alert alert-danger" role="alert">
         <h6 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> Fix the following</h6>
         <ul class="mb-0">
-          {% for name, errs in form.errors.items %}
-            {% if name != '__all__' %}
+          {% for field in form %}
+            {% for err in field.errors %}
               <li>
-                <strong>{{ form.name.label }}:</strong> {{ errs|join:', ' }}
+                <strong>{{ field.label }}:</strong> {{ err }}
               </li>
-            {% endif %}
+            {% endfor %}
           {% endfor %}
         </ul>
       </div>
     {% endif %}
 
-    {% if results or highlighted %}
+    {% if suggestions or highlighted %}
       <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
           <h3 class="h6 mb-0">Best matches</h3>
@@ -46,7 +46,11 @@
               <div class="d-flex justify-content-center">
                 <div class="highlight-message">
                   <i class="bi bi-check-circle-fill"></i>
-                  This membership exactly matches your selections.
+                  {% if match_type == 'Exact' %}
+                    This membership exactly matches your selections.
+                  {% else %}
+                    This is the closest match for your selections.
+                  {% endif %}
                 </div>
               </div>
 
@@ -81,6 +85,11 @@
                   </div>
 
                   <div class="mt-auto">
+                    {% if highlighted.charitable_gift_amount %}
+                      <p class="mt-3 mb-2">
+                        Charitable Gift Amount: <strong>${{ highlighted.charitable_gift_amount }}</strong>
+                      </p>
+                    {% endif %}
                     <a href="{{ highlighted.purchase_url }}" class="btn btn-rbg-primary w-100" target="_blank" rel="noopener noreferrer"><i class="bi bi-cart-fill me-2"></i>Buy this level</a>
                   </div>
                 </div>
@@ -91,20 +100,9 @@
       {% endif %}
 
       <div class="row g-3">
-        {# Render all exact results the same way via include #}
-        {% for level in results %}
-          {% include 'memberships/partials/_level_card.html' with level=level %}
+        {% for item in suggestions %}
+          {% include 'memberships/partials/_level_card.html' with level=item.level badge=item.badge %}
         {% endfor %}
-
-        {# If there's a downsell option (cheaper), render it in the same style but with a badge #}
-        {% if downsell %}
-          {% include 'memberships/partials/_level_card.html' with level=downsell badge='Downsell' %}
-        {% endif %}
-
-        {# If there's an upsell option (more expensive), render it similarly #}
-        {% if upsell %}
-          {% include 'memberships/partials/_level_card.html' with level=upsell badge='Upsell' %}
-        {% endif %}
       </div>
     {% else %}
       <div class="text-center py-5">

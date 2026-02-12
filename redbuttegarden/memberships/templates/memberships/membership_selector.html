@@ -60,6 +60,8 @@
                 </div>
               </div>
 
+              <div id="presale-error" class="alert alert-danger mt-3" role="alert" hidden></div>
+
               <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-rbg-primary"><i class="bi bi-search me-2"></i>Find best match</button>
               </div>
@@ -83,7 +85,9 @@
 {% endblock %}
 
 {% block extra_js %}
-  <!-- HTMX -->
+  {{ cfg.presale_qualification_error_message_template|json_script:'presale-msg-template' }}
+  {{ '2,4,6'|json_script:'presale-levels' }}
+
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   <script src="{% static 'memberships/js/membership_widget.js' %}"></script>
 {% endblock %}

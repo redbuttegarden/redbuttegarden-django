@@ -243,5 +243,120 @@ const MembershipWidget = (function () {
     };
 })();
 
+(function () {
+    function parseIntSafe(el) {
+        const n = parseInt(el?.value ?? "0", 10);
+        return Number.isFinite(n) ? n : 0;
+    }
+
+    function formatTemplate(template, tickets) {
+        return template.replaceAll("{tickets}", String(tickets));
+    }
+
+    function getJsonScript(id) {
+        const el = document.getElementById(id);
+        if (!el) return null;
+        try {
+            return JSON.parse(el.textContent);
+        } catch (_) {
+            return null;
+        }
+    }
+
+    const template = getJsonScript("presale-msg-template") || "";
+    const enforcedLevelsRaw = getJsonScript("presale-levels") || "2,4,6";
+    const enforcedLevels = new Set(
+        String(enforcedLevelsRaw)
+            .split(",")
+            .map((s) => parseInt(s.trim(), 10))
+            .filter((n) => Number.isFinite(n))
+    );
+
+    function init() {
+        const cardholdersEl = document.getElementById("id_cardholders");
+        const admissionsEl = document.getElementById("id_admissions");
+        const ticketsEl = document.getElementById("id_member_tickets");
+        const errorEl = document.getElementById("presale-error");
+
+        if (!cardholdersEl || !admissionsEl || !ticketsEl || !errorEl) return;
+
+        function validatePresaleRule({ report = false } = {}) {
+            const cardholders = parseIntSafe(cardholdersEl);
+            const admissions = parseIntSafe(admissionsEl);
+            const tickets = parseIntSafe(ticketsEl);
+
+            // only enforce for 2/4/6
+            if (!enforcedLevels.has(tickets)) {
+                errorEl.hidden = true;
+                errorEl.textContent = "";
+                // clear any custom validity we set
+                ticketsEl.setCustomValidity?.("");
+                return true;
+            }
+
+            const totalPeople = cardholders + admissions;
+
+            if (totalPeople < tickets) {
+                const msg = formatTemplate(template, tickets);
+                errorEl.textContent = msg;
+                errorEl.hidden = false;
+
+                // IMPORTANT: hook into native constraint validation too
+                // (so browser/htmx flows can be blocked consistently)
+                if (ticketsEl.setCustomValidity) {
+                    ticketsEl.setCustomValidity(msg);
+                    if (report && ticketsEl.reportValidity) ticketsEl.reportValidity();
+                }
+
+                return false;
+            }
+
+            errorEl.hidden = true;
+            errorEl.textContent = "";
+            ticketsEl.setCustomValidity?.("");
+            return true;
+        }
+
+        ["input", "change"].forEach((evt) => {
+            cardholdersEl.addEventListener(evt, () => validatePresaleRule());
+            admissionsEl.addEventListener(evt, () => validatePresaleRule());
+            ticketsEl.addEventListener(evt, () => validatePresaleRule());
+        });
+
+        validatePresaleRule();
+
+        const formEl = ticketsEl.closest("form");
+        if (formEl) {
+            // Normal submit path
+            formEl.addEventListener("submit", function (e) {
+                if (!validatePresaleRule({ report: true })) {
+                    e.preventDefault();
+                    ticketsEl.focus();
+                }
+            });
+
+            // HTMX submit path (blocks hx-post requests too)
+            formEl.addEventListener("htmx:beforeRequest", function (e) {
+                if (!validatePresaleRule({ report: true })) {
+                    e.preventDefault(); // stops the htmx request
+                    ticketsEl.focus();
+                }
+            });
+        }
+    }
+
+    // init once on load
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
+
+    // and re-init after htmx swaps content (Fix 2 below)
+    document.body.addEventListener("htmx:afterSwap", init);
+})();
+
+
+
 // Auto-run
 MembershipWidget.autoInit();

@@ -14,12 +14,13 @@
         "pk": 1,
         "fields": {
             "labels": 1,
-            "name": "Individual Garden 1",
-            "description": "This membership is perfect for Garden lovers! Single admission for each Garden visit all year long! This level does not include access to the Red Butte Garden Outdoor Concert Series Presale.",
+            "name": "Garden 1",
+            "description": "This level does not offer Red Butte Garden Outdoor Concert Series Member Benefits.",
             "cardholders_included": 1,
-            "admissions_allowed": 1,
+            "admissions_allowed": 0,
             "member_sale_ticket_allowance": 0,
-            "price": "65.00",
+            "price": "50.00",
+            "charitable_gift_amount": "50.00",
             "active": true
         }
     },
@@ -28,12 +29,13 @@
         "pk": 2,
         "fields": {
             "labels": 1,
-            "name": "Individual Garden 2",
-            "description": "1 named cardholder, 2 included garden admissions per visit (cardholder plus guests as allowed) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 1 & 1",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 2,
+            "admissions_allowed": 1,
             "member_sale_ticket_allowance": 2,
-            "price": "65.00",
+            "price": "80.00",
+            "charitable_gift_amount": "25.00",
             "active": true
         }
     },
@@ -42,12 +44,13 @@
         "pk": 3,
         "fields": {
             "labels": 1,
-            "name": "Individual Garden 3",
-            "description": "1 named cardholder, 3 included garden admissions per visit (cardholder plus guests as allowed) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 1 & 2",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 3,
+            "admissions_allowed": 2,
             "member_sale_ticket_allowance": 2,
-            "price": "65.00",
+            "price": "110.00",
+            "charitable_gift_amount": "35.00",
             "active": true
         }
     },
@@ -56,12 +59,13 @@
         "pk": 4,
         "fields": {
             "labels": 1,
-            "name": "Individual Garden 4",
-            "description": "1 named cardholder, 4 included garden admissions per visit (cardholder plus guests as allowed) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 1 & 3",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 4,
+            "admissions_allowed": 3,
             "member_sale_ticket_allowance": 2,
-            "price": "65.00",
+            "price": "140.00",
+            "charitable_gift_amount": "65.00",
             "active": true
         }
     },
@@ -70,12 +74,13 @@
         "pk": 5,
         "fields": {
             "labels": 1,
-            "name": "Individual Garden 5",
-            "description": "1 named cardholder, 5 included garden admissions per visit (cardholder plus guests as allowed) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 1 & 3",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 5,
-            "member_sale_ticket_allowance": 2,
-            "price": "65.00",
+            "admissions_allowed": 3,
+            "member_sale_ticket_allowance": 4,
+            "price": "200.00",
+            "charitable_gift_amount": "115.00",
             "active": true
         }
     },
@@ -84,12 +89,13 @@
         "pk": 6,
         "fields": {
             "labels": 1,
-            "name": "Individual Garden 6",
-            "description": "1 named cardholder, 6 included garden admissions per visit (cardholder plus guests as allowed) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 1 & 4",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 6,
+            "admissions_allowed": 4,
             "member_sale_ticket_allowance": 2,
-            "price": "65.00",
+            "price": "170.00",
+            "charitable_gift_amount": "95.00",
             "active": true
         }
     },
@@ -98,12 +104,13 @@
         "pk": 7,
         "fields": {
             "labels": 1,
-            "name": "Individual Garden 7",
-            "description": "1 named cardholder, 7 included garden admissions per visit (cardholder plus guests as allowed) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 1 & 4",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 7,
-            "member_sale_ticket_allowance": 2,
-            "price": "65.00",
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 4,
+            "price": "230.00",
+            "charitable_gift_amount": "145.00",
             "active": true
         }
     },
@@ -112,12 +119,13 @@
         "pk": 8,
         "fields": {
             "labels": 1,
-            "name": "Individual Garden 8",
-            "description": "1 named cardholder, 8 included garden admissions per visit (cardholder plus guests as allowed) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 1 & 5",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 8,
+            "admissions_allowed": 5,
             "member_sale_ticket_allowance": 2,
-            "price": "65.00",
+            "price": "200.00",
+            "charitable_gift_amount": "75.00",
             "active": true
         }
     },
@@ -126,12 +134,13 @@
         "pk": 9,
         "fields": {
             "labels": 1,
-            "name": "Individual Garden 9",
-            "description": "1 named cardholder, 9 included garden admissions per visit (cardholder plus guests as allowed) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 1 & 5",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 9,
-            "member_sale_ticket_allowance": 2,
-            "price": "65.00",
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 4,
+            "price": "260.00",
+            "charitable_gift_amount": "125.00",
             "active": true
         }
     },
@@ -140,12 +149,13 @@
         "pk": 10,
         "fields": {
             "labels": 1,
-            "name": "Individual Garden 10",
-            "description": "1 named cardholder, 10 included garden admissions per visit (cardholder plus guests as allowed) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 1 & 5",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 10,
-            "member_sale_ticket_allowance": 2,
-            "price": "65.00",
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 6,
+            "price": "320.00",
+            "charitable_gift_amount": "175.00",
             "active": true
         }
     },
@@ -154,12 +164,13 @@
         "pk": 11,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience 4",
-            "description": "1 named cardholder, 4 included garden admissions per visit (cardholder plus guests as allowed) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 1 & 6",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 4,
-            "member_sale_ticket_allowance": 4,
-            "price": "65.00",
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 2,
+            "price": "230.00",
+            "charitable_gift_amount": "105.00",
             "active": true
         }
     },
@@ -168,12 +179,13 @@
         "pk": 12,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience 5",
-            "description": "1 named cardholder, 5 included garden admissions per visit (cardholder plus guests as allowed) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 1 & 6",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 5,
+            "admissions_allowed": 6,
             "member_sale_ticket_allowance": 4,
-            "price": "65.00",
+            "price": "290.00",
+            "charitable_gift_amount": "155.00",
             "active": true
         }
     },
@@ -182,12 +194,13 @@
         "pk": 13,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience 6",
-            "description": "1 named cardholder, 6 included garden admissions per visit (cardholder plus guests as allowed) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 1 & 6",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
             "admissions_allowed": 6,
-            "member_sale_ticket_allowance": 4,
-            "price": "65.00",
+            "member_sale_ticket_allowance": 6,
+            "price": "350.00",
+            "charitable_gift_amount": "205.00",
             "active": true
         }
     },
@@ -196,12 +209,13 @@
         "pk": 14,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience 7",
-            "description": "1 named cardholder, 7 included garden admissions per visit (cardholder plus guests as allowed) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 1 & 7",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
             "admissions_allowed": 7,
-            "member_sale_ticket_allowance": 4,
-            "price": "65.00",
+            "member_sale_ticket_allowance": 2,
+            "price": "260.00",
+            "charitable_gift_amount": "135.00",
             "active": true
         }
     },
@@ -210,12 +224,13 @@
         "pk": 15,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience 8",
-            "description": "1 named cardholder, 8 included garden admissions per visit (cardholder plus guests as allowed) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 1 & 7",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 8,
+            "admissions_allowed": 7,
             "member_sale_ticket_allowance": 4,
-            "price": "65.00",
+            "price": "320.00",
+            "charitable_gift_amount": "185.00",
             "active": true
         }
     },
@@ -224,12 +239,13 @@
         "pk": 16,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience 9",
-            "description": "1 named cardholder, 9 included garden admissions per visit (cardholder plus guests as allowed) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 1 & 7",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 9,
-            "member_sale_ticket_allowance": 4,
-            "price": "65.00",
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 6,
+            "price": "380.00",
+            "charitable_gift_amount": "235.00",
             "active": true
         }
     },
@@ -238,12 +254,13 @@
         "pk": 17,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience 10",
-            "description": "1 named cardholder, 10 included garden admissions per visit (cardholder plus guests as allowed) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 1 & 8",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 10,
-            "member_sale_ticket_allowance": 4,
-            "price": "65.00",
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 2,
+            "price": "290.00",
+            "charitable_gift_amount": "165.00",
             "active": true
         }
     },
@@ -252,12 +269,13 @@
         "pk": 18,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience Plus 6",
-            "description": "1 named cardholder, 6 included garden admissions per visit (cardholder plus guests as allowed) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 1 & 8",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 6,
-            "member_sale_ticket_allowance": 6,
-            "price": "65.00",
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 4,
+            "price": "350.00",
+            "charitable_gift_amount": "215.00",
             "active": true
         }
     },
@@ -266,12 +284,13 @@
         "pk": 19,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience Plus 7",
-            "description": "1 named cardholder, 7 included garden admissions per visit (cardholder plus guests as allowed) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 1 & 8",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 1,
-            "admissions_allowed": 7,
+            "admissions_allowed": 8,
             "member_sale_ticket_allowance": 6,
-            "price": "65.00",
+            "price": "410.00",
+            "charitable_gift_amount": "265.00",
             "active": true
         }
     },
@@ -280,12 +299,13 @@
         "pk": 20,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience Plus 8",
-            "description": "1 named cardholder, 8 included garden admissions per visit (cardholder plus guests as allowed) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
-            "cardholders_included": 1,
-            "admissions_allowed": 8,
-            "member_sale_ticket_allowance": 6,
-            "price": "65.00",
+            "name": "Garden 2",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 0,
+            "member_sale_ticket_allowance": 2,
+            "price": "90.00",
+            "charitable_gift_amount": "35.00",
             "active": true
         }
     },
@@ -294,12 +314,13 @@
         "pk": 21,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience Plus 9",
-            "description": "1 named cardholder, 9 included garden admissions per visit (cardholder plus guests as allowed) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
-            "cardholders_included": 1,
-            "admissions_allowed": 9,
-            "member_sale_ticket_allowance": 6,
-            "price": "65.00",
+            "name": "Garden 2 & 1",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 1,
+            "member_sale_ticket_allowance": 2,
+            "price": "120.00",
+            "charitable_gift_amount": "45.00",
             "active": true
         }
     },
@@ -308,12 +329,13 @@
         "pk": 22,
         "fields": {
             "labels": 1,
-            "name": "Individual Experience Plus 10",
-            "description": "1 named cardholder, 10 included garden admissions per visit (cardholder plus guests as allowed) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
-            "cardholders_included": 1,
-            "admissions_allowed": 10,
-            "member_sale_ticket_allowance": 6,
-            "price": "65.00",
+            "name": "Garden 2 & 2",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 2,
+            "member_sale_ticket_allowance": 2,
+            "price": "150.00",
+            "charitable_gift_amount": "75.00",
             "active": true
         }
     },
@@ -322,12 +344,13 @@
         "pk": 23,
         "fields": {
             "labels": 1,
-            "name": "Dual Garden 2",
-            "description": "2 named cardholders, 2 included garden admissions per visit (both cardholders) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 2 & 2",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
             "admissions_allowed": 2,
-            "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "member_sale_ticket_allowance": 4,
+            "price": "210.00",
+            "charitable_gift_amount": "125.00",
             "active": true
         }
     },
@@ -336,12 +359,13 @@
         "pk": 24,
         "fields": {
             "labels": 1,
-            "name": "Dual Garden 3",
-            "description": "2 named cardholders, 3 included garden admissions per visit (both cardholders or one cardholder and + 1 guest) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 2 & 3",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
             "admissions_allowed": 3,
             "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "price": "180.00",
+            "charitable_gift_amount": "105.00",
             "active": true
         }
     },
@@ -350,12 +374,13 @@
         "pk": 25,
         "fields": {
             "labels": 1,
-            "name": "Dual Garden 4",
-            "description": "2 named cardholders, 4 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 2 & 3",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 4,
-            "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "admissions_allowed": 3,
+            "member_sale_ticket_allowance": 4,
+            "price": "240.00",
+            "charitable_gift_amount": "155.00",
             "active": true
         }
     },
@@ -364,12 +389,13 @@
         "pk": 26,
         "fields": {
             "labels": 1,
-            "name": "Dual Garden 5",
-            "description": "2 named cardholders, 5 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 2 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 5,
+            "admissions_allowed": 4,
             "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "price": "210.00",
+            "charitable_gift_amount": "85.00",
             "active": true
         }
     },
@@ -378,12 +404,13 @@
         "pk": 27,
         "fields": {
             "labels": 1,
-            "name": "Dual Garden 6",
-            "description": "2 named cardholders, 6 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 2 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 6,
-            "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 4,
+            "price": "270.00",
+            "charitable_gift_amount": "135.00",
             "active": true
         }
     },
@@ -392,12 +419,13 @@
         "pk": 28,
         "fields": {
             "labels": 1,
-            "name": "Dual Garden 7",
-            "description": "2 named cardholders, 7 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 2 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 7,
-            "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 6,
+            "price": "330.00",
+            "charitable_gift_amount": "185.00",
             "active": true
         }
     },
@@ -406,12 +434,13 @@
         "pk": 29,
         "fields": {
             "labels": 1,
-            "name": "Dual Garden 8",
-            "description": "2 named cardholders, 8 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 2 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 8,
+            "admissions_allowed": 5,
             "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "price": "240.00",
+            "charitable_gift_amount": "115.00",
             "active": true
         }
     },
@@ -420,12 +449,13 @@
         "pk": 30,
         "fields": {
             "labels": 1,
-            "name": "Dual Garden 9",
-            "description": "2 named cardholders, 9 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 2 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 9,
-            "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 4,
+            "price": "300.00",
+            "charitable_gift_amount": "165.00",
             "active": true
         }
     },
@@ -434,12 +464,13 @@
         "pk": 31,
         "fields": {
             "labels": 1,
-            "name": "Dual Garden 10",
-            "description": "2 named cardholders, 10 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 2 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 10,
-            "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 6,
+            "price": "360.00",
+            "charitable_gift_amount": "215.00",
             "active": true
         }
     },
@@ -448,12 +479,13 @@
         "pk": 32,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience 4",
-            "description": "2 named cardholders, 4 included garden admissions per visit (both cardholders or one cardholder and + 1 guest) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 2 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 4,
-            "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 2,
+            "price": "270.00",
+            "charitable_gift_amount": "145.00",
             "active": true
         }
     },
@@ -462,12 +494,13 @@
         "pk": 33,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience 5",
-            "description": "2 named cardholders, 5 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 2 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 5,
+            "admissions_allowed": 6,
             "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "price": "330.00",
+            "charitable_gift_amount": "195.00",
             "active": true
         }
     },
@@ -476,12 +509,13 @@
         "pk": 34,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience 6",
-            "description": "2 named cardholders, 6 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 2 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
             "admissions_allowed": 6,
-            "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "member_sale_ticket_allowance": 6,
+            "price": "390.00",
+            "charitable_gift_amount": "245.00",
             "active": true
         }
     },
@@ -490,12 +524,13 @@
         "pk": 35,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience 7",
-            "description": "2 named cardholders, 7 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 2 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
             "admissions_allowed": 7,
-            "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "member_sale_ticket_allowance": 2,
+            "price": "300.00",
+            "charitable_gift_amount": "175.00",
             "active": true
         }
     },
@@ -504,12 +539,13 @@
         "pk": 36,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience 8",
-            "description": "2 named cardholders, 8 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 2 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 8,
+            "admissions_allowed": 7,
             "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "price": "360.00",
+            "charitable_gift_amount": "225.00",
             "active": true
         }
     },
@@ -518,12 +554,13 @@
         "pk": 37,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience 9",
-            "description": "2 named cardholders, 9 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 2 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 9,
-            "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 6,
+            "price": "420.00",
+            "charitable_gift_amount": "275.00",
             "active": true
         }
     },
@@ -532,12 +569,13 @@
         "pk": 38,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience 10",
-            "description": "2 named cardholders, 10 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 2 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 10,
-            "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 2,
+            "price": "330.00",
+            "charitable_gift_amount": "205.00",
             "active": true
         }
     },
@@ -546,12 +584,13 @@
         "pk": 39,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience Plus 6",
-            "description": "2 named cardholders, 6 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 2 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 6,
-            "member_sale_ticket_allowance": 6,
-            "price": "95.00",
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 4,
+            "price": "390.00",
+            "charitable_gift_amount": "255.00",
             "active": true
         }
     },
@@ -560,12 +599,13 @@
         "pk": 40,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience Plus 7",
-            "description": "2 named cardholders, 7 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 2 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 2,
-            "admissions_allowed": 7,
+            "admissions_allowed": 8,
             "member_sale_ticket_allowance": 6,
-            "price": "95.00",
+            "price": "450.00",
+            "charitable_gift_amount": "305.00",
             "active": true
         }
     },
@@ -574,12 +614,13 @@
         "pk": 41,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience Plus 8",
-            "description": "2 named cardholders, 8 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
-            "cardholders_included": 2,
-            "admissions_allowed": 8,
-            "member_sale_ticket_allowance": 6,
-            "price": "95.00",
+            "name": "Garden 3",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 0,
+            "member_sale_ticket_allowance": 2,
+            "price": "130.00",
+            "charitable_gift_amount": "55.00",
             "active": true
         }
     },
@@ -588,12 +629,13 @@
         "pk": 42,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience Plus 9",
-            "description": "2 named cardholders, 9 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
-            "cardholders_included": 2,
-            "admissions_allowed": 9,
-            "member_sale_ticket_allowance": 6,
-            "price": "95.00",
+            "name": "Garden 3 & 1",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 1,
+            "member_sale_ticket_allowance": 2,
+            "price": "160.00",
+            "charitable_gift_amount": "85.00",
             "active": true
         }
     },
@@ -602,12 +644,13 @@
         "pk": 43,
         "fields": {
             "labels": 1,
-            "name": "Dual Experience Plus 10",
-            "description": "2 named cardholders, 10 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
-            "cardholders_included": 2,
-            "admissions_allowed": 10,
-            "member_sale_ticket_allowance": 6,
-            "price": "95.00",
+            "name": "Experience 3 & 1",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 1,
+            "member_sale_ticket_allowance": 4,
+            "price": "220.00",
+            "charitable_gift_amount": "135.00",
             "active": true
         }
     },
@@ -616,12 +659,13 @@
         "pk": 44,
         "fields": {
             "labels": 1,
-            "name": "Trio Garden 3",
-            "description": "3 named cardholders, 3 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 3 & 2",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 3,
+            "admissions_allowed": 2,
             "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "price": "190.00",
+            "charitable_gift_amount": "115.00",
             "active": true
         }
     },
@@ -630,12 +674,13 @@
         "pk": 45,
         "fields": {
             "labels": 1,
-            "name": "Trio Garden 4",
-            "description": "3 named cardholders, 4 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 3 & 2",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 4,
-            "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "admissions_allowed": 2,
+            "member_sale_ticket_allowance": 4,
+            "price": "250.00",
+            "charitable_gift_amount": "165.00",
             "active": true
         }
     },
@@ -644,12 +689,13 @@
         "pk": 46,
         "fields": {
             "labels": 1,
-            "name": "Trio Garden 5",
-            "description": "3 named cardholders, 5 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 3 & 3",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 5,
-            "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "admissions_allowed": 3,
+            "member_sale_ticket_allowance": 4,
+            "price": "280.00",
+            "charitable_gift_amount": "145.00",
             "active": true
         }
     },
@@ -658,12 +704,13 @@
         "pk": 47,
         "fields": {
             "labels": 1,
-            "name": "Trio Garden 6",
-            "description": "3 named cardholders, 6 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 3 & 3",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 6,
-            "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "admissions_allowed": 3,
+            "member_sale_ticket_allowance": 6,
+            "price": "340.00",
+            "charitable_gift_amount": "195.00",
             "active": true
         }
     },
@@ -672,12 +719,13 @@
         "pk": 48,
         "fields": {
             "labels": 1,
-            "name": "Trio Garden 7",
-            "description": "3 named cardholders, 7 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 3 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 7,
+            "admissions_allowed": 4,
             "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "price": "250.00",
+            "charitable_gift_amount": "125.00",
             "active": true
         }
     },
@@ -686,12 +734,13 @@
         "pk": 49,
         "fields": {
             "labels": 1,
-            "name": "Trio Garden 8",
-            "description": "3 named cardholders, 8 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 3 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 8,
-            "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 4,
+            "price": "310.00",
+            "charitable_gift_amount": "175.00",
             "active": true
         }
     },
@@ -700,12 +749,13 @@
         "pk": 50,
         "fields": {
             "labels": 1,
-            "name": "Trio Garden 9",
-            "description": "3 named cardholders, 9 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 3 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 9,
-            "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 6,
+            "price": "370.00",
+            "charitable_gift_amount": "225.00",
             "active": true
         }
     },
@@ -714,12 +764,13 @@
         "pk": 51,
         "fields": {
             "labels": 1,
-            "name": "Trio Garden 10",
-            "description": "3 named cardholders, 10 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 2 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 3 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 10,
+            "admissions_allowed": 5,
             "member_sale_ticket_allowance": 2,
-            "price": "95.00",
+            "price": "280.00",
+            "charitable_gift_amount": "155.00",
             "active": true
         }
     },
@@ -728,12 +779,13 @@
         "pk": 52,
         "fields": {
             "labels": 1,
-            "name": "Trio Experience 4",
-            "description": "3 named cardholders, 4 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 3 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 4,
+            "admissions_allowed": 5,
             "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "price": "340.00",
+            "charitable_gift_amount": "205.00",
             "active": true
         }
     },
@@ -742,12 +794,13 @@
         "pk": 53,
         "fields": {
             "labels": 1,
-            "name": "Trio Experience 5",
-            "description": "3 named cardholders, 5 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 3 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
             "admissions_allowed": 5,
-            "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "member_sale_ticket_allowance": 6,
+            "price": "400.00",
+            "charitable_gift_amount": "255.00",
             "active": true
         }
     },
@@ -756,12 +809,13 @@
         "pk": 54,
         "fields": {
             "labels": 1,
-            "name": "Trio Experience 6",
-            "description": "3 named cardholders, 6 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 3 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
             "admissions_allowed": 6,
-            "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "member_sale_ticket_allowance": 2,
+            "price": "310.00",
+            "charitable_gift_amount": "185.00",
             "active": true
         }
     },
@@ -770,12 +824,13 @@
         "pk": 55,
         "fields": {
             "labels": 1,
-            "name": "Trio Experience 7",
-            "description": "3 named cardholders, 7 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 3 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 7,
+            "admissions_allowed": 6,
             "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "price": "370.00",
+            "charitable_gift_amount": "235.00",
             "active": true
         }
     },
@@ -784,12 +839,13 @@
         "pk": 56,
         "fields": {
             "labels": 1,
-            "name": "Trio Experience 8",
-            "description": "3 named cardholders, 8 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 3 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 8,
-            "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 6,
+            "price": "430.00",
+            "charitable_gift_amount": "285.00",
             "active": true
         }
     },
@@ -798,12 +854,13 @@
         "pk": 57,
         "fields": {
             "labels": 1,
-            "name": "Trio Experience 9",
-            "description": "3 named cardholders, 9 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 3 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 9,
-            "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 2,
+            "price": "340.00",
+            "charitable_gift_amount": "215.00",
             "active": true
         }
     },
@@ -812,12 +869,13 @@
         "pk": 58,
         "fields": {
             "labels": 1,
-            "name": "Trio Experience 10",
-            "description": "3 named cardholders, 10 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 4 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 3 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 10,
+            "admissions_allowed": 7,
             "member_sale_ticket_allowance": 4,
-            "price": "95.00",
+            "price": "400.00",
+            "charitable_gift_amount": "265.00",
             "active": true
         }
     },
@@ -826,12 +884,13 @@
         "pk": 59,
         "fields": {
             "labels": 1,
-            "name": "Trio Experience Plus 6",
-            "description": "3 named cardholders, 6 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 3 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 6,
+            "admissions_allowed": 7,
             "member_sale_ticket_allowance": 6,
-            "price": "95.00",
+            "price": "460.00",
+            "charitable_gift_amount": "315.00",
             "active": true
         }
     },
@@ -840,12 +899,13 @@
         "pk": 60,
         "fields": {
             "labels": 1,
-            "name": "Trio Experience Plus 7",
-            "description": "3 named cardholders, 7 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Garden 3 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 7,
-            "member_sale_ticket_allowance": 6,
-            "price": "95.00",
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 2,
+            "price": "370.00",
+            "charitable_gift_amount": "245.00",
             "active": true
         }
     },
@@ -854,12 +914,13 @@
         "pk": 61,
         "fields": {
             "labels": 1,
-            "name": "Trio Experience Plus 8",
-            "description": "3 named cardholders, 8 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience 3 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
             "admissions_allowed": 8,
-            "member_sale_ticket_allowance": 6,
-            "price": "95.00",
+            "member_sale_ticket_allowance": 4,
+            "price": "430.00",
+            "charitable_gift_amount": "295.00",
             "active": true
         }
     },
@@ -868,26 +929,13 @@
         "pk": 62,
         "fields": {
             "labels": 1,
-            "name": "Trio Experience Plus 9",
-            "description": "3 named cardholders, 9 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
+            "name": "Experience Plus 3 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
             "cardholders_included": 3,
-            "admissions_allowed": 9,
+            "admissions_allowed": 8,
             "member_sale_ticket_allowance": 6,
-            "price": "95.00",
-            "active": true
-        }
-    },
-    {
-        "model": "memberships.membershiplevel",
-        "pk": 63,
-        "fields": {
-            "labels": 1,
-            "name": "Trio Experience Plus 10",
-            "description": "3 named cardholders, 10 included garden admissions per visit (any combination of cardholders and guests as long as at least one cardholder is present) and up to 6 concert tickets per show can be purchased during the Red Butte Garden Outdoor Concert Series Member Presale. Membership does not guarantee concert ticket availability.",
-            "cardholders_included": 3,
-            "admissions_allowed": 10,
-            "member_sale_ticket_allowance": 6,
-            "price": "95.00",
+            "price": "490.00",
+            "charitable_gift_amount": "345.00",
             "active": true
         }
     }
