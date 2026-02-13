@@ -23,15 +23,19 @@
           <small class="rich-text text-muted">{{ level.description|default:'No description'|richtext }}</small>
         </div>
         <div class="text-end">
-          <div class="h5 mb-0" style="color:var(--rbg-oak-green)">${{ level.price }}</div>
-          <div class="small text-muted">price</div>
+          <div class="h4 fw-bold mb-0" style="color:var(--rbg-oak-green)">${{ level.price|floatformat:'-2' }}</div>
+
+          {% if level.has_auto_renew_discount %}
+            <div class="small text-muted">${{ level.auto_renew_price|floatformat:'-2' }}*</div>
+            <div class="small text-muted mb-1">*auto-renewal price</div>
+          {% endif %}
         </div>
       </div>
 
       <div class="mt-auto">
         {% if level.charitable_gift_amount %}
           <p class="mt-3 mb-2">
-            Charitable Gift Amount: <strong>${{ level.charitable_gift_amount }}</strong>
+            Charitable Gift Amount: <strong>${{ level.charitable_gift_amount|floatformat:'-2' }}</strong>
           </p>
         {% endif %}
         <a href="{{ level.purchase_url }}" class="btn btn-rbg-primary w-100" target="_blank" rel="noopener noreferrer"><i class="bi bi-cart-fill me-2"></i>Buy this level</a>

@@ -79,15 +79,19 @@
                     </div>
 
                     <div class="text-end">
-                      <div class="h5 mb-0">${{ highlighted.price }}</div>
-                      <div class="small text-muted">price</div>
+                      <div class="h4 fw-bold mb-0" style="color:var(--rbg-oak-green)">${{ highlighted.price|floatformat:'-2' }}</div>
+
+                      {% if highlighted.has_auto_renew_discount %}
+                        <div class="small text-muted">${{ highlighted.auto_renew_price|floatformat:'-2' }}*</div>
+                        <div class="small text-muted mb-1">*auto-renewal price</div>
+                      {% endif %}
                     </div>
                   </div>
 
                   <div class="mt-auto">
                     {% if highlighted.charitable_gift_amount %}
                       <p class="mt-3 mb-2">
-                        Charitable Gift Amount: <strong>${{ highlighted.charitable_gift_amount }}</strong>
+                        Charitable Gift Amount: <strong>${{ highlighted.charitable_gift_amount|floatformat:'-2' }}</strong>
                       </p>
                     {% endif %}
                     <a href="{{ highlighted.purchase_url }}" class="btn btn-rbg-primary w-100" target="_blank" rel="noopener noreferrer"><i class="bi bi-cart-fill me-2"></i>Buy this level</a>
@@ -101,7 +105,7 @@
 
       <div class="row g-3">
         {% for item in suggestions %}
-          {% include 'memberships/partials/_level_card.html' with level=item.level badge=item.badge %}
+          {% include 'memberships/partials/_level_card.html' with level=item.level badge=item.badge renewal_discount=cfg.auto_renewal_discount %}
         {% endfor %}
       </div>
     {% else %}

@@ -1,12 +1,11 @@
-from typing import Optional, List, Dict
+from decimal import Decimal
+from typing import List
 
-from django.db.models import Min, Max
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 from .decorators import basic_auth_required
 from .forms import MembershipSelectorForm
 from .models import MembershipWidgetConfig, MembershipLevel
-from .utils import SafeFormatDict
 
 SUGGESTION_SLOTS = 4  # how many non-highlighted cards to show
 
@@ -110,6 +109,32 @@ def membership_suggest(request):
         unique_picks.append(m)
 
     suggestions = [{"level": m, "badge": "Suggested"} for m in unique_picks]
+
+    # -----------------------------
+    # Auto-renewal pricing (Decimal)
+    # -----------------------------
+    renewal_discount: Decimal = cfg.auto_renewal_discount or Decimal("0.00")
+    # Treat <= 0 as "disabled"
+    if renewal_discount < 0:
+        renewal_discount = Decimal("0.00")
+
+    def attach_auto_renew_price(level: MembershipLevel) -> None:
+        """
+        Add computed fields onto the model instance for template use.
+        Assumes level.price is a Decimal (or Decimal-like).
+        """
+        price = level.price or Decimal("0.00")
+        auto = price - renewal_discount
+        if auto < 0:
+            auto = Decimal("0.00")
+
+        # Attach attributes the template can read
+        level.auto_renew_price = auto
+        level.has_auto_renew_discount = renewal_discount > 0
+
+    attach_auto_renew_price(highlighted)
+    for item in suggestions:
+        attach_auto_renew_price(item["level"])
 
     return render(
         request,

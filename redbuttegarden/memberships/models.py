@@ -69,6 +69,13 @@ class MembershipWidgetConfig(models.Model):
         help_text="Use {tickets} as a placeholder. Example output will replace {tickets} with 2, 4, or 6.",
     )
 
+    auto_renewal_discount = models.DecimalField(
+        max_digits=4,  # supports up to 99.99
+        decimal_places=2,
+        help_text="Auto renewal discount amount in USD. Set to zero to disable.",
+        default=Decimal(0),
+    )
+
     panels = [
         FieldPanel("page_header_text"),
         FieldPanel("widget_header_text"),
@@ -78,7 +85,8 @@ class MembershipWidgetConfig(models.Model):
         FieldPanel("cardholder_help_hover"),
         FieldPanel("admissions_help_hover"),
         FieldPanel("member_tickets_help_hover"),
-        FieldPanel("presale_qualification_error_message_template")
+        FieldPanel("presale_qualification_error_message_template"),
+        FieldPanel("auto_renewal_discount")
     ]
 
     class Meta:
