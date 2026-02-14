@@ -2,9 +2,24 @@ import uuid
 
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
 from wagtail import blocks
-from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.blocks import ImageBlock, ImageChooserBlock
 
+from home.models import (
+    AlignedParagraphBlock,
+    ButtonBlock,
+    ButtonListDropdownInfo,
+    EmphaticText,
+    Heading,
+    HeadingBlock,
+    ImageInfoList,
+    ImageLinkList,
+    ImageListCardInfo,
+    ImageListDropdownInfo,
+    MultiColumnAlignedParagraphBlock,
+    ThreeColumnDropdownInfoPanel,
+)
 from .wcag import contrast_ratio
 
 RBG_COLOR_VARIABLE_CHOICES = [
@@ -23,7 +38,7 @@ RBG_COLOR_VARIABLE_CHOICES = [
     ("--rbg-purple", "Purple"),
     ("--rbg-orange", "Orange"),
     ("--rbg-gray", "Gray"),
-    ("--rbg-white", "White")
+    ("--rbg-white", "White"),
 ]
 
 RBG_COLORS = {
@@ -44,6 +59,28 @@ RBG_COLORS = {
     "--rbg-white": "#FFFFFF",
 }
 
+BOOTSTRAP_GAP_CHOICES = [
+    ("g-0", "No gap"),
+    ("g-2", "Small"),
+    ("g-3", "Default"),
+    ("g-4", "Large"),
+    ("g-5", "Extra large"),
+]
+
+VERTICAL_ALIGN_CHOICES = [
+    ("align-items-start", "Top"),
+    ("align-items-center", "Center"),
+    ("align-items-end", "Bottom"),
+]
+
+COLUMN_WIDTH_CHOICES = [
+    ("col-12 col-md-6", "6 (half)"),
+    ("col-12 col-md-4", "4 (one-third)"),
+    ("col-12 col-md-8", "8 (two-thirds)"),
+    ("col-12 col-md-3", "3 (one-quarter)"),
+    ("col-12 col-md-9", "9 (three-quarters)"),
+]
+
 ANCHOR_ID_VALIDATOR = RegexValidator(
     regex=r"^[A-Za-z][A-Za-z0-9\-_:.]*$",
     message="Use a valid HTML id (start with a letter; then letters/numbers, '-', '_', ':', '.').",
@@ -62,6 +99,7 @@ DEFAULT_HEADING = "#072d22"
 MIN_BODY = 4.5
 MIN_HEADING = 3.0
 
+
 def resolve_token_or_default(token: str | None, default_hex: str) -> str:
     """
     token is like '--rbg-teal' or ''/None.
@@ -78,7 +116,9 @@ def resolve_token_or_default(token: str | None, default_hex: str) -> str:
 class LinkedCarouselSlideBlock(blocks.StructBlock):
     image = ImageChooserBlock(required=True)
     caption = blocks.CharBlock(required=False, max_length=255)
-    link_page = blocks.PageChooserBlock(required=False, help_text="Choose an internal page")
+    link_page = blocks.PageChooserBlock(
+        required=False, help_text="Choose an internal page"
+    )
     link_url = blocks.URLBlock(
         required=False,
         help_text="Or enter an external URL (will be used if no internal page selected)",
@@ -487,7 +527,9 @@ class PricingCardBlock(blocks.StructBlock):
             )
             if "display" in errors:
                 # append second message
-                errors["display"] = ValidationError([errors["display"], ValidationError(msg)])
+                errors["display"] = ValidationError(
+                    [errors["display"], ValidationError(msg)]
+                )
             else:
                 errors["display"] = ValidationError(msg)
 
@@ -581,7 +623,9 @@ class PricingCardBlock(blocks.StructBlock):
         # otherwise you get competing backgrounds.
         bg_token = d.get("background_color") or ""
         if variant != "default" and not bg_token:
-            card_classes.append("text-bg-light" if variant == "light" else f"text-bg-{variant}")
+            card_classes.append(
+                "text-bg-light" if variant == "light" else f"text-bg-{variant}"
+            )
 
         if not d.get("border", True):
             card_classes.append("border-0")
@@ -600,8 +644,12 @@ class PricingCardBlock(blocks.StructBlock):
         context["pricing_card_accordion_id"] = f"{base_id}-defs"
 
         # ---- Export computed class strings ----
-        context["pricing_card_wrapper_classes"] = " ".join(c for c in wrapper_classes if c.strip())
-        context["pricing_card_card_classes"] = " ".join(c for c in card_classes if c.strip())
+        context["pricing_card_wrapper_classes"] = " ".join(
+            c for c in wrapper_classes if c.strip()
+        )
+        context["pricing_card_card_classes"] = " ".join(
+            c for c in card_classes if c.strip()
+        )
         context["pricing_card_body_padding"] = d.get("padding") or "p-3"
 
         # ---- Inline CSS custom properties ----
@@ -664,7 +712,9 @@ class PricingCardBlock(blocks.StructBlock):
                 )
 
             # Keep button bg in sync (Bootstrap reads these vars)
-            style_vars.append("--pricing-accordion-btn-bg: var(--pricing-accordion-bg);")
+            style_vars.append(
+                "--pricing-accordion-btn-bg: var(--pricing-accordion-bg);"
+            )
 
         context["pricing_card_style_vars"] = " ".join(style_vars).strip()
 
@@ -674,3 +724,97 @@ class PricingCardBlock(blocks.StructBlock):
         template = "blocks/pricing_card_block.html"
         icon = "list-ul"
         label = "Pricing / Options Card"
+
+
+class ContentStreamBlock(blocks.StreamBlock):
+    pricing_card = PricingCardBlock()
+    arousel = LinkedCarouselBlock()
+    button = ButtonBlock()
+    custom_heading = HeadingBlock()
+    heading = Heading()
+    emphatic_text = EmphaticText()
+    paragraph = AlignedParagraphBlock()
+    multi_column_paragraph = MultiColumnAlignedParagraphBlock()
+    image = ImageBlock()
+    html = blocks.RawHTMLBlock()
+    dropdown_image_list = ImageListDropdownInfo()
+    dropdown_button_list = ButtonListDropdownInfo()
+    card_info_list = ImageListCardInfo()
+    image_info_list = ImageInfoList()
+    image_link_list = ImageLinkList()
+    three_column_dropdown_info_panel = ThreeColumnDropdownInfoPanel()
+
+    class Meta:
+        label = "Content"
+
+
+CONTENT_BLOCKS = [
+    ("carousel", LinkedCarouselBlock()),
+    ("pricing_card", PricingCardBlock()),
+    ("button", ButtonBlock()),
+    ("custom_heading", HeadingBlock()),
+    (
+        "heading",
+        Heading(
+            classname="full title",
+            help_text=_("Text will be green and centered"),
+        ),
+    ),
+    (
+        "emphatic_text",
+        EmphaticText(
+            classname="full title",
+            help_text=_("Text will be red, italic and centered"),
+        ),
+    ),
+    ("paragraph", AlignedParagraphBlock(required=True, classname="paragraph")),
+    ("multi_column_paragraph", MultiColumnAlignedParagraphBlock()),
+    ("image", ImageBlock(help_text=_("Centered image"))),
+    ("html", blocks.RawHTMLBlock()),
+    ("dropdown_image_list", ImageListDropdownInfo()),
+    ("dropdown_button_list", ButtonListDropdownInfo()),
+    ("card_info_list", ImageListCardInfo()),
+    ("image_info_list", ImageInfoList()),
+    ("image_link_list", ImageLinkList()),
+    ("three_column_dropdown_info_panel", ThreeColumnDropdownInfoPanel()),
+]
+
+
+class Columns2Block(blocks.StructBlock):
+    left_width = blocks.ChoiceBlock(
+        choices=COLUMN_WIDTH_CHOICES, default="col-12 col-md-6"
+    )
+    right_width = blocks.ChoiceBlock(
+        choices=COLUMN_WIDTH_CHOICES, default="col-12 col-md-6"
+    )
+    gap = blocks.ChoiceBlock(
+        choices=BOOTSTRAP_GAP_CHOICES,
+        default="g-3",
+        required=True,
+    )
+    v_align = blocks.ChoiceBlock(
+        choices=VERTICAL_ALIGN_CHOICES,
+        default="align-items-start",
+        required=True,
+    )
+    reverse_on_mobile = blocks.BooleanBlock(
+        required=False,
+        default=False,
+        help_text="If checked, right column stacks above left on mobile.",
+    )
+
+    left = blocks.StreamBlock(
+        CONTENT_BLOCKS,
+        required=False,
+        label="Left column content",
+    )
+    right = blocks.StreamBlock(
+        CONTENT_BLOCKS,
+        required=False,
+        label="Right column content",
+    )
+
+    class Meta:
+        template = "blocks/layout/columns_2.html"
+        icon = "placeholder"
+        label = "Two columns"

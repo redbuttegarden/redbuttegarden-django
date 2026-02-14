@@ -1,0 +1,15 @@
+{% load wagtailcore_tags %}
+
+<div class="row {{ value.gap }} {{ value.v_align }}">
+  <div class="{{ value.left_width }} {% if value.reverse_on_mobile %}order-2 order-md-1{% endif %}">
+    {% for block in value.left %}
+      {% include_block block %}
+    {% endfor %}
+  </div>
+
+  <div class="{{ value.right_width }} {% if value.reverse_on_mobile %}order-1 order-md-2{% endif %}">
+    {% for block in value.right %}
+      {% include_block block %}
+    {% endfor %}
+  </div>
+</div>
