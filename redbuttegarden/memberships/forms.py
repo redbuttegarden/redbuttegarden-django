@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import MembershipWidgetConfig
+from .widget_config import MembershipWidgetConfig
 
 
 def validate_even(value):

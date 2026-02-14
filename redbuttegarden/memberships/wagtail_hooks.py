@@ -1,12 +1,11 @@
-from django.templatetags.static import static
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.utils.html import format_html
 from wagtail.admin.ui.tables import UpdatedAtColumn
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
-from .models import MembershipWidgetConfig, MembershipLabel, MembershipLevel
+from .models import MembershipLabel, MembershipLevel
+from .widget_config import MembershipWidgetConfig
 
 
 class MyViewConfigViewSet(SnippetViewSet):

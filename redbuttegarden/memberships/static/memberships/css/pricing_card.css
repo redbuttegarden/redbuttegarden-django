@@ -9,16 +9,18 @@
   box-sizing: border-box;
   color: var(--pricing-card-text, black);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* If you're using Bootstrap's .card inside, keep Bootstrap background controllable too */
+  .card {
+    --bs-card-bg: var(--pricing-card-bg, var(--rbg-conifer-green));
+  }
+
+  .card-body {
+    color: var(--pricing-card-text, black);
+  }
 }
 
-/* If you're using Bootstrap's .card inside, keep Bootstrap background controllable too */
-.card {
-  --bs-card-bg: var(--pricing-card-bg, var(--rbg-conifer-green));
-}
 
-.card-body {
-  color: var(--pricing-card-text, black);
-}
 
 /* Heading */
 .pricing-card__heading {

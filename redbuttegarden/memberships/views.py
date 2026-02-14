@@ -5,7 +5,8 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 from .decorators import basic_auth_required
 from .forms import MembershipSelectorForm
-from .models import MembershipWidgetConfig, MembershipLevel
+from .models import MembershipLevel
+from .widget_config import MembershipWidgetConfig
 
 SUGGESTION_SLOTS = 4  # how many non-highlighted cards to show
 
