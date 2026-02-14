@@ -303,10 +303,43 @@ a:focus-visible {
     opacity: 1;
 }
 
+.large-button button.hover {
+    display: inline-block;
+    font-size: 3.0rem;
+    /* very large text */
+    padding: 1.5rem 3rem;
+    /* large click area */
+    line-height: 1.1;
+    min-width: 18rem;
+    /* visual weight */
+    height: auto;
+    /* defeat fixed heights */
+    border-radius: 0.75rem;
+    box-sizing: border-box;
+    cursor: pointer;
+}
 
-/**********************************************************/
-/*************  Begin CSS for membership page *************/
-/**********************************************************/
+/* Ensure anchor wrapping doesn't collapse */
+.large-button a {
+    display: inline-block;
+}
+
+/* Keyboard focus visibility */
+.large-button button.hover:focus-visible {
+    outline: 3px solid rgba(0, 0, 0, 0.25);
+    outline-offset: 3px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 576px) {
+    .large-button button.hover {
+        font-size: 2.4rem;
+        padding: 1rem 1.5rem;
+        min-width: auto;
+        width: 100%;
+    }
+}
+
 
 .image-card-list .card,
 .card-list .card {

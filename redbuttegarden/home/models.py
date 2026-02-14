@@ -407,6 +407,11 @@ class ButtonBlock(blocks.StructBlock):
     url = blocks.URLBlock()
     color = ColorChoiceBlock()
     alignment = TextAlignmentChoiceBlock()
+    embiggen = blocks.BooleanBlock(
+        required=False,
+        default=False,
+        help_text="If checked, make the button larger.",
+    )
 
     class Meta:
         template = "blocks/button_block.html"

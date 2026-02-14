@@ -11,12 +11,6 @@
   {% include 'includes/page_banner.html' with banner=page.banner %}
 
   {% for block in page.body %}
-    {% if block.block_type == 'button' %}
-      <div class="large-button">
-        {% include_block block %}
-      </div>
-    {% else %}
-      {% include_block block with id=block.id %}
-    {% endif %}
+    {% include_block block with id=block.id %}
   {% endfor %}
 {% endblock %}
