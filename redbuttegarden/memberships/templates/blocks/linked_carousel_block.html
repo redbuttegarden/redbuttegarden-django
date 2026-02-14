@@ -9,14 +9,14 @@
                 <div class="carousel-item text-center {% if forloop.first %}active{% endif %}">
                     {% if slide.link_page %}
                         <a href="{{ slide.link_page.url }}" {% if slide.open_in_new_tab %} target="_blank" rel="noopener noreferrer" {% endif %}>
-                            {% image slide.image original class="img-fluid" %}
+                            {% image slide.image original class="img-fluid w-100" %}
                         </a>
                     {% elif slide.link_url %}
                         <a href="{{ slide.link_url }}" {% if slide.open_in_new_tab %} target="_blank" rel="noopener noreferrer" {% endif %}>
-                            {% image slide.image original class="img-fluid" %}
+                            {% image slide.image original class="img-fluid w-100" %}
                         </a>
                     {% else %}
-                        {% image slide.image original class="img-fluid" %}
+                        {% image slide.image original class="img-fluid w-100" %}
                     {% endif %}
 
                     {% if slide.caption %}
