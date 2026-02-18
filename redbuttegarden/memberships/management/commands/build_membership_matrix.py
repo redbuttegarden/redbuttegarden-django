@@ -8,15 +8,19 @@ from typing import Any, Dict, List
 from django.core.management.base import BaseCommand
 
 from memberships.forms import MembershipSelectorForm
+from memberships.widget_config import MembershipWidgetConfig
 from memberships.services.recommendations import Level, recommend_levels
 
 
 def load_levels_from_fixture(path: Path) -> List[Level]:
     raw = json.loads(path.read_text(encoding="utf-8"))
     levels: List[Level] = []
+
     for obj in raw:
-        if obj.get("model") != "memberships.membershiplevel":
+        model = (obj.get("model") or "").lower()
+        if not model.endswith(".membershiplevel"):
             continue
+
         pk = int(obj["pk"])
         f = obj["fields"]
         levels.append(
@@ -30,6 +34,7 @@ def load_levels_from_fixture(path: Path) -> List[Level]:
                 active=bool(f.get("active", True)),
             )
         )
+
     return levels
 
 
@@ -40,18 +45,12 @@ class Command(BaseCommand):
         parser.add_argument(
             "--fixture",
             default="/code/memberships/fixtures/membership_levels.json",
-            help="Path to membership_levels.json fixture (default: membership_levels.json in CWD).",
+            help="Path to membership_levels.json fixture.",
         )
         parser.add_argument(
             "--out",
             default="membership_matrix.xlsx",
             help="Output xlsx filename (default: membership_matrix.xlsx).",
-        )
-        parser.add_argument(
-            "--slots",
-            type=int,
-            default=4,
-            help="How many non-highlighted suggestion cards to include (default: 4).",
         )
 
     def handle(self, *args, **opts):
@@ -65,35 +64,30 @@ class Command(BaseCommand):
         if not out_path.is_absolute():
             out_path = Path.cwd() / out_path
 
-        suggestion_slots = int(opts["slots"])
-
         levels = load_levels_from_fixture(fixture_path)
 
-        # Input domain from your MembershipSelectorForm:
+        # Use the same cfg as production so validation messages match.
+        cfg = MembershipWidgetConfig.get_solo()
+
+        # Input domain from MembershipSelectorForm
         cardholders_values = range(1, 4)  # 1..3
         admissions_values = range(0, 9)  # 0..8
-        ticket_values = [0, 2, 4, 6]  # even only (matches validate_even + max 6)
+        ticket_values = [0, 2, 4, 6]  # even only
 
-        # Build rows
         rows: List[Dict[str, Any]] = []
 
         for c in cardholders_values:
             for a in admissions_values:
                 for t in ticket_values:
-                    # Use the form to determine validation + error message
                     form = MembershipSelectorForm(
-                        data={
-                            "cardholders": c,
-                            "admissions": a,
-                            "member_tickets": t,
-                        }
+                        data={"cardholders": c, "admissions": a, "member_tickets": t},
+                        cfg=cfg,
                     )
                     valid = form.is_valid()
-                    error_text = ""
+
                     if not valid:
-                        # compact errors for spreadsheet
                         nfe = list(form.non_field_errors())
-                        field_errs = []
+                        field_errs: List[str] = []
                         for f_name in ("cardholders", "admissions", "member_tickets"):
                             errs = form.errors.get(f_name)
                             if errs:
@@ -112,9 +106,18 @@ class Command(BaseCommand):
                                 "highlighted_name": None,
                                 "highlighted_price": None,
                                 "highlighted_ticket_allowance": None,
-                                "suggestion_pks": "",
-                                "suggestion_names": "",
-                                "suggestion_prices": "",
+                                "downsell_1_pk": None,
+                                "downsell_1_name": None,
+                                "downsell_1_price": None,
+                                "downsell_2_pk": None,
+                                "downsell_2_name": None,
+                                "downsell_2_price": None,
+                                "upsell_1_pk": None,
+                                "upsell_1_name": None,
+                                "upsell_1_price": None,
+                                "upsell_2_pk": None,
+                                "upsell_2_name": None,
+                                "upsell_2_price": None,
                             }
                         )
                         continue
@@ -124,11 +127,13 @@ class Command(BaseCommand):
                         cardholders=c,
                         guests=a,
                         tickets=t,
-                        suggestion_slots=suggestion_slots,
                     )
 
                     highlighted = rec.highlighted
-                    suggestions = rec.suggestions
+                    d1 = rec.downsell_1
+                    d2 = rec.downsell_2
+                    u1 = rec.upsell_1
+                    u2 = rec.upsell_2
 
                     rows.append(
                         {
@@ -150,19 +155,25 @@ class Command(BaseCommand):
                                 if highlighted
                                 else None
                             ),
-                            "suggestion_pks": ",".join(str(s.pk) for s in suggestions),
-                            "suggestion_names": " | ".join(s.name for s in suggestions),
-                            "suggestion_prices": " | ".join(
-                                str(s.price) for s in suggestions
-                            ),
+                            "downsell_1_pk": d1.pk if d1 else None,
+                            "downsell_1_name": d1.name if d1 else None,
+                            "downsell_1_price": str(d1.price) if d1 else None,
+                            "downsell_2_pk": d2.pk if d2 else None,
+                            "downsell_2_name": d2.name if d2 else None,
+                            "downsell_2_price": str(d2.price) if d2 else None,
+                            "upsell_1_pk": u1.pk if u1 else None,
+                            "upsell_1_name": u1.name if u1 else None,
+                            "upsell_1_price": str(u1.price) if u1 else None,
+                            "upsell_2_pk": u2.pk if u2 else None,
+                            "upsell_2_name": u2.name if u2 else None,
+                            "upsell_2_price": str(u2.price) if u2 else None,
                         }
                     )
 
-        # Write XLSX
-        self._write_xlsx(out_path, rows, levels, fixture_path, suggestion_slots)
+        self._write_xlsx(out_path, rows, levels, fixture_path)
 
         self.stdout.write(self.style.SUCCESS(f"Wrote: {out_path}"))
-        self.stdout.write(f"Rows: {len(rows)} | Levels: {len(levels)}")
+        self.stdout.write(f"Rows: {len(rows)} | Levels loaded: {len(levels)}")
 
     def _write_xlsx(
         self,
@@ -170,15 +181,14 @@ class Command(BaseCommand):
         rows: List[Dict[str, Any]],
         levels: List[Level],
         fixture_path: Path,
-        slots: int,
     ) -> None:
         from openpyxl import Workbook
+        from openpyxl.styles import Alignment, Font
         from openpyxl.utils import get_column_letter
-        from openpyxl.styles import Font, Alignment
 
         wb = Workbook()
 
-        # Sheet 1: Matrix
+        # ---- Sheet 1: Matrix ----
         ws = wb.active
         ws.title = "Matrix"
 
@@ -193,10 +203,20 @@ class Command(BaseCommand):
             "highlighted_name",
             "highlighted_price",
             "highlighted_ticket_allowance",
-            "suggestion_pks",
-            "suggestion_names",
-            "suggestion_prices",
+            "downsell_1_pk",
+            "downsell_1_name",
+            "downsell_1_price",
+            "downsell_2_pk",
+            "downsell_2_name",
+            "downsell_2_price",
+            "upsell_1_pk",
+            "upsell_1_name",
+            "upsell_1_price",
+            "upsell_2_pk",
+            "upsell_2_name",
+            "upsell_2_price",
         ]
+
         ws.append(headers)
 
         header_font = Font(bold=True)
@@ -219,7 +239,7 @@ class Command(BaseCommand):
 
         ws.freeze_panes = "A2"
 
-        # Sheet 2: Levels (source data)
+        # ---- Sheet 2: Levels ----
         ws2 = wb.create_sheet("Levels")
         ws2_headers = [
             "pk",
@@ -251,14 +271,14 @@ class Command(BaseCommand):
 
         ws2.freeze_panes = "A2"
 
-        # Sheet 3: Metadata
+        # ---- Sheet 3: Metadata ----
         ws3 = wb.create_sheet("Meta")
         ws3.append(["fixture_path", str(fixture_path)])
-        ws3.append(["suggestion_slots", slots])
         ws3.append(
             [
                 "notes",
-                "Matrix built from MembershipSelectorForm domain + membership_levels.json fixture.",
+                "Matrix built from MembershipSelectorForm domain + membership_levels.json fixture. "
+                "Suggestion columns map to: downsell_1, downsell_2, upsell_1, upsell_2 (named slots).",
             ]
         )
 

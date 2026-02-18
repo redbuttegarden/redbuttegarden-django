@@ -1,15 +1,16 @@
+from __future__ import annotations
+
 from decimal import Decimal
 from typing import Dict, List, Optional
 
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
+
 from .decorators import basic_auth_required
 from .forms import MembershipSelectorForm
 from .models import MembershipLevel
-from .services.recommendations import Level, recommend_levels
 from .widget_config import MembershipWidgetConfig
-
-SUGGESTION_SLOTS = 4  # how many non-highlighted cards to show
+from .services.recommendations import Level, recommend_levels
 
 
 @basic_auth_required
@@ -17,7 +18,6 @@ SUGGESTION_SLOTS = 4  # how many non-highlighted cards to show
 def membership_selector_page(request):
     cfg = MembershipWidgetConfig.get_solo()
     form = MembershipSelectorForm(cfg=cfg)
-
     return render(
         request, "memberships/membership_selector.html", {"cfg": cfg, "form": form}
     )
@@ -46,8 +46,7 @@ def membership_suggest(request):
     guests = form.cleaned_data["admissions"]
     tickets = form.cleaned_data["member_tickets"]
 
-    # Pull all active levels once (we'll convert to dataclasses for the recommender,
-    # then map back to ORM instances for rendering).
+    # Fetch all active levels because downsell/upsell rules can cross cardholder counts
     qs = (
         MembershipLevel.objects.filter(active=True)
         .select_related("labels")
@@ -68,10 +67,9 @@ def membership_suggest(request):
             "tooltip",
         )
     )
-
     db_levels: List[MembershipLevel] = list(qs)
+    by_pk: Dict[int, MembershipLevel] = {m.pk: m for m in db_levels}
 
-    # Convert ORM objects -> Level dataclasses (the recommender works on these)
     level_inputs: List[Level] = [
         Level(
             pk=m.pk,
@@ -90,25 +88,11 @@ def membership_suggest(request):
         cardholders=cardholders,
         guests=guests,
         tickets=tickets,
-        suggestion_slots=SUGGESTION_SLOTS,
     )
-
-    # Map dataclass PKs back -> ORM instances (preserves labels/purchase_url/etc.)
-    by_pk: Dict[int, MembershipLevel] = {m.pk: m for m in db_levels}
 
     highlighted: Optional[MembershipLevel] = (
         by_pk.get(rec.highlighted.pk) if rec.highlighted else None
     )
-
-    suggestion_models: List[MembershipLevel] = [
-        by_pk[s.pk] for s in rec.suggestions if s.pk in by_pk
-    ]
-
-    # Build template-friendly shape: [{"level": ..., "badge": ...}, ...]
-    # (you can change "Suggested" to whatever you prefer)
-    suggestions = [{"level": m, "badge": "Suggested"} for m in suggestion_models]
-
-    # If no highlighted, keep your current behavior (template will show “No active membership…”)
     if not highlighted:
         return render(
             request,
@@ -126,6 +110,22 @@ def membership_suggest(request):
                 },
             },
         )
+
+    # Build ordered suggestions with stable badges (no index-shifting!)
+    slots = [
+        ("Downsell", rec.downsell_1),
+        ("Downsell", rec.downsell_2),
+        ("Upsell", rec.upsell_1),
+        ("Upsell", rec.upsell_2),
+    ]
+    suggestions = []
+    for badge, lvl in slots:
+        if not lvl:
+            continue
+        m = by_pk.get(lvl.pk)
+        if not m:
+            continue
+        suggestions.append({"level": m, "badge": badge})
 
     # -----------------------------
     # Auto-renewal pricing (Decimal)
@@ -153,8 +153,8 @@ def membership_suggest(request):
             "cfg": cfg,
             "form": form,
             "highlighted": highlighted,
-            "match_type": rec.match_type,  # "Exact" / "Best" / None
-            "suggestions": suggestions,  # list of dicts for your include
+            "match_type": rec.match_type,
+            "suggestions": suggestions,
             "requested": {
                 "cardholders": cardholders,
                 "admissions": guests,
