@@ -40,3 +40,5 @@ terraform_*.tfvars
 
 # Zappa
 .zappa
+
+*.xlsx
