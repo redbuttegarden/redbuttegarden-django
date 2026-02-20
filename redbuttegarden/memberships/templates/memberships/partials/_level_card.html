@@ -1,28 +1,28 @@
 {% load wagtailcore_tags %}
 
-<div class="col-md-6">
-  <div class="card h-100" data-bs-toggle="tooltip" data-bs-html="true" title="{{ level.tooltip }}">
-    <div class="card-body d-flex flex-column">
-      <div class="d-flex justify-content-between align-items-start mb-2">
+{% firstof col_classes 'col-md-6' as col_classes %}
+{% firstof card_classes 'card h-100' as card_classes %}
+{% firstof body_classes 'card-body d-flex flex-column' as body_classes %}
+
+{# Badge configuration #}
+{% firstof badge_text badge as badge_text %}
+{% firstof badge_classes 'badge bg-secondary' as badge_classes %}
+
+<div class="{{ col_classes }}">
+  {% if pre_content_template %}
+    {% include pre_content_template %}
+  {% endif %}
+  <div class="{{ card_classes }}" data-bs-toggle="tooltip" data-bs-html="true" title="{{ level.tooltip }}">
+    <div class="{{ body_classes }}">
+      {# Row 1: badge left, price right #}
+      <div class="d-flex align-items-start justify-content-between mb-2 gap-2">
         <div>
-          {% if badge %}
-            <span class="badge bg-secondary mb-1">{{ badge }}</span>
+          {% if badge_text %}
+            <span class="{{ badge_classes }}">{{ badge_text|safe }}</span>
           {% endif %}
-          <h5 class="card-title mb-0">{{ level.name }}</h5>
-          <ul class="list-unstyled mb-3">
-            <li>
-              <i class="bi bi-person-fill me-2"></i>{{ level.labels.cardholder_label }}: <strong>{{ level.cardholders_included }}</strong>
-            </li>
-            <li>
-              <i class="bi bi-people-fill me-2"></i>{{ level.labels.admissions_label }}: <strong>{{ level.admissions_allowed }}</strong>
-            </li>
-            <li>
-              <i class="bi bi-ticket-perforated-fill me-2"></i>{{ level.labels.member_tickets_label }}: <strong>{{ level.member_sale_ticket_allowance }}</strong>
-            </li>
-          </ul>
-          <small class="rich-text text-muted">{{ level.description|default:'No description'|richtext }}</small>
         </div>
-        <div class="text-end">
+
+        <div class="text-end flex-shrink-0">
           <div class="h4 fw-bold mb-0" style="color:var(--rbg-oak-green)">${{ level.price|floatformat:'-2' }}</div>
 
           {% if level.has_auto_renew_discount %}
@@ -32,12 +32,38 @@
         </div>
       </div>
 
+      {% if pre_header_template %}
+        {% include pre_header_template %}
+      {% endif %}
+
+      {# Row 2: name always below badge/price #}
+      <h5 class="card-title mb-2">{{ level.name }}</h5>
+
+      {# Row 3: features + description full width #}
+      <ul class="list-unstyled mb-3">
+        <li>
+          <i class="bi bi-person-fill me-2"></i>
+          {{ level.labels.cardholder_label }}: <strong>{{ level.cardholders_included }}</strong>
+        </li>
+        <li>
+          <i class="bi bi-people-fill me-2"></i>
+          {{ level.labels.admissions_label }}: <strong>{{ level.admissions_allowed }}</strong>
+        </li>
+        <li>
+          <i class="bi bi-ticket-perforated-fill me-2"></i>
+          {{ level.labels.member_tickets_label }}: <strong>{{ level.member_sale_ticket_allowance }}</strong>
+        </li>
+      </ul>
+
+      <small class="rich-text text-muted">{{ level.description|default:'No description'|richtext }}</small>
+
       <div class="mt-auto">
         {% if level.charitable_gift_amount %}
           <p class="mt-3 mb-2">
             Charitable Gift Amount: <strong>${{ level.charitable_gift_amount|floatformat:'-2' }}</strong>
           </p>
         {% endif %}
+
         <a href="{{ level.purchase_url }}" class="btn btn-rbg-primary w-100" target="_blank" rel="noopener noreferrer"><i class="bi bi-cart-fill me-2"></i>Buy this level</a>
       </div>
     </div>

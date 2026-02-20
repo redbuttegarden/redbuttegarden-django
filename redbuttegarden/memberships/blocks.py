@@ -21,6 +21,7 @@ from home.models import (
     ThreeColumnDropdownInfoPanel,
 )
 from .wcag import contrast_ratio
+from .widgets import MembershipWidgetBlock
 
 RBG_COLOR_VARIABLE_CHOICES = [
     ("", "Theme default"),
@@ -777,6 +778,7 @@ CONTENT_BLOCKS = [
     ("image_info_list", ImageInfoList()),
     ("image_link_list", ImageLinkList()),
     ("three_column_dropdown_info_panel", ThreeColumnDropdownInfoPanel()),
+    ("membership_widget", MembershipWidgetBlock()),
 ]
 
 
