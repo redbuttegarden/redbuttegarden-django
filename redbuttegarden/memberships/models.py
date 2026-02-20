@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.db import models
+from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField, StreamField
@@ -82,6 +83,28 @@ class MembershipLevel(models.Model):
 
     class Meta:
         ordering = ("name",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "cardholders_included",
+                    "admissions_allowed",
+                    "member_sale_ticket_allowance",
+                ],
+                name="uniq_membership_level_entitlements",
+            ),
+            models.CheckConstraint(
+                condition=Q(price__gte=Decimal("0.00")),
+                name="chk_membership_level_price_nonnegative",
+            ),
+            models.CheckConstraint(
+                condition=Q(charitable_gift_amount__gte=Decimal("0.00")),
+                name="chk_membership_level_gift_nonnegative",
+            ),
+            models.CheckConstraint(
+                condition=Q(charitable_gift_amount__lte=F("price")),
+                name="chk_membership_level_gift_lte_price",
+            ),
+        ]
 
     def __str__(self):
         return self.name
