@@ -56,14 +56,19 @@ def _prev_step(tickets: int) -> Optional[int]:
 
 def _build_index(levels: Sequence[Level]) -> dict[tuple[int, int, int], Level]:
     """
-    Uniqueness constraint guarantees a single level per entitlement triple.
-    If you have inactive levels, we index only active ones.
+    Uniqueness constraint guarantees a single (active) level per entitlement triple.
     """
     idx: dict[tuple[int, int, int], Level] = {}
     for l in levels:
         if not l.active:
             continue
-        idx[(l.cardholders_included, l.admissions_allowed, l.member_sale_ticket_allowance)] = l
+        idx[
+            (
+                l.cardholders_included,
+                l.admissions_allowed,
+                l.member_sale_ticket_allowance,
+            )
+        ] = l
     return idx
 
 
@@ -84,11 +89,23 @@ def _closest_feasible(
     direction=up:   requires price > highlighted
     """
     if direction == "down":
-        pool = [l for l in candidates if l.pk not in exclude and l.price < highlighted.price]
-        ticket_rank_fn = lambda l: 0 if l.member_sale_ticket_allowance < tickets else (1 if l.member_sale_ticket_allowance == tickets else 2)
+        pool = [
+            l for l in candidates if l.pk not in exclude and l.price < highlighted.price
+        ]
+        ticket_rank_fn = lambda l: (
+            0
+            if l.member_sale_ticket_allowance < tickets
+            else (1 if l.member_sale_ticket_allowance == tickets else 2)
+        )
     else:
-        pool = [l for l in candidates if l.pk not in exclude and l.price > highlighted.price]
-        ticket_rank_fn = lambda l: 0 if l.member_sale_ticket_allowance > tickets else (1 if l.member_sale_ticket_allowance == tickets else 2)
+        pool = [
+            l for l in candidates if l.pk not in exclude and l.price > highlighted.price
+        ]
+        ticket_rank_fn = lambda l: (
+            0
+            if l.member_sale_ticket_allowance > tickets
+            else (1 if l.member_sale_ticket_allowance == tickets else 2)
+        )
 
     if not pool:
         return None
@@ -113,38 +130,59 @@ def recommend_levels(
     active = [l for l in levels if l.active]
     idx = _build_index(active)
 
-    # -------- Highlighted (simplified) --------
+    # -------- Highlighted --------
     exact = idx.get((cardholders, guests, tickets))
     if exact:
         highlighted = exact
         match_type = "Exact"
     else:
-        # Best match: match cardholders+guests, ignore tickets.
-        # Prefer the smallest ticket step >= requested, else smallest available for that (cardholders, guests).
+        # Best match: same cardholders+guests, ignore tickets.
         available = [
-            l for l in active
+            l
+            for l in active
             if l.cardholders_included == cardholders and l.admissions_allowed == guests
         ]
         if not available:
-            # Shouldn't happen if your input ranges are guaranteed
             return RecommendationResult(None, None, None, None, None, None)
 
         available.sort(key=lambda l: (l.member_sale_ticket_allowance, l.price, l.pk))
-
-        above_or_equal = [l for l in available if l.member_sale_ticket_allowance >= tickets]
-        highlighted = (above_or_equal[0] if above_or_equal else available[0])
+        above_or_equal = [
+            l for l in available if l.member_sale_ticket_allowance >= tickets
+        ]
+        highlighted = above_or_equal[0] if above_or_equal else available[0]
         match_type = "Best"
 
-    base_tickets = highlighted.member_sale_ticket_allowance
     requested_total = _total_adm(cardholders, guests)
-
     exclude: Set[int] = {highlighted.pk}
 
-    # -------- Ideal downsells/upsells: same cardholders+guests, step tickets --------
+    # NOTE: for downsell/upsell ranking, we still anchor to the highlighted tier for "closest feasible"
+    base_tickets = highlighted.member_sale_ticket_allowance
+
     downs: List[Level] = []
     ups: List[Level] = []
 
-    # Downsells: base -> prev -> prev (same cardholders+guests)
+    # -------- Downsell 1 (NEW RULE) --------
+    # 1) same cardholders+guests, one step fewer *requested* tickets
+    prev_req = _prev_step(tickets)
+    d1: Optional[Level] = None
+
+    if prev_req is not None:
+        cand = idx.get((cardholders, guests, prev_req))
+        if cand and cand.pk not in exclude and cand.price < highlighted.price:
+            d1 = cand
+
+    # 2) fallback: same cardholders+requested tickets, one fewer guest
+    if d1 is None and guests > 0:
+        cand = idx.get((cardholders, guests - 1, tickets))
+        if cand and cand.pk not in exclude and cand.price < highlighted.price:
+            d1 = cand
+
+    if d1:
+        downs.append(d1)
+        exclude.add(d1.pk)
+
+    # -------- Downsell 2 (keep simple: step down from highlighted tier, then fill) --------
+    # Try ticket-step downsell(s) around the highlighted tier (same cardholders+guests)
     t = _prev_step(base_tickets)
     while t is not None and len(downs) < 2:
         cand = idx.get((cardholders, guests, t))
@@ -153,7 +191,7 @@ def recommend_levels(
             exclude.add(cand.pk)
         t = _prev_step(t)
 
-    # Upsells: base -> next -> next (same cardholders+guests)
+    # -------- Upsells: step from highlighted tier --------
     t = _next_step(base_tickets)
     while t is not None and len(ups) < 2:
         cand = idx.get((cardholders, guests, t))
@@ -171,7 +209,7 @@ def recommend_levels(
             requested_total=requested_total,
             cardholders=cardholders,
             guests=guests,
-            tickets=base_tickets,  # important: anchor to highlighted tier
+            tickets=base_tickets,  # anchor to highlighted tier
             direction="down",
         )
         if not cand:
