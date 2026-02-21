@@ -3,11 +3,16 @@ import logging
 from django import forms
 from django.core.paginator import Paginator
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.db.models import Q, CheckConstraint
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
 from wagtail.admin.panels import (
     FieldPanel,
+    FieldRowPanel,
+    HelpPanel,
+    MultiFieldPanel,
     ObjectList,
     PageChooserPanel,
     TabbedInterface,
@@ -31,6 +36,7 @@ from home.models import (
     Heading,
     MultiColumnAlignedParagraphBlock,
 )
+from . import utils as event_utils
 
 
 logger = logging.getLogger(__name__)
@@ -246,15 +252,6 @@ class EventIndexPage(RoutablePageMixin, AbstractBase):
 
 
 class EventPage(AbstractBase):
-    # TODO - Delete image once all existing pages have a thumbnail set
-    #   TODO - When that's done, you can also delete the save override which tries to set thumbnail to image
-    image = models.ForeignKey(
-        "wagtailimages.Image",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="+",
-    )
     location = models.CharField(max_length=100)
     additional_info = RichTextField(blank=True)
     instructor = models.CharField(max_length=100, blank=True)
@@ -262,22 +259,69 @@ class EventPage(AbstractBase):
         max_length=100,
         blank=True,
         null=True,
-        help_text="Accepts numbers or text. e.g. Free!",
+        help_text="Price text for more flexibility (e.g. 'Free', '$35', '$25-$35'). Prefer filling the numeric field when possible.",
     )
     public_cost = models.CharField(
         max_length=200,
         blank=True,
         null=True,
-        help_text="Accepts numbers or text. e.g. $35",
+        help_text="Price text for more flexibility (e.g. 'Free', '$35', '$25-$35'). Prefer filling the numeric field when possible.",
+    )
+    # numeric price fields for machine-readable offers
+    member_cost_amount = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Numeric price for members (machine-readable). Enter a number like 0.00 for Free or 35.00. Leave blank to use 'Member cost' text.",
+    )
+    public_cost_amount = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Numeric price for general public (machine-readable). Example: 35.00.",
     )
     sub_heading = models.CharField(
         max_length=200, blank=True, help_text="e.g. 500,000 Blooming Bulbs"
     )
-    event_dates = models.CharField(max_length=200)
+    # Ideally event dates would only be saved as DateTime values but editors often prefer the flexibility of free text
+    event_dates = models.CharField(
+        max_length=200,
+        blank=True,
+        default="",
+        help_text="Date text for more flexibility. (e.g. 'September-October', 'All Summer', etc.) Prefer filling the Start Datetime and End Datetime when possible.",
+    )
+    start_datetime = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Structured start date/time for search engines. Example: 2026-03-25 10:00 AM. Use this (preferred) when the event has a single start time.",
+    )
+    end_datetime = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Structured end date/time. Optional — helpful for search engines and calendar integrations.",
+    )
+    display_times_on_index = models.BooleanField(
+        default=False,
+        verbose_name="Display times on event index page thumbnail",
+        help_text="Show start/end times (e.g. 9 AM) on the event index page thumbnail (thumbnail space is limited; default off)."
+    )
+    display_times_on_detail = models.BooleanField(
+        default=True,
+        verbose_name="Display times on detail page",
+        help_text="Show start/end times on the event detail page (default on). Turn off to display dates only."
+    )
     event_categories = ParentalManyToManyField(EventCategory, blank=True)
     notes = RichTextField(
         blank=True,
         help_text="Notes will appear on the thumbnail image of the event on the event index page",
+    )
+    # optional URL where tickets are purchased / registration (helps the 'url' in offers)
+    purchase_url = models.URLField(
+        null=True,
+        blank=True,
+        help_text="Optional direct registration/ticketing URL. If provided, search engines will use this when linking to the event page.",
     )
     body = StreamField(BLOCK_TYPES)
     policies = models.ManyToManyField(
@@ -288,21 +332,71 @@ class EventPage(AbstractBase):
     )  # Allow editors to control displayed order of pages
 
     content_panels = AbstractBase.content_panels + [
+        MultiFieldPanel(
+            [
+                HelpPanel(
+                    content=(
+                        "Search engines (and rich results) prefer machine-readable dates/prices. "
+                        "Please fill the fields in this section when possible. "
+                        "You can still use the legacy text fields below when greater flexibility is required."
+                    ),
+                ),
+                FieldPanel(
+                    "start_datetime",
+                    help_text="Structured start date/time.",
+                ),
+                FieldPanel("end_datetime", help_text="Structured end date/time."),
+                FieldPanel("display_times_on_index"),
+                FieldPanel("display_times_on_detail"),
+                FieldRowPanel(
+                    [
+                        FieldPanel(
+                            "member_cost_amount",
+                            classname="col6",
+                            help_text="Numeric price for members, e.g. 0.00 for Free or 35.00.",
+                        ),
+                        FieldPanel(
+                            "public_cost_amount",
+                            classname="col6",
+                            help_text="Numeric price for general public, e.g. 35.00.",
+                        ),
+                    ],
+                    heading="Structured prices",
+                ),
+                FieldPanel("purchase_url"),
+            ],
+            heading="Structured event data (for search engines)",
+            classname="collapsible",
+        ),
+        # Put legacy free-text fields into a collapsed panel
+        MultiFieldPanel(
+            [
+                FieldPanel(
+                    "member_cost",
+                    help_text="Legacy free text entry price for members. Example: 'Free', '$35', '$35-$45'. Prefer using structured 'Member Cost Amount' above when possible.",
+                ),
+                FieldPanel(
+                    "public_cost",
+                    help_text="Legacy free text entry price for public. Prefer using structured 'Public Cost Amount' above when possible.",
+                ),
+                FieldPanel(
+                    "event_dates",
+                    help_text="Free text event date/time text for display (e.g. 'Sundays in May, 10am–12pm'). Prefer using 'Start Datetime'/'End Datetime' above when possible.",
+                ),
+            ],
+            heading="Legacy event fields (use only when necessary)",
+            classname="collapsed",  # collapsed by default so editors don't default to these
+        ),
+        FieldPanel("event_categories"),
         FieldPanel("location"),
         FieldPanel("additional_info"),
         FieldPanel("instructor"),
-        FieldPanel("member_cost"),
-        FieldPanel("public_cost"),
         FieldPanel("sub_heading"),
-        FieldPanel("event_dates"),
-        FieldPanel("event_categories", widget=forms.CheckboxSelectMultiple),
         FieldPanel("notes"),
         FieldPanel("body"),
         FieldPanel(
             "policies",
-            help_text=_(
-                "Optionally choose one or more policy links to include on the page"
-            ),
+            help_text="Optionally choose one or more policy links to include on the page",
         ),
     ]
 
@@ -320,21 +414,93 @@ class EventPage(AbstractBase):
         index.SearchField("body"),
     ]
 
-    def get_cached_paths(self):
-        """
-        In addition to overriding the URL of this page, we also need
-        to invalidate the event category view of any category to which
-        this page belongs.
-        """
-        return ["/"] + [
-            "/events/e-cat/" + category.slug for category in self.event_categories.all()
+    class Meta:
+        constraints = [
+            # At least one of start_datetime OR event_dates (non-empty)
+            CheckConstraint(
+                condition=Q(start_datetime__isnull=False) | ~Q(event_dates=""),
+                name="events_eventpage_start_or_event_dates_not_empty",
+            ),
+            # If end_datetime is set, start_datetime must be set
+            CheckConstraint(
+                condition=Q(end_datetime__isnull=True) | Q(start_datetime__isnull=False),
+                name="events_eventpage_end_requires_start",
+            ),
         ]
 
-    def save(self, clean=True, user=None, log_action=False, **kwargs):
-        if self.thumbnail is None:
-            self.thumbnail = self.image
+    def clean(self):
+        """
+        Enforce:
+        - At least one of event_dates (non-empty) OR start_datetime must be present.
+        - If end_datetime is provided, start_datetime must also be provided.
+        This provides helpful ValidationError messages for the admin forms.
+        """
+        # call parent clean (important)
+        super().clean()
 
-        super().save(**kwargs)
+        errors = {}
+
+        # treat empty/whitespace event_dates as not provided
+        has_event_dates = bool(self.event_dates and self.event_dates.strip())
+        has_start = getattr(self, "start_datetime", None) is not None
+        has_end = getattr(self, "end_datetime", None) is not None
+
+        # rule 1: require at least one of event_dates or start_datetime
+        if not (has_event_dates or has_start):
+            # attach errors to both fields for better UX (or use NON_FIELD_ERRORS)
+            msg = _(
+                "Please provide a structured start date/time (preferred) or fill the human-readable 'Event dates' field."
+            )
+            errors["event_dates"] = msg
+            errors["start_datetime"] = msg
+
+        # rule 2: if end_datetime provided, start_datetime must be provided
+        if has_end and not has_start:
+            errors["end_datetime"] = _(
+                "An end date/time was provided but the start date/time is missing. Please set a start date/time."
+            )
+            # optionally also add error to start_datetime field
+            errors.setdefault(
+                "start_datetime",
+                _("Provide a start date/time when an end date/time is set."),
+            )
+
+        if errors:
+            raise ValidationError(errors)
+
+    def get_context(self, request, *args, **kwargs):
+        """
+        Ensure structured JSON is available in the template context.
+        Keep other context from the parent implementation.
+        """
+        context = super().get_context(request, *args, **kwargs)
+        # attach JSON string (safe to include in template with |safe)
+        context["structured_event_json"] = event_utils.build_structured_event_json(
+            self, request=request
+        )
+        # optionally expose dict for tests/debugging
+        context["structured_event_dict"] = event_utils.build_structured_event_dict(
+            self, request=request
+        )
+        return context
+
+    def save(self, *args, **kwargs):
+        # If editor hasn't set numeric amount but has free-text, try to infer
+        if (self.member_cost_amount is None) and (self.member_cost):
+            try_amount = event_utils.parse_amount_from_text(self.member_cost)
+            if try_amount is not None:
+                self.member_cost_amount = try_amount
+
+        if (self.public_cost_amount is None) and (self.public_cost):
+            try_amount = event_utils.parse_amount_from_text(self.public_cost)
+            if try_amount is not None:
+                self.public_cost_amount = try_amount
+
+        super().save(*args, **kwargs)
+
+    def get_cached_paths(self):
+        yield "/"
+
 
 
 class EventGeneralPage(GeneralPage):
@@ -378,12 +544,4 @@ class EventGeneralPage(GeneralPage):
     )
 
     def get_cached_paths(self):
-        """
-        In addition to overriding the URL of this page, we also need
-        to invalidate the event category view of any category to which
-        this page belongs.
-        """
-
-        return ["/"] + [
-            "/events/e-cat/" + category.slug for category in self.event_categories.all()
-        ]
+        yield "/"

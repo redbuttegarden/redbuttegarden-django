@@ -1,5 +1,9 @@
-<div style="text-align: {{ value.alignment }}">
-    <a href="{{ value.url }}">
-        <input class="{{ value.color }}-button hover" type="submit" value="{{ value.text }}">
-    </a>
+{% if value.embiggen %}<div class="large-button my-4">{% endif %}
+
+<div class="my-2" style="text-align: {{ value.alignment }}">
+  <a href="{{ value.url }}">
+    <button class="{{ value.color }}-button hover">{{ value.text }}</button>
+  </a>
 </div>
+
+{% if value.embiggen %}</div>{% endif %}

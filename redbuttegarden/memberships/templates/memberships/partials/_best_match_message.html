@@ -1,0 +1,10 @@
+<div class="d-flex justify-content-center mb-2">
+  <div class="highlight-message">
+    <i class="bi bi-check-circle-fill"></i>
+    {% if match_type == 'Exact' %}
+      This membership exactly matches your selections.
+    {% else %}
+      This is the closest match for your selections.
+    {% endif %}
+  </div>
+</div>

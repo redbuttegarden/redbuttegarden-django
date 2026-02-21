@@ -122,7 +122,7 @@ class ImageLink(blocks.StructBlock):
     url_title = blocks.CharBlock(
         label="URL Title",
         max_length=200,
-        required=False,
+        required=True,
         help_text=_(
             "Screen reader title used to describe the link. This is not displayed visually but is important for accessibility."
         ),
@@ -226,14 +226,44 @@ class SingleListImageCardInfo(blocks.StructBlock):
         required=False,
     )
 
+    # per-item override: force this item to span the full width
+    force_full_width = blocks.BooleanBlock(
+        required=False,
+        label="Force full width",
+        help_text="If checked this card will be rendered full width regardless of selected layout.",
+    )
+
+    class Meta:
+        icon = "form"
+
 
 class ImageListCardInfo(blocks.StructBlock):
+    layout = blocks.ChoiceBlock(
+        choices=[
+            ("two_column", "Two columns"),
+            ("single_column", "Single column"),
+            ("auto", "Auto (make long items full width)"),
+        ],
+        default="two_column",
+        label="Layout",
+        help_text="Choose how cards are laid out. 'Auto' makes very long items span full width.",
+    )
+
+    auto_threshold = blocks.IntegerBlock(
+        required=False,
+        label="Auto threshold (characters)",
+        default=400,
+        help_text="When layout is 'auto', items with more than this many non-HTML characters will be full width.",
+    )
+
     list_items = blocks.ListBlock(
         SingleListImageCardInfo(), label="Image Card List Item"
     )
 
     class Meta:
         template = "blocks/image_list_card_info.html"
+        icon = "list-ul"
+        label = "Image list cards"
 
 
 class SingleListButtonDropdownInfo(blocks.StructBlock):
@@ -377,6 +407,11 @@ class ButtonBlock(blocks.StructBlock):
     url = blocks.URLBlock()
     color = ColorChoiceBlock()
     alignment = TextAlignmentChoiceBlock()
+    embiggen = blocks.BooleanBlock(
+        required=False,
+        default=False,
+        help_text="If checked, make the button larger.",
+    )
 
     class Meta:
         template = "blocks/button_block.html"
@@ -919,17 +954,17 @@ class HomePage(AbstractBase):
         FieldPanel("hours_section_text"),
         InlinePanel("event_slides", label=_("Slideshow Images")),
         MultiFieldPanel(
-        [
-            FieldRowPanel(
-                [
-                    FieldPanel("visit_image"),
-                    FieldPanel("whats_blooming_now_image"),
-                ]
-            ),
-        ],
-        heading=_("Homepage Featured Images"),
-        help_text=_("Images used for Visit and What's Blooming sections."),
-    ),
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("visit_image"),
+                        FieldPanel("whats_blooming_now_image"),
+                    ]
+                ),
+            ],
+            heading=_("Homepage Featured Images"),
+            help_text=_("Images used for Visit and What's Blooming sections."),
+        ),
         FieldPanel(
             "concert_page", permission="superuser"
         ),  # Arbitrary permission name; only superusers can access this

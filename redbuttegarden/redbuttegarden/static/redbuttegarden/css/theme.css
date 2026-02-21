@@ -24,4 +24,9 @@
     --rbg-gray-rgb: 187, 186, 186;
     --rbg-lilac: #963983;
     --rbg-font-family: 'Open Sans', Impact, sans-serif;
+    --rbg-white: #ffffff;
+
+    --link: #4A3E2A;
+    --link-visited: #3B2F1F;
+    --link-hover: #000000;
 }

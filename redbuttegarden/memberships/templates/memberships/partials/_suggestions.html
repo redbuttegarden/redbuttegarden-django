@@ -1,0 +1,73 @@
+{% load wagtailcore_tags %}
+
+<div class="card card-rbg">
+  <div class="card-body">
+    {# non-field (general) errors first #}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        <h6 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> Need to adjust selections</h6>
+        <ul class="mb-0">
+          {% for err in form.non_field_errors %}
+            <li>{{ err }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {# field-level errors: only render if at least one real field has errors #}
+    {% if form.errors.cardholders or form.errors.admissions or form.errors.member_tickets %}
+      <div class="alert alert-danger" role="alert">
+        <h6 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> Fix the following</h6>
+        <ul class="mb-0">
+          {% for field in form %}
+            {% for err in field.errors %}
+              <li>
+                <strong>{{ field.label }}:</strong> {{ err }}
+              </li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if suggestions or highlighted %}
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <h3 class="h6 mb-0">Best matches</h3>
+          <p class="text-muted mb-0">Top results based on your inputs.</p>
+        </div>
+      </div>
+
+      {% if highlighted %}
+        <div class="row justify-content-center mb-3">
+          <div class="col-lg-7 col-md-8">
+            <div class="highlight-wrapper">
+              {% include 'memberships/partials/_level_card.html' with level=highlighted col_classes='col-12' card_classes='card card-highlighted h-100' badge_text='<i class="bi bi-star-fill me-1"></i>Best Match' badge_classes='badge badge-best-match mb-1' pre_content_template='memberships/partials/_best_match_message.html' %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="row g-3">
+        {% for item in suggestions %}
+          {% include 'memberships/partials/_level_card.html' with level=item.level badge_text=item.badge badge_classes='badge bg-secondary mb-1' %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-card-list display-5 mb-3" style="color:var(--rbg-gray)"></i>
+        <p class="text-muted mb-0">No active membership levels match your query.</p>
+      </div>
+    {% endif %}
+
+    <hr class="my-3" />
+
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="small text-muted">
+        Showing matches for <strong>{{ requested.cardholders }}</strong> cardholders,
+        <strong>{{ requested.admissions }}</strong> admissions, and
+        <strong>{{ requested.tickets }}</strong> tickets.
+      </div>
+    </div>
+  </div>
+</div>

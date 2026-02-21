@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block extra_css %}
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <link href="{% static 'memberships/css/membership_page.css' %}" rel="stylesheet" />
+  <link href="{% static 'memberships/css/pricing_card.css' %}" rel="stylesheet" />
+  <link href="{% static 'memberships/css/membership_widget.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/page_banner.html' with banner=page.banner %}
+
+  {% for block in page.body %}
+    {% include_block block with id=block.id %}
+  {% endfor %}
+{% endblock %}
+
+{% block extra_js %}
+  {{ cfg.presale_qualification_error_message_template|json_script:'presale-msg-template' }}
+  {{ '2,4,6'|json_script:'presale-levels' }}
+
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <script src="{% static 'memberships/js/membership_widget.js' %}"></script>
+{% endblock %}

@@ -1,19 +1,55 @@
-{% load static wagtailcore_tags %}
+{% load wagtailcore_tags wagtailimages_tags %}
 
-{% for result in search_results %}
-    {{ result }}
-    <div><a href="{% pageurl result %}">{{ result }}</a></div>
-    {% if result.search_description %}
-        <p class="italic">{{ result.search_description }}</p>
-    {% endif %}
+<div class="row">
+  <div class="col-12">
+    <div class="list-group">
+      {% for result in search_results %}
+        {% with page=result.specific %}
+          <a class="list-group-item list-group-item-action d-flex flex-column flex-md-row align-items-start position-relative"
+             href="{% pageurl page %}">
+            <div class="me-3 mb-2 mb-md-0" style="width: 120px; flex: 0 0 120px;">
+              {% if page.thumbnail %}
+                <div class="ratio ratio-1x1" aria-hidden="true">
+                  {% image page.thumbnail fill-175x175 alt=page.search_description|default:page.title %}
+                </div>
+              {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 120px;">
+                  <span class="text-muted small">No image</span>
+                </div>
+              {% endif %}
+            </div>
 
-    {% if result.body %}
-        {% for block in result.body|slice:3 %}
-            {% if block.block_type == 'paragraph' %}
-                <p>{{ block.value.paragraph|striptags|safe|truncatechars:200 }}</p>
-            {% endif %}
-        {% endfor %}
-    {% endif %}
-{% empty %}
-    <p>No results found.</p>
-{% endfor %}
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between">
+                <h4 class="mb-1 h6">
+                  <span class="stretched-link text-dark" aria-hidden="true">{{ page.title }}</span>
+                </h4>
+
+                <small class="text-muted ms-2">
+                  {% if page.first_published_at %}{{ page.first_published_at|date:"M j, Y" }}{% endif %}
+                </small>
+              </div>
+
+              {% if page.search_description %}
+                <p class="mb-1 text-muted small">{{ page.search_description }}</p>
+              {% else %}
+                {% if page.body %}
+                  {% for block in page.body|slice:3 %}
+                    {% if block.block_type == 'paragraph' %}
+                      <p class="mb-1 text-muted small">{{ block.value.paragraph|striptags|truncatechars:200 }}</p>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              {% endif %}
+
+              <small class="text-primary">Read more →</small>
+              <span class="visually-hidden">Open {{ page.title }}</span>
+            </div>
+          </a>
+        {% endwith %}
+      {% empty %}
+        <p>No results found.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>

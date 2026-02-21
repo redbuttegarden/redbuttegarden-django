@@ -1,0 +1,942 @@
+[
+    {
+        "model": "memberships.membershiplabel",
+        "pk": 1,
+        "fields": {
+            "name": "Garden Membership Labels",
+            "cardholder_label": "Cardholders",
+            "admissions_label": "Guests per visit",
+            "member_tickets_label": "Member concert tickets"
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 1,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 1",
+            "description": "This level does not offer Red Butte Garden Outdoor Concert Series Member Benefits.",
+            "cardholders_included": 1,
+            "admissions_allowed": 0,
+            "member_sale_ticket_allowance": 0,
+            "price": "50.00",
+            "charitable_gift_amount": "50.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 2,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 1 & 1",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 1,
+            "member_sale_ticket_allowance": 2,
+            "price": "80.00",
+            "charitable_gift_amount": "25.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 3,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 1 & 2",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 2,
+            "member_sale_ticket_allowance": 2,
+            "price": "110.00",
+            "charitable_gift_amount": "35.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 4,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 1 & 3",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 3,
+            "member_sale_ticket_allowance": 2,
+            "price": "140.00",
+            "charitable_gift_amount": "65.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 5,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 1 & 3",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 3,
+            "member_sale_ticket_allowance": 4,
+            "price": "200.00",
+            "charitable_gift_amount": "115.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 6,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 1 & 4",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 2,
+            "price": "170.00",
+            "charitable_gift_amount": "95.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 7,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 1 & 4",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 4,
+            "price": "230.00",
+            "charitable_gift_amount": "145.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 8,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 1 & 5",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 2,
+            "price": "200.00",
+            "charitable_gift_amount": "75.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 9,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 1 & 5",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 4,
+            "price": "260.00",
+            "charitable_gift_amount": "125.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 10,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 1 & 5",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 6,
+            "price": "320.00",
+            "charitable_gift_amount": "175.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 11,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 1 & 6",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 2,
+            "price": "230.00",
+            "charitable_gift_amount": "105.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 12,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 1 & 6",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 4,
+            "price": "290.00",
+            "charitable_gift_amount": "155.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 13,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 1 & 6",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 6,
+            "price": "350.00",
+            "charitable_gift_amount": "205.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 14,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 1 & 7",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 2,
+            "price": "260.00",
+            "charitable_gift_amount": "135.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 15,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 1 & 7",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 4,
+            "price": "320.00",
+            "charitable_gift_amount": "185.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 16,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 1 & 7",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 6,
+            "price": "380.00",
+            "charitable_gift_amount": "235.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 17,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 1 & 8",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 2,
+            "price": "290.00",
+            "charitable_gift_amount": "165.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 18,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 1 & 8",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 4,
+            "price": "350.00",
+            "charitable_gift_amount": "215.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 19,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 1 & 8",
+            "description": "Garden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 1,
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 6,
+            "price": "410.00",
+            "charitable_gift_amount": "265.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 20,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 2",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 0,
+            "member_sale_ticket_allowance": 2,
+            "price": "90.00",
+            "charitable_gift_amount": "35.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 21,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 2 & 1",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 1,
+            "member_sale_ticket_allowance": 2,
+            "price": "120.00",
+            "charitable_gift_amount": "45.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 22,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 2 & 2",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 2,
+            "member_sale_ticket_allowance": 2,
+            "price": "150.00",
+            "charitable_gift_amount": "75.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 23,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 2 & 2",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 2,
+            "member_sale_ticket_allowance": 4,
+            "price": "210.00",
+            "charitable_gift_amount": "125.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 24,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 2 & 3",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 3,
+            "member_sale_ticket_allowance": 2,
+            "price": "180.00",
+            "charitable_gift_amount": "105.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 25,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 2 & 3",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 3,
+            "member_sale_ticket_allowance": 4,
+            "price": "240.00",
+            "charitable_gift_amount": "155.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 26,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 2 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 2,
+            "price": "210.00",
+            "charitable_gift_amount": "85.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 27,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 2 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 4,
+            "price": "270.00",
+            "charitable_gift_amount": "135.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 28,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 2 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 6,
+            "price": "330.00",
+            "charitable_gift_amount": "185.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 29,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 2 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 2,
+            "price": "240.00",
+            "charitable_gift_amount": "115.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 30,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 2 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 4,
+            "price": "300.00",
+            "charitable_gift_amount": "165.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 31,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 2 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 6,
+            "price": "360.00",
+            "charitable_gift_amount": "215.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 32,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 2 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 2,
+            "price": "270.00",
+            "charitable_gift_amount": "145.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 33,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 2 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 4,
+            "price": "330.00",
+            "charitable_gift_amount": "195.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 34,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 2 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 6,
+            "price": "390.00",
+            "charitable_gift_amount": "245.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 35,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 2 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 2,
+            "price": "300.00",
+            "charitable_gift_amount": "175.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 36,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 2 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 4,
+            "price": "360.00",
+            "charitable_gift_amount": "225.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 37,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 2 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 6,
+            "price": "420.00",
+            "charitable_gift_amount": "275.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 38,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 2 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 2,
+            "price": "330.00",
+            "charitable_gift_amount": "205.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 39,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 2 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 4,
+            "price": "390.00",
+            "charitable_gift_amount": "255.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 40,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 2 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 2,
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 6,
+            "price": "450.00",
+            "charitable_gift_amount": "305.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 41,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 3",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 0,
+            "member_sale_ticket_allowance": 2,
+            "price": "130.00",
+            "charitable_gift_amount": "55.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 42,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 3 & 1",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 1,
+            "member_sale_ticket_allowance": 2,
+            "price": "160.00",
+            "charitable_gift_amount": "85.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 43,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 3 & 1",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 1,
+            "member_sale_ticket_allowance": 4,
+            "price": "220.00",
+            "charitable_gift_amount": "135.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 44,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 3 & 2",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 2,
+            "member_sale_ticket_allowance": 2,
+            "price": "190.00",
+            "charitable_gift_amount": "115.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 45,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 3 & 2",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 2,
+            "member_sale_ticket_allowance": 4,
+            "price": "250.00",
+            "charitable_gift_amount": "165.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 46,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 3 & 3",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 3,
+            "member_sale_ticket_allowance": 4,
+            "price": "280.00",
+            "charitable_gift_amount": "145.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 47,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 3 & 3",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 3,
+            "member_sale_ticket_allowance": 6,
+            "price": "340.00",
+            "charitable_gift_amount": "195.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 48,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 3 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 2,
+            "price": "250.00",
+            "charitable_gift_amount": "125.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 49,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 3 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 4,
+            "price": "310.00",
+            "charitable_gift_amount": "175.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 50,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 3 & 4",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 4,
+            "member_sale_ticket_allowance": 6,
+            "price": "370.00",
+            "charitable_gift_amount": "225.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 51,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 3 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 2,
+            "price": "280.00",
+            "charitable_gift_amount": "155.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 52,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 3 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 4,
+            "price": "340.00",
+            "charitable_gift_amount": "205.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 53,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 3 & 5",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 5,
+            "member_sale_ticket_allowance": 6,
+            "price": "400.00",
+            "charitable_gift_amount": "255.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 54,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 3 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 2,
+            "price": "310.00",
+            "charitable_gift_amount": "185.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 55,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 3 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 4,
+            "price": "370.00",
+            "charitable_gift_amount": "235.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 56,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 3 & 6",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 6,
+            "member_sale_ticket_allowance": 6,
+            "price": "430.00",
+            "charitable_gift_amount": "285.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 57,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 3 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 2,
+            "price": "340.00",
+            "charitable_gift_amount": "215.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 58,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 3 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 4,
+            "price": "400.00",
+            "charitable_gift_amount": "265.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 59,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 3 & 7",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 7,
+            "member_sale_ticket_allowance": 6,
+            "price": "460.00",
+            "charitable_gift_amount": "315.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 60,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 3 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 2,
+            "price": "370.00",
+            "charitable_gift_amount": "245.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 61,
+        "fields": {
+            "labels": 1,
+            "name": "Experience 3 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 4,
+            "price": "430.00",
+            "charitable_gift_amount": "295.00",
+            "active": true
+        }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 62,
+        "fields": {
+            "labels": 1,
+            "name": "Experience Plus 3 & 8",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 8,
+            "member_sale_ticket_allowance": 6,
+            "price": "490.00",
+            "charitable_gift_amount": "345.00",
+            "active": true
+        }
+    }
+]

@@ -1,81 +1,104 @@
 {% extends 'base.html' %}
-{% load wagtailcore_tags wagtailimages_tags static %}
+{% load static tz wagtailcore_tags wagtailimages_tags %}
 
 {% block title %}
-    {% if page.search_type == 'event-category' %}{{ page.cat_title }}{% else %}{{ block.super }}{% endif %}
+  {% if page.search_type == 'event-category' %}
+    {{ page.cat_title }}
+  {% else %}
+    {{ block.super }}
+  {% endif %}
 {% endblock %}
 
 {% block content %}
-    {% include 'includes/page_banner.html' with banner=page.banner %}
+  {% include 'includes/page_banner.html' with banner=page.banner %}
 
-    <div class="row text-center">
-        {{ page.intro|richtext }}
-    </div>
+  <div class="row text-center">{{ page.intro|richtext }}</div>
 
-    <div class="d-flex flex-wrap justify-content-around">
-        {% for event in events %}
-            <div class="index-tile">
-                {% with event=event.specific %}
-                    <a class="hover" href="{% pageurl event %}">
-                        <div class="index-thumbnail">
-                            {% comment %}
-                                Added blank alt attribute to image thumbnails since these are primarily to create a
-                                larger surface area for the page links and alt attributes would unnecessarily complicate
-                                page navigation for users using screen readers.
-                            {% endcomment %}
-                            {% image event.thumbnail fill-385x385 alt="" %}
-                            <div class="eventinfo">
-                                <div class="eventname">{{ event.title }}</div>
-                                <div class="eventdate">{{ event.event_dates }}</div>
-                                <div class="eventnotes">{{ event.notes|richtext }}</div>
-                            </div>
+  <div class="d-flex flex-wrap justify-content-around">
+    {% for event in events %}
+      <div class="index-tile">
+        {% with event=event.specific %}
+          <a class="hover" href="{% pageurl event %}">
+            <div class="index-thumbnail">
+              {% comment %}Added blank alt attribute to image thumbnails since these are primarily to create a larger surface area for the page links and alt attributes would unnecessarily complicate page navigation for users using screen readers.{% endcomment %}
+              {% image event.thumbnail fill-385x385 alt='' %}
+              <div class="eventinfo">
+                <div class="eventname">{{ event.title }}</div>
+                <div class="eventdate">
+                {% if event.event_dates|default:""|length %}
+                    {{ event.event_dates }}
+                {% elif event.start_datetime %}
+                    {% localtime on %}
+                    {{ event.start_datetime|date:"M j" }}
+                    {% if event.end_datetime %}
+                        &nbsp;–&nbsp;
+                        {% if event.end_datetime|date:"M j, Y" != event.start_datetime|date:"M j, Y" %}
+                        {{ event.end_datetime|date:"M j, Y" }}
+                        {% else %}
+                        {# same day - show nothing (end date same as start) unless times are enabled #}
+                        {% if event.display_times_on_index %}
+                            {# show end time only if the editor explicitly enabled times for list #}
+                            {{ event.end_datetime|time:"g:i A" }}
+                        {% endif %}
+                        {% endif %}
+                    {% endif %}
+
+                    {# Optional: if the editor wants times on the thumbnail (off by default) #}
+                    {% if event.display_times_on_index and event.start_datetime %}
+                        {# show start time on a second line (or inline) if desired; adjust styling accordingly #}
+                        <div class="eventdate-time">
+                        {{ event.start_datetime|time:"g:i A" }}
+                        {% if event.end_datetime and event.end_datetime|time %}
+                            – {{ event.end_datetime|time:"g:i A" }}
+                        {% endif %}
                         </div>
-                    </a>
-                {% endwith %}
-            </div>
-        {% empty %}
-            <div id="empty-msg" class="row">
-                <div class="tan-bg">
-                    <h2 class="text-center green">
-                        There are currently no planned events in the near future. Please check back soon!
-                    </h2>
+                    {% endif %}
+                    {% endlocaltime %}
+                {% endif %}
                 </div>
+                <div class="eventnotes">{{ event.notes|richtext }}</div>
+              </div>
             </div>
-        {% endfor %}
-    </div>
+          </a>
+        {% endwith %}
+      </div>
+    {% empty %}
+      <div id="empty-msg" class="row">
+        <div class="tan-bg">
+          <h2 class="text-center green">There are currently no planned events in the near future. Please check back soon!</h2>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 
-    <div class="row mt-5">
-        {% for block in page.body %}
-            {% if block.block_type == "image" %}
-                <div class="text-center">
-                    {% image block.value width-200 class="img-fluid" %}
+  <div class="row mt-5">
+    {% for block in page.body %}
+      {% if block.block_type == 'image' %}
+        <div class="text-center">
+          {% image block.value width-200 class='img-fluid' %}
+        </div>
+      {% elif block.block_type == 'page_link' %}
+        <!-- spage is just short for specific page -->
+        {% with spage=block.value.specific %}
+          <div class="col-sm-4 page-link">
+            <a class="hover" href="{% pageurl spage %}">
+              <div class="index-thumbnail">
+                {% comment %}Added blank alt attribute to image thumbnails since these are primarily to create a larger surface area for the page links and alt attributes would unnecessarily complicate page navigation for users using screen readers.{% endcomment %}
+                {% image spage.thumbnail fill-385x385 alt='' %}
+                <div class="eventinfo">
+                  <div class="eventname">{{ spage.title }}</div>
                 </div>
-            {% elif block.block_type == "page_link" %}
-                <!-- spage is just short for specific page -->
-                {% with spage=block.value.specific %}
-                    <div class="col-sm-4 page-link">
-                        <a class="hover" href="{% pageurl spage %}">
-                            <div class="index-thumbnail">
-                                {% comment %}
-                                Added blank alt attribute to image thumbnails since these are primarily to create a
-                                larger surface area for the page links and alt attributes would unnecessarily complicate
-                                page navigation for users using screen readers.
-                                {% endcomment %}
-                                {% image spage.thumbnail fill-385x385 alt="" %}
-                                <div class="eventinfo">
-                                    <div class="eventname">{{ spage.title }}</div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                {% endwith %}
-            {% else %}
-                {% include_block block %}
-            {% endif %}
-        {% endfor %}
-    </div>
+              </div>
+            </a>
+          </div>
+        {% endwith %}
+      {% else %}
+        {% include_block block %}
+      {% endif %}
+    {% endfor %}
+  </div>
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'events/js/no_children_page_links.js' %}"></script>
+  <script src="{% static 'events/js/no_children_page_links.js' %}"></script>
 {% endblock %}

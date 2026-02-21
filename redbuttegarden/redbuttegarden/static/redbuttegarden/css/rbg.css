@@ -2,7 +2,12 @@ html * {
     font-family: 'Usual', 'Open Sans', Impact, serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-weight: bold;
     margin: 1rem 0;
 }
@@ -38,7 +43,8 @@ figcaption {
     border-right: 1px solid rgba(25, 97, 67, .7);
 }
 
-#sponsor-list, #table-info-card-list {
+#sponsor-list,
+#table-info-card-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -114,7 +120,8 @@ img.full-width {
 }
 
 /* To prevent collision between floated images and list style elements */
-ul, ol {
+ul,
+ol {
     list-style-position: inside;
 }
 
@@ -146,15 +153,23 @@ nav[role=pagination] a {
     width: 385px;
 }
 
-.memfaqwrap > a, .memfaqwrap > a:link, .memfaqwrap > a.visited {
+.memfaqwrap>a,
+.memfaqwrap>a:link,
+.memfaqwrap>a.visited {
     text-decoration: none;
 }
 
 /* Backgrounds */
 .green-bg {
-    color: white; /* Black text is too difficult to read with green background */
+    color: white;
+    /* Black text is too difficult to read with green background */
     padding: 10px;
     background-color: #196143;
+
+    /* links on dark */
+    --link: #F2EDE4;
+    --link-visited: #D6F5E8;
+    --link-hover: #FFFFFF;
 }
 
 .tan-bg {
@@ -173,20 +188,35 @@ nav[role=pagination] a {
 }
 
 .red-bg {
-    color: white; /* Better color contrast makes it easier to read with white text */
+    color: white;
+    /* Better color contrast makes it easier to read with white text */
     padding: 10px;
     background-color: red;
+
+    --link: #000;
+    --link-visited: #111;
+    --link-hover: #000;
 }
 
 .orange-bg {
-    font-weight: bold; /* Again, makes text easier to read this way */
+    font-weight: bold;
+    /* Again, makes text easier to read this way */
     padding: 10px;
     background-color: #FF7744;
+
+    --link: #1b2940;
+    --link-visited: #0f1a2a;
+    --link-hover: #000;
 }
 
 .dark-blue-bg {
     padding: 10px;
     background-color: #1b2940;
+
+    /* links on dark */
+    --link: #F2EDE4;
+    --link-visited: #D6F5E8;
+    --link-hover: #FFFFFF;
 }
 
 /* End backgrounds */
@@ -220,7 +250,8 @@ hr {
     margin: auto;
 }
 
-.hover:hover, .hover:focus {
+.hover:hover,
+.hover:focus {
     opacity: .9;
     outline: #ff7744 auto 10px;
     outline-offset: -2px;
@@ -230,14 +261,28 @@ hr {
     opacity: .9;
 }
 
-a, a:link, a:visited, a:active {
-    color: #65563E; /* hyperlink color for default pages */
-    font-weight: bold;
+a,
+a:link {
+    color: var(--link);
+    font-weight: 700;
     text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+a:visited {
+    color: var(--link-visited);
 }
 
 a:hover {
-    color: #C4B59E; /* color when hyperlinks hovered over on default pages*/
+    color: var(--link-hover);
+    text-decoration-thickness: 2px;
+}
+
+/* Strong keyboard focus */
+a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    text-decoration-thickness: 2px;
 }
 
 /* SGS Calendar links should be white */
@@ -249,13 +294,52 @@ a:hover {
 }
 
 /* Bootstrap-compat shim for legacy 'in' class */
-.fade.in { opacity: 1; transition: opacity 0.15s linear; }
-.popover.fade.in { opacity: 1; }
+.fade.in {
+    opacity: 1;
+    transition: opacity 0.15s linear;
+}
 
+.popover.fade.in {
+    opacity: 1;
+}
 
-/**********************************************************/
-/*************  Begin CSS for membership page *************/
-/**********************************************************/
+.large-button button.hover {
+    display: inline-block;
+    font-size: 3.0rem;
+    /* very large text */
+    padding: 1.5rem 3rem;
+    /* large click area */
+    line-height: 1.1;
+    min-width: 18rem;
+    /* visual weight */
+    height: auto;
+    /* defeat fixed heights */
+    border-radius: 0.75rem;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+/* Ensure anchor wrapping doesn't collapse */
+.large-button a {
+    display: inline-block;
+}
+
+/* Keyboard focus visibility */
+.large-button button.hover:focus-visible {
+    outline: 3px solid rgba(0, 0, 0, 0.25);
+    outline-offset: 3px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 576px) {
+    .large-button button.hover {
+        font-size: 2.4rem;
+        padding: 1rem 1.5rem;
+        min-width: auto;
+        width: 100%;
+    }
+}
+
 
 .image-card-list .card,
 .card-list .card {
@@ -268,6 +352,22 @@ a:hover {
     display: flex;
     justify-content: center;
     padding: 0;
+    margin: 0;
+    overflow: hidden;
+    height: 100%;
+    align-items: stretch;
+}
+
+.mempic img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin: 0;
+    border: 0;
+}
+
+.card .row.g-0 {
     overflow: hidden;
 }
 
@@ -276,14 +376,16 @@ a:hover {
     font-weight: bold;
 }
 
-.meminfo h5, .sponinfo h5 {
+.meminfo h5,
+.sponinfo h5 {
     color: #A26BA2;
     font-weight: bold;
     padding-bottom: 0px;
 
 }
 
-.membutton, a.apply-button,
+.membutton,
+a.apply-button,
 #accordion .apply-button .btn-inner {
     background-color: #196143;
     color: #FFF;
@@ -333,7 +435,9 @@ a:hover {
     opacity: .9;
 }
 
-#membenefits, #mempolicies, #memrecurring {
+#membenefits,
+#mempolicies,
+#memrecurring {
     max-width: 640px;
     background-color: #F2EDE4;
     color: #000;
@@ -346,7 +450,8 @@ a:hover {
     margin-top: -5px;
 }
 
-.memfaq, .volbutton {
+.memfaq,
+.volbutton {
     max-width: 1190px;
     text-align: center;
     color: #FFF;
@@ -382,7 +487,11 @@ a:hover {
     margin: auto !important;
 }
 
-#rbgdefaultbody .foot-btn-wrap a, #rbgdefaultbody .foot-btn-wrap a:hover, #rbgdefaultbody .foot-btn-wrap a:active, #rbgdefaultbody .foot-btn-wrap a:visited, #rbgdefaultbody .foot-btn-wrap a:link {
+#rbgdefaultbody .foot-btn-wrap a,
+#rbgdefaultbody .foot-btn-wrap a:hover,
+#rbgdefaultbody .foot-btn-wrap a:active,
+#rbgdefaultbody .foot-btn-wrap a:visited,
+#rbgdefaultbody .foot-btn-wrap a:link {
     text-decoration: none;
     color: #FFF;
     font-weight: normal;
@@ -412,7 +521,8 @@ a:hover {
 /* Being CSS for RBG Banner Images */
 
 .concertbanner {
-    max-height: 175px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner img max-height value */
+    max-height: 175px;
+    /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner img max-height value */
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -424,12 +534,14 @@ a:hover {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    max-height: 175px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner max-height value */
+    max-height: 175px;
+    /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner max-height value */
     max-width: 100%;
 }
 
 .concertdonorbanner {
-    max-height: 150px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner img max-height value */
+    max-height: 150px;
+    /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner img max-height value */
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -441,7 +553,8 @@ a:hover {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    max-height: 150px; /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner max-height value */
+    max-height: 150px;
+    /* IMPORTANT!!! Determines max height of banner on large screens - must match .concertbanner max-height value */
     max-width: 100%;
 }
 
@@ -471,7 +584,10 @@ a:hover {
     background-color: #fdc778;
 }
 
-.orange-panel h2, .orange-panel h3, .orange-panel h4, .orange-panel .accordion-header {
+.orange-panel h2,
+.orange-panel h3,
+.orange-panel h4,
+.orange-panel .accordion-header {
     color: white;
 }
 
@@ -483,7 +599,10 @@ a:hover {
     background-color: #91cced;
 }
 
-.blue-panel h2, .blue-panel h3, .blue-panel h4, .blue-panel .accordion-header {
+.blue-panel h2,
+.blue-panel h3,
+.blue-panel h4,
+.blue-panel .accordion-header {
     color: white;
 }
 
@@ -495,17 +614,29 @@ a:hover {
     background-color: #cce282;
 }
 
-.green-panel h2, .green-panel h3, .green-panel h4, .green-panel .accordion-header {
+.green-panel h2,
+.green-panel h3,
+.green-panel h4,
+.green-panel .accordion-header {
     color: white;
 }
 
-#rbgdefaultbody .accordion a, #rbgdefaultbody .accordion a:link, #rbgdefaultbody .accordion a:visited, #rbgdefaultbody accordion a:active { /* sets link color for panels to black with no underline  */
+#rbgdefaultbody .accordion a,
+#rbgdefaultbody .accordion a:link,
+#rbgdefaultbody .accordion a:visited,
+#rbgdefaultbody accordion a:active {
+    /* sets link color for panels to black with no underline  */
     color: #000;
     text-decoration: none;
 }
 
-#rbgdefaultbody .accordion-body a, #rbgdefaultbody .accordion-body a:link, #rbgdefaultbody .accordion-body a:visited, #rbgdefaultbody .accordion-body a:active { /* sets link colors inside panels back to site defaults */
-    color: #A7916E; /* hyperlink color for default pages */
+#rbgdefaultbody .accordion-body a,
+#rbgdefaultbody .accordion-body a:link,
+#rbgdefaultbody .accordion-body a:visited,
+#rbgdefaultbody .accordion-body a:active {
+    /* sets link colors inside panels back to site defaults */
+    color: #A7916E;
+    /* hyperlink color for default pages */
     text-decoration: underline;
 }
 
@@ -513,18 +644,21 @@ a:hover {
 #rbgdefaultbody .accordion-body .apply-button a:link,
 #rbgdefaultbody .accordion-body .apply-button a:visited,
 #rbgdefaultbody .accordion-body .apply-button a:active {
-    color: #A7916E; /* hyperlink color for default pages */
+    color: #A7916E;
+    /* hyperlink color for default pages */
     text-decoration: none;
 }
 
 #rbgdefaultbody .accordion-body a:hover {
-    color: #C4B59E; /* sets color when hyperlinks hovered over on pages within panel back to site defaults */
+    color: #C4B59E;
+    /* sets color when hyperlinks hovered over on pages within panel back to site defaults */
 }
 
 /* End Accordion Panel Colors */
 
 .donor-height {
-    height: 230px; /* This value might need to be changed each season for donor-package.html */
+    height: 230px;
+    /* This value might need to be changed each season for donor-package.html */
 }
 
 /**********************************************************/
@@ -574,10 +708,12 @@ a:hover {
     background-color: #196143
 }
 
-.spon-table:before { /* create a full-height inline block pseudo-element */
+.spon-table:before {
+    /* create a full-height inline block pseudo-element */
     content: ' ';
     display: inline-block;
-    vertical-align: middle; /* vertical alignment of the inline element */
+    vertical-align: middle;
+    /* vertical alignment of the inline element */
     height: 100%;
 }
 
@@ -586,7 +722,8 @@ a:hover {
     margin-bottom: 4px;
 }
 
-#sponcontain td, #sponcontain th {
+#sponcontain td,
+#sponcontain th {
     text-align: center;
 }
 
@@ -637,7 +774,11 @@ a:hover {
     color: var(--rbg-oak-green);
 }
 
-.green-button, .tan-button, .dk-tn-button, .red-button, .orange-button {
+.green-button,
+.tan-button,
+.dk-tn-button,
+.red-button,
+.orange-button {
     color: #FFF;
     font-weight: bold;
     font-size: 16px;
@@ -668,7 +809,8 @@ a:hover {
     background-color: #FF7744;
 }
 
-#rbgdefaultbody .green-button-wrap a, #rbgdefaultbody .green-button-wrap a:link {
+#rbgdefaultbody .green-button-wrap a,
+#rbgdefaultbody .green-button-wrap a:link {
     text-decoration: none;
 }
 
@@ -676,7 +818,8 @@ a:hover {
     font-weight: normal;
 }
 
-.green-button:hover, .tan-button:hover {
+.green-button:hover,
+.tan-button:hover {
     opacity: .9;
 }
 
@@ -694,7 +837,12 @@ body.event-page h1 {
     font-size: 24px;
 }
 
-.event-pic, .ev-tickets, .ev-cal, .ev-hr, .ev-tickets, .ev-cal {
+.event-pic,
+.ev-tickets,
+.ev-cal,
+.ev-hr,
+.ev-tickets,
+.ev-cal {
     margin-left: auto;
     margin-right: auto;
     max-width: 280px;
@@ -708,7 +856,8 @@ body.event-page h1 {
     z-index: 2;
 }
 
-.ev-tickets img, .ev-cal img {
+.ev-tickets img,
+.ev-cal img {
     max-width: 300px;
     width: 100%;
     height: auto;
@@ -721,15 +870,18 @@ body.event-page h1 {
     clear: both;
 }
 
-.ev-tickets, .ev-cal {
+.ev-tickets,
+.ev-cal {
     clear: none;
 }
 
-.ev-tickets, .ev-cal {
+.ev-tickets,
+.ev-cal {
     max-width: 280px;
 }
 
-.ev-tickets:hover, .ev-cal:hover {
+.ev-tickets:hover,
+.ev-cal:hover {
     background-color: #F2EDE4;
 }
 
@@ -738,7 +890,11 @@ body.event-page h1 {
     clear: both;
 }
 
-.inline, .ev-member-sale, .ev-public-sale, .ev-member-cost, .ev-public-cost {
+.inline,
+.ev-member-sale,
+.ev-public-sale,
+.ev-member-cost,
+.ev-public-cost {
     display: inline;
 }
 
@@ -758,7 +914,8 @@ body.event-page h1 {
     max-width: 600px;
 }
 
-.eventwrapsmall, .collectionswrap {
+.eventwrapsmall,
+.collectionswrap {
     position: relative;
 }
 
@@ -783,7 +940,7 @@ body.event-page h1 {
     padding: 15px;
 }
 
-.img-link > .eventinfo {
+.img-link>.eventinfo {
     bottom: 40%;
 }
 
@@ -833,7 +990,8 @@ body.event-page h1 {
 
 /* Begin Grid Page Header Code */
 
-.grid-header, .grid-header-small {
+.grid-header,
+.grid-header-small {
     font-size: 36px;
     text-align: center;
     text-transform: capitalize;
@@ -872,7 +1030,8 @@ body.event-page h1 {
     max-width: 1280px;
     width: 100%;
     background-color: #65563E;
-    cursor: pointer; /* Adding this makes collapse panels with this class work on Safari on iOS devices */
+    cursor: pointer;
+    /* Adding this makes collapse panels with this class work on Safari on iOS devices */
 }
 
 #volunteer-apps {
@@ -912,7 +1071,10 @@ body.event-page h1 {
 
 @media print {
 
-    .concert-print-hide, .navbar-wrapper, #prefooterbg, #rbgfooterbg {
+    .concert-print-hide,
+    .navbar-wrapper,
+    #prefooterbg,
+    #rbgfooterbg {
         display: none;
     }
 
@@ -928,14 +1090,19 @@ body.event-page h1 {
     }
 }
 
-#rbgdefaultbody .con-title a, #rbgdefaultbody .con-title a:link, #rbgdefaultbody .con-title a:visited, #rbgdefaultbody .con-title a:active {
+#rbgdefaultbody .con-title a,
+#rbgdefaultbody .con-title a:link,
+#rbgdefaultbody .con-title a:visited,
+#rbgdefaultbody .con-title a:active {
     /* font-size: 1em !important; */
     font-weight: bold;
     text-decoration: none;
     color: #000;
 }
 
-.con-title a:hover, .con-opener a:hover, .con-sub a:hover {
+.con-title a:hover,
+.con-opener a:hover,
+.con-sub a:hover {
     color: #C4B59E !important;
     text-decoration: none;
 }
@@ -945,14 +1112,20 @@ body.event-page h1 {
     font-style: italic;
 }
 
-#rbgdefaultbody .con-sub a, #rbgdefaultbody .con-sub a:link, #rbgdefaultbody .con-sub a:visited, #rbgdefaultbody .con-sub a:active {
+#rbgdefaultbody .con-sub a,
+#rbgdefaultbody .con-sub a:link,
+#rbgdefaultbody .con-sub a:visited,
+#rbgdefaultbody .con-sub a:active {
     /* font-size: 1em !important; */
     font-weight: normal;
     text-decoration: none;
     color: #000;
 }
 
-#rbgdefaultbody .con-opener a, #rbgdefaultbody .con-opener a:link, #rbgdefaultbody .con-opener a:visited, #rbgdefaultbody .con-opener a:active {
+#rbgdefaultbody .con-opener a,
+#rbgdefaultbody .con-opener a:link,
+#rbgdefaultbody .con-opener a:visited,
+#rbgdefaultbody .con-opener a:active {
     /* font-size: 1em !important; */
     font-weight: normal;
     text-decoration: none;
@@ -977,13 +1150,15 @@ body.event-page h1 {
     font-style: italic;
 }
 
-.con-button, .con-button img {
+.con-button,
+.con-button img {
     background-color: #196143;
 }
 
 /* Event Carousel CSS */
 
-.carousel-inner > .item > img, .carousel-inner > .item > a > img {
+.carousel-inner>.item>img,
+.carousel-inner>.item>a>img {
     width: 70%;
     margin: auto;
 }
@@ -1139,7 +1314,8 @@ body.event-page h1 {
 }
 
 
-.botany-bin-table table, .offsite-pickup-table table {
+.botany-bin-table table,
+.offsite-pickup-table table {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
@@ -1153,7 +1329,8 @@ body.event-page h1 {
     height: 28px;
 }
 
-.botany-bin-table td, .offsite-pickup-table td {
+.botany-bin-table td,
+.offsite-pickup-table td {
     text-align: center;
     font-weight: bold;
     padding: 10px;
@@ -1194,7 +1371,10 @@ body.event-page h1 {
     background-color: #652D91;
 }
 
-.gad-purple, #rbgdefaultbody .gad-purple a, #rbgdefaultbody .gad-purple a:hover, #rbgdefaultbody .gad-purple a:visited {
+.gad-purple,
+#rbgdefaultbody .gad-purple a,
+#rbgdefaultbody .gad-purple a:hover,
+#rbgdefaultbody .gad-purple a:visited {
     color: #652D91;
     /* color: #594A68; */
 }

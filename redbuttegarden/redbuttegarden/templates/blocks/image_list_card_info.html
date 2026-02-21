@@ -1,27 +1,49 @@
-{% load wagtailcore_tags wagtailimages_tags static %}
+{% load wagtailcore_tags wagtailimages_tags %}
 
 <div class="image-card-list row">
-    {% for list_item in value.list_items %}
-        <div class="col-md-6 mb-3">
-            <div class="card h-100">
-                <div class="row h-100 g-0">
-                    {% if list_item.image %}
-                        <div class="col-3 mempic rounded-start">
-                            <img src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
-                        </div>
+    {# coerce auto_threshold to a number using add:0 (default "400" if not set) #}
+    {% with layout=value.layout auto_threshold=value.auto_threshold|default:"400"|add:0 %}
+        {% for list_item in value.list_items %}
+
+            {% if layout == "single_column" %}
+                <div class="col-md-12 mb-3">
+
+            {% elif layout == "two_column" %}
+                <div class="col-md-6 mb-3">
+
+            {% else %}
+                {# AUTO layout: compute text_length (length returns an int) #}
+                {% with text_length=list_item.text|striptags|length %}
+                    {% if list_item.force_full_width or text_length > auto_threshold %}
+                        <div class="col-md-12 mb-3">
+                    {% else %}
+                        <div class="col-md-6 mb-3">
                     {% endif %}
-                    <div class="{% if list_item.image %}col-9{% else %}col-12{% endif %}">
-                        <div class="card-body h-100 d-flex flex-column meminfo">
-                            {% include_block list_item.text %}
-                            {% if list_item.button_text %}
-                                <a class="mt-auto align-self-end" href="{{ list_item.button_url }}">
-                                    <input class="membutton" type="submit" value="{{ list_item.button_text }}">
-                                </a>
-                            {% endif %}
+                {% endwith %}
+            {% endif %}
+
+                <div class="card h-100">
+                    <div class="row h-100 g-0">
+                        {% if list_item.image %}
+                            <div class="col-3 mempic rounded-start">
+                                <img src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
+                            </div>
+                        {% endif %}
+                        <div class="{% if list_item.image %}col-9{% else %}col-12{% endif %}">
+                            <div class="card-body h-100 d-flex flex-column meminfo">
+                                {% include_block list_item.text %}
+                                {% if list_item.button_text %}
+                                    <a class="mt-auto align-self-end" href="{{ list_item.button_url }}">
+                                        <input class="membutton" type="submit" value="{{ list_item.button_text }}">
+                                    </a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    {% endfor %}
+
+            </div> {# closes col-md-* #}
+
+        {% endfor %}
+    {% endwith %}
 </div>

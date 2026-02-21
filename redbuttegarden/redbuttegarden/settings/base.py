@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "events",
     "home",
     "journal",
+    "memberships",
     "monitoring",
     "plants",
     "redbuttegarden.apps.CustomUsersAppConfig",
@@ -66,6 +67,7 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.humanize",
     "django.contrib.sessions",
     "django.contrib.sitemaps",
     "django.contrib.messages",
@@ -177,6 +179,7 @@ WAGTAILEMBEDS_RESPONSIVE_HTML = True
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = (
     4.5 * 1024 * 1024
 )  # i.e. 4.5MB - Needed to avoid hitting AWS API Gateway payload limits
+WAGTAILIMAGES_MAX_IMAGE_PIXELS = 89478485
 WAGTAILSEARCH_BACKENDS = {
     "default": {
         "BACKEND": "wagtail.search.backends.database",
@@ -257,7 +260,7 @@ SPECTACULAR_SETTINGS = {
     "SERVE_AUTHENTICATION": ["rest_framework.authentication.SessionAuthentication"],
 }
 
-MAPBOX_API_TOKEN = "pk.eyJ1IjoiYXVzbGFuZXIiLCJhIjoiY2tlMXZ2Yml0MDNlODJ1c3p6d2IweWRobiJ9.UPSxvlFp9B5NYelSHUwhRw"
+MAPBOX_API_TOKEN = os.environ.get("MAPBOX_API_TOKEN", None)
 
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap5.html"
 
@@ -285,3 +288,8 @@ CONSTANT_CONTACT_API_CLIENT_SECRET = os.environ.get(
 
 # IndexNow
 INDEXNOW_KEY = os.environ.get("INDEXNOW_KEY")
+
+# Temporary basic auth just to hide pages under development
+MEMBERS_BASIC_AUTH_ENABLED = os.environ.get('MEMBERS_BASIC_AUTH_ENABLED', True)
+MEMBERS_BASIC_AUTH_USERNAME = os.environ.get('MEMBERS_BASIC_AUTH_USERNAME')
+MEMBERS_BASIC_AUTH_PASSWORD = os.environ.get('MEMBERS_BASIC_AUTH_PASSWORD')
