@@ -50,6 +50,7 @@ from wagtail.telepath import register
 
 from home.abstract_models import AbstractBase
 from home.custom_fields import ChoiceArrayField
+from memberships.blocks import LinkedCarouselBlock
 
 logger = logging.getLogger(__name__)
 
@@ -106,6 +107,31 @@ class ImageCarousel(blocks.StructBlock):
     images = blocks.ListBlock(
         ImageBlock(),
     )
+    max_height = blocks.IntegerBlock(
+        required=False,
+        default=500,
+        min_value=50,
+        help_text="Max height of the carousel in pixels (default 500).",
+    )
+
+    def get_context(self, value, parent_context=None):
+        context = super().get_context(value, parent_context=parent_context)
+        h = value.get("max_height") or 500
+
+        images_with_renditions = []
+        for img in value.get("images") or []:
+            # height-<px> maintains aspect ratio, constraining by height
+            rendition = img.get_rendition(f"height-{h}")
+            images_with_renditions.append(
+                {
+                    "image": img,
+                    "rendition": rendition,
+                }
+            )
+
+        context["carousel_height"] = h
+        context["carousel_images"] = images_with_renditions
+        return context
 
     class Meta:
         template = "blocks/image_carousel.html"
@@ -568,6 +594,7 @@ class GeneralPage(AbstractBase):
             ("multi_column_paragraph", MultiColumnAlignedParagraphBlock()),
             ("image", ImageBlock(help_text=_("Centered image"))),
             ("image_carousel", ImageCarousel()),
+            ("linked_carousel", LinkedCarouselBlock()),
             ("html", blocks.RawHTMLBlock()),
             ("dropdown_image_list", ImageListDropdownInfo()),
             ("dropdown_button_list", ButtonListDropdownInfo()),

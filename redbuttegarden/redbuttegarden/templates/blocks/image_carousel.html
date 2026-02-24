@@ -1,25 +1,23 @@
 {% load wagtailimages_tags %}
 
 <div class="container">
-    <br>
-    <div id="rbgCarousel" class="carousel slide">
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner">
-            {% for image in value.images %}
-                <div class="carousel-item text-center {% if forloop.first %}active{% endif %}">
-                    {% image image original class="img-fluid" %}
-                </div>
-            {% endfor %}
+  <br />
+  <div id="rbgCarousel-{{ id }}" class="rbg-carousel carousel slide" style="height: {{ carousel_height }}px;">
+    <div class="d-flex align-items-center h-100 carousel-inner">
+      {% for item in carousel_images %}
+        <div class="carousel-item text-center {% if forloop.first %}active{% endif %}">
+          <img src="{{ item.rendition.url }}" width="{{ item.rendition.width }}" height="{{ item.rendition.height }}" alt="{{ item.image.title|default:'' }}" class="img-fluid" loading="lazy" />
         </div>
-
-        <!-- Left and right controls -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#rbgCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#rbgCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
+      {% endfor %}
     </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#rbgCarousel-{{ id }}" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#rbgCarousel-{{ id }}" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
 </div>

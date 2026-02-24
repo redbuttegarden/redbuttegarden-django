@@ -7,7 +7,7 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField, StreamField
 from wagtail.search import index
 
-from .blocks import Columns2Block, ContentStreamBlock
+from .combined_blocks import Columns2Block, ContentStreamBlock
 from home.abstract_models import AbstractBase
 from .widgets import MembershipWidgetBlock
 

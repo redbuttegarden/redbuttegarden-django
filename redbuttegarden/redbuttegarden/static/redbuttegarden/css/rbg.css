@@ -1155,16 +1155,10 @@ body.event-page h1 {
     background-color: #196143;
 }
 
-/* Event Carousel CSS */
+/* Image Carousel CSS */
 
-.carousel-inner>.item>img,
-.carousel-inner>.item>a>img {
-    width: 70%;
-    margin: auto;
-}
-
-#rbgCarousel {
-    background-color: #196143;
+.rbg-carousel.carousel {
+    background-color: gray;
 }
 
 /* Vertical Concert Sponsors Banner  - HIDDEN FOR NOW, DEVELOPMENT WANTS HORIZONTAL*/
