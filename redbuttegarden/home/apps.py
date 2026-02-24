@@ -15,6 +15,7 @@ class HomeConfig(AppConfig):
         from .models import GeneralPage, TwoColumnGeneralPage
         # Implicitly register signals by importing them
         from . import signals
+        from . import nav_settings
 
         page_published.connect(general_published_handler, sender=GeneralPage)
         page_published.connect(general_published_handler, sender=TwoColumnGeneralPage)

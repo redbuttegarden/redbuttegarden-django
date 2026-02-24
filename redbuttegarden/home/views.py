@@ -5,11 +5,13 @@ from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import render
 from django.utils.cache import patch_vary_headers
 from django.views.decorators.http import require_GET
+from wagtail.models import Site
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from concerts.models import ConcertDonorClubMember
 from events.models import EventIndexPage
 from home.models import CurrentWeather, RBGHours, HomePage
+from .nav_settings import NavigationSettings
 
 logger = logging.getLogger(__name__)
 
@@ -29,24 +31,41 @@ class RBGHoursViewSet(SnippetViewSet):
 
 @require_GET
 def nav_fragment(request):
-    """Return personalized navbar fragment. Context MUST be complete before render()."""
     context = {}
-    main_event_slug = "events"
 
+    # Existing: main event page
+    main_event_slug = "events"
     try:
         context["main_event_page"] = EventIndexPage.objects.get(slug=main_event_slug)
     except EventIndexPage.DoesNotExist:
-        logger.error(
-            f'Event page with slug "{main_event_slug}" not found. Is it missing or was the slug changed?'
-        )
+        logger.error(f'Event page with slug "{main_event_slug}" not found.')
         context["main_event_page"] = None
 
+    # Existing: personalization
     if request.user.is_authenticated:
         context["is_concert_donor_club_member"] = ConcertDonorClubMember.objects.filter(
             user=request.user, active=True
         ).exists()
     else:
         context["is_concert_donor_club_member"] = False
+
+    # New: nav settings
+    site = Site.find_for_request(request)
+    nav_settings = NavigationSettings.for_site(site) if site else None
+
+    nav = (
+        nav_settings.resolved_nav()
+        if nav_settings
+        else {
+            "groups": [],
+            "top_links": [],
+            "show_search": True,
+            "search_placeholder": "Search",
+        }
+    )
+
+    # IMPORTANT: unpack into template variables your navbar_fragment.html expects
+    context.update(nav)
 
     response = render(
         request, "includes/navbar_fragment.html", context=context, status=200

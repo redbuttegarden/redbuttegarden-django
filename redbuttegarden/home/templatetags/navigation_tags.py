@@ -2,6 +2,7 @@ from django import template
 from wagtail.models import Page, Site
 
 from ..models import FooterText
+from ..nav_settings import NavigationSettings
 
 register = template.Library()
 # https://docs.djangoproject.com/en/3.2/howto/custom-template-tags/
@@ -109,3 +110,26 @@ def get_footer_text(context):
     return {
         "footer_text": footer_text,
     }
+
+
+@register.inclusion_tag("home/navbar_fragment.html", takes_context=True)
+def render_navbar(context):
+    request = context["request"]
+    settings = NavigationSettings.for_request(request)
+    nav = (
+        settings.resolved_nav()
+        if settings
+        else {
+            "groups": [],
+            "top_links": [],
+            "show_search": True,
+            "search_placeholder": "Search",
+        }
+    )
+
+    # Include whatever else your navbar template needs from context:
+    nav["request"] = request
+    nav["is_concert_donor_club_member"] = context.get("is_concert_donor_club_member")
+    nav["main_event_page"] = context.get("main_event_page")
+
+    return nav
