@@ -58,7 +58,7 @@ def _nav_fragment_url_for_site(site: Site) -> str:
     Build an absolute URL to the nav fragment endpoint for a given Site.
     If you only need the path, return reverse(...) instead.
     """
-    path = reverse("nav-fragment")  # <-- ensure your nav_fragment view has this name
+    path = reverse("home:nav-fragment")
     root_url = site.root_url or ""  # e.g. https://example.com
     return f"{root_url}{path}" if root_url else path
 
