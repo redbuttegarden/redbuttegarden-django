@@ -32,10 +32,6 @@ class RecommendationResult:
     upsell_2: Optional[Level]
 
 
-def _total_adm(cardholders: int, guests: int) -> int:
-    return cardholders + guests
-
-
 def _next_step(tickets: int) -> Optional[int]:
     for v in TICKET_STEPS:
         if v > tickets:
@@ -61,7 +57,13 @@ def _build_index(levels: Sequence[Level]) -> dict[tuple[int, int, int], Level]:
     for l in levels:
         if not l.active:
             continue
-        idx[(l.cardholders_included, l.admissions_allowed, l.member_sale_ticket_allowance)] = l
+        idx[
+            (
+                l.cardholders_included,
+                l.admissions_allowed,
+                l.member_sale_ticket_allowance,
+            )
+        ] = l
     return idx
 
 
@@ -69,67 +71,71 @@ def _sorted_by_price(levels: Iterable[Level]) -> List[Level]:
     return sorted(levels, key=lambda l: (l.price, l.pk))
 
 
-def _nth_cheapest_after_highlighted(
+def _closest_by_price_sorted(
+    *,
+    all_active_sorted: Sequence[Level],
+    highlighted: Level,
+    exclude: Set[int],
+) -> List[Level]:
+    """
+    Candidates ordered by absolute distance from highlighted.price, then by price, then pk.
+    Deterministic and stable. Includes cheaper, equal, and more expensive.
+    """
+    hp = highlighted.price
+    cands = [l for l in all_active_sorted if l.pk not in exclude]
+    cands.sort(key=lambda l: (abs(l.price - hp), l.price, l.pk))
+    return cands
+
+
+def _pick_nth_prefer_band_else_closest(
     *,
     all_active_sorted: Sequence[Level],
     highlighted: Level,
     exclude: Set[int],
     n: int,
+    prefer: str,
 ) -> Optional[Level]:
     """
-    Return the nth cheapest membership AFTER highlighted in global price ordering,
-    skipping excluded items. n=1 => next cheapest, n=2 => next-next cheapest.
-    If not enough after highlighted, fall back to nth overall non-excluded if possible else cheapest.
+    Always tries to return something (unless there are no non-excluded levels).
+
+    prefer:
+      - "cheaper": prefer strictly cheaper-than-highlighted with same number of cardholders, else fill from closest-by-price overall
+      - "expensive": prefer strictly more-expensive-than-highlighted with same number of cardholders, else fill from closest-by-price overall
+
+    n=1 returns first pick, n=2 returns second pick, etc. This function does NOT mutate exclude.
     """
     if n <= 0:
         raise ValueError("n must be >= 1")
 
-    non_excluded = [l for l in all_active_sorted if l.pk not in exclude]
-    if not non_excluded:
+    remaining = [l for l in all_active_sorted if l.pk not in exclude if l.cardholders_included == highlighted.cardholders_included]
+    if not remaining:
         return None
 
-    try:
-        idx_h = next(i for i, l in enumerate(all_active_sorted) if l.pk == highlighted.pk)
-    except StopIteration:
-        return non_excluded[n - 1] if len(non_excluded) >= n else non_excluded[0]
+    if prefer == "cheaper":
+        primary = [l for l in remaining if l.price < highlighted.price]
+    elif prefer == "expensive":
+        primary = [l for l in remaining if l.price > highlighted.price]
+    else:
+        raise ValueError("prefer must be 'cheaper' or 'expensive'")
 
-    found = 0
-    for j in range(idx_h + 1, len(all_active_sorted)):
-        cand = all_active_sorted[j]
-        if cand.pk in exclude:
-            continue
-        found += 1
-        if found == n:
-            return cand
+    primary.sort(key=lambda l: (l.price, l.pk))
 
-    return non_excluded[n - 1] if len(non_excluded) >= n else non_excluded[0]
+    # If we have enough in the preferred band, just return that nth.
+    if len(primary) >= n:
+        return primary[n - 1]
 
+    # Otherwise, build a combined list:
+    #   - all preferred-band candidates first (already sorted)
+    #   - then fill the rest with closest-by-price candidates not already included
+    picked_pks = {l.pk for l in primary}
+    closest = _closest_by_price_sorted(
+        all_active_sorted=all_active_sorted, highlighted=highlighted, exclude=exclude
+    )
+    fill = [l for l in closest if l.pk not in picked_pks]
 
-def _nth_most_expensive_after_highlighted(
-    *,
-    all_active_sorted: Sequence[Level],
-    highlighted: Level,
-    exclude: Set[int],
-    n: int,
-) -> Optional[Level]:
-    """
-    Reverse of _nth_cheapest_after_highlighted:
-    Return the nth most expensive membership AFTER highlighted, meaning:
-      - sort ascending by price
-      - walk backwards from highlighted to find more expensive options? (actually "more expensive" is AFTER in price order)
-    Since list is ascending, "more expensive after highlighted" is *forward*.
-    For symmetry with downsells, we interpret:
-      Upsell 1 fallback = next MORE EXPENSIVE after highlighted (n=1),
-      Upsell 2 fallback = next-next MORE EXPENSIVE after highlighted (n=2).
-
-    This is actually identical traversal direction as "cheapest after highlighted" because both scan forward.
-    The difference is only conceptual; we keep a separate function for clarity/logging.
-    """
-    return _nth_cheapest_after_highlighted(
-        all_active_sorted=all_active_sorted,
-        highlighted=highlighted,
-        exclude=exclude,
-        n=n,
+    combined = primary + fill
+    return (
+        combined[n - 1] if len(combined) >= n else (combined[0] if combined else None)
     )
 
 
@@ -141,6 +147,9 @@ def recommend_levels(
     tickets: int,
 ) -> RecommendationResult:
     active = [l for l in levels if l.active]
+    if not active:
+        return RecommendationResult(None, None, None, None, None, None)
+
     idx = _build_index(active)
     all_active_sorted = _sorted_by_price(active)
 
@@ -152,22 +161,27 @@ def recommend_levels(
     else:
         # Best: same (C,G), ignore tickets, pick smallest ticket allowance >= requested else smallest available
         available = [
-            l for l in active
+            l
+            for l in active
             if l.cardholders_included == cardholders and l.admissions_allowed == guests
         ]
         if not available:
             return RecommendationResult(None, None, None, None, None, None)
 
         available.sort(key=lambda l: (l.member_sale_ticket_allowance, l.price, l.pk))
-        above_or_equal = [l for l in available if l.member_sale_ticket_allowance >= tickets]
+        above_or_equal = [
+            l for l in available if l.member_sale_ticket_allowance >= tickets
+        ]
         highlighted = above_or_equal[0] if above_or_equal else available[0]
         match_type = "Best"
 
     exclude: Set[int] = {highlighted.pk}
 
-    # -------- Downsell 1 --------
-    prev_req = _prev_step(tickets)
+    # -----------------------------
+    # Downsell 1
+    # -----------------------------
     d1: Optional[Level] = None
+    prev_req = _prev_step(tickets)
 
     # 1) (C, G, prev(T))
     if prev_req is not None:
@@ -175,13 +189,9 @@ def recommend_levels(
         if cand and cand.pk not in exclude:
             d1 = cand
             logger.debug(
-                "Downsell 1 selected via primary (C,G,prevT) for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, cand.pk, cand.name, cand.price
-            )
-        else:
-            logger.debug(
-                "Downsell 1 primary (C,G,prevT) not found for input (C=%s,G=%s,T=%s)",
-                cardholders, guests, tickets
+                "Downsell 1 primary (C,G,prevT) hit -> pk=%s price=%s",
+                cand.pk,
+                cand.price,
             )
 
     # 2) (C, G-1, T)
@@ -190,32 +200,34 @@ def recommend_levels(
         if cand and cand.pk not in exclude:
             d1 = cand
             logger.debug(
-                "Downsell 1 selected via fallback #1 (C,G-1,T) for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, cand.pk, cand.name, cand.price
-            )
-        else:
-            logger.debug(
-                "Downsell 1 fallback #1 (C,G-1,T) not found for input (C=%s,G=%s,T=%s)",
-                cardholders, guests, tickets
+                "Downsell 1 fallback (C,G-1,T) hit -> pk=%s price=%s",
+                cand.pk,
+                cand.price,
             )
 
-    # 3) next cheapest after highlighted
+    # 3) price fallback: prefer cheaper, else closest-by-price
     if d1 is None:
-        d1 = _nth_cheapest_after_highlighted(
+        d1 = _pick_nth_prefer_band_else_closest(
             all_active_sorted=all_active_sorted,
             highlighted=highlighted,
             exclude=exclude,
             n=1,
+            prefer="cheaper",
         )
         if d1:
             logger.debug(
-                "Downsell 1 fell back to next-cheapest-after-highlighted for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, d1.pk, d1.name, d1.price
+                "Downsell 1 price fallback prefer-cheaper-else-closest -> pk=%s price=%s (highlighted=%s)",
+                d1.pk,
+                d1.price,
+                highlighted.price,
             )
 
-    exclude.add(d1.pk) if d1 else None
+    if d1:
+        exclude.add(d1.pk)
 
-    # -------- Downsell 2 --------
+    # -----------------------------
+    # Downsell 2
+    # -----------------------------
     d2: Optional[Level] = None
 
     # 1) (C-1, G+1, T)
@@ -224,13 +236,9 @@ def recommend_levels(
         if cand and cand.pk not in exclude:
             d2 = cand
             logger.debug(
-                "Downsell 2 selected via fallback #1 (C-1,G+1,T) for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, cand.pk, cand.name, cand.price
-            )
-        else:
-            logger.debug(
-                "Downsell 2 fallback #1 (C-1,G+1,T) not found for input (C=%s,G=%s,T=%s)",
-                cardholders, guests, tickets
+                "Downsell 2 fallback (C-1,G+1,T) hit -> pk=%s price=%s",
+                cand.pk,
+                cand.price,
             )
 
     # 2) (C, G-1, T)
@@ -239,13 +247,9 @@ def recommend_levels(
         if cand and cand.pk not in exclude:
             d2 = cand
             logger.debug(
-                "Downsell 2 selected via fallback #2 (C,G-1,T) for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, cand.pk, cand.name, cand.price
-            )
-        else:
-            logger.debug(
-                "Downsell 2 fallback #2 (C,G-1,T) not found for input (C=%s,G=%s,T=%s)",
-                cardholders, guests, tickets
+                "Downsell 2 fallback (C,G-1,T) hit -> pk=%s price=%s",
+                cand.pk,
+                cand.price,
             )
 
     # 3) (C, G-2, T)
@@ -254,34 +258,36 @@ def recommend_levels(
         if cand and cand.pk not in exclude:
             d2 = cand
             logger.debug(
-                "Downsell 2 selected via fallback #3 (C,G-2,T) for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, cand.pk, cand.name, cand.price
-            )
-        else:
-            logger.debug(
-                "Downsell 2 fallback #3 (C,G-2,T) not found for input (C=%s,G=%s,T=%s)",
-                cardholders, guests, tickets
+                "Downsell 2 fallback (C,G-2,T) hit -> pk=%s price=%s",
+                cand.pk,
+                cand.price,
             )
 
-    # 4) next-next cheapest after highlighted
+    # 4) price fallback: prefer cheaper, else closest-by-price (2nd pick)
     if d2 is None:
-        d2 = _nth_cheapest_after_highlighted(
+        d2 = _pick_nth_prefer_band_else_closest(
             all_active_sorted=all_active_sorted,
             highlighted=highlighted,
             exclude=exclude,
             n=2,
+            prefer="cheaper",
         )
         if d2:
             logger.debug(
-                "Downsell 2 fell back to next-next-cheapest-after-highlighted for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, d2.pk, d2.name, d2.price
+                "Downsell 2 price fallback prefer-cheaper-else-closest (#2) -> pk=%s price=%s (highlighted=%s)",
+                d2.pk,
+                d2.price,
+                highlighted.price,
             )
 
-    exclude.add(d2.pk) if d2 else None
+    if d2:
+        exclude.add(d2.pk)
 
-    # -------- Upsell 1 (reverse of Downsell 1) --------
-    next_req = _next_step(tickets)
+    # -----------------------------
+    # Upsell 1
+    # -----------------------------
     u1: Optional[Level] = None
+    next_req = _next_step(tickets)
 
     # 1) (C, G, next(T))
     if next_req is not None:
@@ -289,13 +295,9 @@ def recommend_levels(
         if cand and cand.pk not in exclude:
             u1 = cand
             logger.debug(
-                "Upsell 1 selected via primary (C,G,nextT) for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, cand.pk, cand.name, cand.price
-            )
-        else:
-            logger.debug(
-                "Upsell 1 primary (C,G,nextT) not found for input (C=%s,G=%s,T=%s)",
-                cardholders, guests, tickets
+                "Upsell 1 primary (C,G,nextT) hit -> pk=%s price=%s",
+                cand.pk,
+                cand.price,
             )
 
     # 2) (C, G+1, T)
@@ -304,32 +306,32 @@ def recommend_levels(
         if cand and cand.pk not in exclude:
             u1 = cand
             logger.debug(
-                "Upsell 1 selected via fallback #1 (C,G+1,T) for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, cand.pk, cand.name, cand.price
-            )
-        else:
-            logger.debug(
-                "Upsell 1 fallback #1 (C,G+1,T) not found for input (C=%s,G=%s,T=%s)",
-                cardholders, guests, tickets
+                "Upsell 1 fallback (C,G+1,T) hit -> pk=%s price=%s", cand.pk, cand.price
             )
 
-    # 3) next most-expensive-after-highlighted (in price order this is the next item after highlighted)
+    # 3) price fallback: prefer more expensive, else closest-by-price
     if u1 is None:
-        u1 = _nth_most_expensive_after_highlighted(
+        u1 = _pick_nth_prefer_band_else_closest(
             all_active_sorted=all_active_sorted,
             highlighted=highlighted,
             exclude=exclude,
             n=1,
+            prefer="expensive",
         )
         if u1:
             logger.debug(
-                "Upsell 1 fell back to next-more-expensive-after-highlighted for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, u1.pk, u1.name, u1.price
+                "Upsell 1 price fallback prefer-expensive-else-closest -> pk=%s price=%s (highlighted=%s)",
+                u1.pk,
+                u1.price,
+                highlighted.price,
             )
 
-    exclude.add(u1.pk) if u1 else None
+    if u1:
+        exclude.add(u1.pk)
 
-    # -------- Upsell 2 (reverse of Downsell 2) --------
+    # -----------------------------
+    # Upsell 2
+    # -----------------------------
     u2: Optional[Level] = None
 
     # 1) (C+1, G-1, T)  [preserve total admissions]
@@ -338,13 +340,9 @@ def recommend_levels(
         if cand and cand.pk not in exclude:
             u2 = cand
             logger.debug(
-                "Upsell 2 selected via fallback #1 (C+1,G-1,T) for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, cand.pk, cand.name, cand.price
-            )
-        else:
-            logger.debug(
-                "Upsell 2 fallback #1 (C+1,G-1,T) not found for input (C=%s,G=%s,T=%s)",
-                cardholders, guests, tickets
+                "Upsell 2 fallback (C+1,G-1,T) hit -> pk=%s price=%s",
+                cand.pk,
+                cand.price,
             )
 
     # 2) (C, G+1, T)
@@ -353,13 +351,7 @@ def recommend_levels(
         if cand and cand.pk not in exclude:
             u2 = cand
             logger.debug(
-                "Upsell 2 selected via fallback #2 (C,G+1,T) for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, cand.pk, cand.name, cand.price
-            )
-        else:
-            logger.debug(
-                "Upsell 2 fallback #2 (C,G+1,T) not found for input (C=%s,G=%s,T=%s)",
-                cardholders, guests, tickets
+                "Upsell 2 fallback (C,G+1,T) hit -> pk=%s price=%s", cand.pk, cand.price
             )
 
     # 3) (C, G+2, T)
@@ -368,30 +360,28 @@ def recommend_levels(
         if cand and cand.pk not in exclude:
             u2 = cand
             logger.debug(
-                "Upsell 2 selected via fallback #3 (C,G+2,T) for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, cand.pk, cand.name, cand.price
-            )
-        else:
-            logger.debug(
-                "Upsell 2 fallback #3 (C,G+2,T) not found for input (C=%s,G=%s,T=%s)",
-                cardholders, guests, tickets
+                "Upsell 2 fallback (C,G+2,T) hit -> pk=%s price=%s", cand.pk, cand.price
             )
 
-    # 4) next-next more-expensive-after-highlighted
+    # 4) price fallback: prefer more expensive, else closest-by-price (2nd pick)
     if u2 is None:
-        u2 = _nth_most_expensive_after_highlighted(
+        u2 = _pick_nth_prefer_band_else_closest(
             all_active_sorted=all_active_sorted,
             highlighted=highlighted,
             exclude=exclude,
             n=2,
+            prefer="expensive",
         )
         if u2:
             logger.debug(
-                "Upsell 2 fell back to next-next-more-expensive-after-highlighted for input (C=%s,G=%s,T=%s): picked pk=%s name=%r price=%s",
-                cardholders, guests, tickets, u2.pk, u2.name, u2.price
+                "Upsell 2 price fallback prefer-expensive-else-closest (#2) -> pk=%s price=%s (highlighted=%s)",
+                u2.pk,
+                u2.price,
+                highlighted.price,
             )
 
-    exclude.add(u2.pk) if u2 else None
+    if u2:
+        exclude.add(u2.pk)
 
     return RecommendationResult(
         match_type=match_type,
