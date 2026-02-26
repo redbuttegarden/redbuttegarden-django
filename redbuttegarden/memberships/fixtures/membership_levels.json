@@ -938,5 +938,20 @@
             "charitable_gift_amount": "345.00",
             "active": true
         }
+    },
+    {
+        "model": "memberships.membershiplevel",
+        "pk": 63,
+        "fields": {
+            "labels": 1,
+            "name": "Garden 3 & 3",
+            "description": "All Cardholders must be named. \nGarden Membership purchase does not guarantee Red Butte Garden Outdoor Concert Series ticket availability or access to other ticketed events.",
+            "cardholders_included": 3,
+            "admissions_allowed": 3,
+            "member_sale_ticket_allowance": 2,
+            "price": "220.00",
+            "charitable_gift_amount": "95.00",
+            "active": true
+        }
     }
 ]
