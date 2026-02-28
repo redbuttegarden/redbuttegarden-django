@@ -89,7 +89,6 @@
 
 @media (min-width: 590px) {
     #map {
-        float: right;
         width: 75%;
         height: 800px;
     }
@@ -113,4 +112,13 @@
     .map-overlay {
         height: 500px;
     }
+}
+
+#legend .legend-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: text-bottom;
+  /* keeps aspect ratio while fitting the box */
+  object-fit: contain;
 }

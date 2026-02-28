@@ -29,6 +29,7 @@ urlpatterns = [
     path(
         "api/species/<int:pk>/set-image/", views.set_image, name="api-set-species-image"
     ),
+    path("api/collections-geojson/", views.collections_geojson, name="api-collections-geojson"),
     path(
         "collection/<int:collection_id>/",
         views.collection_detail,
@@ -57,5 +58,6 @@ urlpatterns = [
     ),
     path("rss/", GardenBloomFeed(), name="bloom-rss"),
     path("ical/", GardenBloomICalFeed(), name="bloom-ical"),
+    path("service-worker.js", views.service_worker, name="service-worker"),
     path("", include(router.urls)),
 ]

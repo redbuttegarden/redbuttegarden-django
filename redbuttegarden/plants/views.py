@@ -1,19 +1,21 @@
 import logging
+import os
 import re
 import requests
 
+from decimal import Decimal, InvalidOperation
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.core.paginator import PageNotAnInteger, EmptyPage
 from django.db import IntegrityError
-from django.http import JsonResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.middleware.csrf import get_token
 from django.urls import reverse
 from django.utils import timezone
-from geojson import dumps
+from django.views.decorators.http import require_GET
+from django.views.decorators.cache import cache_control
 from requests import HTTPError
 from rest_framework import generics, viewsets, status
 from urllib.parse import urlencode
@@ -50,6 +52,16 @@ from .serializers import (
 from .utils import filter_by_parameter, get_feature_collection, style_message
 
 logger = logging.getLogger(__name__)
+
+
+MAX_FEATURES = 5000
+
+@require_GET
+@cache_control(max_age=0, no_cache=True, must_revalidate=True)
+def service_worker(request):
+    sw_path = os.path.join(settings.BASE_DIR, "static", "pwa", "service-worker.js")
+    with open(sw_path, "r", encoding="utf-8") as f:
+        return HttpResponse(f.read(), content_type="application/javascript")
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
@@ -228,25 +240,54 @@ def csrf_view(request):
     return render(request, "plants/token.html")
 
 
-def plant_map_view(request):
-    if (
-        request.headers.get("x-requested-with") == "XMLHttpRequest"
-        and request.method == "GET"
-    ):
+def _parse_bbox(bbox: str):
+    parts = bbox.split(",")
+    if len(parts) != 4:
+        raise ValueError("bbox must have 4 comma-separated values")
+    west, south, east, north = (Decimal(p.strip()) for p in parts)
+    return west, south, east, north
+
+@require_GET
+def collections_geojson(request):
+    qs = Collection.objects.exclude(location=None).select_related(
+        "location", "species", "species__genus", "species__genus__family", "garden"
+    )
+
+    bbox = request.GET.get("bbox")
+    if bbox:
         try:
-            collections = filter_by_parameter(
-                request, Collection.objects.exclude(location=None)
+            west, south, east, north = _parse_bbox(bbox)
+        except (ValueError, InvalidOperation):
+            return JsonResponse({"message": "Invalid bbox."}, status=400)
+
+        # Handle antimeridian wrap (rare for you, but correct)
+        if west <= east:
+            qs = qs.filter(
+                location__longitude__gte=west,
+                location__longitude__lte=east,
+                location__latitude__gte=south,
+                location__latitude__lte=north,
             )
-        except ValidationError:
-            return JsonResponse(
-                data={"message": "Encountered error while parsing parameters."},
-                status=400,
+        else:
+            # bbox crosses the dateline; split into two longitude ranges
+            qs = qs.filter(
+                location__latitude__gte=south,
+                location__latitude__lte=north,
+            ).filter(
+                (Q(location__longitude__gte=west) | Q(location__longitude__lte=east))
             )
 
-        feature_collection = get_feature_collection(collections)
-        collection_geojson = dumps(feature_collection)
-        return JsonResponse(collection_geojson, safe=False)
+    # Apply your existing filters
+    qs = filter_by_parameter(request, qs)
 
+    # Hard cap to prevent accidental “return everything”
+    qs = qs.order_by("-id")[:MAX_FEATURES]
+
+    feature_collection = get_feature_collection(qs)
+    return JsonResponse(feature_collection, safe=False)
+
+
+def plant_map_view(request):
     mapbox_api_token = getattr(settings, "MAPBOX_API_TOKEN", None)
     return render(
         request, "plants/collection_map.html", {"mapbox_token": mapbox_api_token}

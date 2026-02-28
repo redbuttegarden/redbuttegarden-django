@@ -38,19 +38,20 @@
                 <label for="streets-v11">streets</label>
             </div>
         </div>
-        <div id="legend">
-            <h5>Legend</h5>
-            <div><span><img src="{% static 'plants/img/annual_icon.png' %}" alt="Icon for annual plants"></span>Annual</div>
-            <div><span><img src="{% static 'plants/img/bulb_icon.png' %}" alt="Icon for bulb plants"></span>Bulb</div>
-            <div><span><img src="{% static 'plants/img/deciduous_shrub_icon.png' %}" alt="Icon for deciduous shrubs"></span>Deciduous Shrub</div>
-            <div><span><img src="{% static 'plants/img/deciduous_tree_icon.png' %}" alt="Icon for deciduous trees"></span>Deciduous Tree</div>
-            <div><span><img src="{% static 'plants/img/vine_icon.png' %}" alt="Icon for viney plants"></span>Vine</div>
-            <div><span><img src="{% static 'plants/img/evergreen_groundcover_icon.png' %}" alt="Icon for evergreen groundcover plants"></span>Evergreen Groundcover</div>
-            <div><span><img src="{% static 'plants/img/evergreen_shrub_icon.png' %}" alt="Icon for evergreen shrubs"></span>Evergreen Shrub</div>
-            <div><span><img src="{% static 'plants/img/evergreen_tree_icon.png' %}" alt="Icon for evergreen trees"></span>Evergreen Tree</div>
-            <div><span><img src="{% static 'plants/img/grass_icon.png' %}" alt="Icon for grasses"></span>Grass</div>
-            <div><span><img src="{% static 'plants/img/perennial_icon.png' %}" alt="Icon for perennial plants"></span>Perennial</div>
-            <div><span><img src="{% static 'plants/img/succulent_icon.png' %}" alt="Icon for succulent plants"></span>Succulent</div>
+       <div id="legend">
+        <h5>Legend</h5>
+
+        <div><span><img class="legend-icon" src="{% static 'plants/img/annual_icon.svg' %}" alt="Icon for annual plants"></span>Annual</div>
+        <div><span><img class="legend-icon" src="{% static 'plants/img/bulb_icon.svg' %}" alt="Icon for bulb plants"></span>Bulb</div>
+        <div><span><img class="legend-icon" src="{% static 'plants/img/deciduous_shrub_icon.svg' %}" alt="Icon for deciduous shrubs"></span>Deciduous Shrub</div>
+        <div><span><img class="legend-icon" src="{% static 'plants/img/deciduous_tree_icon.svg' %}" alt="Icon for deciduous trees"></span>Deciduous Tree</div>
+        <div><span><img class="legend-icon" src="{% static 'plants/img/vine_icon.svg' %}" alt="Icon for viney plants"></span>Vine</div>
+        <div><span><img class="legend-icon" src="{% static 'plants/img/evergreen_groundcover_icon.svg' %}" alt="Icon for evergreen groundcover plants"></span>Evergreen Groundcover</div>
+        <div><span><img class="legend-icon" src="{% static 'plants/img/evergreen_shrub_icon.svg' %}" alt="Icon for evergreen shrubs"></span>Evergreen Shrub</div>
+        <div><span><img class="legend-icon" src="{% static 'plants/img/evergreen_tree_icon.svg' %}" alt="Icon for evergreen trees"></span>Evergreen Tree</div>
+        <div><span><img class="legend-icon" src="{% static 'plants/img/grass_icon.svg' %}" alt="Icon for grasses"></span>Grass</div>
+        <div><span><img class="legend-icon" src="{% static 'plants/img/perennial_icon.svg' %}" alt="Icon for perennial plants"></span>Perennial</div>
+        <div><span><img class="legend-icon" src="{% static 'plants/img/succulent_icon.svg' %}" alt="Icon for succulent plants"></span>Succulent</div>
         </div>
 
         <div class="row">
@@ -58,20 +59,14 @@
                 <h5>Plant Collection Map Tutorial</h5>
                 <p>Click <a href="{% slugurl 'plant-app-tutorial' %}">HERE</a> for a guide on how to use this map and explore the rest of our living collections detail pages.</p>
             </div>
-            <div class="credits">
-                <h5>Icon Credit/Attribution</h5>
-                <div>Annual and evergreen groundcover icons made by <a href="https://www.flaticon.com/authors/darius-dan" title="Darius Dan">Darius Dan</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-                <div>Bulb, perennial, succulent and deciduous tree icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-                <div>Deciduous and evergreen shrub icons made by <a href="https://www.flaticon.com/authors/bqlqn" title="bqlqn">bqlqn</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-                <div>Evergreen tree icon made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-                <div>Vine icon made by <a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp">Eucalyp</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-                <div>Grass icon made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block extra_js %}
+    <script>
+    window.SERVICE_WORKER_URL = "{% url 'plants:service-worker' %}";
+    </script>
     {{ mapbox_token|json_script:"mapboxToken" }}
     <script src="{% static 'plants/js/name_styling.js' %}"></script>
     <script src="{% static 'plants/js/plant_map.js' %}"></script>

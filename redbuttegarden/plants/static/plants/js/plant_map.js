@@ -1,18 +1,24 @@
+console.log("plant_map.js loaded");
+
 const mapboxToken = JSON.parse(document.getElementById('mapboxToken').textContent);
 
 mapboxgl.accessToken = mapboxToken;
 const map = new mapboxgl.Map({
-    container: 'map', // container ID
-    style: 'mapbox://styles/auslaner/ckrdvnurq2ix018o34dv8sxft', // style URL
-    center: [-111.823807, 40.766367], // starting position [lng, lat]
-    zoom: 16 // starting zoom
+    container: 'map',
+    style: 'mapbox://styles/auslaner/ckrdvnurq2ix018o34dv8sxft',
+    center: [-111.823807, 40.766367],
+    zoom: 16
 });
+
+function isMobile() {
+    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+}
 
 if (isMobile()) {
     const geolocateControl = new mapboxgl.GeolocateControl({
-        positionOptions: {
-            enableHighAccuracy: true
-        }, trackUserLocation: true, showUserHeading: true,
+        positionOptions: { enableHighAccuracy: true },
+        trackUserLocation: true,
+        showUserHeading: true,
     });
     map.addControl(geolocateControl, 'bottom-left');
 }
@@ -25,7 +31,6 @@ for (const input of inputs) {
     input.onclick = (layer) => {
         const layerId = layer.target.id;
 
-        // Only change from default RBG custom style if something else is selected
         if (layerId !== 'rbg-custom') {
             map.setStyle('mapbox://styles/mapbox/' + layerId);
         }
@@ -33,7 +38,7 @@ for (const input of inputs) {
         map.once('styledata', () => {
             console.log('Initializing map with style: ' + layerId);
             initialMapSetup(map);
-        })
+        });
     };
 }
 
@@ -41,22 +46,23 @@ for (const input of inputs) {
 let collections = [];
 
 // Create a popup, but don't add it to the map yet.
-let popup = new mapboxgl.Popup({
-    closeButton: false
-});
+let popup = new mapboxgl.Popup({ closeButton: false });
 
 let filterEl = document.getElementById('feature-filter');
 let listingEl = document.getElementById('feature-listing');
 
-function isMobile() {
-    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
-}
-
 function renderListings(features) {
-    features.sort((a, b) => (a.properties.family_name > b.properties.family_name) ? 1 : (a.properties.family_name === b.properties.family_name) ? ((a.properties.genus_name > b.properties.genus_name) ? 1 : (a.properties.genus_name === b.properties.genus_name) ? ((a.properties.species_name > b.properties.species_name) ? 1 : -1) : -1) : -1);
+    features.sort((a, b) =>
+        (a.properties.family_name > b.properties.family_name) ? 1 :
+            (a.properties.family_name === b.properties.family_name) ?
+                ((a.properties.genus_name > b.properties.genus_name) ? 1 :
+                    (a.properties.genus_name === b.properties.genus_name) ?
+                        ((a.properties.species_name > b.properties.species_name) ? 1 : -1) : -1) : -1
+    );
+
     let empty = document.createElement('p');
-    // Clear any existing listings
     listingEl.innerHTML = '';
+
     if (features.length) {
         features.forEach(function (feature) {
             if (!feature.properties.cluster) {
@@ -66,7 +72,6 @@ function renderListings(features) {
                 collection.target = '_blank';
                 collection.innerHTML = '<div class="feature-listing">' + prop.family_name + ' ' + style_full_name(prop.species_full_name) + '</div>';
                 collection.addEventListener('mouseover', function () {
-                    // Highlight corresponding feature on the map
                     popup
                         .setLngLat(feature.geometry.coordinates)
                         .setHTML(style_full_name(prop.species_full_name))
@@ -76,7 +81,6 @@ function renderListings(features) {
             }
         });
 
-        // Show the filter input
         filterEl.parentNode.style.display = 'block';
     } else if (features.length === 0 && filterEl.value !== '') {
         empty.textContent = 'No results found';
@@ -85,11 +89,11 @@ function renderListings(features) {
         empty.textContent = 'Drag the map to populate results';
         listingEl.appendChild(empty);
 
-        // Hide the filter input
         filterEl.parentNode.style.display = 'none';
 
-        // remove features filter
-        map.setFilter('unclustered-point', ['has', 'id']);
+        if (map.getLayer('unclustered-point')) {
+            map.setFilter('unclustered-point', ['has', 'id']);
+        }
     }
 }
 
@@ -99,9 +103,6 @@ function normalize(string) {
 
 function getUniqueFeatures(array, comparatorProperty) {
     let existingFeatureKeys = {};
-    // Because features come from tiled vector data, feature geometries may be split
-    // or duplicated across tile boundaries and, as a result, features may appear
-    // multiple times in query results.
     return array.filter(function (el) {
         if (existingFeatureKeys[el.properties[comparatorProperty]]) {
             return false;
@@ -113,243 +114,203 @@ function getUniqueFeatures(array, comparatorProperty) {
 }
 
 function resetMapFilter(map) {
-    map.setFilter('unclustered-point', ['has', 'id']);
+    if (map.getLayer('unclustered-point')) {
+        map.setFilter('unclustered-point', ['has', 'id']);
+    }
 }
 
-async function initialMapSetup(map) {
-    // Add a new source from our GeoJSON data and
-    // set the 'cluster' option to true. GL-JS will
-    // add the point_count property to your source data.
+// ---------------- URL builder (single source of truth) ----------------
+function buildCollectionsGeojsonUrl(map) {
+    const url = new URL("/plants/api/collections-geojson/", window.location.origin);
 
-    // Load all the icon images
-    map.loadImage('/static/plants/img/annual_icon.png', function (error, image) {
-        if (error) throw error;
+    // Preserve existing filter query params (?family_name=... etc)
+    url.search = window.location.search;
 
-        map.addImage('Annual', image);
-    });
-    map.loadImage('/static/plants/img/bulb_icon.png', function (error, image) {
-        if (error) throw error;
-
-        map.addImage('Bulb', image);
-    });
-    map.loadImage('/static/plants/img/deciduous_shrub_icon.png', function (error, image) {
-        if (error) throw error;
-
-        map.addImage('Deciduous Shrub', image);
-    });
-    map.loadImage('/static/plants/img/deciduous_tree_icon.png', function (error, image) {
-        if (error) throw error;
-
-        map.addImage('Deciduous Tree', image);
-    });
-    map.loadImage('/static/plants/img/evergreen_groundcover_icon.png', function (error, image) {
-        if (error) throw error;
-
-        map.addImage('Evergreen Groundcover', image);
-    });
-    map.loadImage('/static/plants/img/evergreen_shrub_icon.png', function (error, image) {
-        if (error) throw error;
-
-        map.addImage('Evergreen Shrub', image);
-    });
-    map.loadImage('/static/plants/img/evergreen_tree_icon.png', function (error, image) {
-        if (error) throw error;
-
-        map.addImage('Evergreen Tree', image);
-    });
-    map.loadImage('/static/plants/img/vine_icon.png', function (error, image) {
-        if (error) throw error;
-
-        map.addImage('Deciduous Vine', image);
-        map.addImage('Evergreen Vine', image);
-    });
-    map.loadImage('/static/plants/img/grass_icon.png', function (error, image) {
-        if (error) throw error;
-
-        map.addImage('Grass', image);
-    });
-    map.loadImage('/static/plants/img/perennial_icon.png', function (error, image) {
-        if (error) throw error;
-
-        map.addImage('Perennial', image);
-    });
-    map.loadImage('/static/plants/img/succulent_icon.png', function (error, image) {
-        if (error) throw error;
-
-        map.addImage('Succulent', image);
-    });
-
-    // If URL includes parameters send ajax request for filtered collections
-    // Otherwise, load geojson file of all collections
-    const currentUrl = window.location.href;
-    if (currentUrl.includes('?')) {
-        try {
-            const response = await fetch(currentUrl, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const filteredCollections = await response.json();
-
-            map.addSource('collections', {
-                type: 'geojson',
-                data: JSON.parse(filteredCollections),
-                cluster: true,
-                clusterMaxZoom: 17,
-                clusterRadius: 40
-            });
-
-            map.addLayer({
-                id: 'clusters', type: 'circle', source: 'collections', filter: ['has', 'point_count'], paint: {
-                    'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
-                    'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
-                }
-            });
-
-            map.addLayer({
-                id: 'cluster-count', type: 'symbol', source: 'collections', filter: ['has', 'point_count'], layout: {
-                    'text-field': '{point_count_abbreviated}',
-                    'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                    'text-size': 12
-                }
-            });
-
-            map.addLayer({
-                id: 'unclustered-point',
-                type: 'symbol',
-                source: 'collections',
-                filter: ['!', ['has', 'point_count']],
-                layout: {
-                    'icon-image': ['get', 'habit'], 'icon-size': 2
-                }
-            });
-
-            document.getElementById("map-load-overlay").style.display = "none";
-
-            renderListings([]);
-        } catch (error) {
-            console.error(error.message);
-        }
-    } else {
-        map.addSource('collections', {
-            type: 'geojson',
-            data: `https://${window.location.hostname}/media/collections.geojson`,
-            cluster: true,
-            clusterMaxZoom: 17, // Max zoom to cluster points on
-            clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
-        });
-
-        map.addLayer({
-            id: 'clusters', type: 'circle', source: 'collections', filter: ['has', 'point_count'], paint: {
-                // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-                // with three steps to implement three types of circles:
-                //   * Blue, 20px circles when point count is less than 100
-                //   * Yellow, 30px circles when point count is between 100 and 750
-                //   * Pink, 40px circles when point count is greater than or equal to 750
-                'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
-                'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
-            }
-        });
-
-        map.addLayer({
-            id: 'cluster-count', type: 'symbol', source: 'collections', filter: ['has', 'point_count'], layout: {
-                'text-field': '{point_count_abbreviated}',
-                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                'text-size': 12
-            }
-        });
-
-        map.addLayer({
-            id: 'unclustered-point',
-            type: 'symbol',
-            source: 'collections',
-            filter: ['!', ['has', 'point_count']],
-            layout: {
-                'icon-image': ['get', 'habit'], 'icon-size': 2
-            }
-        });
-
-        document.getElementById("map-load-overlay").style.display = "none";
-
-        // Call this function on initialization
-        // passing an empty array to render an empty state
-        renderListings([]);
+    // Add bbox if possible (requires map to be initialized)
+    try {
+        const b = map.getBounds();
+        url.searchParams.set("bbox", [
+            b.getWest(),
+            b.getSouth(),
+            b.getEast(),
+            b.getNorth(),
+        ].join(","));
+    } catch (e) {
+        // If bounds aren't available yet, just omit bbox
     }
 
+    return url;
+}
+
+// ---------- Guards / helpers ----------
+let handlersBound = false;
+
+function safeAddImage(map, name, url) {
+    if (map.hasImage(name)) return;
+
+    map.loadImage(url, function (error, image) {
+        if (error) {
+            console.error(`Failed to load image ${name} from ${url}`, error);
+            return;
+        }
+        if (!map.hasImage(name)) {
+            map.addImage(name, image);
+        }
+    });
+}
+
+function ensureCollectionsSource(map, featureCollection) {
+    const existing = map.getSource('collections');
+    if (existing) {
+        existing.setData(featureCollection);
+        return;
+    }
+
+    map.addSource('collections', {
+        type: 'geojson',
+        data: featureCollection,
+        cluster: true,
+        clusterMaxZoom: 17,
+        clusterRadius: 40,
+    });
+}
+
+function ensureLayer(map, layerDef) {
+    if (map.getLayer(layerDef.id)) return;
+    map.addLayer(layerDef);
+}
+
+function hideLoader() {
+    const el = document.getElementById("map-load-overlay");
+    if (el) el.style.display = "none";
+}
+
+// Keep these as top-level helpers (used by click handler)
+function formatSpeciesFullName(species_id, species_full_name) {
+    if (species_id) {
+        return '<span class="pop-up-label">Full Name: </span><a href="/plants/species/' + species_id + '/"' + style_full_name(species_full_name) + '</a>';
+    } else {
+        return '<span class="pop-up-label">Full Name: </span>' + style_full_name(species_full_name);
+    }
+}
+
+async function refreshCollectionsData(map) {
+    const source = map.getSource("collections");
+    if (!source) return;
+
+    const url = buildCollectionsGeojsonUrl(map);
+    console.log("Refreshing collections from:", url.toString());
+
+    try {
+        const response = await fetch(url.toString(), {
+            headers: { "Accept": "application/json" },
+        });
+
+        if (!response.ok) {
+            const text = await response.text().catch(() => "");
+            throw new Error(`GeoJSON HTTP ${response.status}. Body starts: ${text.slice(0, 200)}`);
+        }
+
+        const featureCollection = await response.json();
+        source.setData(featureCollection);
+    } catch (err) {
+        console.error("Failed to refresh collections:", err);
+    }
+}
+
+// Bind event handlers once (NOT inside re-run setup)
+function bindHandlersOnce(map) {
+    if (handlersBound) return;
+    handlersBound = true;
+
     map.on('movestart', function () {
-        // reset features filter as the map starts moving
         resetMapFilter(map);
     });
 
-    map.on('moveend', function () {
-        let features = map.queryRenderedFeatures({layers: ['clusters', 'unclustered-point']});
+    map.on('moveend', async function () {
+        // Keep sidebar updated
+        const layers = [];
+        if (map.getLayer('clusters')) layers.push('clusters');
+        if (map.getLayer('unclustered-point')) layers.push('unclustered-point');
+        if (!layers.length) return;
 
+        let features = map.queryRenderedFeatures({ layers });
         if (features) {
             let uniqueFeatures = getUniqueFeatures(features, 'id');
-            // Populate features for the listing overlay.
             renderListings(uniqueFeatures);
-
-            // Store the current features in `collections` variable to
-            // later use for filtering on `keyup`.
             collections = uniqueFeatures;
         }
+
+        // Optional but recommended: refresh GeoJSON based on new bbox
+        await refreshCollectionsData(map);
     });
 
-    // inspect a cluster on click
     map.on('click', 'clusters', function (e) {
-        var features = map.queryRenderedFeatures(e.point, {
-            layers: ['clusters']
-        });
-        var clusterId = features[0].properties.cluster_id;
-        map.getSource('collections').getClusterExpansionZoom(clusterId, function (err, zoom) {
-            if (err) return;
+        const source = map.getSource('collections');
+        if (!source) return;
 
-            map.easeTo({
-                center: features[0].geometry.coordinates, zoom: zoom
-            });
+        const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+        if (!features || !features.length) return;
+
+        const clusterId = features[0].properties.cluster_id;
+        source.getClusterExpansionZoom(clusterId, function (err, zoom) {
+            if (err) return;
+            map.easeTo({ center: features[0].geometry.coordinates, zoom: zoom });
         });
     });
 
-    // When a click event occurs on a feature in
-    // the unclustered-point layer, open a popup at
-    // the location of the feature, with
-    // description HTML from its properties.
     map.on('click', 'unclustered-point', function (e) {
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const family_name = e.features[0].properties.family_name;
-        const genus_name = e.features[0].properties.genus_name;
-        const species_name = e.features[0].properties.species_name;
-        const species_full_name = e.features[0].properties.species_full_name;
-        const species_id = e.features[0].properties.species_id;
-        const collection_id = e.features[0].properties.id;
-        const vernacular_name = e.features[0].properties.vernacular_name;
-        const habit = e.features[0].properties.habit;
-        const hardiness = e.features[0].properties.hardiness;
-        const water_regime = e.features[0].properties.water_regime;
-        const exposure = e.features[0].properties.exposure;
-        const bloom_time = e.features[0].properties.bloom_time;
-        const plant_size = e.features[0].properties.plant_size;
-        const garden_area = e.features[0].properties.garden_area;
-        const garden_name = e.features[0].properties.garden_name;
-        const garden_code = e.features[0].properties.garden_code;
-        const planted_on = e.features[0].properties.planted_on;
+        if (!e.features || !e.features.length) return;
+
+        const f = e.features[0];
+        const coordinates = f.geometry.coordinates.slice();
+
+        const family_name = f.properties.family_name;
+        const genus_name = f.properties.genus_name;
+        const species_name = f.properties.species_name;
+        const species_full_name = f.properties.species_full_name;
+        const species_id = f.properties.species_id;
+        const collection_id = f.properties.id;
+        const vernacular_name = f.properties.vernacular_name;
+        const habit = f.properties.habit;
+        const hardiness = f.properties.hardiness;
+        const water_regime = f.properties.water_regime;
+        const exposure = f.properties.exposure;
+        const bloom_time = f.properties.bloom_time;
+        const plant_size = f.properties.plant_size;
+        const garden_area = f.properties.garden_area;
+        const garden_name = f.properties.garden_name;
+        const garden_code = f.properties.garden_code;
+        const planted_on = f.properties.planted_on;
 
         const formatted_species_full_name = formatSpeciesFullName(species_id, species_full_name);
 
-        // Ensure that if the map is zoomed out such that
-        // multiple copies of the feature are visible, the
-        // popup appears over the copy being pointed to.
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
 
         new mapboxgl.Popup()
             .setLngLat(coordinates)
-            .setHTML('<div class="pop-up-row">' + '<a href="/plants/collection/' + collection_id + '/">Collection Detail Page</a>' + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Family Name: </span>' + family_name + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Genus Name: </span><span class="scientific-name">' + genus_name + '</span>' + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Species Name: </span><span class="scientific-name">' + species_name + '</span>' + '</div>' + '<div class="pop-up-row">' + formatted_species_full_name + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Vernacular Name: </span>' + vernacular_name + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Habit: </span>' + habit + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Hardiness: </span>' + hardiness + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Water Regime: </span>' + water_regime + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Exposure: </span>' + exposure + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Bloom Times: </span>' + bloom_time + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Plant Size: </span>' + plant_size + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Garden Area: </span>' + garden_area + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Garden Name: </span>' + garden_name + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Garden Code: </span>' + garden_code + '</div>' + '<div class="pop-up-row">' + '<span class="pop-up-label">Planted On: </span>' + planted_on + '</div>')
+            .setHTML(
+                '<div class="pop-up-row">' +
+                '<a href="/plants/collection/' + collection_id + '/">Collection Detail Page</a>' +
+                '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Family Name: </span>' + family_name + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Genus Name: </span><span class="scientific-name">' + genus_name + '</span></div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Species Name: </span><span class="scientific-name">' + species_name + '</span></div>' +
+                '<div class="pop-up-row">' + formatted_species_full_name + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Vernacular Name: </span>' + vernacular_name + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Habit: </span>' + habit + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Hardiness: </span>' + hardiness + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Water Regime: </span>' + water_regime + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Exposure: </span>' + exposure + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Bloom Times: </span>' + bloom_time + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Plant Size: </span>' + plant_size + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Garden Area: </span>' + garden_area + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Garden Name: </span>' + garden_name + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Garden Code: </span>' + garden_code + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Planted On: </span>' + planted_on + '</div>'
+            )
             .addTo(map);
     });
 
@@ -360,42 +321,168 @@ async function initialMapSetup(map) {
         map.getCanvas().style.cursor = '';
     });
 
-    function formatSpeciesFullName(species_id, species_full_name) {
-        if (species_id) {
-            return '<span class="pop-up-label">Full Name: </span><a href="/plants/species/' + species_id + '/"' + style_full_name(species_full_name) + '</a>'
-        } else {
-            return '<span class="pop-up-label">Full Name: </span>' + style_full_name(species_full_name)
-        }
-    }
-
     function filterByElementValue() {
+        if (!map.getLayer('unclustered-point')) return;
+
         let value = normalize(filterEl.value);
 
         if (!value) {
             resetMapFilter(map);
-            return
+            return;
         }
 
-        // Filter visible features that don't match the input value.
         let filtered = collections.filter(function (feature) {
             let cluster = feature.properties.cluster;
             let family = normalize(feature.properties.family_name || '');
             let genus = normalize(feature.properties.genus_name || '');
-            return !cluster && family.indexOf(value) > -1 || genus.indexOf(value) > -1;
+            return (!cluster && (family.indexOf(value) > -1 || genus.indexOf(value) > -1));
         });
 
-        // Populate the sidebar with filtered results
         renderListings(filtered);
 
-        // Set the filter to populate features into the layer.
         if (filtered.length) {
-            map.setFilter('unclustered-point', ['match', ['get', 'id'], filtered.map(function (feature) {
-                return feature.properties.id;
-            }), true, false]);
+            map.setFilter('unclustered-point', [
+                'match',
+                ['get', 'id'],
+                filtered.map((feature) => feature.properties.id),
+                true,
+                false
+            ]);
         }
     }
 
+    filterEl.removeEventListener('keyup', filterByElementValue);
     filterEl.addEventListener('keyup', filterByElementValue);
+}
+
+const MAP_ICONS = {
+    "Annual": "/static/plants/img/annual_icon.svg",
+    "Bulb": "/static/plants/img/bulb_icon.svg",
+    "Deciduous Shrub": "/static/plants/img/deciduous_shrub_icon.svg",
+    "Deciduous Tree": "/static/plants/img/deciduous_tree_icon.svg",
+    "Deciduous Vine": "/static/plants/img/vine_icon.svg",
+    "Evergreen Groundcover": "/static/plants/img/evergreen_groundcover_icon.svg",
+    "Evergreen Shrub": "/static/plants/img/evergreen_shrub_icon.svg",
+    "Evergreen Tree": "/static/plants/img/evergreen_tree_icon.svg",
+    "Evergreen Vine": "/static/plants/img/vine_icon.svg",
+    "Grass": "/static/plants/img/grass_icon.svg",
+    "Perennial": "/static/plants/img/perennial_icon.svg",
+    "Succulent": "/static/plants/img/succulent_icon.svg",
+};
+
+// Rasterize an SVG to imageData and add to Mapbox under `name`
+async function addSvgIcon(map, name, svgUrl, size = 64, pixelRatio = 2) {
+    if (map.hasImage(name)) return;
+
+    const res = await fetch(svgUrl, { cache: "force-cache" });
+    if (!res.ok) throw new Error(`Failed to fetch SVG ${svgUrl}`);
+
+    const svgText = await res.text();
+    const blob = new Blob([svgText], { type: "image/svg+xml" });
+    const objectUrl = URL.createObjectURL(blob);
+
+    const img = new Image();
+    img.decoding = "async";
+
+    await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = objectUrl;
+    });
+
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, size, size);
+
+    URL.revokeObjectURL(objectUrl);
+
+    const imageData = ctx.getImageData(0, 0, size, size);
+    if (!map.hasImage(name)) {
+        map.addImage(name, imageData, { pixelRatio });
+    }
+}
+
+// Load all icons once
+async function loadAllIcons(map) {
+    const entries = Object.entries(MAP_ICONS);
+    await Promise.all(
+        entries.map(([name, url]) => addSvgIcon(map, name, url, 64, 2).catch((e) => {
+            console.error("Icon load failed:", name, url, e);
+        }))
+    );
+}
+
+// ---------- Main setup ----------
+async function initialMapSetup(map) {
+    // 1) Images 
+    await loadAllIcons(map);
+
+    // 2) Fetch GeoJSON from endpoint (with page filters + bbox)
+    const url = buildCollectionsGeojsonUrl(map);
+    console.log("Fetching collections from:", url.toString());
+
+    try {
+        const response = await fetch(url.toString(), {
+            headers: { "Accept": "application/json" },
+        });
+
+        if (!response.ok) {
+            const text = await response.text().catch(() => "");
+            throw new Error(`GeoJSON HTTP ${response.status}. Body starts: ${text.slice(0, 200)}`);
+        }
+
+        const featureCollection = await response.json();
+
+        // 3) Source (guarded)
+        ensureCollectionsSource(map, featureCollection);
+
+        // 4) Layers (guarded)
+        ensureLayer(map, {
+            id: "clusters",
+            type: "circle",
+            source: "collections",
+            filter: ["has", "point_count"],
+            paint: {
+                "circle-color": ["step", ["get", "point_count"], "#51bbd6", 100, "#f1f075", 750, "#f28cb1"],
+                "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+            },
+        });
+
+        ensureLayer(map, {
+            id: "cluster-count",
+            type: "symbol",
+            source: "collections",
+            filter: ["has", "point_count"],
+            layout: {
+                "text-field": "{point_count_abbreviated}",
+                "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+                "text-size": 12,
+            },
+        });
+
+        ensureLayer(map, {
+            id: "unclustered-point",
+            type: "symbol",
+            source: "collections",
+            filter: ["!", ["has", "point_count"]],
+            layout: {
+                "icon-image": ["get", "habit"],
+                "icon-size": 2,
+            },
+        });
+
+        hideLoader();
+        renderListings([]);
+    } catch (error) {
+        console.error("Initial collections fetch failed:", error);
+        hideLoader();
+        if (listingEl) listingEl.innerHTML = "<p>Unable to load collections.</p>";
+    }
+
+    // 5) Bind interactions once (not duplicated on style change)
+    bindHandlersOnce(map);
 }
 
 map.on('load', function () {
@@ -403,3 +490,15 @@ map.on('load', function () {
         await initialMapSetup(map);
     })();
 });
+
+console.log("serviceWorker in navigator?", "serviceWorker" in navigator);
+
+if ("serviceWorker" in navigator) {
+  console.log("Attempting SW register...");
+  navigator.serviceWorker
+    .register("/plants/service-worker.js")
+    .then((reg) => console.log("SW registered:", reg.scope))
+    .catch((err) => console.error("SW registration failed:", err));
+} else {
+  console.log("Service workers not supported in this browser/context");
+}
