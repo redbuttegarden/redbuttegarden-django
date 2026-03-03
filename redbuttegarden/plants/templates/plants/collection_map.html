@@ -1,209 +1,208 @@
 {% extends 'base.html' %}
 {% load static wagtailcore_tags %}
 
-{% block title %}Living Collections Plant Map{% endblock %}
+{% block title %}
+  Living Collections Plant Map
+{% endblock %}
 
 {% block extra_css %}
-    <link href='https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css' rel='stylesheet' />
-    <link href="{% static 'plants/css/plant_map.css' %}" rel="stylesheet">
-    <script src='https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js'></script>
-    <script src="https://kit.fontawesome.com/332beda55d.js" crossorigin="anonymous"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" />
+  <link href="{% static 'plants/css/plant_map.css' %}" rel="stylesheet" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
+  <script src="https://kit.fontawesome.com/332beda55d.js" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block abnormal_content %}
-    <div class="container-fluid px-0">
-        <div id="map-load-overlay">
-            <div id="load-icon" class="fa-3x">
-                <i class="fas fa-sync-alt fa-spin"></i>
-            </div>
-        </div>
-        <div class="map-overlay">
-            <div class="map-filter-panel">
-                <div class="map-filter-header">
-                    <div class="fw-semibold">Search filters</div>
-
-                    <div id="active-filters" class="active-filters small text-muted">
-                    {# JS will populate this live; keep a noscript fallback #}
-                    <noscript>
-                        {% if request.GET %}
-                        Active filters: {{ request.GET.urlencode }}
-                        {% else %}
-                        No active filters
-                        {% endif %}
-                    </noscript>
-                    </div>
-                </div>
-
-                <form id="map-filters-form" method="get" action="{% url 'plants:plant-map' %}">
-                    <div class="filter-grid">
-                    <div class="filter-field">
-                        {{ form.scientific_name.label_tag }}
-                        {{ form.scientific_name }}
-                    </div>
-                    <div class="filter-field">
-                        {{ form.common_name.label_tag }}
-                        {{ form.common_name }}
-                    </div>
-                    <div class="filter-field">
-                        {{ form.garden_name.label_tag }}
-                        {{ form.garden_name }}
-                    </div>
-                    <div class="filter-field">
-                        {{ form.garden_code.label_tag }}
-                        {{ form.garden_code }}
-                    </div>
-                    <div class="filter-field">
-                        {{ form.plant_id.label_tag }}
-                        {{ form.plant_id }}
-                    </div>
-                    </div>
-
-                    <details class="advanced-filters">
-                    <summary class="fw-semibold">Advanced</summary>
-
-                    <div class="filter-grid mt-2">
-                        <div class="filter-field">
-                        {{ form.family_name.label_tag }}
-                        {{ form.family_name }}
-                        </div>
-                        <div class="filter-field">
-                        {{ form.habits.label_tag }}
-                        {{ form.habits }}
-                        </div>
-                        <div class="filter-field">
-                        {{ form.exposures.label_tag }}
-                        {{ form.exposures }}
-                        </div>
-                        <div class="filter-field">
-                        {{ form.water_needs.label_tag }}
-                        {{ form.water_needs }}
-                        </div>
-                        <div class="filter-field">
-                        {{ form.bloom_months.label_tag }}
-                        {{ form.bloom_months }}
-                        </div>
-                        <div class="filter-field">
-                        {{ form.flower_colors.label_tag }}
-                        {{ form.flower_colors }}
-                        </div>
-                        <div class="filter-field">
-                        {{ form.memorial_person.label_tag }}
-                        {{ form.memorial_person }}
-                        </div>
-
-                        <div class="filter-checkboxes">
-                        <label class="check">{{ form.utah_native }} Utah native</label>
-                        <label class="check">{{ form.plant_select }} Plant select</label>
-                        <label class="check">{{ form.deer_resistant }} Deer resistant</label>
-                        <label class="check">{{ form.rabbit_resistant }} Rabbit resistant</label>
-                        <label class="check">{{ form.bee_friendly }} Bee friendly</label>
-                        <label class="check">{{ form.high_elevation }} High elevation</label>
-                        <label class="check">{{ form.available_memorial }} Memorial available</label>
-                        </div>
-                    </div>
-                    </details>
-
-                    <div class="filter-actions">
-                    <button type="submit" class="btn btn-primary btn-sm">Apply</button>
-                    <button type="button" id="filters-reset" class="btn btn-light btn-sm">Reset</button>
-                    <a class="btn btn-outline-secondary btn-sm"
-                        href="{% url 'plants:collection-list' %}?{{ request.GET.urlencode }}">
-                        View list
-                    </a>
-                    </div>
-                </form>
-                </div>
-            <fieldset>
-                <label for="feature-filter">Collection filter</label>
-                <input id="feature-filter" type="text" placeholder="Filter results by name">
-            </fieldset>
-            <p class="small text-center">Click a collection to open it's detail page</p>
-            <div id="feature-listing" class="listing"></div>
-        </div>
-        <div id="map">
-            <div id="mapMenu">
-                <input id="rbg-custom" type="radio" name="rtoggle" value="rbg" checked>
-                <label for="rbg-custom">RBG&A custom</label>
-                <input id="satellite-v9" type="radio" name="rtoggle" value="satellite">
-                <label for="satellite-v9">satellite</label>
-                <input id="light-v10" type="radio" name="rtoggle" value="light">
-                <label for="light-v10">light</label>
-                <input id="dark-v10" type="radio" name="rtoggle" value="dark">
-                <label for="dark-v10">dark</label>
-                <input id="streets-v11" type="radio" name="rtoggle" value="streets">
-                <label for="streets-v11">streets</label>
-            </div>
-        </div>
-       <div id="legend" class="p-2">
-            <h5 class="mb-2">Legend</h5>
-
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <img class="legend-icon" src="{% static 'plants/img/annual_icon.svg' %}" alt="Icon for annual plants">
-                <span>Annual</span>
-            </div>
-
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <img class="legend-icon" src="{% static 'plants/img/bulb_icon.svg' %}" alt="Icon for bulb plants">
-                <span>Bulb</span>
-            </div>
-
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <img class="legend-icon" src="{% static 'plants/img/deciduous_shrub_icon.svg' %}" alt="Icon for deciduous shrubs">
-                <span>Deciduous Shrub</span>
-            </div>
-
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <img class="legend-icon" src="{% static 'plants/img/deciduous_tree_icon.svg' %}" alt="Icon for deciduous trees">
-                <span>Deciduous Tree</span>
-            </div>
-
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <img class="legend-icon" src="{% static 'plants/img/vine_icon.svg' %}" alt="Icon for viney plants">
-                <span>Vine</span>
-            </div>
-
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <img class="legend-icon" src="{% static 'plants/img/evergreen_groundcover_icon.svg' %}" alt="Icon for evergreen groundcover plants">
-                <span>Evergreen Groundcover</span>
-            </div>
-
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <img class="legend-icon" src="{% static 'plants/img/evergreen_shrub_icon.svg' %}" alt="Icon for evergreen shrubs">
-                <span>Evergreen Shrub</span>
-            </div>
-
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <img class="legend-icon" src="{% static 'plants/img/evergreen_tree_icon.svg' %}" alt="Icon for evergreen trees">
-                <span>Evergreen Tree</span>
-            </div>
-
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <img class="legend-icon" src="{% static 'plants/img/grass_icon.svg' %}" alt="Icon for grasses">
-                <span>Grass</span>
-            </div>
-
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <img class="legend-icon" src="{% static 'plants/img/perennial_icon.svg' %}" alt="Icon for perennial plants">
-                <span>Perennial</span>
-            </div>
-
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <img class="legend-icon" src="{% static 'plants/img/succulent_icon.svg' %}" alt="Icon for succulent plants">
-                <span>Succulent</span>
-            </div>
-        </div>
-
-        <div class="row mx-0">
-            <div class="tutorial p-3">
-                <h5>Plant Collection Map Tutorial</h5>
-                <p>Click <a href="{% slugurl 'plant-app-tutorial' %}">HERE</a> for a guide on how to use this map and explore the rest of our living collections detail pages.</p>
-            </div>
-        </div>
+  <div class="container-fluid px-0">
+    <div id="map-load-overlay">
+      <div id="load-icon" class="fa-3x">
+        <i class="fas fa-sync-alt fa-spin"></i>
+      </div>
     </div>
+
+    <div class="map-overlay">
+      {# Collapsible filter panel (collapsed by default; CSS can force open on desktop) #}
+      <details class="map-filters" id="mapFilters" open>
+        <summary class="map-filters__toggle">
+          <span class="fw-semibold">Search filters</span>
+          <span id="active-filters" class="active-filters small text-muted ms-2">
+            <noscript>
+              {% if request.GET %}
+                Active filters: {{ request.GET.urlencode }}
+              {% else %}
+                No active filters
+              {% endif %}
+            </noscript>
+          </span>
+          <span class="map-filters__chevron" aria-hidden="true"></span>
+        </summary>
+
+        <div class="map-filter-panel map-filters__body">
+          <form id="map-filters-form" method="get" action="{% url 'plants:plant-map' %}">
+            <div class="filter-grid">
+              <div class="filter-field">{{ form.scientific_name.label_tag }}
+                {{ form.scientific_name }}</div>
+              <div class="filter-field">{{ form.common_name.label_tag }}
+                {{ form.common_name }}</div>
+              <div class="filter-field">{{ form.garden_name.label_tag }}
+                {{ form.garden_name }}</div>
+              <div class="filter-field">{{ form.garden_code.label_tag }}
+                {{ form.garden_code }}</div>
+              <div class="filter-field">{{ form.plant_id.label_tag }}
+                {{ form.plant_id }}</div>
+            </div>
+
+            <details class="advanced-filters">
+              <summary class="fw-semibold">Advanced</summary>
+
+              <div class="filter-grid mt-2">
+                <div class="filter-field">{{ form.family_name.label_tag }}
+                  {{ form.family_name }}</div>
+                <div class="filter-field">{{ form.habits.label_tag }}
+                  {{ form.habits }}</div>
+                <div class="filter-field">{{ form.exposures.label_tag }}
+                  {{ form.exposures }}</div>
+                <div class="filter-field">{{ form.water_needs.label_tag }}
+                  {{ form.water_needs }}</div>
+                <div class="filter-field">{{ form.bloom_months.label_tag }}
+                  {{ form.bloom_months }}</div>
+                <div class="filter-field">{{ form.flower_colors.label_tag }}
+                  {{ form.flower_colors }}</div>
+                <div class="filter-field">{{ form.memorial_person.label_tag }}
+                  {{ form.memorial_person }}</div>
+
+                <div class="filter-checkboxes">
+                  <label class="check">{{ form.utah_native }} Utah native</label>
+                  <label class="check">{{ form.plant_select }} Plant select</label>
+                  <label class="check">{{ form.deer_resistant }} Deer resistant</label>
+                  <label class="check">{{ form.rabbit_resistant }} Rabbit resistant</label>
+                  <label class="check">{{ form.bee_friendly }} Bee friendly</label>
+                  <label class="check">{{ form.high_elevation }} High elevation</label>
+                  <label class="check">{{ form.available_memorial }} Memorial available</label>
+                </div>
+              </div>
+            </details>
+
+            <div class="filter-actions">
+              <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+              <button type="button" id="filters-reset" class="btn btn-light btn-sm">Reset</button>
+              <a class="btn btn-outline-secondary btn-sm" href="{% url 'plants:collection-list' %}?{{ request.GET.urlencode }}">View list</a>
+            </div>
+          </form>
+        </div>
+      </details>
+
+      {# Existing in-map quick filter and listing stay visible #}
+      <fieldset>
+        <label for="feature-filter">Collection filter</label>
+        <input id="feature-filter" type="text" placeholder="Filter results by name" />
+      </fieldset>
+      <p class="small text-center">Click a collection to open it's detail page</p>
+      <div id="feature-listing" class="listing"></div>
+    </div>
+
+    <div id="map">
+      <div id="mapMenu">
+        <input id="rbg-custom" type="radio" name="rtoggle" value="rbg" checked />
+        <label for="rbg-custom">RBG&A custom</label>
+        <input id="satellite-v9" type="radio" name="rtoggle" value="satellite" />
+        <label for="satellite-v9">satellite</label>
+        <input id="light-v10" type="radio" name="rtoggle" value="light" />
+        <label for="light-v10">light</label>
+        <input id="dark-v10" type="radio" name="rtoggle" value="dark" />
+        <label for="dark-v10">dark</label>
+        <input id="streets-v11" type="radio" name="rtoggle" value="streets" />
+        <label for="streets-v11">streets</label>
+      </div>
+    </div>
+
+    <div id="legend" class="p-2">
+      <h5 class="mb-2">Legend</h5>
+
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <img class="legend-icon" src="{% static 'plants/img/annual_icon.svg' %}" alt="Icon for annual plants" />
+        <span>Annual</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <img class="legend-icon" src="{% static 'plants/img/bulb_icon.svg' %}" alt="Icon for bulb plants" />
+        <span>Bulb</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <img class="legend-icon" src="{% static 'plants/img/deciduous_shrub_icon.svg' %}" alt="Icon for deciduous shrubs" />
+        <span>Deciduous Shrub</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <img class="legend-icon" src="{% static 'plants/img/deciduous_tree_icon.svg' %}" alt="Icon for deciduous trees" />
+        <span>Deciduous Tree</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <img class="legend-icon" src="{% static 'plants/img/vine_icon.svg' %}" alt="Icon for viney plants" />
+        <span>Vine</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <img class="legend-icon" src="{% static 'plants/img/evergreen_groundcover_icon.svg' %}" alt="Icon for evergreen groundcover plants" />
+        <span>Evergreen Groundcover</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <img class="legend-icon" src="{% static 'plants/img/evergreen_shrub_icon.svg' %}" alt="Icon for evergreen shrubs" />
+        <span>Evergreen Shrub</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <img class="legend-icon" src="{% static 'plants/img/evergreen_tree_icon.svg' %}" alt="Icon for evergreen trees" />
+        <span>Evergreen Tree</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <img class="legend-icon" src="{% static 'plants/img/grass_icon.svg' %}" alt="Icon for grasses" />
+        <span>Grass</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <img class="legend-icon" src="{% static 'plants/img/perennial_icon.svg' %}" alt="Icon for perennial plants" />
+        <span>Perennial</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <img class="legend-icon" src="{% static 'plants/img/succulent_icon.svg' %}" alt="Icon for succulent plants" />
+        <span>Succulent</span>
+      </div>
+    </div>
+
+    <div class="row mx-0">
+      <div class="tutorial p-3">
+        <h5>Plant Collection Map Tutorial</h5>
+        <p>
+          Click <a href="{% slugurl 'plant-app-tutorial' %}">HERE</a> for a guide on how to use this map and explore the rest of our living collections detail pages.
+        </p>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block extra_js %}
-    {{ mapbox_token|json_script:"mapboxToken" }}
-    <script src="{% static 'plants/js/name_styling.js' %}"></script>
-    <script src="{% static 'plants/js/plant_map.js' %}"></script>
+  {{ mapbox_token|json_script:'mapboxToken' }}
+  <script src="{% static 'plants/js/name_styling.js' %}"></script>
+  <script src="{% static 'plants/js/plant_map.js' %}"></script>
+
+  {# Optional: open filters when a user focuses a form field (nice on mobile) #}
+  <script>
+    ;(function () {
+      var details = document.getElementById('mapFilters')
+      if (!details) return
+    
+      var form = document.getElementById('map-filters-form')
+      if (!form) return
+    
+      form.addEventListener('focusin', function () {
+        details.open = true
+      })
+    })()
+  </script>
 {% endblock %}

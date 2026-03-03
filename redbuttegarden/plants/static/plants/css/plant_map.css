@@ -32,13 +32,15 @@
 .map-overlay {
     font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     background-color: #efefef;
-    overflow: hidden;
     min-height: 250px;
 }
 
 @media (max-width: 590px) {
     .map-overlay {
-        height: 250px;
+        max-height: 250px;
+        overflow-y: auto;
+        /* allow scrolling */
+        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -224,4 +226,55 @@ div.mapboxgl-popup {
     gap: 8px;
     flex-wrap: wrap;
     margin-top: 10px;
+}
+
+/* Mobile-first: collapsed by default (details has no "open") */
+@media (max-width: 590px) {
+    .map-filters__toggle {
+        cursor: pointer;
+        user-select: none;
+        padding: 10px 12px;
+        font-weight: 600;
+    }
+
+    /* Optional: make the open content scrollable */
+    .map-filters[open] {
+        max-height: 250px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Base: make the details toggle look clickable (all sizes) */
+.map-filters__toggle {
+    cursor: pointer;
+    user-select: none;
+    padding: 10px 12px;
+}
+
+/* Mobile: collapsed by default, show body only when open */
+@media (max-width: 590px) {
+    .map-filters .map-filters__body {
+        display: none;
+    }
+
+    .map-filters[open] .map-filters__body {
+        display: block;
+        max-height: 250px;
+        /* cap */
+        overflow-y: auto;
+        /* scroll */
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Desktop: always show body, hide the summary toggle */
+@media (min-width: 591px) {
+    .map-filters__toggle {
+        display: none;
+    }
+
+    .map-filters .map-filters__body {
+        display: block;
+    }
 }

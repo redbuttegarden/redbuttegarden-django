@@ -598,6 +598,32 @@ function bindMapFiltersForm(map) {
     }
 }
 
+(() => {
+  const details = document.getElementById("mapFilters");
+  if (!details) return;
+
+  const mqMobile = window.matchMedia("(max-width: 590px)");
+
+  const syncDetails = () => {
+    if (mqMobile.matches) {
+      details.removeAttribute("open"); // collapsed on mobile
+    } else {
+      details.setAttribute("open", ""); // open on desktop
+    }
+  };
+
+  // Run once on load
+  syncDetails();
+
+  // Keep it in sync if the viewport crosses the breakpoint
+  if (typeof mqMobile.addEventListener === "function") {
+    mqMobile.addEventListener("change", syncDetails);
+  } else if (typeof mqMobile.addListener === "function") {
+    // Safari fallback
+    mqMobile.addListener(syncDetails);
+  }
+})();
+
 map.on('load', function () {
     (async () => {
         await initialMapSetup(map);
