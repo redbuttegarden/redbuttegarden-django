@@ -1,9 +1,11 @@
 import logging
+import os
 
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import render
 from django.utils.cache import patch_vary_headers
+from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_GET
 from wagtail.models import Site
 from wagtail.snippets.views.snippets import SnippetViewSet
@@ -27,6 +29,18 @@ class RBGHoursViewSet(SnippetViewSet):
         "garden_open_message",
         "garden_closed_message",
     )
+
+
+@require_GET
+@cache_control(max_age=0, no_cache=True, must_revalidate=True)
+def service_worker(request):
+    sw_path = os.path.join(settings.BASE_DIR, "static", "pwa", "service-worker.js")
+    with open(sw_path, "r", encoding="utf-8") as f:
+        return HttpResponse(f.read(), content_type="application/javascript")
+
+@require_GET
+def offline(request):
+    return render(request, "home/offline.html")
 
 
 @require_GET

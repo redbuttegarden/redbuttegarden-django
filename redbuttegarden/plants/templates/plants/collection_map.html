@@ -38,24 +38,67 @@
                 <label for="streets-v11">streets</label>
             </div>
         </div>
-       <div id="legend">
-        <h5>Legend</h5>
+       <div id="legend" class="p-2">
+            <h5 class="mb-2">Legend</h5>
 
-        <div><span><img class="legend-icon" src="{% static 'plants/img/annual_icon.svg' %}" alt="Icon for annual plants"></span>Annual</div>
-        <div><span><img class="legend-icon" src="{% static 'plants/img/bulb_icon.svg' %}" alt="Icon for bulb plants"></span>Bulb</div>
-        <div><span><img class="legend-icon" src="{% static 'plants/img/deciduous_shrub_icon.svg' %}" alt="Icon for deciduous shrubs"></span>Deciduous Shrub</div>
-        <div><span><img class="legend-icon" src="{% static 'plants/img/deciduous_tree_icon.svg' %}" alt="Icon for deciduous trees"></span>Deciduous Tree</div>
-        <div><span><img class="legend-icon" src="{% static 'plants/img/vine_icon.svg' %}" alt="Icon for viney plants"></span>Vine</div>
-        <div><span><img class="legend-icon" src="{% static 'plants/img/evergreen_groundcover_icon.svg' %}" alt="Icon for evergreen groundcover plants"></span>Evergreen Groundcover</div>
-        <div><span><img class="legend-icon" src="{% static 'plants/img/evergreen_shrub_icon.svg' %}" alt="Icon for evergreen shrubs"></span>Evergreen Shrub</div>
-        <div><span><img class="legend-icon" src="{% static 'plants/img/evergreen_tree_icon.svg' %}" alt="Icon for evergreen trees"></span>Evergreen Tree</div>
-        <div><span><img class="legend-icon" src="{% static 'plants/img/grass_icon.svg' %}" alt="Icon for grasses"></span>Grass</div>
-        <div><span><img class="legend-icon" src="{% static 'plants/img/perennial_icon.svg' %}" alt="Icon for perennial plants"></span>Perennial</div>
-        <div><span><img class="legend-icon" src="{% static 'plants/img/succulent_icon.svg' %}" alt="Icon for succulent plants"></span>Succulent</div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <img class="legend-icon" src="{% static 'plants/img/annual_icon.svg' %}" alt="Icon for annual plants">
+                <span>Annual</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <img class="legend-icon" src="{% static 'plants/img/bulb_icon.svg' %}" alt="Icon for bulb plants">
+                <span>Bulb</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <img class="legend-icon" src="{% static 'plants/img/deciduous_shrub_icon.svg' %}" alt="Icon for deciduous shrubs">
+                <span>Deciduous Shrub</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <img class="legend-icon" src="{% static 'plants/img/deciduous_tree_icon.svg' %}" alt="Icon for deciduous trees">
+                <span>Deciduous Tree</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <img class="legend-icon" src="{% static 'plants/img/vine_icon.svg' %}" alt="Icon for viney plants">
+                <span>Vine</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <img class="legend-icon" src="{% static 'plants/img/evergreen_groundcover_icon.svg' %}" alt="Icon for evergreen groundcover plants">
+                <span>Evergreen Groundcover</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <img class="legend-icon" src="{% static 'plants/img/evergreen_shrub_icon.svg' %}" alt="Icon for evergreen shrubs">
+                <span>Evergreen Shrub</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <img class="legend-icon" src="{% static 'plants/img/evergreen_tree_icon.svg' %}" alt="Icon for evergreen trees">
+                <span>Evergreen Tree</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <img class="legend-icon" src="{% static 'plants/img/grass_icon.svg' %}" alt="Icon for grasses">
+                <span>Grass</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <img class="legend-icon" src="{% static 'plants/img/perennial_icon.svg' %}" alt="Icon for perennial plants">
+                <span>Perennial</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <img class="legend-icon" src="{% static 'plants/img/succulent_icon.svg' %}" alt="Icon for succulent plants">
+                <span>Succulent</span>
+            </div>
         </div>
 
-        <div class="row">
-            <div class="tutorial">
+        <div class="row mx-0">
+            <div class="tutorial p-3">
                 <h5>Plant Collection Map Tutorial</h5>
                 <p>Click <a href="{% slugurl 'plant-app-tutorial' %}">HERE</a> for a guide on how to use this map and explore the rest of our living collections detail pages.</p>
             </div>
@@ -64,9 +107,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script>
-    window.SERVICE_WORKER_URL = "{% url 'plants:service-worker' %}";
-    </script>
     {{ mapbox_token|json_script:"mapboxToken" }}
     <script src="{% static 'plants/js/name_styling.js' %}"></script>
     <script src="{% static 'plants/js/plant_map.js' %}"></script>

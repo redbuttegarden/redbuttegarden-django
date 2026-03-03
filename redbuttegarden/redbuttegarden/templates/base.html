@@ -22,11 +22,6 @@
     <link rel="manifest" href="{% static 'manifest.webmanifest' %}">
     <meta name="theme-color" content="#0b3d2e">
 
-    <!-- iOS add-to-home-screen -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Plant Map">
-    <link rel="apple-touch-icon" href="{% static 'pwa/icon-192.png' %}">
-
     <title>
         {% block title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}{% endblock %}
         {% block title_suffix %}{% with self.get_site.site_name as site_name %}{% if site_name %}-

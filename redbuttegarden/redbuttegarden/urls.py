@@ -1,8 +1,10 @@
 import os
 
 from django.conf import settings
-from django.urls import include, path
 from django.contrib import admin
+from django.templatetags.static import static
+from django.urls import include, path
+from django.views.generic import RedirectView
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -60,6 +62,15 @@ urlpatterns += [
         name="redoc",
     ),
     path("accounts/", include("django.contrib.auth.urls")),
+
+    path(
+        "apple-touch-icon.png",
+        RedirectView.as_view(url=static("redbuttegarden/img/favicon/apple-touch-icon-152x152.png"), permanent=True),
+    ),
+    path(
+        "apple-touch-icon-precomposed.png",
+        RedirectView.as_view(url=static("redbuttegarden/img/favicon/apple-touch-icon-152x152.png"), permanent=True),
+    ),
 ]
 
 if settings.DEBUG:

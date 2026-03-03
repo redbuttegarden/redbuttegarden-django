@@ -283,6 +283,27 @@ function bindHandlersOnce(map) {
         const garden_code = f.properties.garden_code;
         const planted_on = f.properties.planted_on;
 
+        function displayList(value) {
+            if (!value) return "";
+
+            try {
+                const arr = Array.isArray(value) ? value : JSON.parse(value);
+                if (Array.isArray(arr)) return arr.join(", ");
+            } catch {
+                if (typeof value === "string") {
+                    return value
+                        .split(",")
+                        .map(s => s.trim())
+                        .filter(Boolean)
+                        .join(", ");
+                }
+            }
+            return "";
+        }
+
+        const hardinessDisplay = displayList(hardiness);   // "5, 6, 7, 8, 9"
+        const bloomTimeDisplay = displayList(bloom_time);  // "April, May"
+
         const formatted_species_full_name = formatSpeciesFullName(species_id, species_full_name);
 
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
@@ -301,10 +322,10 @@ function bindHandlersOnce(map) {
                 '<div class="pop-up-row">' + formatted_species_full_name + '</div>' +
                 '<div class="pop-up-row"><span class="pop-up-label">Vernacular Name: </span>' + vernacular_name + '</div>' +
                 '<div class="pop-up-row"><span class="pop-up-label">Habit: </span>' + habit + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Hardiness: </span>' + hardiness + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Hardiness Zones: </span>' + hardinessDisplay + '</div>' +
                 '<div class="pop-up-row"><span class="pop-up-label">Water Regime: </span>' + water_regime + '</div>' +
                 '<div class="pop-up-row"><span class="pop-up-label">Exposure: </span>' + exposure + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Bloom Times: </span>' + bloom_time + '</div>' +
+                '<div class="pop-up-row"><span class="pop-up-label">Bloom Times: </span>' + bloomTimeDisplay + '</div>' +
                 '<div class="pop-up-row"><span class="pop-up-label">Plant Size: </span>' + plant_size + '</div>' +
                 '<div class="pop-up-row"><span class="pop-up-label">Garden Area: </span>' + garden_area + '</div>' +
                 '<div class="pop-up-row"><span class="pop-up-label">Garden Name: </span>' + garden_name + '</div>' +
@@ -490,15 +511,3 @@ map.on('load', function () {
         await initialMapSetup(map);
     })();
 });
-
-console.log("serviceWorker in navigator?", "serviceWorker" in navigator);
-
-if ("serviceWorker" in navigator) {
-  console.log("Attempting SW register...");
-  navigator.serviceWorker
-    .register("/plants/service-worker.js")
-    .then((reg) => console.log("SW registered:", reg.scope))
-    .catch((err) => console.error("SW registration failed:", err));
-} else {
-  console.log("Service workers not supported in this browser/context");
-}

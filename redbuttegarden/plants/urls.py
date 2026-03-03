@@ -58,6 +58,5 @@ urlpatterns = [
     ),
     path("rss/", GardenBloomFeed(), name="bloom-rss"),
     path("ical/", GardenBloomICalFeed(), name="bloom-ical"),
-    path("service-worker.js", views.service_worker, name="service-worker"),
     path("", include(router.urls)),
 ]

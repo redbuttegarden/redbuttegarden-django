@@ -1,5 +1,4 @@
 import logging
-import os
 import re
 import requests
 
@@ -10,12 +9,11 @@ from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from django.core.paginator import PageNotAnInteger, EmptyPage
 from django.db import IntegrityError
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.middleware.csrf import get_token
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET
-from django.views.decorators.cache import cache_control
 from requests import HTTPError
 from rest_framework import generics, viewsets, status
 from urllib.parse import urlencode
@@ -55,13 +53,6 @@ logger = logging.getLogger(__name__)
 
 
 MAX_FEATURES = 5000
-
-@require_GET
-@cache_control(max_age=0, no_cache=True, must_revalidate=True)
-def service_worker(request):
-    sw_path = os.path.join(settings.BASE_DIR, "static", "pwa", "service-worker.js")
-    with open(sw_path, "r", encoding="utf-8") as f:
-        return HttpResponse(f.read(), content_type="application/javascript")
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
