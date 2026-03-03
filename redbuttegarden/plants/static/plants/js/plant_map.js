@@ -504,6 +504,98 @@ async function initialMapSetup(map) {
 
     // 5) Bind interactions once (not duplicated on style change)
     bindHandlersOnce(map);
+
+    bindMapFiltersForm(map);
+}
+
+// ---------------- Filters UI (no reload) ----------------
+function buildQueryStringFromForm(formEl) {
+    const params = new URLSearchParams();
+
+    for (const el of formEl.elements) {
+        if (!el.name) continue;
+        if (el.disabled) continue;
+
+        // Skip non-data controls
+        if (el.type === "submit" || el.type === "button" || el.type === "reset") continue;
+        if (el.name === "csrfmiddlewaretoken") continue;
+
+        if (el.type === "checkbox") {
+            if (el.checked) params.append(el.name, "1");
+            continue;
+        }
+
+        if (el.tagName === "SELECT" && el.multiple) {
+            for (const opt of el.selectedOptions) {
+                const v = (opt.value || "").trim();
+                if (v) params.append(el.name, v);
+            }
+            continue;
+        }
+
+        const v = (el.value || "").trim();
+        if (!v) continue;
+        params.append(el.name, v);
+    }
+
+    return params.toString();
+}
+
+function setActiveFiltersIndicator(qs) {
+    const el = document.getElementById("active-filters");
+    if (!el) return;
+
+    if (!qs) {
+        el.textContent = "No active filters";
+        return;
+    }
+
+    // Human-friendly decode
+    const pretty = decodeURIComponent(qs.replace(/\+/g, " "));
+    el.textContent = `Active filters: ${pretty}`;
+}
+
+function bindMapFiltersForm(map) {
+    const formEl = document.getElementById("map-filters-form");
+    if (!formEl) return;
+
+    // Initialize indicator from current URL
+    setActiveFiltersIndicator(window.location.search.replace(/^\?/, ""));
+
+    formEl.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const qs = buildQueryStringFromForm(formEl);
+
+        // Update browser URL without reload
+        const newUrl = `${window.location.pathname}${qs ? "?" + qs : ""}`;
+        window.history.replaceState({}, "", newUrl);
+
+        setActiveFiltersIndicator(qs);
+
+        // Refresh GeoJSON source with new filters + current bbox
+        await refreshCollectionsData(map);
+
+        // Clear sidebar listing until moveend repopulates from rendered features
+        if (listingEl) listingEl.innerHTML = "<p>Drag the map to populate results</p>";
+        resetMapFilter(map);
+    });
+
+    const resetBtn = document.getElementById("filters-reset");
+    if (resetBtn) {
+        resetBtn.addEventListener("click", async () => {
+            formEl.reset();
+
+            // Clear URL
+            window.history.replaceState({}, "", window.location.pathname);
+            setActiveFiltersIndicator("");
+
+            await refreshCollectionsData(map);
+
+            if (listingEl) listingEl.innerHTML = "<p>Drag the map to populate results</p>";
+            resetMapFilter(map);
+        });
+    }
 }
 
 map.on('load', function () {

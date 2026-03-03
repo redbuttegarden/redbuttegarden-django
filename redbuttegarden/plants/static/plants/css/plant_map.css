@@ -138,3 +138,90 @@ div.mapboxgl-popup {
     display: block;
     object-fit: contain;
 }
+
+/* ---- Filter panel (map sidebar) ---- */
+.map-filter-panel {
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.map-filter-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.active-filters {
+    overflow-wrap: anywhere;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+@media (min-width: 590px) {
+    .filter-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.filter-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* Ensure form fields don't inherit .map-overlay input styles that hide borders */
+.map-overlay .filter-field input,
+.map-overlay .filter-field select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    background: #fff;
+}
+
+/* Checkboxes */
+.filter-checkboxes {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding-top: 6px;
+}
+
+@media (min-width: 590px) {
+    .filter-checkboxes {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.filter-checkboxes .check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.map-overlay .filter-checkboxes input[type="checkbox"] {
+    width: auto;
+    padding: 0;
+    margin: 0;
+}
+
+/* Advanced details */
+.advanced-filters summary {
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}

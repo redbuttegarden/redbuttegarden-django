@@ -287,8 +287,17 @@ def collections_geojson(request):
 
 def plant_map_view(request):
     mapbox_api_token = getattr(settings, "MAPBOX_API_TOKEN", None)
+
+    # GET-bound so existing query params prefill form fields
+    form = CollectionSearchForm(request.GET or None)
+
     return render(
-        request, "plants/collection_map.html", {"mapbox_token": mapbox_api_token}
+        request,
+        "plants/collection_map.html",
+        {
+            "mapbox_token": mapbox_api_token,
+            "form": form,
+        },
     )
 
 
