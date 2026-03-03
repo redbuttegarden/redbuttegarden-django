@@ -55,6 +55,11 @@ logger = logging.getLogger(__name__)
 
 MAX_FEATURES = 5000
 
+SEARCH_TO_FILTER_PARAMS = {
+    # CollectionSearchForm field -> CollectionFilter field
+    "scientific_name": "species_full_name",
+}
+
 
 class FamilyViewSet(viewsets.ModelViewSet):
     """
@@ -238,6 +243,7 @@ def _parse_bbox(bbox: str):
         raise ValueError("bbox must have 4 comma-separated values")
     west, south, east, north = (Decimal(p.strip()) for p in parts)
     return west, south, east, north
+
 
 @require_GET
 def collections_geojson(request):
@@ -434,19 +440,12 @@ def species_or_collection_feedback(request, species_id=None, collection_id=None)
 
 
 def collection_search(request):
-    """
-    View for filtering Collection objects to be displayed on the plant map.
-    """
-    form = CollectionSearchForm()
-
-    context = {"form": form}
+    form = CollectionSearchForm(request.POST or None)
 
     if request.method == "POST":
-        form = CollectionSearchForm(request.POST)
         if form.is_valid():
-            # Not false filter added to exclude boolean fields unless marked True
             params = {
-                k: v for k, v in form.cleaned_data.items() if v != "" and v is not False
+                k: v for k, v in form.cleaned_data.items() if v not in ("", None, False)
             }
 
             if "map_search" in request.POST:
@@ -457,17 +456,15 @@ def collection_search(request):
                 return HttpResponseNotFound("Missing search type.")
 
             if params:
-                url += "?" + urlencode(params)
-
+                url = f"{url}?{urlencode(params)}"
             return redirect(url)
-        else:
-            messages.add_message(
-                request,
-                messages.ERROR,
-                "Received invalid form data. Please edit your request and try again",
-            )
 
-    return render(request, "plants/collection_search.html", context)
+        messages.error(
+            request,
+            "Received invalid form data. Please edit your request and try again",
+        )
+
+    return render(request, "plants/collection_search.html", {"form": form})
 
 
 def collection_list(request):

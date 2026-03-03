@@ -21,6 +21,7 @@ class CollectionSearchForm(forms.Form):
     bloom_months = forms.ChoiceField(choices=[], required=False)
     flower_colors = forms.ChoiceField(choices=[], required=False)
     memorial_person = forms.ChoiceField(choices=[], required=False)
+
     utah_native = forms.BooleanField(required=False)
     plant_select = forms.BooleanField(required=False)
     deer_resistant = forms.BooleanField(required=False)
@@ -29,106 +30,150 @@ class CollectionSearchForm(forms.Form):
     high_elevation = forms.BooleanField(required=False)
     available_memorial = forms.BooleanField(required=False)
 
-    field_order = ['scientific_name',
-                   'common_name',
-                   'family_name',
-                   'garden_name',
-                   'habits',
-                   'exposures',
-                   'water_needs',
-                   'bloom_months',
-                   'flower_colors',
-                   'memorial_person',
-                   'utah_native',
-                   'plant_select',
-                   'deer_resistant',
-                   'rabbit_resistant',
-                   'bee_friendly',
-                   'high_elevation',
-                   'available_memorial']
+    field_order = [
+        "scientific_name",
+        "common_name",
+        "family_name",
+        "garden_name",
+        "habits",
+        "exposures",
+        "water_needs",
+        "bloom_months",
+        "flower_colors",
+        "memorial_person",
+        "utah_native",
+        "plant_select",
+        "deer_resistant",
+        "rabbit_resistant",
+        "bee_friendly",
+        "high_elevation",
+        "available_memorial",
+    ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        family_choices = [(family['id'], family['name']) for family in Family.objects.values('id', 'name')]
-        garden_name_choices = [(garden['name'], garden['name']) for garden in
-                               GardenArea.objects.values('name').distinct('name')]
-        habit_choices = [(species['habit'], species['habit']) for species in
-                         Species.objects.order_by('habit').values('habit').distinct('habit')]
-        exposure_choices = [(species['exposure'], species['exposure']) for species in
-                            Species.objects.order_by('exposure').values('exposure').distinct('exposure')
-                            if species['exposure'] != '' and species['exposure'] is not None]
-        water_need_choices = [(species['water_regime'], species['water_regime']) for species in
-                              Species.objects.order_by('water_regime').values('water_regime').distinct('water_regime')]
+        family_choices = [
+            (str(f["id"]), f["name"]) for f in Family.objects.values("id", "name")
+        ]
+        garden_name_choices = [
+            (g["name"], g["name"]) for g in GardenArea.objects.values("name").distinct()
+        ]
+        habit_choices = [
+            (s["habit"], s["habit"])
+            for s in Species.objects.order_by("habit").values("habit").distinct()
+            if s["habit"]
+        ]
+        exposure_choices = [
+            (s["exposure"], s["exposure"])
+            for s in Species.objects.order_by("exposure").values("exposure").distinct()
+            if s["exposure"]
+        ]
+        water_need_choices = [
+            (s["water_regime"], s["water_regime"])
+            for s in Species.objects.order_by("water_regime")
+            .values("water_regime")
+            .distinct()
+            if s["water_regime"]
+        ]
         bloom_month_choices = [(v, v) for _, v in MONTHS.items()]
-        # Flower color list of lists
-        flower_colors_split = [species['flower_color'].split(',') for species in
-                               Species.objects.order_by('flower_color').values('flower_color').distinct('flower_color')
-                               if species['flower_color'] != '' and species['flower_color'] is not None]
-        flower_colors_split = [(color.strip(), color.strip()) for colors in flower_colors_split for color in
-                               colors]  # Flattens list of lists
-        flower_color_choices = sorted(list(OrderedDict.fromkeys(flower_colors_split)))  # Removes duplicates
-        commemoration_people_choices = [(collection['commemoration_person'], collection['commemoration_person']) for
-                                        collection in
-                                        Collection.objects.order_by('commemoration_person').values(
-                                            'commemoration_person').distinct('commemoration_person')
-                                        if collection['commemoration_person'] != ''
-                                        and collection['commemoration_person'] is not None]
 
-        # Insert empty choice to lists that don't already have an empty option
-        family_choices.insert(0, (None, ''))
-        garden_name_choices.insert(0, (None, ''))
-        habit_choices.insert(0, (None, ''))
-        exposure_choices.insert(0, (None, ''))
-        water_need_choices.insert(0, (None, ''))
-        bloom_month_choices.insert(0, (None, ''))
-        flower_color_choices.insert(0, (None, ''))
-        commemoration_people_choices.insert(0, (None, ''))
+        flower_colors_split = [
+            s["flower_color"].split(",")
+            for s in Species.objects.order_by("flower_color")
+            .values("flower_color")
+            .distinct()
+            if s["flower_color"]
+        ]
+        flower_colors_split = [
+            (c.strip(), c.strip())
+            for colors in flower_colors_split
+            for c in colors
+            if c.strip()
+        ]
+        flower_color_choices = sorted(list(OrderedDict.fromkeys(flower_colors_split)))
 
-        self.fields['family_name'].choices = family_choices
-        self.fields['garden_name'].choices = garden_name_choices
-        self.fields['habits'].choices = habit_choices
-        self.fields['exposures'].choices = exposure_choices
-        self.fields['water_needs'].choices = water_need_choices
-        self.fields['bloom_months'].choices = bloom_month_choices
-        self.fields['flower_colors'].choices = flower_color_choices
-        self.fields['memorial_person'].choices = commemoration_people_choices
+        commemoration_people_choices = [
+            (c["commemoration_person"], c["commemoration_person"])
+            for c in Collection.objects.order_by("commemoration_person")
+            .values("commemoration_person")
+            .distinct()
+            if c["commemoration_person"]
+        ]
+
+        # IMPORTANT: use "" as the empty value for ChoiceField
+        def with_empty(choices):
+            return [("", "")] + choices
+
+        self.fields["family_name"].choices = with_empty(family_choices)
+        self.fields["garden_name"].choices = with_empty(garden_name_choices)
+        self.fields["habits"].choices = with_empty(habit_choices)
+        self.fields["exposures"].choices = with_empty(exposure_choices)
+        self.fields["water_needs"].choices = with_empty(water_need_choices)
+        self.fields["bloom_months"].choices = with_empty(bloom_month_choices)
+        self.fields["flower_colors"].choices = with_empty(flower_color_choices)
+        self.fields["memorial_person"].choices = with_empty(
+            commemoration_people_choices
+        )
 
         for visible in self.visible_fields():
-            if isinstance(visible.field.widget, CheckboxInput):
-                pass
-            else:
-                visible.field.widget.attrs['class'] = 'form-control'
+            if not isinstance(visible.field.widget, CheckboxInput):
+                visible.field.widget.attrs["class"] = "form-control"
+
+    def to_query_params(self) -> dict:
+        """
+        Produce a querystring-safe dict:
+        - drop empty strings and None
+        - drop False booleans (unchecked)
+        """
+        params = {}
+        for k, v in self.cleaned_data.items():
+            if v in ("", None, False):
+                continue
+            params[k] = v
+        return params
 
 
 class FeedbackReportForm(forms.Form):
     """
     Form used to report problems with a particular Species or Collection.
     """
-    species_or_collection_object = forms.ModelChoiceField(queryset=Collection.objects.none(), disabled=True,
-                                                          empty_label=None)
-    subject = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Subject'}))
-    message = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Your feedback'}))
-    sender = forms.EmailField(required=False,
-                              widget=forms.TextInput(attrs={'placeholder': 'Your email address - Optional!'}))
-    cc_myself = forms.BooleanField(required=False, label='CC Me')
+
+    species_or_collection_object = forms.ModelChoiceField(
+        queryset=Collection.objects.none(), disabled=True, empty_label=None
+    )
+    subject = forms.CharField(
+        max_length=100, widget=forms.TextInput(attrs={"placeholder": "Subject"})
+    )
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={"placeholder": "Your feedback"})
+    )
+    sender = forms.EmailField(
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Your email address - Optional!"}),
+    )
+    cc_myself = forms.BooleanField(required=False, label="CC Me")
 
     def __init__(self, species_id, collection_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if species_id:
-            self.fields['species_or_collection_object'].queryset = Species.objects.filter(id=species_id)
-            self.fields['species_or_collection_object'].initial = species_id
+            self.fields["species_or_collection_object"].queryset = (
+                Species.objects.filter(id=species_id)
+            )
+            self.fields["species_or_collection_object"].initial = species_id
         elif collection_id:
-            self.fields['species_or_collection_object'].queryset = Collection.objects.filter(id=collection_id)
-            self.fields['species_or_collection_object'].initial = collection_id
+            self.fields["species_or_collection_object"].queryset = (
+                Collection.objects.filter(id=collection_id)
+            )
+            self.fields["species_or_collection_object"].initial = collection_id
         else:
-            raise forms.ValidationError('Missing ID to Species or Collection')
+            raise forms.ValidationError("Missing ID to Species or Collection")
 
         for visible in self.visible_fields():
             if isinstance(visible.field.widget, CheckboxInput):
                 pass
             else:
-                visible.field.widget.attrs['class'] = 'form-control'
+                visible.field.widget.attrs["class"] = "form-control"
 
 
 class BloomEventSnippetForm(forms.ModelForm):
@@ -138,26 +183,28 @@ class BloomEventSnippetForm(forms.ModelForm):
 
     class Meta:
         model = BloomEvent
-        fields = '__all__'
+        fields = "__all__"
 
         widgets = {
-            'bloom_start': AdminDateInput(),
-            'bloom_end': AdminDateInput(),
+            "bloom_start": AdminDateInput(),
+            "bloom_end": AdminDateInput(),
         }
 
     class Media:
-        js = ['admin/js/bloom_event_collection_qs.js']
+        js = ["admin/js/bloom_event_collection_qs.js"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         species_id = None
-        if self.data and 'species' in self.data:
-            species_id = self.data.get('species')
+        if self.data and "species" in self.data:
+            species_id = self.data.get("species")
         elif self.instance and self.instance.pk:
             species_id = self.instance.species_id
 
         if species_id:
-            self.fields['collections'].queryset = Collection.objects.filter(species=species_id).order_by('plant_id')
+            self.fields["collections"].queryset = Collection.objects.filter(
+                species=species_id
+            ).order_by("plant_id")
         else:
-            self.fields['collections'].queryset = Collection.objects.all()
+            self.fields["collections"].queryset = Collection.objects.all()
