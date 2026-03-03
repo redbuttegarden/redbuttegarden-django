@@ -6,7 +6,7 @@ server {
     listen 443 ssl http2 default_server;
     server_name ${NGINX_HOST};
 
-    ssl_certificate /etc/ssl/certs/web_dev_redbutte_utah_edu.pem;
+    ssl_certificate /etc/ssl/certs/rbg-it-web-dev_redbutte_utah_edu.pem;
     ssl_certificate_key /etc/ssl/certs/web_dev.key;
 
     ssl_session_timeout 1d;
