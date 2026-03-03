@@ -2,6 +2,7 @@ import logging
 import os
 
 from django.conf import settings
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import render
 from django.utils.cache import patch_vary_headers
@@ -34,9 +35,17 @@ class RBGHoursViewSet(SnippetViewSet):
 @require_GET
 @cache_control(max_age=0, no_cache=True, must_revalidate=True)
 def service_worker(request):
-    sw_path = os.path.join(settings.BASE_DIR, "static", "pwa", "service-worker.js")
-    with open(sw_path, "r", encoding="utf-8") as f:
-        return HttpResponse(f.read(), content_type="application/javascript")
+    path = "pwa/service-worker.js"
+    try:
+        with staticfiles_storage.open(path, "rb") as f:
+            content = f.read()
+    except FileNotFoundError:
+        raise Http404(f"Missing static file: {path}")
+
+    resp = HttpResponse(content, content_type="application/javascript")
+    resp["Service-Worker-Allowed"] = "/"
+
+    return resp
 
 @require_GET
 def offline(request):
