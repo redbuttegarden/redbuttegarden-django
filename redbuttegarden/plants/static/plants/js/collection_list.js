@@ -1,4 +1,77 @@
-/* global htmx */
+function hardResetFilterForm(form) {
+    const els = form.querySelectorAll("input, select, textarea");
+
+    els.forEach((el) => {
+        if (!el.name) return;
+        if (el.type === "hidden") return; // keep _hx and any other hidden markers
+
+        if (el.type === "checkbox" || el.type === "radio") {
+            el.checked = false;
+            return;
+        }
+
+        if (el.tagName === "SELECT") {
+            // Prefer blank option if present
+            const hasBlank = Array.from(el.options).some((o) => o.value === "");
+            el.value = hasBlank ? "" : (el.options[0]?.value ?? "");
+            return;
+        }
+
+        // text/search/textarea/etc.
+        el.value = "";
+    });
+}
+
+function setupClearIntercept() {
+    const form = document.getElementById("collection-filter-form");
+    const clear = document.getElementById("collection-clear");
+    if (!form || !clear) return;
+
+    clear.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        // 1) Reset UI values (defeats bfcache/autofill)
+        hardResetFilterForm(form);
+
+        // 2) Clean destination URL (should be something like /plants/collections/results/?mode=list)
+        const baseUrl = new URL(
+            clear.getAttribute("href") || window.location.pathname,
+            window.location.origin
+        );
+
+        // Ensure we don't keep HTMX marker in pushed URLs
+        baseUrl.searchParams.delete("_hx");
+
+        const url = baseUrl.pathname + (baseUrl.search ? baseUrl.search : "");
+
+        // 3) Temporarily disable all non-hidden fields so HTMX can't serialize stale values
+        const els = form.querySelectorAll("input, select, textarea");
+        const disabled = [];
+        els.forEach((el) => {
+            if (el.type === "hidden") return;
+            if (el.disabled) return;
+            el.disabled = true;
+            disabled.push(el);
+        });
+
+        // 4) HTMX request to the clean URL (no form params)
+        if (typeof window.htmx !== "undefined") {
+            htmx.ajax("GET", url, {
+                target: "#table-container",
+                swap: "outerHTML",
+                pushUrl: true,
+            });
+        } else {
+            window.location.assign(url);
+        }
+
+        // 5) Re-enable fields immediately after request is queued
+        window.setTimeout(() => {
+            disabled.forEach((el) => (el.disabled = false));
+        }, 0);
+    });
+}
+
 (() => {
     function addFormControl() {
         const container = document.getElementById("collection-filter-form");
@@ -98,6 +171,7 @@
         document.body.addEventListener("htmx:afterSwap", () => {
             addFormControl();
             setupCleanGetSubmit(); // form may have been swapped/replaced
+            setupClearIntercept(); // clear button/form may have been swapped/replaced
 
             if (!pendingPush) return;
             try {
@@ -112,11 +186,13 @@
         addFormControl();
         setupCleanGetSubmit();
         setupHtmxPaginationIntercept();
+        setupClearIntercept();
     });
 
     document.body.addEventListener("htmx:afterSwap", () => {
         addFormControl();
         setupCleanGetSubmit();
+        setupClearIntercept();
     });
 })();
 
@@ -134,9 +210,6 @@
                 delete params[key];
             }
         });
-
-        // If you want to keep _hx=1, do nothing; if you want to drop it from URL pushes, delete it:
-        // delete params._hx;
     }
 
     // HTMX hook: runs right before request is sent

@@ -47,14 +47,7 @@
 
     <div class="col-auto">
       <button type="submit" class="btn btn-primary">Filter</button>
-      <button
-        type="submit"
-        class="btn btn-outline-secondary"
-        formaction="{{ clear_url|default:request.path }}"
-        formmethod="get"
-      >
-        Clear
-      </button>
+      <a id="collection-clear" href="{{ clear_url|default:request.path }}" class="btn btn-outline-secondary">Clear</a>
     </div>
   </form>
 

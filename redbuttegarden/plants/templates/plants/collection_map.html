@@ -87,12 +87,7 @@
               <button type="submit" class="btn btn-primary btn-sm">Apply</button>
               <button type="button" id="filters-reset" class="btn btn-light btn-sm">Reset</button>
 
-              <a class="btn btn-outline-secondary btn-sm"
-                href="{% url 'plants:collection-results' %}{% if normalized_qs %}
-                  ?{{ normalized_qs }}
-                {% endif %}">
-                View list
-              </a>
+              <a id="view-list-link" class="btn btn-outline-secondary btn-sm" href="{% url 'plants:collection-results' %}">View list</a>
             </div>
           </form>
         </div>

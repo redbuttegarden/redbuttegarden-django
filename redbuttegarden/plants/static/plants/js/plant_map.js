@@ -9,6 +9,72 @@ const map = new mapboxgl.Map({
     zoom: 16
 });
 
+function syncViewListLink() {
+    const link = document.getElementById("view-list-link");
+    if (!link) return;
+
+    const url = new URL(link.getAttribute("href"), window.location.origin);
+    url.search = window.location.search;   // current filters
+    url.searchParams.delete("bbox");        // optional: list page doesn't need bbox
+    link.setAttribute("href", url.toString());
+}
+
+function buildQueryStringFromFormForLinks(formEl) {
+    const params = new URLSearchParams();
+
+    for (const el of formEl.elements) {
+        if (!el.name) continue;
+        if (el.disabled) continue;
+
+        // Skip non-data controls
+        if (el.type === "submit" || el.type === "button" || el.type === "reset") continue;
+
+        if (el.type === "checkbox") {
+            if (el.checked) params.append(el.name, "true");
+            continue;
+        }
+
+        if (el.tagName === "SELECT" && el.multiple) {
+            for (const opt of el.selectedOptions) {
+                const v = (opt.value || "").trim();
+                if (v) params.append(el.name, v);
+            }
+            continue;
+        }
+
+        const v = (el.value || "").trim();
+        if (!v) continue;
+        params.append(el.name, v);
+    }
+
+    return params.toString();
+}
+
+let viewListBound = false;
+
+function bindViewListLink() {
+    if (viewListBound) return;
+    viewListBound = true;
+
+    const link = document.getElementById("view-list-link");
+    const formEl = document.getElementById("map-filters-form");
+    if (!link || !formEl) return;
+
+    const baseHref = link.getAttribute("href");
+
+    link.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        // Build from current form state (works even if user never hit Apply)
+        const qs = buildQueryStringFromFormForLinks(formEl);
+
+        const dest = new URL(baseHref, window.location.origin);
+        if (qs) dest.search = "?" + qs;
+
+        window.location.assign(dest.toString());
+    });
+}
+
 function isMobile() {
     return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
 }
@@ -23,8 +89,8 @@ if (isMobile()) {
 }
 
 // Code for changing styles based off https://docs.mapbox.com/mapbox-gl-js/example/setstyle/
-const layerList = document.getElementById('mapMenu');
-const inputs = layerList.getElementsByTagName('input');
+const layerList = document.getElementById("mapMenu");
+const inputs = layerList ? layerList.getElementsByTagName("input") : [];
 
 for (const input of inputs) {
     input.onclick = (layer) => {
@@ -35,6 +101,7 @@ for (const input of inputs) {
         }
 
         map.once('style.load', () => {
+            bindViewListLink();
             console.log('Initializing map with style: ' + layerId);
             initialMapSetup(map);
         });
@@ -232,23 +299,23 @@ function bindHandlersOnce(map) {
         resetMapFilter(map);
     });
 
-    map.on('moveend', async function () {
-        // Keep sidebar updated
-        const layers = [];
-        if (map.getLayer('clusters')) layers.push('clusters');
-        if (map.getLayer('unclustered-point')) layers.push('unclustered-point');
-        if (!layers.length) return;
-
-        let features = map.queryRenderedFeatures({ layers });
-        if (features) {
-            let uniqueFeatures = getUniqueFeatures(features, 'id');
-            renderListings(uniqueFeatures);
-            collections = uniqueFeatures;
-        }
-
+    map.on("moveend", function () {
+        // Debounced refresh for bbox
         clearTimeout(refreshTimer);
-        refreshTimer = setTimeout(() => {
-            refreshCollectionsData(map);
+        refreshTimer = setTimeout(async () => {
+            await refreshCollectionsData(map);
+
+            map.once("idle", () => {
+                const layers = [];
+                if (map.getLayer("clusters")) layers.push("clusters");
+                if (map.getLayer("unclustered-point")) layers.push("unclustered-point");
+                if (!layers.length) return;
+
+                const features = map.queryRenderedFeatures({ layers });
+                const uniqueFeatures = getUniqueFeatures(features || [], "id");
+                renderListings(uniqueFeatures);
+                collections = uniqueFeatures;
+            });
         }, 350);
     });
 
@@ -569,6 +636,8 @@ function bindMapFiltersForm(map) {
     // Initialize indicator from current URL
     setActiveFiltersIndicator(window.location.search.replace(/^\?/, ""));
 
+    syncViewListLink();
+
     formEl.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -579,9 +648,7 @@ function bindMapFiltersForm(map) {
         window.history.replaceState({}, "", newUrl);
 
         setActiveFiltersIndicator(qs);
-
-        // Refresh GeoJSON source with new filters + current bbox
-        await refreshCollectionsData(map);
+        syncViewListLink();
 
         await refreshCollectionsData(map);
         map.once("idle", () => {
@@ -600,11 +667,37 @@ function bindMapFiltersForm(map) {
     const resetBtn = document.getElementById("filters-reset");
     if (resetBtn) {
         resetBtn.addEventListener("click", async () => {
+            // Reset native controls (good for text inputs)
             formEl.reset();
 
-            // Clear URL
+            // Force-clear selects + checkboxes to "no filter"
+            for (const el of formEl.elements) {
+                if (!el.name) continue;
+                if (el.disabled) continue;
+
+                if (el.type === "checkbox") {
+                    el.checked = false;
+                    continue;
+                }
+
+                if (el.tagName === "SELECT") {
+                    // Select the blank/placeholder option if it exists, else fall back to first option
+                    const hasBlank = Array.from(el.options).some((opt) => opt.value === "");
+                    el.value = hasBlank ? "" : (el.options[0]?.value ?? "");
+                    continue;
+                }
+
+                if (el.type === "text" || el.type === "search" || el.tagName === "TEXTAREA") {
+                    el.value = "";
+                }
+            }
+
+            // Clear URL (what you already do)
             window.history.replaceState({}, "", window.location.pathname);
             setActiveFiltersIndicator("");
+
+            // Keep View List correct (if you're building it from form, optional)
+            // syncViewListLink();  // if you still use it; otherwise no-op
 
             await refreshCollectionsData(map);
 

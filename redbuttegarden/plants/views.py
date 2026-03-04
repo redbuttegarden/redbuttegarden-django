@@ -754,6 +754,6 @@ def top_trees(request):
     )
 
     if is_htmx:
-        return render(request, "plants/_results_container.html", context)
+        return render(request, "plants/includes/_results_container.html", context)
 
     return render(request, "plants/collection_results.html", context)
