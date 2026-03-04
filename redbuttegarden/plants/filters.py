@@ -1,9 +1,12 @@
+from collections import OrderedDict
+
 import django_filters
 from django import forms
 from django.http import QueryDict
 from django.contrib.postgres.search import SearchQuery, SearchVector
+from django.utils.dates import MONTHS
 
-from .models import Collection, Species
+from .models import Collection, Species, GardenArea, Family
 
 
 TRUE_VALUES = {"1", "true", "t", "yes", "y", "on"}
@@ -19,10 +22,6 @@ class CollectionFilter(django_filters.FilterSet):
     Aliases accepted (search form / map / legacy):
       - scientific_name -> species_full_name
       - common_name -> common_name (method)
-      - family_name -> family_name (id)
-      - habits -> habits, exposures -> exposures, water_needs -> water_needs
-      - bloom_months -> bloom_months, flower_colors -> flower_colors
-      - memorial_person -> memorial_person
       - plus boolean checkboxes (utah_native, etc.)
     """
 
@@ -30,69 +29,92 @@ class CollectionFilter(django_filters.FilterSet):
     plant_id = django_filters.CharFilter(
         method="filter_plant_id_contains",
         label="Plant ID contains",
-        widget=forms.TextInput(attrs={"placeholder": "e.g. 2025"}),
+        widget=forms.TextInput(),
     )
 
     species_full_name = django_filters.CharFilter(
         field_name="species__full_name",
         lookup_expr="icontains",
         label="Scientific name",
-        widget=forms.TextInput(attrs={"placeholder": "Acer rubrum"}),
-    )
-
-    garden_name = django_filters.CharFilter(
-        field_name="garden__name",
-        lookup_expr="icontains",
-        label="Garden name",
-        widget=forms.TextInput(attrs={"placeholder": "Courtyard"}),
+        widget=forms.TextInput(),
     )
 
     garden_area = django_filters.CharFilter(
         field_name="garden__area",
         lookup_expr="icontains",
         label="Garden area",
-        widget=forms.TextInput(attrs={"placeholder": "Wedding Lawn"}),
+        widget=forms.TextInput(),
     )
 
     garden_code = django_filters.CharFilter(
         field_name="garden__code",
         lookup_expr="icontains",
         label="Garden code",
-        widget=forms.TextInput(attrs={"placeholder": "GWL"}),
+        widget=forms.TextInput(),
     )
 
-    # ---------- Additional fields (from search form) ----------
     common_name = django_filters.CharFilter(
         method="filter_common_name", label="Common name"
     )
 
-    family_name = django_filters.NumberFilter(
-        field_name="species__genus__family_id", label="Family"
+    # ---------- Choice-based filters (populated from DB in __init__) ----------
+    family_name = django_filters.TypedChoiceFilter(
+        field_name="species__genus__family_id",
+        label="Family",
+        choices=[],
+        coerce=int,
+        empty_value=None,
     )
 
-    habits = django_filters.CharFilter(
-        field_name="species__habit", lookup_expr="iexact", label="Habit"
-    )
-    exposures = django_filters.CharFilter(
-        field_name="species__exposure", lookup_expr="iexact", label="Exposure"
-    )
-    water_needs = django_filters.CharFilter(
-        field_name="species__water_regime", lookup_expr="iexact", label="Water needs"
+    garden_name = django_filters.ChoiceFilter(
+        field_name="garden__name",
+        label="Garden name",
+        choices=[],
+        lookup_expr="iexact",
     )
 
-    bloom_months = django_filters.CharFilter(
-        method="filter_bloom_month", label="Bloom month"
+    habits = django_filters.ChoiceFilter(
+        field_name="species__habit",
+        label="Habit",
+        choices=[],
+        lookup_expr="iexact",
     )
-    flower_colors = django_filters.CharFilter(
+
+    exposures = django_filters.ChoiceFilter(
+        field_name="species__exposure",
+        label="Exposure",
+        choices=[],
+        lookup_expr="iexact",
+    )
+
+    water_needs = django_filters.ChoiceFilter(
+        field_name="species__water_regime",
+        label="Water needs",
+        choices=[],
+        lookup_expr="iexact",
+    )
+
+    bloom_months = django_filters.ChoiceFilter(
+        method="filter_bloom_month",
+        label="Bloom month",
+        choices=[],
+    )
+
+    flower_colors = django_filters.ChoiceFilter(
         field_name="species__flower_color",
         lookup_expr="icontains",
         label="Flower color",
+        choices=[],
     )
 
-    memorial_person = django_filters.CharFilter(
-        field_name="commemoration_person", lookup_expr="iexact", label="Memorial person"
+    memorial_person = django_filters.ChoiceFilter(
+        field_name="commemoration_person",
+        lookup_expr="iexact",
+        label="Memorial person",
+        choices=[],
     )
 
+    # ---------- Boolean filters ----------
     utah_native = django_filters.BooleanFilter(
         method="filter_truthy",
         field_name="species__utah_native",
@@ -137,11 +159,8 @@ class CollectionFilter(django_filters.FilterSet):
     )
 
     # ---------- Aliases: accept other param names without duplicating logic ----------
-    # NOTE: these are *query-param aliases*, not separate UI filters.
     PARAM_ALIASES = {
-        # search-form / map keys -> canonical list keys
         "scientific_name": "species_full_name",
-        # optional: if you ever used these variants elsewhere
         "species": "species_full_name",
         "q": "species_full_name",
     }
@@ -149,13 +168,11 @@ class CollectionFilter(django_filters.FilterSet):
     class Meta:
         model = Collection
         fields = [
-            # canonical list keys
             "plant_id",
             "species_full_name",
             "garden_name",
             "garden_area",
             "garden_code",
-            # search-form keys
             "common_name",
             "family_name",
             "habits",
@@ -174,21 +191,93 @@ class CollectionFilter(django_filters.FilterSet):
         ]
 
     def __init__(self, data=None, *args, **kwargs):
-        # Remap aliases in GET params to canonical keys before django-filter parses them.
         data = self._canonicalize_querydict(data)
         super().__init__(data=data, *args, **kwargs)
 
+        def _set_empty_label(field, label="---------"):
+            if hasattr(field, "empty_label"):
+                field.empty_label = label
+            else:
+                # ChoiceField: ensure first choice is the placeholder
+                choices = list(field.choices)
+                if not choices or choices[0][0] != "":
+                    field.choices = [("", label)] + choices
+
+        # IMPORTANT: do NOT prepend ("", "") to choices.
+        # Let Django render the default "---------" empty option consistently.
+
+        # Families
+        family_choices = Family.objects.order_by("name").values_list("id", "name")
+        self.form.fields["family_name"].choices = [
+            (fid, name) for fid, name in family_choices
+        ]
+        _set_empty_label(self.form.fields["family_name"])
+
+        # Garden names
+        garden_choices = (
+            GardenArea.objects.order_by("name")
+            .values_list("name", flat=True)
+            .distinct()
+        )
+        self.form.fields["garden_name"].choices = [(g, g) for g in garden_choices if g]
+
+        # Habit / exposure / water regime
+        habit_choices = (
+            Species.objects.order_by("habit").values_list("habit", flat=True).distinct()
+        )
+        self.form.fields["habits"].choices = [(h, h) for h in habit_choices if h]
+
+        exposure_choices = (
+            Species.objects.order_by("exposure")
+            .values_list("exposure", flat=True)
+            .distinct()
+        )
+        self.form.fields["exposures"].choices = [(e, e) for e in exposure_choices if e]
+
+        water_choices = (
+            Species.objects.order_by("water_regime")
+            .values_list("water_regime", flat=True)
+            .distinct()
+        )
+        self.form.fields["water_needs"].choices = [(w, w) for w in water_choices if w]
+
+        # Bloom months
+        self.form.fields["bloom_months"].choices = [(v, v) for _, v in MONTHS.items()]
+
+        # Flower colors: split, strip, unique, sorted
+        raw_colors = (
+            Species.objects.order_by("flower_color")
+            .values_list("flower_color", flat=True)
+            .distinct()
+        )
+        split_colors = []
+        for s in raw_colors:
+            if not s:
+                continue
+            split_colors.extend([c.strip() for c in s.split(",") if c.strip()])
+
+        unique_colors = sorted(list(OrderedDict.fromkeys(split_colors)))
+        self.form.fields["flower_colors"].choices = [(c, c) for c in unique_colors]
+
+        # Memorial people
+        people = (
+            Collection.objects.order_by("commemoration_person")
+            .values_list("commemoration_person", flat=True)
+            .distinct()
+        )
+        self.form.fields["memorial_person"].choices = [(p, p) for p in people if p]
+
+        # Widget class tweaks
         for field in self.form.fields.values():
             widget = field.widget
             if isinstance(widget, forms.CheckboxInput):
-                existing = widget.attrs.get("class", "")
-                if "form-check-input" not in existing:
-                    widget.attrs["class"] = (existing + " form-check-input").strip()
-                continue
-
-            existing = widget.attrs.get("class", "")
-            if "form-control" not in existing:
-                widget.attrs["class"] = (existing + " form-control").strip()
+                widget.attrs["class"] = (
+                    widget.attrs.get("class", "") + " form-check-input"
+                ).strip()
+            else:
+                widget.attrs["class"] = (
+                    widget.attrs.get("class", "") + " form-control"
+                ).strip()
 
     def _canonicalize_querydict(self, data):
         """
@@ -198,7 +287,6 @@ class CollectionFilter(django_filters.FilterSet):
         if not data:
             return data
 
-        # Works for QueryDict and dict-like
         if isinstance(data, QueryDict):
             qd = data.copy()
         else:
@@ -214,7 +302,6 @@ class CollectionFilter(django_filters.FilterSet):
             if canonical in qd:
                 continue
             if alias in qd:
-                # preserve multiple values if provided
                 for v in qd.getlist(alias):
                     qd.appendlist(canonical, v)
         return qd
@@ -240,7 +327,6 @@ class CollectionFilter(django_filters.FilterSet):
         return qs.filter(species__bloom_time__overlap=month_tokens)
 
     def filter_truthy(self, qs, field_name, value):
-        # checkbox semantics: if present/truthy => True
         if value in (None, "", False):
             return qs
         if isinstance(value, str):

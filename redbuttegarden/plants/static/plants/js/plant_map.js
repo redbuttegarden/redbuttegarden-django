@@ -1,5 +1,4 @@
-console.log("plant_map.js loaded");
-
+let refreshTimer = null;
 const mapboxToken = JSON.parse(document.getElementById('mapboxToken').textContent);
 
 mapboxgl.accessToken = mapboxToken;
@@ -35,7 +34,7 @@ for (const input of inputs) {
             map.setStyle('mapbox://styles/mapbox/' + layerId);
         }
 
-        map.once('styledata', () => {
+        map.once('style.load', () => {
             console.log('Initializing map with style: ' + layerId);
             initialMapSetup(map);
         });
@@ -121,28 +120,28 @@ function resetMapFilter(map) {
 
 // ---------------- URL builder (single source of truth) ----------------
 function buildCollectionsGeojsonUrl(map) {
-  const url = new URL("/plants/api/collections-geojson/", window.location.origin);
+    const url = new URL("/plants/api/collections-geojson/", window.location.origin);
 
-  // Copy current query params, excluding UI-only params
-  const current = new URLSearchParams(window.location.search);
-  const dropKeys = new Set(["page", "_export", "_hx", "mode"]);
+    // Copy current query params, excluding UI-only params
+    const current = new URLSearchParams(window.location.search);
+    const dropKeys = new Set(["page", "_export", "_hx", "mode"]);
 
-  for (const [k, v] of current.entries()) {
-    if (dropKeys.has(k)) continue;
-    // Keep multiple values if present (URLSearchParams.entries already iterates them)
-    url.searchParams.append(k, v);
-  }
+    for (const [k, v] of current.entries()) {
+        if (dropKeys.has(k)) continue;
+        // Keep multiple values if present (URLSearchParams.entries already iterates them)
+        url.searchParams.append(k, v);
+    }
 
-  // Add bbox if map bounds are available
-  try {
-    const b = map.getBounds();
-    url.searchParams.set(
-      "bbox",
-      [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].join(",")
-    );
-  } catch (e) {}
+    // Add bbox if map bounds are available
+    try {
+        const b = map.getBounds();
+        url.searchParams.set(
+            "bbox",
+            [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].join(",")
+        );
+    } catch (e) { }
 
-  return url;
+    return url;
 }
 
 // ---------- Guards / helpers ----------
@@ -188,13 +187,16 @@ function hideLoader() {
     if (el) el.style.display = "none";
 }
 
-// Keep these as top-level helpers (used by click handler)
 function formatSpeciesFullName(species_id, species_full_name) {
     if (species_id) {
-        return '<span class="pop-up-label">Full Name: </span><a href="/plants/species/' + species_id + '/"' + style_full_name(species_full_name) + '</a>';
-    } else {
-        return '<span class="pop-up-label">Full Name: </span>' + style_full_name(species_full_name);
+        return (
+            '<span class="pop-up-label">Full Name: </span>' +
+            '<a href="/plants/species/' + species_id + '/">' +
+            style_full_name(species_full_name) +
+            "</a>"
+        );
     }
+    return '<span class="pop-up-label">Full Name: </span>' + style_full_name(species_full_name);
 }
 
 async function refreshCollectionsData(map) {
@@ -244,8 +246,10 @@ function bindHandlersOnce(map) {
             collections = uniqueFeatures;
         }
 
-        // Optional but recommended: refresh GeoJSON based on new bbox
-        await refreshCollectionsData(map);
+        clearTimeout(refreshTimer);
+        refreshTimer = setTimeout(() => {
+            refreshCollectionsData(map);
+        }, 350);
     });
 
     map.on('click', 'clusters', function (e) {
@@ -524,7 +528,7 @@ function buildQueryStringFromForm(formEl) {
         if (el.name === "csrfmiddlewaretoken") continue;
 
         if (el.type === "checkbox") {
-            if (el.checked) params.append(el.name, "1");
+            if (el.checked) params.append(el.name, "true");
             continue;
         }
 
@@ -579,8 +583,17 @@ function bindMapFiltersForm(map) {
         // Refresh GeoJSON source with new filters + current bbox
         await refreshCollectionsData(map);
 
-        // Clear sidebar listing until moveend repopulates from rendered features
-        if (listingEl) listingEl.innerHTML = "<p>Drag the map to populate results</p>";
+        await refreshCollectionsData(map);
+        map.once("idle", () => {
+            const layers = [];
+            if (map.getLayer("clusters")) layers.push("clusters");
+            if (map.getLayer("unclustered-point")) layers.push("unclustered-point");
+            if (!layers.length) return;
+            const features = map.queryRenderedFeatures({ layers });
+            const uniqueFeatures = getUniqueFeatures(features || [], "id");
+            renderListings(uniqueFeatures);
+            collections = uniqueFeatures;
+        });
         resetMapFilter(map);
     });
 
@@ -602,29 +615,29 @@ function bindMapFiltersForm(map) {
 }
 
 (() => {
-  const details = document.getElementById("mapFilters");
-  if (!details) return;
+    const details = document.getElementById("mapFilters");
+    if (!details) return;
 
-  const mqMobile = window.matchMedia("(max-width: 590px)");
+    const mqMobile = window.matchMedia("(max-width: 590px)");
 
-  const syncDetails = () => {
-    if (mqMobile.matches) {
-      details.removeAttribute("open"); // collapsed on mobile
-    } else {
-      details.setAttribute("open", ""); // open on desktop
+    const syncDetails = () => {
+        if (mqMobile.matches) {
+            details.removeAttribute("open"); // collapsed on mobile
+        } else {
+            details.setAttribute("open", ""); // open on desktop
+        }
+    };
+
+    // Run once on load
+    syncDetails();
+
+    // Keep it in sync if the viewport crosses the breakpoint
+    if (typeof mqMobile.addEventListener === "function") {
+        mqMobile.addEventListener("change", syncDetails);
+    } else if (typeof mqMobile.addListener === "function") {
+        // Safari fallback
+        mqMobile.addListener(syncDetails);
     }
-  };
-
-  // Run once on load
-  syncDetails();
-
-  // Keep it in sync if the viewport crosses the breakpoint
-  if (typeof mqMobile.addEventListener === "function") {
-    mqMobile.addEventListener("change", syncDetails);
-  } else if (typeof mqMobile.addListener === "function") {
-    // Safari fallback
-    mqMobile.addListener(syncDetails);
-  }
 })();
 
 map.on('load', function () {

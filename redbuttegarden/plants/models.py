@@ -208,6 +208,6 @@ class BloomEvent(models.Model):
         # If a URL is not set, generate one based on the species
         if not self.url:
             if self.species:
-                self.url = f'https://redbuttegarden.org/plants/plant-map/?scientific_name={urllib.parse.quote(self.species.full_name)}'
+                self.url = f'https://redbuttegarden.org/plants/plant-map/?species_full_name={urllib.parse.quote(self.species.full_name)}'
 
         super().save(*args, **kwargs)
