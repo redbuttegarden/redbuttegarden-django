@@ -40,45 +40,45 @@
         <div class="map-filter-panel map-filters__body">
           <form id="map-filters-form" method="get" action="{% url 'plants:plant-map' %}">
             <div class="filter-grid">
-              <div class="filter-field">{{ form.scientific_name.label_tag }}
-                {{ form.scientific_name }}</div>
-              <div class="filter-field">{{ form.common_name.label_tag }}
-                {{ form.common_name }}</div>
-              <div class="filter-field">{{ form.garden_name.label_tag }}
-                {{ form.garden_name }}</div>
-              <div class="filter-field">{{ form.garden_code.label_tag }}
-                {{ form.garden_code }}</div>
-              <div class="filter-field">{{ form.plant_id.label_tag }}
-                {{ form.plant_id }}</div>
+              <div class="filter-field">{{ filter.form.species_full_name.label_tag }}
+                {{ filter.form.species_full_name }}</div>
+              <div class="filter-field">{{ filter.form.common_name.label_tag }}
+                {{ filter.form.common_name }}</div>
+              <div class="filter-field">{{ filter.form.garden_name.label_tag }}
+                {{ filter.form.garden_name }}</div>
+              <div class="filter-field">{{ filter.form.garden_code.label_tag }}
+                {{ filter.form.garden_code }}</div>
+              <div class="filter-field">{{ filter.form.plant_id.label_tag }}
+                {{ filter.form.plant_id }}</div>
             </div>
 
             <details class="advanced-filters">
               <summary class="fw-semibold">Advanced</summary>
 
               <div class="filter-grid mt-2">
-                <div class="filter-field">{{ form.family_name.label_tag }}
-                  {{ form.family_name }}</div>
-                <div class="filter-field">{{ form.habits.label_tag }}
-                  {{ form.habits }}</div>
-                <div class="filter-field">{{ form.exposures.label_tag }}
-                  {{ form.exposures }}</div>
-                <div class="filter-field">{{ form.water_needs.label_tag }}
-                  {{ form.water_needs }}</div>
-                <div class="filter-field">{{ form.bloom_months.label_tag }}
-                  {{ form.bloom_months }}</div>
-                <div class="filter-field">{{ form.flower_colors.label_tag }}
-                  {{ form.flower_colors }}</div>
-                <div class="filter-field">{{ form.memorial_person.label_tag }}
-                  {{ form.memorial_person }}</div>
+                <div class="filter-field">{{ filter.form.family_name.label_tag }}
+                  {{ filter.form.family_name }}</div>
+                <div class="filter-field">{{ filter.form.habits.label_tag }}
+                  {{ filter.form.habits }}</div>
+                <div class="filter-field">{{ filter.form.exposures.label_tag }}
+                  {{ filter.form.exposures }}</div>
+                <div class="filter-field">{{ filter.form.water_needs.label_tag }}
+                  {{ filter.form.water_needs }}</div>
+                <div class="filter-field">{{ filter.form.bloom_months.label_tag }}
+                  {{ filter.form.bloom_months }}</div>
+                <div class="filter-field">{{ filter.form.flower_colors.label_tag }}
+                  {{ filter.form.flower_colors }}</div>
+                <div class="filter-field">{{ filter.form.memorial_person.label_tag }}
+                  {{ filter.form.memorial_person }}</div>
 
                 <div class="filter-checkboxes">
-                  <label class="check">{{ form.utah_native }} Utah native</label>
-                  <label class="check">{{ form.plant_select }} Plant select</label>
-                  <label class="check">{{ form.deer_resistant }} Deer resistant</label>
-                  <label class="check">{{ form.rabbit_resistant }} Rabbit resistant</label>
-                  <label class="check">{{ form.bee_friendly }} Bee friendly</label>
-                  <label class="check">{{ form.high_elevation }} High elevation</label>
-                  <label class="check">{{ form.available_memorial }} Memorial available</label>
+                  <label class="check">{{ filter.form.utah_native }} Utah native</label>
+                  <label class="check">{{ filter.form.plant_select }} Plant select</label>
+                  <label class="check">{{ filter.form.deer_resistant }} Deer resistant</label>
+                  <label class="check">{{ filter.form.rabbit_resistant }} Rabbit resistant</label>
+                  <label class="check">{{ filter.form.bee_friendly }} Bee friendly</label>
+                  <label class="check">{{ filter.form.high_elevation }} High elevation</label>
+                  <label class="check">{{ filter.form.available_memorial }} Memorial available</label>
                 </div>
               </div>
             </details>
@@ -86,7 +86,13 @@
             <div class="filter-actions">
               <button type="submit" class="btn btn-primary btn-sm">Apply</button>
               <button type="button" id="filters-reset" class="btn btn-light btn-sm">Reset</button>
-              <a class="btn btn-outline-secondary btn-sm" href="{% url 'plants:collection-list' %}{% if normalized_qs %}?{{ normalized_qs }}{% endif %}">View list</a>
+
+              <a class="btn btn-outline-secondary btn-sm"
+                href="{% url 'plants:collection-results' %}{% if normalized_qs %}
+                  ?{{ normalized_qs }}
+                {% endif %}">
+                View list
+              </a>
             </div>
           </form>
         </div>

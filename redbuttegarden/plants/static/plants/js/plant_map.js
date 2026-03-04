@@ -121,25 +121,28 @@ function resetMapFilter(map) {
 
 // ---------------- URL builder (single source of truth) ----------------
 function buildCollectionsGeojsonUrl(map) {
-    const url = new URL("/plants/api/collections-geojson/", window.location.origin);
+  const url = new URL("/plants/api/collections-geojson/", window.location.origin);
 
-    // Preserve existing filter query params (?family_name=... etc)
-    url.search = window.location.search;
+  // Copy current query params, excluding UI-only params
+  const current = new URLSearchParams(window.location.search);
+  const dropKeys = new Set(["page", "_export", "_hx", "mode"]);
 
-    // Add bbox if possible (requires map to be initialized)
-    try {
-        const b = map.getBounds();
-        url.searchParams.set("bbox", [
-            b.getWest(),
-            b.getSouth(),
-            b.getEast(),
-            b.getNorth(),
-        ].join(","));
-    } catch (e) {
-        // If bounds aren't available yet, just omit bbox
-    }
+  for (const [k, v] of current.entries()) {
+    if (dropKeys.has(k)) continue;
+    // Keep multiple values if present (URLSearchParams.entries already iterates them)
+    url.searchParams.append(k, v);
+  }
 
-    return url;
+  // Add bbox if map bounds are available
+  try {
+    const b = map.getBounds();
+    url.searchParams.set(
+      "bbox",
+      [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].join(",")
+    );
+  } catch (e) {}
+
+  return url;
 }
 
 // ---------- Guards / helpers ----------

@@ -37,8 +37,8 @@ urlpatterns = [
     ),
     path("species/<int:species_id>/", views.species_detail, name="species-detail"),
     path("plant-map/", views.plant_map_view, name="plant-map"),
-    path("search/", views.collection_search, name="collection-search"),
-    path("collection-list/", views.collection_list, name="collection-list"),
+    path("collections/results/", views.collection_results, name="collection-results"),
+    path("collections/search/", views.collection_search_page, name="collection-search"),
     path(
         "species-feedback/<int:species_id>/",
         views.species_or_collection_feedback,

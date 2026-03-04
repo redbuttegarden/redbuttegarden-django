@@ -1,0 +1,9 @@
+<div id="results-container">
+  {% if mode == 'map' and map_template %}
+    {% include map_template %}
+  {% else %}
+    <div id="table-container">
+      {% include table_template|default:'plants/collection_list_table.html' %}
+    </div>
+  {% endif %}
+</div>

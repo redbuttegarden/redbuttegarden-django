@@ -31,7 +31,7 @@ from wagtail.images.models import Image
 
 from .tables import CollectionTable, TopTreesSpeciesTable
 from .filters import CollectionFilter, TopTreesSpeciesFilter
-from .forms import CollectionSearchForm, FeedbackReportForm
+from .forms import FeedbackReportForm
 from .models import (
     Family,
     Genus,
@@ -48,17 +48,16 @@ from .serializers import (
     GenusSerializer,
     LocationSerializer,
 )
-from .utils import filter_by_parameter, get_feature_collection, style_message
+from .utils import (
+    clean_querydict,
+    get_feature_collection,
+    style_message,
+)
 
 logger = logging.getLogger(__name__)
 
 
 MAX_FEATURES = 5000
-
-SEARCH_TO_FILTER_PARAMS = {
-    # CollectionSearchForm field -> CollectionFilter field
-    "scientific_name": "species_full_name",
-}
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
@@ -275,45 +274,42 @@ def collections_geojson(request):
                 (Q(location__longitude__gte=west) | Q(location__longitude__lte=east))
             )
 
-    # Apply your existing filters
-    qs = filter_by_parameter(request, qs)
+    qs = CollectionFilter(request.GET or None, queryset=qs).qs
 
-    # Hard cap to prevent accidental “return everything”
     qs = qs.order_by("-id")[:MAX_FEATURES]
-
-    feature_collection = get_feature_collection(qs)
-    return JsonResponse(feature_collection, safe=False)
+    return JsonResponse(get_feature_collection(qs), safe=False)
 
 
 def plant_map_view(request):
     mapbox_api_token = getattr(settings, "MAPBOX_API_TOKEN", None)
 
-    form = CollectionSearchForm(request.GET or None)
-    normalized_qs = ""
+    # Use the same filterset contract as list view
+    base_qs = Collection.objects.exclude(location=None).select_related(
+        "location", "species", "garden"
+    )
+    f = CollectionFilter(request.GET or None, queryset=base_qs)
+    filtered_qs = f.qs
 
-    if form.is_valid():
-        params = {}
-        for k, v in form.cleaned_data.items():
-            if v in ("", None, [], (), {}):
-                continue
-            if v is False:
-                # Usually you don't want to include false checkboxes in the URL at all
-                # unless your filter supports explicit false filtering.
-                continue
-            if v is True:
-                # Normalize checkbox booleans to "true" (django-filter-friendly)
-                params[k] = "true"
-            else:
-                params[k] = v
-        normalized_qs = urlencode(params, doseq=True)
+    # Optional: canonicalize URL on full page loads (same as list view)
+    is_htmx = (
+        request.headers.get("HX-Request") == "true"
+        or request.META.get("HTTP_HX_REQUEST") == "true"
+        or request.GET.get("_hx") == "1"
+    )
+    if request.method == "GET" and not is_htmx and request.GET:
+        cleaned = clean_querydict(request.GET)
+        if cleaned.urlencode() != request.GET.urlencode():
+            url = request.path
+            qs = cleaned.urlencode()
+            return HttpResponseRedirect(f"{url}?{qs}" if qs else url)
 
     return render(
         request,
         "plants/collection_map.html",
         {
             "mapbox_token": mapbox_api_token,
-            "form": form,
-            "normalized_qs": normalized_qs,
+            "filter": f,  # map template renders filter.form
+            "objects": filtered_qs,  # or build GeoJSON / bounds / counts etc.
         },
     )
 
@@ -465,60 +461,17 @@ def species_or_collection_feedback(request, species_id=None, collection_id=None)
     return render(request, "plants/plant_feedback.html", context)
 
 
-def collection_search(request):
-    form = CollectionSearchForm(request.POST or None)
-
-    if request.method == "POST":
-        if form.is_valid():
-            params = {
-                k: v for k, v in form.cleaned_data.items() if v not in ("", None, False)
-            }
-
-            if "map_search" in request.POST:
-                url = reverse("plants:plant-map")
-            elif "list_search" in request.POST:
-                url = reverse("plants:collection-list")
-            else:
-                return HttpResponseNotFound("Missing search type.")
-
-            if params:
-                url = f"{url}?{urlencode(params)}"
-            return redirect(url)
-
-        messages.error(
-            request,
-            "Received invalid form data. Please edit your request and try again",
-        )
-
-    return render(request, "plants/collection_search.html", {"form": form})
-
-
-def _clean_querydict(qd):
-    qd = qd.copy()
-    # remove keys with only empty values
-    for key in list(qd.keys()):
-        vals = [v for v in qd.getlist(key) if v not in ("", None)]
-        if not vals:
-            qd.pop(key, None)
-        else:
-            qd.setlist(key, vals)
-    return qd
-
-
-def collection_list(request):
-    """
-    Collection list view with django-filter, LazyPaginator, HTMX-compatible partials,
-    and export support.
-    """
-    # Only redirect on full page loads, not HTMX fragments
+def collection_results(request):
+    # HTMX detection
     is_htmx = (
         request.headers.get("HX-Request") == "true"
         or request.META.get("HTTP_HX_REQUEST") == "true"
         or request.GET.get("_hx") == "1"
     )
 
+    # Canonicalize querystring
     if request.method == "GET" and not is_htmx and request.GET:
-        cleaned = _clean_querydict(request.GET)
+        cleaned = clean_querydict(request.GET)
         if cleaned.urlencode() != request.GET.urlencode():
             url = request.path
             qs = cleaned.urlencode()
@@ -526,27 +479,45 @@ def collection_list(request):
                 url = f"{url}?{qs}"
             return HttpResponseRedirect(url)
 
-    # Apply filters (if any). Use the CollectionFilter to parse GET params and produce a filtered queryset
+    mode = request.GET.get("mode", "list")
+    if mode not in ("list", "map"):
+        mode = "list"
+
     base_qs = Collection.objects.all()
     collection_filter = CollectionFilter(request.GET or None, queryset=base_qs)
     filtered_qs = collection_filter.qs
 
-    # Export handling (preserve filters)
+    context = {
+        "page_title": "Living Collections",
+        "heading": "Living Collections",
+        "filter": collection_filter,
+        "mode": mode,
+        # template switches (recommended defaults)
+        "show_mode_toggle": True,
+        "htmx_enabled": (mode == "list"),  # keep HTMX for list/table only
+        "clear_url": f"{request.path}?mode={mode}",
+        "table_template": "plants/collection_list_table.html",
+    }
+
+    # MAP MODE
+    if mode == "map":
+        filtered_qs = filtered_qs.select_related("species", "garden")
+        context["objects"] = filtered_qs
+        return render(request, "plants/collection_map.html", context)
+
+    # LIST MODE
     export_format = request.GET.get("_export", None)
     if TableExport.is_valid_format(export_format):
         export_table = CollectionTable(filtered_qs)
         exporter = TableExport(export_format, export_table)
         return exporter.response(f"collections.{export_format}")
 
-    # Build table from filtered queryset
     table = CollectionTable(filtered_qs)
 
-    # Pagination: configure then explicitly paginate (materializes table.page for LazyPaginator)
     per_page = 50
     RequestConfig(request, paginate={"paginator_class": LazyPaginator}).configure(table)
     table.paginate(page=request.GET.get("page", 1), per_page=per_page)
 
-    # Compute safe pagination display values (matching the approach you used earlier)
     try:
         page_number = int(request.GET.get("page", 1))
         if page_number < 1:
@@ -564,19 +535,18 @@ def collection_list(request):
     if current_page_count == 0:
         table_start = 0
         table_end = 0
+        table_total = 0
+        total_known = True
     else:
         table_start = (page_number - 1) * per_page + 1
 
-        # Try to determine total count (may be expensive). If available, use it; otherwise mark unknown.
         total_known = True
-        table_total = None
         try:
             table_total = filtered_qs.count()
         except Exception:
-            total_known = False
             table_total = None
+            total_known = False
 
-        # Prefer a reliable count from paginator if present
         if getattr(table, "page", None) is not None:
             try:
                 maybe_count = getattr(table.page.paginator, "count", None)
@@ -601,31 +571,45 @@ def collection_list(request):
             if value in ("", None, [], (), {}):
                 continue
             if value is False:
-                # If you want explicit false filtering, serialize as "false" instead.
                 continue
-            if value is True:
-                params[name] = "true"
-            else:
-                params[name] = value
+            params[name] = "true" if value is True else value
+
         querystring = urlencode(params, doseq=True)
 
-    context = {
-        "table": table,
-        "filter": collection_filter,  # pass the FilterSet so template can render the form
-        "querystring": querystring,
-        "table_start": table_start,
-        "table_end": table_end,
-        "table_total": table_total if "table_total" in locals() else None,
-        "total_known": locals().get("total_known", False),
-        "per_page": per_page,
-    }
+    context.update(
+        {
+            "table": table,
+            "querystring": querystring,
+            "table_start": table_start,
+            "table_end": table_end,
+            "table_total": table_total,
+            "total_known": total_known,
+            "per_page": per_page,
+        }
+    )
 
-    # HTMX partial support: return only the table fragment on HTMX requests
-    if request.headers.get("HX-Request") == "true":
-        return render(request, "plants/collection_list_table.html", context)
+    if is_htmx:
+        # match your template include path
+        return render(request, "plants/includes/_results_container.html", context)
 
-    # full page render
-    return render(request, "plants/collection_list.html", context)
+    return render(request, "plants/collection_results.html", context)
+
+
+def collection_search_page(request):
+    """
+    Landing page only: displays the filter form and sends users to results.
+    No POST; no filtering here beyond binding the form for UX.
+    """
+    base_qs = Collection.objects.none()  # we don't need results here
+    collection_filter = CollectionFilter(request.GET or None, queryset=base_qs)
+
+    return render(
+        request,
+        "plants/collection_search.html",
+        {
+            "filter": collection_filter,
+        },
+    )
 
 
 def feedback_thanks(request):
@@ -744,6 +728,8 @@ def top_trees(request):
 """
 
     context = {
+        "page_title": "Top Trees",
+        "heading": "Top Tree Selections for Utah",
         "additional_html": additional_html,
         "table": table,
         "filter": f,
@@ -753,6 +739,11 @@ def top_trees(request):
         "table_total": table_total,
         "total_known": total_known,
         "per_page": per_page,
+        # template switches
+        "show_mode_toggle": False,
+        "htmx_enabled": True,
+        "clear_url": request.path,  # clears filters
+        "table_template": "plants/collection_list_table.html",
     }
 
     # Robust HTMX detection: header OR WSGI META OR explicit GET param fallback (_hx=1)
@@ -763,7 +754,6 @@ def top_trees(request):
     )
 
     if is_htmx:
-        response = render(request, "plants/collection_list_table.html", context)
-        return response
+        return render(request, "plants/_results_container.html", context)
 
-    return render(request, "plants/collection_list.html", context)
+    return render(request, "plants/collection_results.html", context)
