@@ -94,26 +94,46 @@ class CollectionFilter(django_filters.FilterSet):
     )
 
     utah_native = django_filters.BooleanFilter(
-        method="filter_truthy", field_name="species__utah_native"
+        method="filter_truthy",
+        field_name="species__utah_native",
+        widget=forms.CheckboxInput(),
+        label="Utah native",
     )
     plant_select = django_filters.BooleanFilter(
-        method="filter_truthy", field_name="species__plant_select"
+        method="filter_truthy",
+        field_name="species__plant_select",
+        widget=forms.CheckboxInput(),
+        label="Plant Select",
     )
     deer_resistant = django_filters.BooleanFilter(
-        method="filter_truthy", field_name="species__deer_resist"
+        method="filter_truthy",
+        field_name="species__deer_resist",
+        widget=forms.CheckboxInput(),
+        label="Deer resistant",
     )
     rabbit_resistant = django_filters.BooleanFilter(
-        method="filter_truthy", field_name="species__rabbit_resist"
+        method="filter_truthy",
+        field_name="species__rabbit_resist",
+        widget=forms.CheckboxInput(),
+        label="Rabbit resistant",
     )
     bee_friendly = django_filters.BooleanFilter(
-        method="filter_truthy", field_name="species__bee_friend"
+        method="filter_truthy",
+        field_name="species__bee_friend",
+        widget=forms.CheckboxInput(),
+        label="Bee friendly",
     )
     high_elevation = django_filters.BooleanFilter(
-        method="filter_truthy", field_name="species__high_elevation"
+        method="filter_truthy",
+        field_name="species__high_elevation",
+        widget=forms.CheckboxInput(),
+        label="High elevation",
     )
 
     available_memorial = django_filters.BooleanFilter(
-        method="filter_available_memorial"
+        method="filter_available_memorial",
+        widget=forms.CheckboxInput(),
+        label="Available memorial",
     )
 
     # ---------- Aliases: accept other param names without duplicating logic ----------
@@ -158,13 +178,17 @@ class CollectionFilter(django_filters.FilterSet):
         data = self._canonicalize_querydict(data)
         super().__init__(data=data, *args, **kwargs)
 
-        # Add bootstrap classes to all widgets
         for field in self.form.fields.values():
             widget = field.widget
-            if hasattr(widget, "attrs"):
+            if isinstance(widget, forms.CheckboxInput):
                 existing = widget.attrs.get("class", "")
-                if "form-control" not in existing:
-                    widget.attrs["class"] = (existing + " form-control").strip()
+                if "form-check-input" not in existing:
+                    widget.attrs["class"] = (existing + " form-check-input").strip()
+                continue
+
+            existing = widget.attrs.get("class", "")
+            if "form-control" not in existing:
+                widget.attrs["class"] = (existing + " form-control").strip()
 
     def _canonicalize_querydict(self, data):
         """

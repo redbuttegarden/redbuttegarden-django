@@ -288,8 +288,24 @@ def collections_geojson(request):
 def plant_map_view(request):
     mapbox_api_token = getattr(settings, "MAPBOX_API_TOKEN", None)
 
-    # GET-bound so existing query params prefill form fields
     form = CollectionSearchForm(request.GET or None)
+    normalized_qs = ""
+
+    if form.is_valid():
+        params = {}
+        for k, v in form.cleaned_data.items():
+            if v in ("", None, [], (), {}):
+                continue
+            if v is False:
+                # Usually you don't want to include false checkboxes in the URL at all
+                # unless your filter supports explicit false filtering.
+                continue
+            if v is True:
+                # Normalize checkbox booleans to "true" (django-filter-friendly)
+                params[k] = "true"
+            else:
+                params[k] = v
+        normalized_qs = urlencode(params, doseq=True)
 
     return render(
         request,
@@ -297,6 +313,7 @@ def plant_map_view(request):
         {
             "mapbox_token": mapbox_api_token,
             "form": form,
+            "normalized_qs": normalized_qs,
         },
     )
 
@@ -476,11 +493,39 @@ def collection_search(request):
     return render(request, "plants/collection_search.html", {"form": form})
 
 
+def _clean_querydict(qd):
+    qd = qd.copy()
+    # remove keys with only empty values
+    for key in list(qd.keys()):
+        vals = [v for v in qd.getlist(key) if v not in ("", None)]
+        if not vals:
+            qd.pop(key, None)
+        else:
+            qd.setlist(key, vals)
+    return qd
+
+
 def collection_list(request):
     """
     Collection list view with django-filter, LazyPaginator, HTMX-compatible partials,
     and export support.
     """
+    # Only redirect on full page loads, not HTMX fragments
+    is_htmx = (
+        request.headers.get("HX-Request") == "true"
+        or request.META.get("HTTP_HX_REQUEST") == "true"
+        or request.GET.get("_hx") == "1"
+    )
+
+    if request.method == "GET" and not is_htmx and request.GET:
+        cleaned = _clean_querydict(request.GET)
+        if cleaned.urlencode() != request.GET.urlencode():
+            url = request.path
+            qs = cleaned.urlencode()
+            if qs:
+                url = f"{url}?{qs}"
+            return HttpResponseRedirect(url)
+
     # Apply filters (if any). Use the CollectionFilter to parse GET params and produce a filtered queryset
     base_qs = Collection.objects.all()
     collection_filter = CollectionFilter(request.GET or None, queryset=base_qs)
@@ -546,10 +591,23 @@ def collection_list(request):
         else:
             table_end = table_start + current_page_count - 1
 
-    # Build querystring without _export so export links preserve filters
-    querydict = request.GET.copy()
-    querydict.pop("_export", None)
-    querystring = querydict.urlencode()
+    # Build querystring from validated filter form data (drops empties)
+    querystring = ""
+    if collection_filter.form.is_bound and collection_filter.form.is_valid():
+        params = {}
+        for name, value in collection_filter.form.cleaned_data.items():
+            if name == "_export":
+                continue
+            if value in ("", None, [], (), {}):
+                continue
+            if value is False:
+                # If you want explicit false filtering, serialize as "false" instead.
+                continue
+            if value is True:
+                params[name] = "true"
+            else:
+                params[name] = value
+        querystring = urlencode(params, doseq=True)
 
     context = {
         "table": table,
