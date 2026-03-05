@@ -2,8 +2,10 @@ import os
 
 from django.conf import settings
 from django.contrib import admin
+from django.http import Http404
 from django.templatetags.static import static
 from django.urls import include, path
+from django.views.decorators.cache import cache_page
 from django.views.generic import RedirectView
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -12,11 +14,58 @@ from drf_spectacular.views import (
 )
 
 from wagtail.admin import urls as wagtailadmin_urls
-from wagtail.contrib.sitemaps.views import sitemap
+
+from wagtail.contrib.sitemaps import views as wagtail_sitemap_views
+from wagtail.contrib.sitemaps.sitemap_generator import Sitemap as WagtailSitemap
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
+from wagtail.models import Site
 
 from search import views as search_views
+from sitemaps.sitemaps import (
+    PlantsStaticViewsSitemap,
+    CollectionDetailSitemap,
+    SpeciesDetailSitemap,
+)
+
+SITEMAPS = {
+    "wagtail": WagtailSitemap,
+    "plants-static": PlantsStaticViewsSitemap,
+    "collections": CollectionDetailSitemap,
+    "species": SpeciesDetailSitemap,
+}
+
+CACHE_SECONDS = 60 * 60  # 1 hour
+
+
+def _force_default_site(request):
+    default_site = Site.objects.get(is_default_site=True)
+
+    # Only serve sitemap on the default hostname (keeps domains consistent)
+    req_host = request.get_host().split(":")[0]
+    if req_host != default_site.hostname:
+        raise Http404()
+
+    request._wagtail_site = default_site
+    request.site = default_site
+    return default_site
+
+
+@cache_page(CACHE_SECONDS)
+def sitemap_index(request):
+    _force_default_site(request)
+    return wagtail_sitemap_views.index(
+        request,
+        sitemaps=SITEMAPS,
+        sitemap_url_name="sitemap-section",
+    )
+
+
+@cache_page(CACHE_SECONDS)
+def sitemap_section(request, section):
+    _force_default_site(request)
+    return wagtail_sitemap_views.sitemap(request, sitemaps=SITEMAPS, section=section)
+
 
 urlpatterns = []
 """
@@ -36,7 +85,8 @@ if not os.environ.get("DJANGO_SETTINGS_MODULE") in [
     ]
 
 urlpatterns += [
-    path("sitemap.xml", sitemap),
+    path("sitemap.xml", sitemap_index, name="sitemap-index"),
+    path("sitemap-<str:section>.xml", sitemap_section, name="sitemap-section"),
     path("", include("home.urls", namespace="home")),
     # May need to temporarily comment out plants app urls to migrate fresh database
     path("plants/", include("plants.urls", namespace="plants")),
@@ -62,14 +112,19 @@ urlpatterns += [
         name="redoc",
     ),
     path("accounts/", include("django.contrib.auth.urls")),
-
     path(
         "apple-touch-icon.png",
-        RedirectView.as_view(url=static("redbuttegarden/img/favicon/apple-touch-icon-152x152.png"), permanent=True),
+        RedirectView.as_view(
+            url=static("redbuttegarden/img/favicon/apple-touch-icon-152x152.png"),
+            permanent=True,
+        ),
     ),
     path(
         "apple-touch-icon-precomposed.png",
-        RedirectView.as_view(url=static("redbuttegarden/img/favicon/apple-touch-icon-152x152.png"), permanent=True),
+        RedirectView.as_view(
+            url=static("redbuttegarden/img/favicon/apple-touch-icon-152x152.png"),
+            permanent=True,
+        ),
     ),
 ]
 

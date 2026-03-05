@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.humanize",
     "django.contrib.sessions",
+    "django.contrib.sites",
     "django.contrib.sitemaps",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -95,6 +96,7 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
+SITE_ID = 1
 
 ROOT_URLCONF = "redbuttegarden.urls"
 
