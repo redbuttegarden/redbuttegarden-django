@@ -516,7 +516,10 @@ def collection_results(request):
 
     per_page = 50
     RequestConfig(request, paginate={"paginator_class": LazyPaginator}).configure(table)
-    table.paginate(page=request.GET.get("page", 1), per_page=per_page)
+    page = request.GET.get("page", 1)
+    if not page.isdigit():
+        page = 1
+    table.paginate(page=page, per_page=per_page)
 
     try:
         page_number = int(request.GET.get("page", 1))
