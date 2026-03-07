@@ -14,13 +14,13 @@ services:
 
   db:
     container_name: rbg-db
-    image: "postgres:16.8"
+    image: "postgres:18.3"
     ports:
       - "5432:5432"
     env_file:
       - redbuttegarden/.env.dev
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres_data:/var/lib/postgresql
 
   nginx:
     build: ./nginx
