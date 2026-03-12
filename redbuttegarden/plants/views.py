@@ -29,6 +29,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from wagtail.models import Collection as WagtailCollection
 from wagtail.images.models import Image
+from wagtail.images.permissions import permission_policy as image_permission_policy
 
 from .tables import CollectionTable, TopTreesSpeciesTable
 from .filters import CollectionFilter, TopTreesSpeciesFilter
@@ -249,10 +250,12 @@ class SpeciesImageEditImageDescriptionView(generics.RetrieveUpdateAPIView):
         return self.update(request, *args, **kwargs)
     
     def update(self, request, *args, **kwargs):
-        instance = self.get_object()  # SpeciesImage
+        instance = self.get_object()            # SpeciesImage
+        image = instance.image                  # wagtailimages.Image
 
-        if not request.user.has_perm("wagtailimages.change_image"):
-            raise PermissionDenied("You do not have permission to edit Wagtail images.")
+        # Collection-aware permission check (respects Wagtail collection permissions)
+        if not image_permission_policy.user_has_permission_for_instance(request.user, "change", image):
+            raise PermissionDenied("You do not have permission to edit this Wagtail image.")
 
         serializer = self.get_serializer(
             instance,

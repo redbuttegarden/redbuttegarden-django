@@ -1,12 +1,14 @@
 import io
 
 import pytest
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Group, Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from PIL import Image as PILImage
 from rest_framework.test import APIClient
 from wagtail.images import get_image_model
+from wagtail.images.permissions import permission_policy as image_permission_policy
+from wagtail.models import GroupCollectionPermission
 
 from plants.models import SpeciesImage
 
@@ -121,22 +123,37 @@ class TestSpeciesImageAPILogic:
         )
         assert resp.status_code == 403
 
+
     def test_patch_updates_wagtail_image_description_with_permission(
         self, authed_client, user, species_image
     ):
         ImageModel = get_image_model()
         if not hasattr(ImageModel, "description"):
-            pytest.skip(
-                "Wagtail Image model has no 'description' field in this project."
-            )
+            pytest.skip("Wagtail Image model has no 'description' field in this project.")
 
-        perm = Permission.objects.get(codename="change_image")
-        user.user_permissions.add(perm)
+        image = species_image.image
+        assert image.collection_id is not None
+
+        group = Group.objects.create(name="api-image-editors")
+        user.groups.add(group)
+
+        # Assign collection-scoped permission (Wagtail uses Django Permission records)
+        change_perm = Permission.objects.get(
+            content_type__app_label="wagtailimages",
+            codename="change_image",
+        )
+
+        GroupCollectionPermission.objects.create(
+            group=group,
+            collection=image.collection,
+            permission=change_perm,
+        )
+
+        # Sanity check: permission policy should allow change
+        assert image_permission_policy.user_has_permission_for_instance(user, "change", image)
 
         url = reverse("plants:speciesimage-image-description", kwargs={"pk": species_image.pk})
-        resp = authed_client.patch(
-            url, data={"description_write": "Example alt text"}, format="json"
-        )
+        resp = authed_client.patch(url, data={"description_write": "Example alt text"}, format="json")
         assert resp.status_code == 200
         data = resp.json()
 
