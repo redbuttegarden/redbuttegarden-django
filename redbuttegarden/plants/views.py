@@ -10,21 +10,22 @@ from django.core.mail import EmailMessage
 from django.core.paginator import PageNotAnInteger, EmptyPage
 from django.db import IntegrityError
 from django.db.models import Q
-from django.http import JsonResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import JsonResponse, HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 from requests import HTTPError
-from rest_framework import generics, viewsets, status
 from urllib.parse import urlencode
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from django_tables2.config import RequestConfig
 from django_tables2.export.export import TableExport
 from django_tables2.paginators import LazyPaginator
+from rest_framework import generics, viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from wagtail.models import Collection as WagtailCollection
 from wagtail.images.models import Image
@@ -47,6 +48,8 @@ from .serializers import (
     CollectionSerializer,
     GenusSerializer,
     LocationSerializer,
+    SpeciesImageListSerializer,
+    SpeciesImageEditImageDescriptionSerializer
 )
 from .utils import (
     clean_querydict,
@@ -230,6 +233,36 @@ def set_image(request, pk):
         )
 
     return JsonResponse({"status": "failure"})
+
+
+class SpeciesImageListView(generics.ListAPIView):
+    queryset = SpeciesImage.objects.select_related("species", "image").order_by("species_id", "sort_order", "id")
+    serializer_class = SpeciesImageListSerializer
+
+
+class SpeciesImageEditImageDescriptionView(generics.RetrieveUpdateAPIView):
+    queryset = SpeciesImage.objects.select_related("species", "image")
+    serializer_class = SpeciesImageEditImageDescriptionSerializer
+
+    def patch(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+    
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()  # SpeciesImage
+
+        if not request.user.has_perm("wagtailimages.change_image"):
+            raise PermissionDenied("You do not have permission to edit Wagtail images.")
+
+        serializer = self.get_serializer(
+            instance,
+            data=request.data,
+            partial=kwargs.get("partial", False),
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return super().update(request, *args, **kwargs)
 
 
 def csrf_view(request):

@@ -29,7 +29,17 @@ urlpatterns = [
     path(
         "api/species/<int:pk>/set-image/", views.set_image, name="api-set-species-image"
     ),
-    path("api/collections-geojson/", views.collections_geojson, name="api-collections-geojson"),
+    path("species-images/", views.SpeciesImageListView.as_view(), name="speciesimage-list"),
+    path(
+        "api/species-images/<int:pk>/image-description/",
+        views.SpeciesImageEditImageDescriptionView.as_view(),
+        name="speciesimage-image-description",
+    ),
+    path(
+        "api/collections-geojson/",
+        views.collections_geojson,
+        name="api-collections-geojson",
+    ),
     path(
         "collection/<int:collection_id>/",
         views.collection_detail,
