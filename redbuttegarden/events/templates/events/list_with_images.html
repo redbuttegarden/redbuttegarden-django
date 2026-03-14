@@ -1,28 +1,27 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
-<section class="row">
-    <div class="col-md-9 col-md-offset-1">
-        <ul class="tan-bg list-unstyled">
-            {% for list_item in value.list_items %}
-                <li>
-                    <div class="media">
-                        <div class="media-left media-middle">
-                            {% if list_item.link_url %}
-                                <a href="{{ list.link_url }}">
-                                    <img class="img-rounded" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
-                                </a>
-                            {% else %}
-                                <img class="img-rounded" src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
-                            {% endif %}
-                        </div>
-                        <div class="media-body">
-                            <h2 class="text-center">{{ list_item.title|upper }}</h2>
-                            <h4 class="text-center green">{{ list_item.sub_title }}</h4>
-                            {% include_block list_item.text %}
-                        </div>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+<section class="row my-3">
+  <ul class="tan-bg list-unstyled">
+    {% for list_item in value.list_items %}
+      <li class="mb-4">
+        <div class="d-flex align-items-start gap-3">
+          <div class="flex-shrink-0">
+            {% if list_item.link_url %}
+              <a href="{{ list_item.link_url }}">{% image list_item.image original class='rounded img-fluid' %}</a>
+            {% else %}
+              {% image list_item.image original class='rounded img-fluid' %}
+            {% endif %}
+          </div>
+
+          <div class="flex-grow-1">
+            <div class="text-center">
+              <div class="fs-2">{{ list_item.title }}</div>
+              <div class="green fs-4">{{ list_item.sub_title }}</div>
+            </div>
+            {% include_block list_item.text|richtext %}
+          </div>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
 </section>
