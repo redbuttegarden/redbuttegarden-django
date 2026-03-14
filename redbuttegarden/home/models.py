@@ -583,7 +583,7 @@ class GeneralPage(AbstractBase):
     body = StreamField(
         block_types=[
             ("button", ButtonBlock()),
-            ("custom_heading", HeadingBlock()),
+            ("custom_heading", HeadingBlock(help_text=_('Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text'))),
             (
                 "heading",
                 Heading(
