@@ -81,6 +81,11 @@ def resolve_token_or_default(token: str | None, default_hex: str) -> str:
 
 class LinkedCarouselSlideBlock(blocks.StructBlock):
     image = ImageChooserBlock(required=True)
+    alt_text = blocks.CharBlock(
+        required=False,
+        max_length=255,
+        help_text="Describe the image for screen readers. Leave blank only if the image is purely decorative.",
+    )
     caption = blocks.CharBlock(required=False, max_length=255)
     link_page = blocks.PageChooserBlock(
         required=False, help_text="Choose an internal page"
