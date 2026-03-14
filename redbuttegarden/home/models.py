@@ -180,7 +180,15 @@ class AlignedParagraphBlock(blocks.StructBlock):
         ],
         default="default",
     )
-    paragraph = blocks.RichTextBlock()
+    paragraph = blocks.RichTextBlock(features=[
+        "h2",
+        "h3",
+        "bold",
+        "italic",
+        "link",
+        "ol",
+        "ul",
+    ], help_text='Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text')
 
     class Meta:
         template = "blocks/aligned_paragraph.html"
@@ -1147,7 +1155,16 @@ class RetailPartnerBlock(blocks.StructBlock):
     name = blocks.CharBlock(max_length=75)
     addresses = blocks.ListBlock(AddressBlock(), required=False)
     url = blocks.URLBlock(required=False)
-    info = blocks.RichTextBlock()
+    info = blocks.RichTextBlock(
+        features=[
+            "h4",
+            "bold",
+            "italic",
+            "link",
+            "ol",
+            "ul",
+        ]
+    )
 
     class Meta:
         template = "blocks/retail_partner_block.html"
@@ -1174,6 +1191,31 @@ class RetailPartnerPage(AbstractBase):
         index.SearchField("body"),
         index.SearchField("retail_partners"),
     ]
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+
+        partners = list(self.retail_partners)
+
+        rows = []
+        row_size = 3
+
+        for i in range(0, len(partners), row_size):
+            row_items = partners[i : i + row_size]
+
+            filler_count = row_size - len(row_items)
+            for _ in range(filler_count):
+                row_items.append(
+                    {
+                        "is_placeholder": True,
+                        "message": "Your business could be here!",
+                    }
+                )
+
+            rows.append(row_items)
+
+        context["partner_rows"] = rows
+        return context
 
     def save_revision(self, *args, **kwargs):
         if self.banner is None:

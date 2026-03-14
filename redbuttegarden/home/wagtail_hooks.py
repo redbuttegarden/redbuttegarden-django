@@ -20,7 +20,7 @@ def include_sweetalert2():
 def warn_on_pdf_upload():
     return format_html(
         '<script src="{}"></script>',
-        '/static/admin/js/warn_pdf_upload.js'  # Adjust path as needed
+        '/static/admin/js/warn_pdf_upload.js'
     )
 
 
