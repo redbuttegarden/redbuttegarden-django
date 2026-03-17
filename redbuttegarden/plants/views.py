@@ -50,7 +50,7 @@ from .serializers import (
     GenusSerializer,
     LocationSerializer,
     SpeciesImageListSerializer,
-    SpeciesImageEditImageDescriptionSerializer
+    SpeciesImageEditImageDescriptionSerializer,
 )
 from .utils import (
     clean_querydict,
@@ -237,7 +237,9 @@ def set_image(request, pk):
 
 
 class SpeciesImageListView(generics.ListAPIView):
-    queryset = SpeciesImage.objects.select_related("species", "image").order_by("species_id", "sort_order", "id")
+    queryset = SpeciesImage.objects.select_related("species", "image").order_by(
+        "species_id", "sort_order", "id"
+    )
     serializer_class = SpeciesImageListSerializer
 
 
@@ -248,14 +250,18 @@ class SpeciesImageEditImageDescriptionView(generics.RetrieveUpdateAPIView):
     def patch(self, request, *args, **kwargs):
         kwargs["partial"] = True
         return self.update(request, *args, **kwargs)
-    
+
     def update(self, request, *args, **kwargs):
-        instance = self.get_object()            # SpeciesImage
-        image = instance.image                  # wagtailimages.Image
+        instance = self.get_object()  # SpeciesImage
+        image = instance.image  # wagtailimages.Image
 
         # Collection-aware permission check (respects Wagtail collection permissions)
-        if not image_permission_policy.user_has_permission_for_instance(request.user, "change", image):
-            raise PermissionDenied("You do not have permission to edit this Wagtail image.")
+        if not image_permission_policy.user_has_permission_for_instance(
+            request.user, "change", image
+        ):
+            raise PermissionDenied(
+                "You do not have permission to edit this Wagtail image."
+            )
 
         serializer = self.get_serializer(
             instance,
@@ -497,6 +503,14 @@ def species_or_collection_feedback(request, species_id=None, collection_id=None)
     return render(request, "plants/plant_feedback.html", context)
 
 
+def _coerce_positive_int(value, default=1):
+    try:
+        value = int(value)
+    except (TypeError, ValueError):
+        return default
+    return value if value > 0 else default
+
+
 def collection_results(request):
     # HTMX detection
     is_htmx = (
@@ -528,20 +542,17 @@ def collection_results(request):
         "heading": "Living Collections",
         "filter": collection_filter,
         "mode": mode,
-        # template switches (recommended defaults)
         "show_mode_toggle": True,
-        "htmx_enabled": (mode == "list"),  # keep HTMX for list/table only
+        "htmx_enabled": (mode == "list"),
         "clear_url": f"{request.path}?mode={mode}",
         "table_template": "plants/collection_list_table.html",
     }
 
-    # MAP MODE
     if mode == "map":
         filtered_qs = filtered_qs.select_related("species", "garden")
         context["objects"] = filtered_qs
         return render(request, "plants/collection_map.html", context)
 
-    # LIST MODE
     export_format = request.GET.get("_export", None)
     if TableExport.is_valid_format(export_format):
         export_table = CollectionTable(filtered_qs)
@@ -551,18 +562,24 @@ def collection_results(request):
     table = CollectionTable(filtered_qs)
 
     per_page = 50
-    RequestConfig(request, paginate={"paginator_class": LazyPaginator}).configure(table)
-    page = request.GET.get("page", 1)
-    if not page.isdigit():
-        page = 1
-    table.paginate(page=page, per_page=per_page)
+    requested_page = _coerce_positive_int(request.GET.get("page"), default=1)
 
-    try:
-        page_number = int(request.GET.get("page", 1))
-        if page_number < 1:
-            page_number = 1
-    except (ValueError, TypeError):
-        page_number = 1
+    RequestConfig(
+        request,
+        paginate={
+            "per_page": per_page,
+            "paginator_class": LazyPaginator,
+            "silent": True,
+        },
+    ).configure(table)
+
+    # Use the actual resolved page number if pagination succeeded
+    page_number = requested_page
+    if getattr(table, "page", None) is not None:
+        try:
+            page_number = table.page.number
+        except Exception:
+            page_number = requested_page
 
     try:
         current_page_count = (
@@ -571,36 +588,32 @@ def collection_results(request):
     except Exception:
         current_page_count = 0
 
-    if current_page_count == 0:
-        table_start = 0
-        table_end = 0
-        table_total = 0
-        total_known = True
-    else:
-        table_start = (page_number - 1) * per_page + 1
+    paginator = getattr(getattr(table, "page", None), "paginator", None)
 
-        total_known = True
+    # LazyPaginator does not support count()
+    if isinstance(paginator, LazyPaginator):
+        table_total = None
+        total_known = False
+    else:
         try:
             table_total = filtered_qs.count()
+            total_known = True
         except Exception:
             table_total = None
             total_known = False
 
-        if getattr(table, "page", None) is not None:
-            try:
-                maybe_count = getattr(table.page.paginator, "count", None)
-                if isinstance(maybe_count, int):
-                    table_total = maybe_count
-                    total_known = True
-            except Exception:
-                pass
-
+    if current_page_count == 0:
+        table_start = 0
+        table_end = 0
+        if total_known and table_total is None:
+            table_total = 0
+    else:
+        table_start = (page_number - 1) * per_page + 1
         if total_known and isinstance(table_total, int):
-            table_end = min(page_number * per_page, table_total)
+            table_end = min(table_start + current_page_count - 1, table_total)
         else:
             table_end = table_start + current_page_count - 1
 
-    # Build querystring from validated filter form data (drops empties)
     querystring = ""
     if collection_filter.form.is_bound and collection_filter.form.is_valid():
         params = {}
@@ -628,7 +641,6 @@ def collection_results(request):
     )
 
     if is_htmx:
-        # match your template include path
         return render(request, "plants/includes/_results_container.html", context)
 
     return render(request, "plants/collection_results.html", context)
