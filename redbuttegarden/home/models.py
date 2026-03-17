@@ -183,6 +183,7 @@ class AlignedParagraphBlock(blocks.StructBlock):
     paragraph = blocks.RichTextBlock(features=[
         "h2",
         "h3",
+        "lead",
         "bold",
         "italic",
         "link",
@@ -191,7 +192,7 @@ class AlignedParagraphBlock(blocks.StructBlock):
         "document-link",
         "image",
         "embed",
-    ], help_text='Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text')
+    ], help_text='Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead can be used to make slightly larger text for emphasis.')
 
     class Meta:
         template = "blocks/aligned_paragraph.html"
@@ -249,9 +250,9 @@ class SingleListImageCardInfo(blocks.StructBlock):
     )
     text = blocks.RichTextBlock(
         label="Text",
-        features=["h4", "h5", "bold", "italic", "link", "ul"],
+        features=["bold", "italic", "link", "ul", "lead"],
         help_text=_(
-            "Note that h4 elements will be colored green and h5 elements will be colored purple"
+            "Lead text appears slightly larger"
         ),
     )
     button_text = blocks.CharBlock(
@@ -310,7 +311,8 @@ class SingleListButtonDropdownInfo(blocks.StructBlock):
     )
     info_text = blocks.RichTextBlock(
         label="Info Text",
-        features=["h4", "h5", "bold", "italic", "link", "document-link", "ul"],
+        features=["bold", "italic", "link", "document-link", "ul", "lead"],
+        help_text=_("Lead text appears slightly larger.")
     )
 
 
@@ -1114,7 +1116,7 @@ class EventSlides(Orderable):
     )
     text = RichTextField(
         max_length=100,
-        features=["h1", "h2", "h3", "h4", "h5", "h6", "bold", "italic"],
+        features=["bold", "italic", "lead"],
         null=True,
         blank=True,
     )
@@ -1160,13 +1162,15 @@ class RetailPartnerBlock(blocks.StructBlock):
     url = blocks.URLBlock(required=False)
     info = blocks.RichTextBlock(
         features=[
-            "h4",
+            "h3",
             "bold",
             "italic",
             "link",
             "ol",
             "ul",
-        ]
+            "lead"
+        ],
+        help_text=_("Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead can be used to make slightly larger text for emphasis.")
     )
 
     class Meta:
