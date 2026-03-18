@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load render_table from django_tables2 %}
+
+{% block title %}
+  {{ page_title|default:"Living Collections" }}
+{% endblock %}
+
+{% block extra_css %}
+  <link href="{% static 'plants/css/collection_list.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+  {% if additional_html %}
+    {% autoescape off %}{{ additional_html }}{% endautoescape %}
+  {% endif %}
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="m-0">{{ heading|default:page_title|default:"Living Collections" }}</h1>
+  </div>
+
+  <form
+    id="collection-filter-form"
+    method="get"
+    class="row g-2 align-items-end mb-3"
+    {% if htmx_enabled %}
+      hx-get="{{ request.path }}"
+      hx-target="#results-container"
+      hx-swap="outerHTML"
+      hx-push-url="true"
+      hx-trigger="keyup changed delay:500ms, submit"
+    {% endif %}
+  >
+    {% if htmx_enabled %}
+      <input type="hidden" name="_hx" value="1" />
+    {% endif %}
+
+    {% for field in filter.form %}
+      <div class="col-sm-6 col-md-4">
+        <label for="{{ field.id_for_label }}" class="form-label small text-muted">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <div class="form-text">{{ field.help_text }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a id="collection-clear" href="{{ clear_url|default:request.path }}" class="btn btn-outline-secondary">Clear</a>
+    </div>
+  </form>
+
+  {% include "plants/includes/_results_container.html" %}
+{% endblock %}
+
+{% block extra_js %}
+  {% if htmx_enabled %}
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  {% endif %}
+  <script src="{% static 'plants/js/name_styling.js' %}"></script>
+  <script src="{% static 'plants/js/style_rows.js' %}"></script>
+  <script src="{% static 'plants/js/collection_list.js' %}"></script>
+{% endblock %}

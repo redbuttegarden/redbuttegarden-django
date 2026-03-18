@@ -29,6 +29,17 @@ urlpatterns = [
     path(
         "api/species/<int:pk>/set-image/", views.set_image, name="api-set-species-image"
     ),
+    path("species-images/", views.SpeciesImageListView.as_view(), name="speciesimage-list"),
+    path(
+        "api/species-images/<int:pk>/image-description/",
+        views.SpeciesImageEditImageDescriptionView.as_view(),
+        name="speciesimage-image-description",
+    ),
+    path(
+        "api/collections-geojson/",
+        views.collections_geojson,
+        name="api-collections-geojson",
+    ),
     path(
         "collection/<int:collection_id>/",
         views.collection_detail,
@@ -36,8 +47,8 @@ urlpatterns = [
     ),
     path("species/<int:species_id>/", views.species_detail, name="species-detail"),
     path("plant-map/", views.plant_map_view, name="plant-map"),
-    path("search/", views.collection_search, name="collection-search"),
-    path("collection-list/", views.collection_list, name="collection-list"),
+    path("collections/results/", views.collection_results, name="collection-results"),
+    path("collections/search/", views.collection_search_page, name="collection-search"),
     path(
         "species-feedback/<int:species_id>/",
         views.species_or_collection_feedback,

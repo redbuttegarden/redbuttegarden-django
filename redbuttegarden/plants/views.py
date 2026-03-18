@@ -2,35 +2,38 @@ import logging
 import re
 import requests
 
+from decimal import Decimal, InvalidOperation
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.core.paginator import PageNotAnInteger, EmptyPage
 from django.db import IntegrityError
-from django.http import JsonResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.db.models import Q
+from django.http import JsonResponse, HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.urls import reverse
 from django.utils import timezone
-from geojson import dumps
+from django.views.decorators.http import require_GET
 from requests import HTTPError
-from rest_framework import generics, viewsets, status
 from urllib.parse import urlencode
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from django_tables2.config import RequestConfig
 from django_tables2.export.export import TableExport
 from django_tables2.paginators import LazyPaginator
+from rest_framework import generics, viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from wagtail.models import Collection as WagtailCollection
 from wagtail.images.models import Image
+from wagtail.images.permissions import permission_policy as image_permission_policy
 
 from .tables import CollectionTable, TopTreesSpeciesTable
 from .filters import CollectionFilter, TopTreesSpeciesFilter
-from .forms import CollectionSearchForm, FeedbackReportForm
+from .forms import FeedbackReportForm
 from .models import (
     Family,
     Genus,
@@ -46,10 +49,19 @@ from .serializers import (
     CollectionSerializer,
     GenusSerializer,
     LocationSerializer,
+    SpeciesImageListSerializer,
+    SpeciesImageEditImageDescriptionSerializer,
 )
-from .utils import filter_by_parameter, get_feature_collection, style_message
+from .utils import (
+    clean_querydict,
+    get_feature_collection,
+    style_message,
+)
 
 logger = logging.getLogger(__name__)
+
+
+MAX_FEATURES = 5000
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
@@ -224,32 +236,123 @@ def set_image(request, pk):
     return JsonResponse({"status": "failure"})
 
 
+class SpeciesImageListView(generics.ListAPIView):
+    queryset = SpeciesImage.objects.select_related("species", "image").order_by(
+        "species_id", "sort_order", "id"
+    )
+    serializer_class = SpeciesImageListSerializer
+
+
+class SpeciesImageEditImageDescriptionView(generics.RetrieveUpdateAPIView):
+    queryset = SpeciesImage.objects.select_related("species", "image")
+    serializer_class = SpeciesImageEditImageDescriptionSerializer
+
+    def patch(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()  # SpeciesImage
+        image = instance.image  # wagtailimages.Image
+
+        # Collection-aware permission check (respects Wagtail collection permissions)
+        if not image_permission_policy.user_has_permission_for_instance(
+            request.user, "change", image
+        ):
+            raise PermissionDenied(
+                "You do not have permission to edit this Wagtail image."
+            )
+
+        serializer = self.get_serializer(
+            instance,
+            data=request.data,
+            partial=kwargs.get("partial", False),
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return super().update(request, *args, **kwargs)
+
+
 def csrf_view(request):
     return render(request, "plants/token.html")
 
 
-def plant_map_view(request):
-    if (
-        request.headers.get("x-requested-with") == "XMLHttpRequest"
-        and request.method == "GET"
-    ):
+def _parse_bbox(bbox: str):
+    parts = bbox.split(",")
+    if len(parts) != 4:
+        raise ValueError("bbox must have 4 comma-separated values")
+    west, south, east, north = (Decimal(p.strip()) for p in parts)
+    return west, south, east, north
+
+
+@require_GET
+def collections_geojson(request):
+    qs = Collection.objects.exclude(location=None).select_related(
+        "location", "species", "species__genus", "species__genus__family", "garden"
+    )
+
+    bbox = request.GET.get("bbox")
+    if bbox:
         try:
-            collections = filter_by_parameter(
-                request, Collection.objects.exclude(location=None)
+            west, south, east, north = _parse_bbox(bbox)
+        except (ValueError, InvalidOperation):
+            return JsonResponse({"message": "Invalid bbox."}, status=400)
+
+        # Handle antimeridian wrap (rare for you, but correct)
+        if west <= east:
+            qs = qs.filter(
+                location__longitude__gte=west,
+                location__longitude__lte=east,
+                location__latitude__gte=south,
+                location__latitude__lte=north,
             )
-        except ValidationError:
-            return JsonResponse(
-                data={"message": "Encountered error while parsing parameters."},
-                status=400,
+        else:
+            # bbox crosses the dateline; split into two longitude ranges
+            qs = qs.filter(
+                location__latitude__gte=south,
+                location__latitude__lte=north,
+            ).filter(
+                (Q(location__longitude__gte=west) | Q(location__longitude__lte=east))
             )
 
-        feature_collection = get_feature_collection(collections)
-        collection_geojson = dumps(feature_collection)
-        return JsonResponse(collection_geojson, safe=False)
+    qs = CollectionFilter(request.GET or None, queryset=qs).qs
 
+    qs = qs.order_by("-id")[:MAX_FEATURES]
+    return JsonResponse(get_feature_collection(qs), safe=False)
+
+
+def plant_map_view(request):
     mapbox_api_token = getattr(settings, "MAPBOX_API_TOKEN", None)
+
+    # Use the same filterset contract as list view
+    base_qs = Collection.objects.exclude(location=None).select_related(
+        "location", "species", "garden"
+    )
+    f = CollectionFilter(request.GET or None, queryset=base_qs)
+    filtered_qs = f.qs
+
+    # Optional: canonicalize URL on full page loads (same as list view)
+    is_htmx = (
+        request.headers.get("HX-Request") == "true"
+        or request.META.get("HTTP_HX_REQUEST") == "true"
+        or request.GET.get("_hx") == "1"
+    )
+    if request.method == "GET" and not is_htmx and request.GET:
+        cleaned = clean_querydict(request.GET)
+        if cleaned.urlencode() != request.GET.urlencode():
+            url = request.path
+            qs = cleaned.urlencode()
+            return HttpResponseRedirect(f"{url}?{qs}" if qs else url)
+
     return render(
-        request, "plants/collection_map.html", {"mapbox_token": mapbox_api_token}
+        request,
+        "plants/collection_map.html",
+        {
+            "mapbox_token": mapbox_api_token,
+            "filter": f,  # map template renders filter.form
+            "objects": filtered_qs,  # or build GeoJSON / bounds / counts etc.
+        },
     )
 
 
@@ -400,75 +503,83 @@ def species_or_collection_feedback(request, species_id=None, collection_id=None)
     return render(request, "plants/plant_feedback.html", context)
 
 
-def collection_search(request):
-    """
-    View for filtering Collection objects to be displayed on the plant map.
-    """
-    form = CollectionSearchForm()
-
-    context = {"form": form}
-
-    if request.method == "POST":
-        form = CollectionSearchForm(request.POST)
-        if form.is_valid():
-            # Not false filter added to exclude boolean fields unless marked True
-            params = {
-                k: v for k, v in form.cleaned_data.items() if v != "" and v is not False
-            }
-
-            if "map_search" in request.POST:
-                url = reverse("plants:plant-map")
-            elif "list_search" in request.POST:
-                url = reverse("plants:collection-list")
-            else:
-                return HttpResponseNotFound("Missing search type.")
-
-            if params:
-                url += "?" + urlencode(params)
-
-            return redirect(url)
-        else:
-            messages.add_message(
-                request,
-                messages.ERROR,
-                "Received invalid form data. Please edit your request and try again",
-            )
-
-    return render(request, "plants/collection_search.html", context)
+def _coerce_positive_int(value, default=1):
+    try:
+        value = int(value)
+    except (TypeError, ValueError):
+        return default
+    return value if value > 0 else default
 
 
-def collection_list(request):
-    """
-    Collection list view with django-filter, LazyPaginator, HTMX-compatible partials,
-    and export support.
-    """
-    # Apply filters (if any). Use the CollectionFilter to parse GET params and produce a filtered queryset
+def collection_results(request):
+    # HTMX detection
+    is_htmx = (
+        request.headers.get("HX-Request") == "true"
+        or request.META.get("HTTP_HX_REQUEST") == "true"
+        or request.GET.get("_hx") == "1"
+    )
+
+    # Canonicalize querystring
+    if request.method == "GET" and not is_htmx and request.GET:
+        cleaned = clean_querydict(request.GET)
+        if cleaned.urlencode() != request.GET.urlencode():
+            url = request.path
+            qs = cleaned.urlencode()
+            if qs:
+                url = f"{url}?{qs}"
+            return HttpResponseRedirect(url)
+
+    mode = request.GET.get("mode", "list")
+    if mode not in ("list", "map"):
+        mode = "list"
+
     base_qs = Collection.objects.all()
     collection_filter = CollectionFilter(request.GET or None, queryset=base_qs)
     filtered_qs = collection_filter.qs
 
-    # Export handling (preserve filters)
+    context = {
+        "page_title": "Living Collections",
+        "heading": "Living Collections",
+        "filter": collection_filter,
+        "mode": mode,
+        "show_mode_toggle": True,
+        "htmx_enabled": (mode == "list"),
+        "clear_url": f"{request.path}?mode={mode}",
+        "table_template": "plants/collection_list_table.html",
+    }
+
+    if mode == "map":
+        filtered_qs = filtered_qs.select_related("species", "garden")
+        context["objects"] = filtered_qs
+        return render(request, "plants/collection_map.html", context)
+
     export_format = request.GET.get("_export", None)
     if TableExport.is_valid_format(export_format):
         export_table = CollectionTable(filtered_qs)
         exporter = TableExport(export_format, export_table)
         return exporter.response(f"collections.{export_format}")
 
-    # Build table from filtered queryset
     table = CollectionTable(filtered_qs)
 
-    # Pagination: configure then explicitly paginate (materializes table.page for LazyPaginator)
     per_page = 50
-    RequestConfig(request, paginate={"paginator_class": LazyPaginator}).configure(table)
-    table.paginate(page=request.GET.get("page", 1), per_page=per_page)
+    requested_page = _coerce_positive_int(request.GET.get("page"), default=1)
 
-    # Compute safe pagination display values (matching the approach you used earlier)
-    try:
-        page_number = int(request.GET.get("page", 1))
-        if page_number < 1:
-            page_number = 1
-    except (ValueError, TypeError):
-        page_number = 1
+    RequestConfig(
+        request,
+        paginate={
+            "per_page": per_page,
+            "paginator_class": LazyPaginator,
+            "silent": True,
+        },
+    ).configure(table)
+
+    # Use the actual resolved page number if pagination succeeded
+    page_number = requested_page
+    if getattr(table, "page", None) is not None:
+        try:
+            page_number = table.page.number
+        except Exception:
+            page_number = requested_page
 
     try:
         current_page_count = (
@@ -477,58 +588,79 @@ def collection_list(request):
     except Exception:
         current_page_count = 0
 
+    paginator = getattr(getattr(table, "page", None), "paginator", None)
+
+    # LazyPaginator does not support count()
+    if isinstance(paginator, LazyPaginator):
+        table_total = None
+        total_known = False
+    else:
+        try:
+            table_total = filtered_qs.count()
+            total_known = True
+        except Exception:
+            table_total = None
+            total_known = False
+
     if current_page_count == 0:
         table_start = 0
         table_end = 0
+        if total_known and table_total is None:
+            table_total = 0
     else:
         table_start = (page_number - 1) * per_page + 1
-
-        # Try to determine total count (may be expensive). If available, use it; otherwise mark unknown.
-        total_known = True
-        table_total = None
-        try:
-            table_total = filtered_qs.count()
-        except Exception:
-            total_known = False
-            table_total = None
-
-        # Prefer a reliable count from paginator if present
-        if getattr(table, "page", None) is not None:
-            try:
-                maybe_count = getattr(table.page.paginator, "count", None)
-                if isinstance(maybe_count, int):
-                    table_total = maybe_count
-                    total_known = True
-            except Exception:
-                pass
-
         if total_known and isinstance(table_total, int):
-            table_end = min(page_number * per_page, table_total)
+            table_end = min(table_start + current_page_count - 1, table_total)
         else:
             table_end = table_start + current_page_count - 1
 
-    # Build querystring without _export so export links preserve filters
-    querydict = request.GET.copy()
-    querydict.pop("_export", None)
-    querystring = querydict.urlencode()
+    querystring = ""
+    if collection_filter.form.is_bound and collection_filter.form.is_valid():
+        params = {}
+        for name, value in collection_filter.form.cleaned_data.items():
+            if name == "_export":
+                continue
+            if value in ("", None, [], (), {}):
+                continue
+            if value is False:
+                continue
+            params[name] = "true" if value is True else value
 
-    context = {
-        "table": table,
-        "filter": collection_filter,  # pass the FilterSet so template can render the form
-        "querystring": querystring,
-        "table_start": table_start,
-        "table_end": table_end,
-        "table_total": table_total if "table_total" in locals() else None,
-        "total_known": locals().get("total_known", False),
-        "per_page": per_page,
-    }
+        querystring = urlencode(params, doseq=True)
 
-    # HTMX partial support: return only the table fragment on HTMX requests
-    if request.headers.get("HX-Request") == "true":
-        return render(request, "plants/collection_list_table.html", context)
+    context.update(
+        {
+            "table": table,
+            "querystring": querystring,
+            "table_start": table_start,
+            "table_end": table_end,
+            "table_total": table_total,
+            "total_known": total_known,
+            "per_page": per_page,
+        }
+    )
 
-    # full page render
-    return render(request, "plants/collection_list.html", context)
+    if is_htmx:
+        return render(request, "plants/includes/_results_container.html", context)
+
+    return render(request, "plants/collection_results.html", context)
+
+
+def collection_search_page(request):
+    """
+    Landing page only: displays the filter form and sends users to results.
+    No POST; no filtering here beyond binding the form for UX.
+    """
+    base_qs = Collection.objects.none()  # we don't need results here
+    collection_filter = CollectionFilter(request.GET or None, queryset=base_qs)
+
+    return render(
+        request,
+        "plants/collection_search.html",
+        {
+            "filter": collection_filter,
+        },
+    )
 
 
 def feedback_thanks(request):
@@ -647,6 +779,8 @@ def top_trees(request):
 """
 
     context = {
+        "page_title": "Top Trees",
+        "heading": "Top Tree Selections for Utah",
         "additional_html": additional_html,
         "table": table,
         "filter": f,
@@ -656,6 +790,11 @@ def top_trees(request):
         "table_total": table_total,
         "total_known": total_known,
         "per_page": per_page,
+        # template switches
+        "show_mode_toggle": False,
+        "htmx_enabled": True,
+        "clear_url": request.path,  # clears filters
+        "table_template": "plants/collection_list_table.html",
     }
 
     # Robust HTMX detection: header OR WSGI META OR explicit GET param fallback (_hx=1)
@@ -666,7 +805,6 @@ def top_trees(request):
     )
 
     if is_htmx:
-        response = render(request, "plants/collection_list_table.html", context)
-        return response
+        return render(request, "plants/includes/_results_container.html", context)
 
-    return render(request, "plants/collection_list.html", context)
+    return render(request, "plants/collection_results.html", context)

@@ -9,6 +9,8 @@ urlpatterns = [
     path("api/latest-weather/", views.latest_weather, name="latest-weather"),
     path("api/hours/<int:page_id>", views.get_hours, name="hours"),
     path("robots.txt", views.robots_txt, name="robots-txt"),
+    path("service-worker.js", views.service_worker, name="service-worker"),
+    path("offline/", views.offline, name="offline"),
     # The file name MUST be the key, according to the spec.
     path(
         f"{settings.INDEXNOW_KEY}.txt",

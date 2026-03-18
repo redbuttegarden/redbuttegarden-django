@@ -1,31 +1,42 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Living Collection Search{% endblock %}
-
-{% block extra_css %}
-    <link href="{% static 'plants/css/plant_search.css' %}" rel="stylesheet">
+{% block title %}
+  Living Collection Search
 {% endblock %}
 
+{% block extra_css %}
+  <link href="{% static 'plants/css/plant_search.css' %}" rel="stylesheet" />
+{% endblock %}
 
 {% block content %}
-    <h1>Search our Living Collections</h1>
-    <div class="search">
-        <form action="{% url 'plants:collection-search' %}" method="post">
-            {% csrf_token %}
-            {{ form }}
-            <br>
-            <input type="submit" name="map_search" class="btn btn-primary" value="Map Search Results" />
-            <input type="submit" name="list_search" class="btn btn-primary" value="List Search Results" />
-            <button type="reset" class="btn btn-light">Reset Form</button>
-        </form>
-    </div>
+  <h1>Search our Living Collections</h1>
 
-    <br>
+  <div class="search">
+    <form action="{% url 'plants:collection-results' %}" method="get">
+      {# Using the django-filter form as the single source of truth #}
+      {{ filter.form }}
 
-    <div>
-        <p>
-            <a href="https://herbaria.plants.ox.ac.uk/bol/rbbg/">BRAHMS Online Database</a>
-        </p>
+      <br />
+
+      <button type="submit" class="btn btn-primary" formaction="{% url 'plants:collection-results' %}">List Search Results</button>
+
+      <button type="submit" class="btn btn-primary" formaction="{% url 'plants:plant-map' %}">Map Search Results</button>
+
+      <button type="reset" class="btn btn-light">Reset Form</button>
+    </form>
+
+    {# Optional: make buttons look like your old labels while still sending mode values #}
+    <div class="mt-2">
+      <small class="text-muted">Tip: Use “Map” to visualize collections and “List” for exporting/pagination.</small>
     </div>
+  </div>
+
+  <br />
+
+  <div>
+    <p>
+      <a href="https://herbaria.plants.ox.ac.uk/bol/rbbg/">BRAHMS Online Database</a>
+    </p>
+  </div>
 {% endblock %}

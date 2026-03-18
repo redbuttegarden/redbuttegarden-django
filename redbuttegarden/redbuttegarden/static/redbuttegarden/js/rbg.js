@@ -15,3 +15,13 @@ Array.from(alerts).forEach(alert => {
         mainElem.focus();
     });
 });
+
+if ("serviceWorker" in navigator) {
+    console.log("Attempting SW register...");
+    navigator.serviceWorker
+        .register("/service-worker.js")
+        .then((reg) => console.log("SW registered:", reg.scope))
+        .catch((err) => console.error("SW registration failed:", err));
+} else {
+    console.log("Service workers not supported in this browser/context");
+}

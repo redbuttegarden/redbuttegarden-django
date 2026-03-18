@@ -1,95 +1,10 @@
+/* ---------- Layout ---------- */
 #map {
     height: 400px;
 }
 
-#map-load-overlay {
-    position: fixed; /* Sit on top of the page content */
-    display: table;
-    width: 100%; /* Full width (cover the whole page) */
-    height: 100%; /* Full height (cover the whole page) */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-    cursor: pointer; /* Add a pointer on hover */
-    text-align: center;
-}
-#load-icon {
-    display: table-cell;
-    vertical-align: middle;
-    color: white;
-}
-.map-overlay {
-    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-    background-color: #efefef;
-    overflow: hidden;
-    min-height: 250px;
-}
-
-.map-overlay fieldset {
-    display: none;
-    background: #ddd;
-    border: none;
-    padding: 10px;
-    margin: 0;
-}
-
-.map-overlay input {
-    display: block;
-    border: none;
-    width: 100%;
-    border-radius: 3px;
-    padding: 10px;
-    margin: 0;
-    box-sizing: border-box;
-}
-
-.map-overlay .listing {
-    overflow: auto;
-    max-height: 100%;
-}
-
-.map-overlay .listing > * {
-    display: block;
-    padding: 5px 10px;
-    margin: 0;
-}
-
-.map-overlay .listing a {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    color: #404;
-    text-decoration: none;
-}
-
-.map-overlay .listing a:last-child {
-    border: none;
-}
-
-.map-overlay .listing a:hover {
-    background: #f0f0f0;
-}
-.credits, .tutorial {
-    margin: 15px;
-}
-#mapMenu {
-    position: absolute;
-    z-index: 2;
-    background: #efefef;
-    padding: 10px;
-    font-family: 'Open Sans', sans-serif;
-}
-.pop-up-label {
-    font-weight: bold;
-}
-.scientific-name {
-    font-style: italic;
-}
-
 @media (min-width: 590px) {
     #map {
-        float: right;
         width: 75%;
         height: 800px;
     }
@@ -109,8 +24,233 @@
     }
 }
 
-@media (min-width: 1100px) {
+/* ---------- Loading overlay ---------- */
+#map-load-overlay {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+}
+
+#load-icon {
+    color: #fff;
+}
+
+/* ---------- Sidebar / overlay ---------- */
+.map-overlay {
+    font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    background-color: #efefef;
+    min-height: 250px;
+
+    /* Single scroll container (works for Advanced open/closed) */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile: give the sidebar a viewport-based cap so it can scroll */
+@media (max-width: 590px) {
     .map-overlay {
-        height: 500px;
+        max-height: 70vh;
+        /* tune 60–80vh */
     }
+}
+
+/* Hide the old quick filter fieldset until needed */
+.map-overlay fieldset {
+    display: none;
+    background: #ddd;
+    border: none;
+    padding: 10px;
+    margin: 0;
+}
+
+/* ---------- Listing ---------- */
+/* Let .map-overlay handle scrolling; don't create nested scroll areas */
+.map-overlay .listing {
+    max-height: none;
+    overflow: visible;
+}
+
+.map-overlay .listing>* {
+    display: block;
+    padding: 5px 10px;
+    margin: 0;
+}
+
+.map-overlay .listing a {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    color: #404;
+    text-decoration: none;
+}
+
+.map-overlay .listing a:last-child {
+    border: none;
+}
+
+.map-overlay .listing a:hover {
+    background: #f0f0f0;
+}
+
+/* ---------- Map style switcher ---------- */
+#mapMenu {
+    position: absolute;
+    z-index: 2;
+    background: #efefef;
+    padding: 10px;
+    font-family: "Open Sans", sans-serif;
+}
+
+div.mapboxgl-popup {
+    z-index: 3;
+}
+
+.pop-up-label {
+    font-weight: 700;
+}
+
+.scientific-name {
+    font-style: italic;
+}
+
+/* ---------- Legend ---------- */
+#legend .legend-icon {
+    width: 16px;
+    height: 16px;
+    display: block;
+    object-fit: contain;
+}
+
+/* ---------- Filter panel (map sidebar) ---------- */
+.map-filter-panel {
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.active-filters {
+    overflow-wrap: anywhere;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+@media (min-width: 590px) {
+    .filter-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.filter-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* Style form controls in the filter panel */
+.map-overlay .filter-field input,
+.map-overlay .filter-field select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    background: #fff;
+}
+
+/* ---------- Checkboxes ---------- */
+.filter-checkboxes {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding-top: 6px;
+}
+
+@media (min-width: 590px) {
+    .filter-checkboxes {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.filter-checkboxes .check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.map-overlay .filter-checkboxes input[type="checkbox"] {
+    display: inline-block;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    border: initial;
+    background: initial;
+    appearance: auto;
+    -webkit-appearance: checkbox;
+}
+
+/* ---------- Advanced filters ---------- */
+.advanced-filters summary {
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+/* ---------- Collapsible filters (details/summary) ---------- */
+.map-filters__toggle {
+    cursor: pointer;
+    user-select: none;
+    padding: 10px 12px;
+}
+
+/* Mobile: body hidden unless open */
+@media (max-width: 590px) {
+    .map-filters .map-filters__body {
+        display: none;
+    }
+
+    .map-filters[open] .map-filters__body {
+        display: block;
+    }
+
+    /* Ensure details doesn't become its own scroll container */
+    .map-filters[open] {
+        max-height: none;
+        overflow: visible;
+    }
+}
+
+/* Desktop: always show body, hide summary toggle */
+@media (min-width: 591px) {
+    .map-filters__toggle {
+        display: none;
+    }
+
+    .map-filters .map-filters__body {
+        display: block;
+    }
+}
+
+/* Keep the listing a stable size; scroll inside it */
+#feature-listing {
+    height: 40vh;
+    /* stable, responsive */
+    max-height: 320px;
+    /* cap for large screens */
+    min-height: 160px;
+    /* ensures it's always usable */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }

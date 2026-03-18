@@ -1,9 +1,12 @@
 import logging
+import os
 
 from django.conf import settings
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import render
 from django.utils.cache import patch_vary_headers
+from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_GET
 from wagtail.models import Site
 from wagtail.snippets.views.snippets import SnippetViewSet
@@ -27,6 +30,26 @@ class RBGHoursViewSet(SnippetViewSet):
         "garden_open_message",
         "garden_closed_message",
     )
+
+
+@require_GET
+@cache_control(max_age=0, no_cache=True, must_revalidate=True)
+def service_worker(request):
+    path = "pwa/service-worker.js"
+    try:
+        with staticfiles_storage.open(path, "rb") as f:
+            content = f.read()
+    except FileNotFoundError:
+        raise Http404(f"Missing static file: {path}")
+
+    resp = HttpResponse(content, content_type="application/javascript")
+    resp["Service-Worker-Allowed"] = "/"
+
+    return resp
+
+@require_GET
+def offline(request):
+    return render(request, "home/offline.html")
 
 
 @require_GET
