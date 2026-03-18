@@ -56,7 +56,7 @@ def register_lead_feature(features):
         "label": "Ld",
         "description": "Lead text",
         "style": {
-            "fontSize": "1.25rem",
+            "fontSize": "1.75rem",
             "lineHeight": "1.5",
         },
     }
@@ -81,37 +81,6 @@ def register_lead_feature(features):
             },
         },
     )
-
-
-@hooks.register("register_rich_text_features")
-def register_lead_text_feature(features):
-    feature_name = "lead"
-    type_ = "LEAD"
-
-    control = {
-        "type": type_,
-        "label": "L",
-        "description": "Lead text",
-    }
-
-    features.register_editor_plugin(
-        "draftail",
-        feature_name,
-        draftail_features.InlineStyleFeature(control),
-    )
-
-    features.register_converter_rule(
-        "contentstate",
-        feature_name,
-        {
-            "from_database_format": {
-                'span[class="text-lead"]': InlineStyleElementHandler(type_)
-            },
-            "to_database_format": {"style_map": {type_: 'span class="text-lead"'}},
-        },
-    )
-
-    features.default_features.append(feature_name)
 
 
 @hooks.register("before_serve_document")

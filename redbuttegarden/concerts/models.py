@@ -205,7 +205,7 @@ class ConcertBlock(blocks.StructBlock):
     band_info = blocks.RichTextBlock(
         features=["h3", "bold", "italic", "link", "ol", "ul", "lead"],
         help_text=_(
-            "Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead can be used to make slightly larger text for emphasis. Provide the names of the bands/openers and any other info here. Text will be centered."
+            "Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead (Ld) can be used to make slightly larger text for emphasis. Provide the names of the bands/openers and any other info here. Text will be centered."
         ),
     )
     concert_dates = blocks.ListBlock(blocks.DateTimeBlock())
@@ -265,30 +265,30 @@ class ConcertPage(AbstractBase):
         help_text=_("Where to direct the banner image link"), blank=True
     )
     intro = RichTextField(
-        features=["h3", "bold", "italic", "link", "ol", "ul", "lead"],
+        features=["bold", "italic", "link", "ol", "ul", "lead"],
         help_text=_(
-            "Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead can be used to make slightly larger text for emphasis. Provide the names of the bands/openers and any other info here. Text will be centered."
+            "Text will be centered. Lead (Ld) can be used to make larger text for emphasis. Provide the names of the bands/openers and any other info here."
         ),
         blank=True,
     )
     presale_info = RichTextField(
-        features=["h3", "bold", "italic", "link", "ol", "ul", "lead"],
+        features=["bold", "italic", "link", "ol", "ul", "lead"],
         help_text=_(
-            "Displayed above any presale concerts. Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead can be used to make slightly larger text for emphasis. Provide the names of the bands/openers and any other info here. Text will be centered."
+            "Text will be centered. Displayed above any presale concerts. Lead (Ld) can be used to make larger text for emphasis. Provide the names of the bands/openers and any other info here."
         ),
         blank=True
     )
     wave_one_info = RichTextField(
-        features=["h3", "bold", "italic", "link", "ol", "ul", "lead"],
+        features=["bold", "italic", "link", "ol", "ul", "lead"],
         help_text=_(
-            "Displayed above any wave 1 concerts concerts. Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead can be used to make slightly larger text for emphasis. Provide the names of the bands/openers and any other info here. Text will be centered."
+            "Text will be centered. Displayed above any wave 1 concerts concerts. Lead (Ld) can be used to make larger text for emphasis. Provide the names of the bands/openers and any other info here."
         ),
         blank=True
     )
     wave_two_info = RichTextField(
-        features=["h3", "bold", "italic", "link", "ol", "ul", "lead"],
+        features=["bold", "italic", "link", "ol", "ul", "lead"],
         help_text=_(
-            "Displayed above any wave 2 concerts. Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead can be used to make slightly larger text for emphasis. Provide the names of the bands/openers and any other info here. Text will be centered."
+            "Text will be centered. Displayed above any wave 2 concerts. Lead (Ld) can be used to make larger text for emphasis. Provide the names of the bands/openers and any other info here."
         ),
         blank=True
     )

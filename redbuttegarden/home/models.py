@@ -192,7 +192,7 @@ class AlignedParagraphBlock(blocks.StructBlock):
         "document-link",
         "image",
         "embed",
-    ], help_text='Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead can be used to make slightly larger text for emphasis.')
+    ], help_text='Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead (Ld) can be used to make slightly larger text for emphasis.')
 
     class Meta:
         template = "blocks/aligned_paragraph.html"
@@ -312,7 +312,7 @@ class SingleListButtonDropdownInfo(blocks.StructBlock):
     info_text = blocks.RichTextBlock(
         label="Info Text",
         features=["bold", "italic", "link", "document-link", "ul", "lead"],
-        help_text=_("Lead text appears slightly larger.")
+        help_text=_("Lead (Ld) text appears slightly larger.")
     )
 
 

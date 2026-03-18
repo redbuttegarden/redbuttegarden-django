@@ -16,8 +16,8 @@ h2.accordion-header {
     margin: 0;
 }
 
-.rich-text .text-lead {
-    font-size: 1.25rem;
+span.text-lead {
+    font-size: 1.75rem;
     line-height: 1.5;
 }
 
