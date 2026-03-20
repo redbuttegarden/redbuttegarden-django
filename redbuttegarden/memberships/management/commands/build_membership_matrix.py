@@ -11,6 +11,10 @@ from memberships.forms import MembershipSelectorForm
 from memberships.widget_config import MembershipWidgetConfig
 from memberships.services.recommendations import Level, recommend_levels
 
+DEFAULT_FIXTURE_PATH = (
+    Path(__file__).resolve().parents[2] / "fixtures" / "membership_levels.json"
+)
+
 
 def load_levels_from_fixture(path: Path) -> List[Level]:
     raw = json.loads(path.read_text(encoding="utf-8"))
@@ -44,7 +48,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--fixture",
-            default="/code/memberships/fixtures/membership_levels.json",
+            default=str(DEFAULT_FIXTURE_PATH),
             help="Path to membership_levels.json fixture.",
         )
         parser.add_argument(

@@ -6,7 +6,9 @@ import pytest
 
 from memberships.services.recommendations import Level
 
-FIXTURE_PATH = Path("/code/memberships/fixtures/membership_levels.json")
+FIXTURE_PATH = (
+    Path(__file__).resolve().parents[2] / "fixtures" / "membership_levels.json"
+)
 
 
 @pytest.fixture(scope="session")
