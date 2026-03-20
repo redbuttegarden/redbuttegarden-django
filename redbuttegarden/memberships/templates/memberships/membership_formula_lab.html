@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Membership formula preview
+{% endblock %}
+
+{% block extra_css %}
+  <link href="{% static 'memberships/css/membership_widget.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-xl-10">
+        <div class="card card-rbg mb-4">
+          <div class="card-body">
+            <h1 class="h4 mb-2" style="color:var(--rbg-dark-blue)">Membership formula preview</h1>
+            <p class="text-muted mb-0">Edit the ordered formulas for each recommendation slot, then run the live recommendation engine against the current active membership levels.</p>
+          </div>
+        </div>
+
+        <form method="post" class="card card-rbg mb-4">
+          <div class="card-body">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger" role="alert">
+                <ul class="mb-0">
+                  {% for err in form.non_field_errors %}
+                    <li>{{ err }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <div class="mb-4">
+              <h2 class="h6">Membership request</h2>
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label" for="{{ form.cardholders.id_for_label }}">{{ form.cardholders.label }}</label>
+                  {{ form.cardholders }}
+                  {% for err in form.cardholders.errors %}
+                    <div class="text-danger small mt-1">{{ err }}</div>
+                  {% endfor %}
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="{{ form.admissions.id_for_label }}">{{ form.admissions.label }}</label>
+                  {{ form.admissions }}
+                  {% for err in form.admissions.errors %}
+                    <div class="text-danger small mt-1">{{ err }}</div>
+                  {% endfor %}
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="{{ form.member_tickets.id_for_label }}">{{ form.member_tickets.label }}</label>
+                  {{ form.member_tickets }}
+                  {% for err in form.member_tickets.errors %}
+                    <div class="text-danger small mt-1">{{ err }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="h6 mb-0">Recommendation formulas</h2>
+                <span class="small text-muted">One tuple per line, evaluated top to bottom before price fallback.</span>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ form.downsell_1_formulas.id_for_label }}">{{ form.downsell_1_formulas.label }}</label>
+                  {{ form.downsell_1_formulas }}
+                  <div class="form-text">{{ form.downsell_1_formulas.help_text }}</div>
+                  {% for err in form.downsell_1_formulas.errors %}
+                    <div class="text-danger small mt-1">{{ err }}</div>
+                  {% endfor %}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ form.downsell_2_formulas.id_for_label }}">{{ form.downsell_2_formulas.label }}</label>
+                  {{ form.downsell_2_formulas }}
+                  <div class="form-text">{{ form.downsell_2_formulas.help_text }}</div>
+                  {% for err in form.downsell_2_formulas.errors %}
+                    <div class="text-danger small mt-1">{{ err }}</div>
+                  {% endfor %}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ form.upsell_1_formulas.id_for_label }}">{{ form.upsell_1_formulas.label }}</label>
+                  {{ form.upsell_1_formulas }}
+                  <div class="form-text">{{ form.upsell_1_formulas.help_text }}</div>
+                  {% for err in form.upsell_1_formulas.errors %}
+                    <div class="text-danger small mt-1">{{ err }}</div>
+                  {% endfor %}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ form.upsell_2_formulas.id_for_label }}">{{ form.upsell_2_formulas.label }}</label>
+                  {{ form.upsell_2_formulas }}
+                  <div class="form-text">{{ form.upsell_2_formulas.help_text }}</div>
+                  {% for err in form.upsell_2_formulas.errors %}
+                    <div class="text-danger small mt-1">{{ err }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-rbg-primary">Preview recommendations</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="card card-rbg">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h2 class="h6 mb-1">Preview results</h2>
+                <p class="text-muted mb-0">The table below shows the levels returned by the edited formulas.</p>
+              </div>
+              {% if requested %}
+                <div class="small text-muted text-end">
+                  <div><strong>{{ requested.cardholders }}</strong> cardholders</div>
+                  <div><strong>{{ requested.admissions }}</strong> admissions</div>
+                  <div><strong>{{ requested.tickets }}</strong> tickets</div>
+                </div>
+              {% endif %}
+            </div>
+
+            {% if recommendation_rows %}
+              <div class="mb-3 small text-muted">
+                Highlighted match type:
+                <strong>{{ match_type|default:"None" }}</strong>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead>
+                    <tr>
+                      <th scope="col">Slot</th>
+                      <th scope="col">Matched formula</th>
+                      <th scope="col">Result</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for row in recommendation_rows %}
+                      <tr>
+                        <th scope="row">{{ row.label }}</th>
+                        <td><code>{{ row.formula|default:"-" }}</code></td>
+                        <td>
+                          {% if row.level %}
+                            <div class="fw-semibold">{{ row.level.name }}</div>
+                            <div class="small text-muted">
+                              C={{ row.level.cardholders_included }},
+                              G={{ row.level.admissions_allowed }},
+                              T={{ row.level.member_sale_ticket_allowance }}
+                              at ${{ row.level.price|floatformat:2 }}
+                            </div>
+                          {% else %}
+                            <span class="text-muted">No result</span>
+                          {% endif %}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p class="text-muted mb-0">Submit the form to preview how your edited formulas change the returned recommendations.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

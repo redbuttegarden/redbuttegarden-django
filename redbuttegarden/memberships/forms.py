@@ -1,6 +1,10 @@
 from django import forms
 
 from .widget_config import MembershipWidgetConfig
+from .services.recommendations import (
+    DEFAULT_RECOMMENDATION_FORMULAS,
+    validate_recommendation_formula,
+)
 
 
 def validate_even(value):
@@ -94,3 +98,103 @@ class MembershipSelectorForm(forms.Form):
             raise forms.ValidationError(msg)
 
         return cleaned
+
+
+FORMULA_FIELD_NAMES = (
+    "downsell_1_formulas",
+    "downsell_2_formulas",
+    "upsell_1_formulas",
+    "upsell_2_formulas",
+)
+
+FORMULA_FIELD_HELP_TEXT = (
+    "One formula per line, evaluated top to bottom. Supported terms: C, G, T, "
+    "prev(T), next(T), integers, +, and -."
+)
+
+
+class MembershipRecommendationFormulaForm(MembershipSelectorForm):
+    downsell_1_formulas = forms.CharField(
+        label="Downsell 1 formulas",
+        required=False,
+        help_text=FORMULA_FIELD_HELP_TEXT,
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control font-monospace",
+                "rows": 3,
+                "spellcheck": "false",
+            }
+        ),
+    )
+    downsell_2_formulas = forms.CharField(
+        label="Downsell 2 formulas",
+        required=False,
+        help_text=FORMULA_FIELD_HELP_TEXT,
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control font-monospace",
+                "rows": 4,
+                "spellcheck": "false",
+            }
+        ),
+    )
+    upsell_1_formulas = forms.CharField(
+        label="Upsell 1 formulas",
+        required=False,
+        help_text=FORMULA_FIELD_HELP_TEXT,
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control font-monospace",
+                "rows": 3,
+                "spellcheck": "false",
+            }
+        ),
+    )
+    upsell_2_formulas = forms.CharField(
+        label="Upsell 2 formulas",
+        required=False,
+        help_text=FORMULA_FIELD_HELP_TEXT,
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control font-monospace",
+                "rows": 4,
+                "spellcheck": "false",
+            }
+        ),
+    )
+
+    def __init__(self, *args, cfg=None, **kwargs):
+        super().__init__(*args, cfg=cfg, **kwargs)
+        for field_name, formulas in DEFAULT_RECOMMENDATION_FORMULAS.items():
+            form_field_name = f"{field_name}_formulas"
+            self.fields[form_field_name].initial = "\n".join(formulas)
+
+    def _clean_formula_field(self, field_name):
+        raw_value = self.cleaned_data.get(field_name, "")
+        lines = tuple(line.strip() for line in raw_value.splitlines() if line.strip())
+
+        for index, formula in enumerate(lines, start=1):
+            try:
+                validate_recommendation_formula(formula)
+            except ValueError as exc:
+                raise forms.ValidationError(f"Line {index}: {exc}") from exc
+
+        return lines
+
+    def clean_downsell_1_formulas(self):
+        return self._clean_formula_field("downsell_1_formulas")
+
+    def clean_downsell_2_formulas(self):
+        return self._clean_formula_field("downsell_2_formulas")
+
+    def clean_upsell_1_formulas(self):
+        return self._clean_formula_field("upsell_1_formulas")
+
+    def clean_upsell_2_formulas(self):
+        return self._clean_formula_field("upsell_2_formulas")
+
+    def get_formula_config(self):
+        return {
+            field_name.removesuffix("_formulas"): self.cleaned_data[field_name]
+            for field_name in FORMULA_FIELD_NAMES
+        }
