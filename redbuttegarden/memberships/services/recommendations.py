@@ -25,11 +25,21 @@ class Level:
 @dataclass(frozen=True)
 class RecommendationResult:
     match_type: Optional[str]  # "Exact", "Best", or None
+
     highlighted: Optional[Level]
+    highlighted_formula: Optional[str]
+
     downsell_1: Optional[Level]
+    downsell_1_formula: Optional[str]
+
     downsell_2: Optional[Level]
+    downsell_2_formula: Optional[str]
+
     upsell_1: Optional[Level]
+    upsell_1_formula: Optional[str]
+
     upsell_2: Optional[Level]
+    upsell_2_formula: Optional[str]
 
 
 def _next_step(tickets: int) -> Optional[int]:
@@ -146,18 +156,37 @@ def recommend_levels(
     guests: int,
     tickets: int,
 ) -> RecommendationResult:
+    logger.debug(f"Getting recommendations for C: {cardholders}, G: {guests}, T: {tickets}")
     active = [l for l in levels if l.active]
     if not active:
-        return RecommendationResult(None, None, None, None, None, None)
+        return RecommendationResult(
+            match_type=None,
+            highlighted=None,
+            highlighted_formula=None,
+            downsell_1=None,
+            downsell_1_formula=None,
+            downsell_2=None,
+            downsell_2_formula=None,
+            upsell_1=None,
+            upsell_1_formula=None,
+            upsell_2=None,
+            upsell_2_formula=None,
+        )
 
     idx = _build_index(active)
     all_active_sorted = _sorted_by_price(active)
+
+    d1_formula = ""
+    d2_formula = ""
+    u1_formula = ""
+    u2_formula = ""
 
     # -------- Highlighted --------
     exact = idx.get((cardholders, guests, tickets))
     if exact:
         highlighted = exact
         match_type = "Exact"
+        highlighted_formula = "exact"
     else:
         # Best: same (C,G), ignore tickets, pick smallest ticket allowance >= requested else smallest available
         available = [
@@ -166,7 +195,19 @@ def recommend_levels(
             if l.cardholders_included == cardholders and l.admissions_allowed == guests
         ]
         if not available:
-            return RecommendationResult(None, None, None, None, None, None)
+            return RecommendationResult(
+                match_type=None,
+                highlighted=None,
+                highlighted_formula=None,
+                downsell_1=None,
+                downsell_1_formula=None,
+                downsell_2=None,
+                downsell_2_formula=None,
+                upsell_1=None,
+                upsell_1_formula=None,
+                upsell_2=None,
+                upsell_2_formula=None,
+            )
 
         available.sort(key=lambda l: (l.member_sale_ticket_allowance, l.price, l.pk))
         above_or_equal = [
@@ -174,6 +215,11 @@ def recommend_levels(
         ]
         highlighted = above_or_equal[0] if above_or_equal else available[0]
         match_type = "Best"
+        highlighted_formula = (
+            "best_same_cg_ticket_gte"
+            if above_or_equal
+            else "best_same_cg_smallest_ticket"
+        )
 
     exclude: Set[int] = {highlighted.pk}
 
@@ -188,6 +234,7 @@ def recommend_levels(
         cand = idx.get((cardholders, guests, prev_req))
         if cand and cand.pk not in exclude:
             d1 = cand
+            d1_formula = "primary"
             logger.debug(
                 "Downsell 1 primary (C,G,prevT) hit -> pk=%s price=%s",
                 cand.pk,
@@ -199,8 +246,9 @@ def recommend_levels(
         cand = idx.get((cardholders, guests - 1, tickets))
         if cand and cand.pk not in exclude:
             d1 = cand
+            d1_formula = "fallback_1"
             logger.debug(
-                "Downsell 1 fallback (C,G-1,T) hit -> pk=%s price=%s",
+                "Downsell 1 fallback #1 (C,G-1,T) hit -> pk=%s price=%s",
                 cand.pk,
                 cand.price,
             )
@@ -215,8 +263,9 @@ def recommend_levels(
             prefer="cheaper",
         )
         if d1:
+            d1_formula = "price_fallback_2"
             logger.debug(
-                "Downsell 1 price fallback prefer-cheaper-else-closest -> pk=%s price=%s (highlighted=%s)",
+                "Downsell 1 final fallback #2 prefer-cheaper-else-closest -> pk=%s price=%s (highlighted=%s)",
                 d1.pk,
                 d1.price,
                 highlighted.price,
@@ -235,8 +284,9 @@ def recommend_levels(
         cand = idx.get((cardholders - 1, guests + 1, tickets))
         if cand and cand.pk not in exclude:
             d2 = cand
+            d2_formula = "primary"
             logger.debug(
-                "Downsell 2 fallback (C-1,G+1,T) hit -> pk=%s price=%s",
+                "Downsell 2 primary (C-1,G+1,T) hit -> pk=%s price=%s",
                 cand.pk,
                 cand.price,
             )
@@ -246,8 +296,9 @@ def recommend_levels(
         cand = idx.get((cardholders, guests - 1, tickets))
         if cand and cand.pk not in exclude:
             d2 = cand
+            d2_formula = "fallback_1"
             logger.debug(
-                "Downsell 2 fallback (C,G-1,T) hit -> pk=%s price=%s",
+                "Downsell 2 fallback #1 (C,G-1,T) hit -> pk=%s price=%s",
                 cand.pk,
                 cand.price,
             )
@@ -257,8 +308,9 @@ def recommend_levels(
         cand = idx.get((cardholders, guests - 2, tickets))
         if cand and cand.pk not in exclude:
             d2 = cand
+            d2_formula = "fallback_2"
             logger.debug(
-                "Downsell 2 fallback (C,G-2,T) hit -> pk=%s price=%s",
+                "Downsell 2 fallback #2 (C,G-2,T) hit -> pk=%s price=%s",
                 cand.pk,
                 cand.price,
             )
@@ -273,8 +325,9 @@ def recommend_levels(
             prefer="cheaper",
         )
         if d2:
+            d2_formula = "price_fallback_3"
             logger.debug(
-                "Downsell 2 price fallback prefer-cheaper-else-closest (#2) -> pk=%s price=%s (highlighted=%s)",
+                "Downsell 2 price final fallback #3 prefer-cheaper-else-closest (#2) -> pk=%s price=%s (highlighted=%s)",
                 d2.pk,
                 d2.price,
                 highlighted.price,
@@ -294,6 +347,7 @@ def recommend_levels(
         cand = idx.get((cardholders, guests, next_req))
         if cand and cand.pk not in exclude:
             u1 = cand
+            u1_formula = "primary"
             logger.debug(
                 "Upsell 1 primary (C,G,nextT) hit -> pk=%s price=%s",
                 cand.pk,
@@ -305,8 +359,9 @@ def recommend_levels(
         cand = idx.get((cardholders, guests + 1, tickets))
         if cand and cand.pk not in exclude:
             u1 = cand
+            u1_formula = "fallback_1"
             logger.debug(
-                "Upsell 1 fallback (C,G+1,T) hit -> pk=%s price=%s", cand.pk, cand.price
+                "Upsell 1 fallback #1 (C,G+1,T) hit -> pk=%s price=%s", cand.pk, cand.price
             )
 
     # 3) price fallback: prefer more expensive, else closest-by-price
@@ -319,8 +374,9 @@ def recommend_levels(
             prefer="expensive",
         )
         if u1:
+            u1_formula = "price_fallback_2"
             logger.debug(
-                "Upsell 1 price fallback prefer-expensive-else-closest -> pk=%s price=%s (highlighted=%s)",
+                "Upsell 1 final fallback #2 prefer-expensive-else-closest -> pk=%s price=%s (highlighted=%s)",
                 u1.pk,
                 u1.price,
                 highlighted.price,
@@ -339,8 +395,9 @@ def recommend_levels(
         cand = idx.get((cardholders + 1, guests - 1, tickets))
         if cand and cand.pk not in exclude:
             u2 = cand
+            u2_formula = "primary"
             logger.debug(
-                "Upsell 2 fallback (C+1,G-1,T) hit -> pk=%s price=%s",
+                "Upsell 2 primary (C+1,G-1,T) hit -> pk=%s price=%s",
                 cand.pk,
                 cand.price,
             )
@@ -350,8 +407,9 @@ def recommend_levels(
         cand = idx.get((cardholders, guests + 1, tickets))
         if cand and cand.pk not in exclude:
             u2 = cand
+            u2_formula = "fallback_1"
             logger.debug(
-                "Upsell 2 fallback (C,G+1,T) hit -> pk=%s price=%s", cand.pk, cand.price
+                "Upsell 2 fallback #1 (C,G+1,T) hit -> pk=%s price=%s", cand.pk, cand.price
             )
 
     # 3) (C, G+2, T)
@@ -359,8 +417,9 @@ def recommend_levels(
         cand = idx.get((cardholders, guests + 2, tickets))
         if cand and cand.pk not in exclude:
             u2 = cand
+            u2_formula = "fallback_2"
             logger.debug(
-                "Upsell 2 fallback (C,G+2,T) hit -> pk=%s price=%s", cand.pk, cand.price
+                "Upsell 2 fallback #2 (C,G+2,T) hit -> pk=%s price=%s", cand.pk, cand.price
             )
 
     # 4) price fallback: prefer more expensive, else closest-by-price (2nd pick)
@@ -373,8 +432,9 @@ def recommend_levels(
             prefer="expensive",
         )
         if u2:
+            u2_formula = "price_fallback_3"
             logger.debug(
-                "Upsell 2 price fallback prefer-expensive-else-closest (#2) -> pk=%s price=%s (highlighted=%s)",
+                "Upsell 2 final fallback #3 prefer-expensive-else-closest (#2) -> pk=%s price=%s (highlighted=%s)",
                 u2.pk,
                 u2.price,
                 highlighted.price,
@@ -386,8 +446,13 @@ def recommend_levels(
     return RecommendationResult(
         match_type=match_type,
         highlighted=highlighted,
+        highlighted_formula=highlighted_formula,
         downsell_1=d1,
+        downsell_1_formula=d1_formula,
         downsell_2=d2,
+        downsell_2_formula=d2_formula,
         upsell_1=u1,
+        upsell_1_formula=u1_formula,
         upsell_2=u2,
+        upsell_2_formula=u2_formula,
     )
