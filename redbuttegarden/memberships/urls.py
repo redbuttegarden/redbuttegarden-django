@@ -5,4 +5,9 @@ app_name = "members"
 urlpatterns = [
     path("membership/", views.membership_selector_page, name="membership_selector"),
     path("membership/suggest/", views.membership_suggest, name="membership_suggest"),
+    path(
+        "membership/formulas/",
+        views.membership_formula_lab,
+        name="membership_formula_lab",
+    ),
 ]

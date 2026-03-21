@@ -90,11 +90,11 @@ class HtmlCacheControlMiddleware(MiddlewareMixin):
     """
 
     # Default we will apply if nothing more restrictive exists
-    # - max-age=0 encourages revalidation
-    # - s-maxage set to 30 minutes
-    # - must-revalidate/proxy-revalidate allow proper revalidation semantics
+    # - max-age=60 allows browsers to reuse HTML briefly
+    # - s-maxage=86400 lets shared caches keep HTML warm for a day
+    # - must-revalidate/proxy-revalidate preserve revalidation semantics once stale
     DEFAULT_CACHE_CTRL = (
-        "public, max-age=0, s-maxage=1800, must-revalidate, proxy-revalidate"
+        "public, max-age=60, s-maxage=86400, must-revalidate, proxy-revalidate"
     )
 
     def _media_type(self, response) -> Optional[str]:
