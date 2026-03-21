@@ -2,7 +2,7 @@ services:
   web:
     container_name: rbg-web
     env_file:
-      - redbuttegarden/.env.dev
+      - $HOME/.rbg-env.dev
     build: redbuttegarden/
     volumes:
       - ./redbuttegarden:/code
@@ -18,7 +18,7 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - redbuttegarden/.env.dev
+      - $HOME/.rbg-env.dev
     volumes:
       - postgres_data:/var/lib/postgresql
 
