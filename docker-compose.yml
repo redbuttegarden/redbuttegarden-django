@@ -36,7 +36,7 @@ services:
       - static_volume:/home/static
       - media_volume:/home/media
       - ./nginx/templates:/etc/nginx/templates
-      - ./nginx/certs:/etc/ssl/certs
+      - $HOME/rbg-web/certs:/etc/ssl/certs
     environment:
       - NGINX_HOST=rbg-it-web-dev.redbutte.utah.edu
       - APP_PORT=8000
