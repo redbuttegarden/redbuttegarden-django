@@ -180,7 +180,19 @@ class AlignedParagraphBlock(blocks.StructBlock):
         ],
         default="default",
     )
-    paragraph = blocks.RichTextBlock()
+    paragraph = blocks.RichTextBlock(features=[
+        "h2",
+        "h3",
+        "lead",
+        "bold",
+        "italic",
+        "link",
+        "ol",
+        "ul",
+        "document-link",
+        "image",
+        "embed",
+    ], help_text='Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead (Ld) can be used to make slightly larger text for emphasis.')
 
     class Meta:
         template = "blocks/aligned_paragraph.html"
@@ -238,9 +250,9 @@ class SingleListImageCardInfo(blocks.StructBlock):
     )
     text = blocks.RichTextBlock(
         label="Text",
-        features=["h4", "h5", "bold", "italic", "link", "ul"],
+        features=["bold", "italic", "link", "ul", "lead"],
         help_text=_(
-            "Note that h4 elements will be colored green and h5 elements will be colored purple"
+            "Lead text appears slightly larger"
         ),
     )
     button_text = blocks.CharBlock(
@@ -299,7 +311,8 @@ class SingleListButtonDropdownInfo(blocks.StructBlock):
     )
     info_text = blocks.RichTextBlock(
         label="Info Text",
-        features=["h4", "h5", "bold", "italic", "link", "document-link", "ul"],
+        features=["bold", "italic", "link", "document-link", "ul", "lead"],
+        help_text=_("Lead (Ld) text appears slightly larger.")
     )
 
 
@@ -575,7 +588,7 @@ class GeneralPage(AbstractBase):
     body = StreamField(
         block_types=[
             ("button", ButtonBlock()),
-            ("custom_heading", HeadingBlock()),
+            ("custom_heading", HeadingBlock(help_text=_('Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text'))),
             (
                 "heading",
                 Heading(
@@ -1103,7 +1116,7 @@ class EventSlides(Orderable):
     )
     text = RichTextField(
         max_length=100,
-        features=["h1", "h2", "h3", "h4", "h5", "h6", "bold", "italic"],
+        features=["bold", "italic", "lead"],
         null=True,
         blank=True,
     )
@@ -1147,7 +1160,18 @@ class RetailPartnerBlock(blocks.StructBlock):
     name = blocks.CharBlock(max_length=75)
     addresses = blocks.ListBlock(AddressBlock(), required=False)
     url = blocks.URLBlock(required=False)
-    info = blocks.RichTextBlock()
+    info = blocks.RichTextBlock(
+        features=[
+            "h3",
+            "bold",
+            "italic",
+            "link",
+            "ol",
+            "ul",
+            "lead"
+        ],
+        help_text=_("Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead can be used to make slightly larger text for emphasis.")
+    )
 
     class Meta:
         template = "blocks/retail_partner_block.html"
@@ -1174,6 +1198,31 @@ class RetailPartnerPage(AbstractBase):
         index.SearchField("body"),
         index.SearchField("retail_partners"),
     ]
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+
+        partners = list(self.retail_partners)
+
+        rows = []
+        row_size = 3
+
+        for i in range(0, len(partners), row_size):
+            row_items = partners[i : i + row_size]
+
+            filler_count = row_size - len(row_items)
+            for _ in range(filler_count):
+                row_items.append(
+                    {
+                        "is_placeholder": True,
+                        "message": "Your business could be here!",
+                    }
+                )
+
+            rows.append(row_items)
+
+        context["partner_rows"] = rows
+        return context
 
     def save_revision(self, *args, **kwargs):
         if self.banner is None:

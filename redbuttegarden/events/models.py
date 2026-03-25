@@ -111,7 +111,7 @@ class SingleListImage(blocks.StructBlock):
     title = blocks.CharBlock(
         label="Title",
         max_length=200,
-        help_text=_("Displayed right of image in h2 tag, centered and uppercase"),
+        help_text=_("Displayed right of image in fs-2 tag (font-size of h2), centered and uppercase"),
     )
     sub_title = blocks.CharBlock(
         label="Subtitle",
