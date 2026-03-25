@@ -2,7 +2,10 @@ from django import forms
 
 from .widget_config import MembershipWidgetConfig
 from .services.recommendations import (
+    DEFAULT_PRICE_FALLBACK_FORMULAS,
     DEFAULT_RECOMMENDATION_FORMULAS,
+    get_default_price_fallback_formulas,
+    validate_price_fallback_formula,
     validate_recommendation_formula,
 )
 
@@ -111,6 +114,16 @@ FORMULA_FIELD_HELP_TEXT = (
     "One formula per line, evaluated top to bottom. Supported terms: C, G, T, "
     "prev(T), next(T), integers, +, and -."
 )
+PRICE_FALLBACK_FIELD_NAMES = (
+    "downsell_1_price_fallback",
+    "downsell_2_price_fallback",
+    "upsell_1_price_fallback",
+    "upsell_2_price_fallback",
+)
+PRICE_FALLBACK_HELP_TEXT = (
+    "Enter one fallback rule in this field. Start with cheaper(n) or "
+    "expensive(n), then optionally add ; match=... or ; prefer=... filters."
+)
 
 
 class MembershipRecommendationFormulaForm(MembershipSelectorForm):
@@ -120,8 +133,8 @@ class MembershipRecommendationFormulaForm(MembershipSelectorForm):
         help_text=FORMULA_FIELD_HELP_TEXT,
         widget=forms.Textarea(
             attrs={
-                "class": "form-control font-monospace",
-                "rows": 3,
+                "class": "form-control font-monospace formula-lab-textarea",
+                "rows": 6,
                 "spellcheck": "false",
             }
         ),
@@ -132,8 +145,8 @@ class MembershipRecommendationFormulaForm(MembershipSelectorForm):
         help_text=FORMULA_FIELD_HELP_TEXT,
         widget=forms.Textarea(
             attrs={
-                "class": "form-control font-monospace",
-                "rows": 4,
+                "class": "form-control font-monospace formula-lab-textarea",
+                "rows": 7,
                 "spellcheck": "false",
             }
         ),
@@ -144,8 +157,8 @@ class MembershipRecommendationFormulaForm(MembershipSelectorForm):
         help_text=FORMULA_FIELD_HELP_TEXT,
         widget=forms.Textarea(
             attrs={
-                "class": "form-control font-monospace",
-                "rows": 3,
+                "class": "form-control font-monospace formula-lab-textarea",
+                "rows": 6,
                 "spellcheck": "false",
             }
         ),
@@ -156,8 +169,52 @@ class MembershipRecommendationFormulaForm(MembershipSelectorForm):
         help_text=FORMULA_FIELD_HELP_TEXT,
         widget=forms.Textarea(
             attrs={
-                "class": "form-control font-monospace",
-                "rows": 4,
+                "class": "form-control font-monospace formula-lab-textarea",
+                "rows": 7,
+                "spellcheck": "false",
+            }
+        ),
+    )
+    downsell_1_price_fallback = forms.CharField(
+        label="Downsell 1 price fallback",
+        required=False,
+        help_text=PRICE_FALLBACK_HELP_TEXT,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control font-monospace formula-lab-input",
+                "spellcheck": "false",
+            }
+        ),
+    )
+    downsell_2_price_fallback = forms.CharField(
+        label="Downsell 2 price fallback",
+        required=False,
+        help_text=PRICE_FALLBACK_HELP_TEXT,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control font-monospace formula-lab-input",
+                "spellcheck": "false",
+            }
+        ),
+    )
+    upsell_1_price_fallback = forms.CharField(
+        label="Upsell 1 price fallback",
+        required=False,
+        help_text=PRICE_FALLBACK_HELP_TEXT,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control font-monospace formula-lab-input",
+                "spellcheck": "false",
+            }
+        ),
+    )
+    upsell_2_price_fallback = forms.CharField(
+        label="Upsell 2 price fallback",
+        required=False,
+        help_text=PRICE_FALLBACK_HELP_TEXT,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control font-monospace formula-lab-input",
                 "spellcheck": "false",
             }
         ),
@@ -168,6 +225,9 @@ class MembershipRecommendationFormulaForm(MembershipSelectorForm):
         for field_name, formulas in DEFAULT_RECOMMENDATION_FORMULAS.items():
             form_field_name = f"{field_name}_formulas"
             self.fields[form_field_name].initial = "\n".join(formulas)
+        for field_name, formula in DEFAULT_PRICE_FALLBACK_FORMULAS.items():
+            form_field_name = f"{field_name}_price_fallback"
+            self.fields[form_field_name].initial = formula
 
     def _clean_formula_field(self, field_name):
         raw_value = self.cleaned_data.get(field_name, "")
@@ -193,8 +253,39 @@ class MembershipRecommendationFormulaForm(MembershipSelectorForm):
     def clean_upsell_2_formulas(self):
         return self._clean_formula_field("upsell_2_formulas")
 
+    def _clean_price_fallback_field(self, field_name):
+        raw_value = (self.cleaned_data.get(field_name) or "").strip()
+        slot_name = field_name.removesuffix("_price_fallback")
+        if not raw_value:
+            return get_default_price_fallback_formulas()[slot_name]
+
+        try:
+            validate_price_fallback_formula(raw_value)
+        except ValueError as exc:
+            raise forms.ValidationError(str(exc)) from exc
+
+        return raw_value
+
     def get_formula_config(self):
         return {
             field_name.removesuffix("_formulas"): self.cleaned_data[field_name]
             for field_name in FORMULA_FIELD_NAMES
+        }
+
+    def clean_downsell_1_price_fallback(self):
+        return self._clean_price_fallback_field("downsell_1_price_fallback")
+
+    def clean_downsell_2_price_fallback(self):
+        return self._clean_price_fallback_field("downsell_2_price_fallback")
+
+    def clean_upsell_1_price_fallback(self):
+        return self._clean_price_fallback_field("upsell_1_price_fallback")
+
+    def clean_upsell_2_price_fallback(self):
+        return self._clean_price_fallback_field("upsell_2_price_fallback")
+
+    def get_price_fallback_config(self):
+        return {
+            field_name.removesuffix("_price_fallback"): self.cleaned_data[field_name]
+            for field_name in PRICE_FALLBACK_FIELD_NAMES
         }

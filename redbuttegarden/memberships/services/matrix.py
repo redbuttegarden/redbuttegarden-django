@@ -10,8 +10,10 @@ from memberships.forms import MembershipSelectorForm
 from memberships.services.recommendations import (
     RECOMMENDATION_SLOT_ORDER,
     Level,
+    get_default_price_fallback_formulas,
     get_default_recommendation_formulas,
     recommend_levels,
+    validate_price_fallback_formula,
     validate_recommendation_formula,
 )
 
@@ -111,12 +113,37 @@ def _normalize_formulas(
     return normalized
 
 
+def _normalize_price_fallbacks(
+    price_fallbacks: Mapping[str, str] | None,
+) -> dict[str, str]:
+    normalized = get_default_price_fallback_formulas()
+    if not price_fallbacks:
+        return normalized
+
+    unknown_slots = set(price_fallbacks) - set(RECOMMENDATION_SLOT_ORDER)
+    if unknown_slots:
+        unknown = ", ".join(sorted(unknown_slots))
+        raise ValueError(f"Unknown recommendation slots: {unknown}")
+
+    for slot in RECOMMENDATION_SLOT_ORDER:
+        if slot not in price_fallbacks:
+            continue
+
+        formula = price_fallbacks[slot].strip()
+        validate_price_fallback_formula(formula)
+        normalized[slot] = formula
+
+    return normalized
+
+
 def build_membership_matrix_rows(
     levels: Sequence[Level],
     cfg,
     formulas: Mapping[str, Sequence[str]] | None = None,
+    price_fallbacks: Mapping[str, str] | None = None,
 ) -> list[dict[str, Any]]:
     normalized_formulas = _normalize_formulas(formulas)
+    normalized_price_fallbacks = _normalize_price_fallbacks(price_fallbacks)
     rows: list[dict[str, Any]] = []
 
     for cardholders in range(1, 4):
@@ -177,6 +204,7 @@ def build_membership_matrix_rows(
                     guests=admissions,
                     tickets=tickets,
                     formulas=normalized_formulas,
+                    price_fallbacks=normalized_price_fallbacks,
                 )
                 highlighted = recommendation.highlighted
                 downsell_1 = recommendation.downsell_1
@@ -233,12 +261,14 @@ def build_membership_matrix_workbook_bytes(
     levels: Sequence[Level],
     level_source,
     formulas: Mapping[str, Sequence[str]] | None = None,
+    price_fallbacks: Mapping[str, str] | None = None,
 ) -> bytes:
     from openpyxl import Workbook
     from openpyxl.styles import Alignment, Font
     from openpyxl.utils import get_column_letter
 
     normalized_formulas = _normalize_formulas(formulas)
+    normalized_price_fallbacks = _normalize_price_fallbacks(price_fallbacks)
     workbook = Workbook()
 
     matrix_sheet = workbook.active
@@ -291,6 +321,8 @@ def build_membership_matrix_workbook_bytes(
     meta_sheet.append(["notes", MATRIX_NOTES])
     for slot in RECOMMENDATION_SLOT_ORDER:
         meta_sheet.append([f"{slot}_formulas", "\n".join(normalized_formulas[slot])])
+    for slot in RECOMMENDATION_SLOT_ORDER:
+        meta_sheet.append([f"{slot}_price_fallback", normalized_price_fallbacks[slot]])
 
     buffer = BytesIO()
     workbook.save(buffer)

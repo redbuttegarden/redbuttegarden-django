@@ -72,13 +72,14 @@ DEFAULT_RECOMMENDATION_FORMULAS: dict[str, Tuple[str, ...]] = {
         "(C+1, G, T)",
     ),
 }
-PRICE_FALLBACK_FORMULAS: dict[str, str] = {
-    "downsell_1": "price_fallback_2",
-    "downsell_2": "price_fallback_3",
-    "upsell_1": "price_fallback_2",
-    "upsell_2": "price_fallback_3",
+DEFAULT_PRICE_FALLBACK_FORMULAS: dict[str, str] = {
+    "downsell_1": "cheaper(1)",
+    "downsell_2": "cheaper(2)",
+    "upsell_1": "expensive(1)",
+    "upsell_2": "expensive(2)",
 }
 FORMULA_EXPRESSION_TOKEN_RE = re.compile(r"\s*(prev\(T\)|next\(T\)|[CGT]|\d+|[+-])")
+PRICE_FALLBACK_FORMULA_RE = re.compile(r"^\s*(cheaper|expensive)\((.*)\)\s*$")
 
 
 @dataclass(frozen=True)
@@ -112,10 +113,25 @@ class RecommendationResult:
     upsell_2_formula: Optional[str]
 
 
+@dataclass(frozen=True)
+class PriceFallbackSpec:
+    direction: str
+    n: int
+    prefer_dimensions: Tuple[str, ...]
+    match_dimensions: Tuple[str, ...]
+
+
 def get_default_recommendation_formulas() -> dict[str, Tuple[str, ...]]:
     return {
         slot: tuple(formulas)
         for slot, formulas in DEFAULT_RECOMMENDATION_FORMULAS.items()
+    }
+
+
+def get_default_price_fallback_formulas() -> dict[str, str]:
+    return {
+        slot: formula
+        for slot, formula in DEFAULT_PRICE_FALLBACK_FORMULAS.items()
     }
 
 
@@ -245,6 +261,100 @@ def validate_recommendation_formula(formula: str) -> None:
         _parse_formula_expression(part)
 
 
+def validate_price_fallback_formula(formula: str) -> None:
+    _parse_price_fallback_formula(formula)
+
+
+def _normalize_fallback_dimensions(
+    raw_value: str, *, option_name: str
+) -> tuple[str, ...]:
+    raw_value = raw_value.strip()
+    if not raw_value:
+        raise ValueError(
+            f"Fallback option '{option_name}' requires one or more dimensions."
+        )
+
+    if raw_value.lower() in {"any", "none"}:
+        return ()
+
+    alias_map = {
+        "c": "cardholders",
+        "cardholders": "cardholders",
+        "g": "guests",
+        "guests": "guests",
+        "t": "tickets",
+        "tickets": "tickets",
+    }
+    dimensions: list[str] = []
+    for token in raw_value.split(","):
+        normalized = alias_map.get(token.strip().lower())
+        if normalized is None:
+            raise ValueError(
+                "Fallback dimensions must be cardholders, guests, tickets, "
+                "or their aliases C, G, T."
+            )
+        if normalized not in dimensions:
+            dimensions.append(normalized)
+    return tuple(dimensions)
+
+
+def _parse_price_fallback_formula(formula: str) -> PriceFallbackSpec:
+    match = PRICE_FALLBACK_FORMULA_RE.match(formula.strip())
+    if not match:
+        raise ValueError(
+            "Fallback formula must use the format 'cheaper(n)' or "
+            "'expensive(n)', with optional '; match=...' or '; prefer=...'."
+        )
+
+    direction = match.group(1)
+    inner = formula.strip()[len(direction) + 1 : -1]
+    parts = [part.strip() for part in inner.split(";")]
+    if not parts or not parts[0].isdigit():
+        raise ValueError("Fallback formula index must be an integer 1 or greater.")
+
+    n = int(parts[0])
+    if n <= 0:
+        raise ValueError("Fallback formula index must be 1 or greater.")
+
+    prefer_dimensions: tuple[str, ...] = ("cardholders",)
+    match_dimensions: tuple[str, ...] = ()
+    seen_options: set[str] = set()
+
+    for option in parts[1:]:
+        if not option:
+            raise ValueError("Fallback options cannot be empty.")
+
+        key, separator, value = option.partition("=")
+        if separator != "=":
+            raise ValueError("Fallback options must use the format 'key=value'.")
+
+        normalized_key = key.strip().lower()
+        if normalized_key not in {"prefer", "match"}:
+            raise ValueError("Fallback options must use 'prefer=' or 'match='.")
+        if normalized_key in seen_options:
+            raise ValueError(f"Fallback option '{normalized_key}' can only be set once.")
+        seen_options.add(normalized_key)
+
+        dimensions = _normalize_fallback_dimensions(
+            value, option_name=normalized_key
+        )
+        if normalized_key == "prefer":
+            prefer_dimensions = dimensions
+        else:
+            match_dimensions = dimensions
+
+    return PriceFallbackSpec(
+        direction=direction,
+        n=n,
+        prefer_dimensions=prefer_dimensions,
+        match_dimensions=match_dimensions,
+    )
+
+
+def resolve_price_fallback_formula(formula: str) -> PriceFallbackSpec:
+    return _parse_price_fallback_formula(formula)
+
+
 def resolve_recommendation_formula(
     formula: str, *, cardholders: int, guests: int, tickets: int
 ) -> Optional[tuple[int, int, int]]:
@@ -289,6 +399,28 @@ def _normalize_recommendation_formulas(
     return normalized
 
 
+def _normalize_price_fallback_formulas(
+    price_fallbacks: Optional[Mapping[str, str]],
+) -> dict[str, str]:
+    normalized = get_default_price_fallback_formulas()
+    if not price_fallbacks:
+        return normalized
+
+    unknown_slots = set(price_fallbacks.keys()) - set(RECOMMENDATION_SLOT_ORDER)
+    if unknown_slots:
+        unknown = ", ".join(sorted(unknown_slots))
+        raise ValueError(f"Unknown recommendation slots: {unknown}")
+
+    for slot in RECOMMENDATION_SLOT_ORDER:
+        if slot not in price_fallbacks:
+            continue
+        formula = price_fallbacks[slot].strip()
+        validate_price_fallback_formula(formula)
+        normalized[slot] = formula
+
+    return normalized
+
+
 def _build_index(levels: Sequence[Level]) -> dict[tuple[int, int, int], Level]:
     """
     Uniqueness constraint guarantees a single (active) level per entitlement triple.
@@ -313,18 +445,38 @@ def _sorted_by_price(levels: Iterable[Level]) -> List[Level]:
 
 def _closest_by_price_sorted(
     *,
-    all_active_sorted: Sequence[Level],
+    levels: Sequence[Level],
     highlighted: Level,
-    exclude: Set[int],
 ) -> List[Level]:
     """
     Candidates ordered by absolute distance from highlighted.price, then by price, then pk.
     Deterministic and stable. Includes cheaper, equal, and more expensive.
     """
     hp = highlighted.price
-    cands = [l for l in all_active_sorted if l.pk not in exclude]
+    cands = list(levels)
     cands.sort(key=lambda l: (abs(l.price - hp), l.price, l.pk))
     return cands
+
+
+def _matches_requested_dimensions(
+    level: Level,
+    *,
+    dimensions: Sequence[str],
+    cardholders: int,
+    guests: int,
+    tickets: int,
+) -> bool:
+    expected = {
+        "cardholders": cardholders,
+        "guests": guests,
+        "tickets": tickets,
+    }
+    actual = {
+        "cardholders": level.cardholders_included,
+        "guests": level.admissions_allowed,
+        "tickets": level.member_sale_ticket_allowance,
+    }
+    return all(actual[dimension] == expected[dimension] for dimension in dimensions)
 
 
 def _pick_nth_prefer_band_else_closest(
@@ -334,27 +486,63 @@ def _pick_nth_prefer_band_else_closest(
     exclude: Set[int],
     n: int,
     prefer: str,
+    cardholders: int,
+    guests: int,
+    tickets: int,
+    prefer_dimensions: Sequence[str],
+    match_dimensions: Sequence[str],
 ) -> Optional[Level]:
     """
     Always tries to return something (unless there are no non-excluded levels).
 
     prefer:
-      - "cheaper": prefer strictly cheaper-than-highlighted with same number of cardholders, else fill from closest-by-price overall
-      - "expensive": prefer strictly more-expensive-than-highlighted with same number of cardholders, else fill from closest-by-price overall
+      - "cheaper": prefer strictly cheaper-than-highlighted among the preferred
+        dimensions, else fill from closest-by-price overall
+      - "expensive": prefer strictly more-expensive-than-highlighted among the
+        preferred dimensions, else fill from closest-by-price overall
 
     n=1 returns first pick, n=2 returns second pick, etc. This function does NOT mutate exclude.
     """
     if n <= 0:
         raise ValueError("n must be >= 1")
 
-    remaining = [l for l in all_active_sorted if l.pk not in exclude if l.cardholders_included == highlighted.cardholders_included]
+    remaining = [
+        l
+        for l in all_active_sorted
+        if l.pk not in exclude
+        and _matches_requested_dimensions(
+            l,
+            dimensions=match_dimensions,
+            cardholders=cardholders,
+            guests=guests,
+            tickets=tickets,
+        )
+    ]
     if not remaining:
         return None
 
+    preferred_remaining = (
+        [
+            l
+            for l in remaining
+            if _matches_requested_dimensions(
+                l,
+                dimensions=prefer_dimensions,
+                cardholders=cardholders,
+                guests=guests,
+                tickets=tickets,
+            )
+        ]
+        if prefer_dimensions
+        else remaining
+    )
+    if prefer_dimensions and not preferred_remaining:
+        preferred_remaining = remaining
+
     if prefer == "cheaper":
-        primary = [l for l in remaining if l.price < highlighted.price]
+        primary = [l for l in preferred_remaining if l.price < highlighted.price]
     elif prefer == "expensive":
-        primary = [l for l in remaining if l.price > highlighted.price]
+        primary = [l for l in preferred_remaining if l.price > highlighted.price]
     else:
         raise ValueError("prefer must be 'cheaper' or 'expensive'")
     primary.sort(key=lambda l: (l.price, l.pk))
@@ -367,9 +555,7 @@ def _pick_nth_prefer_band_else_closest(
     #   - all preferred-band candidates first (already sorted)
     #   - then fill the rest with closest-by-price candidates not already included
     picked_pks = {l.pk for l in primary}
-    closest = _closest_by_price_sorted(
-        all_active_sorted=all_active_sorted, highlighted=highlighted, exclude=exclude
-    )
+    closest = _closest_by_price_sorted(levels=remaining, highlighted=highlighted)
     fill = [l for l in closest if l.pk not in picked_pks]
 
     combined = primary + fill
@@ -411,6 +597,7 @@ def recommend_levels(
     guests: int,
     tickets: int,
     formulas: Optional[Mapping[str, Sequence[str]]] = None,
+    price_fallbacks: Optional[Mapping[str, str]] = None,
 ) -> RecommendationResult:
     logger.debug(f"Getting recommendations for C: {cardholders}, G: {guests}, T: {tickets}")
     active = [l for l in levels if l.active]
@@ -432,6 +619,7 @@ def recommend_levels(
     idx = _build_index(active)
     all_active_sorted = _sorted_by_price(active)
     normalized_formulas = _normalize_recommendation_formulas(formulas)
+    normalized_price_fallbacks = _normalize_price_fallback_formulas(price_fallbacks)
 
     d1_formula = ""
     d2_formula = ""
@@ -502,17 +690,24 @@ def recommend_levels(
 
     # 3) price fallback: prefer cheaper, else closest-by-price
     if d1 is None:
+        d1_formula = normalized_price_fallbacks["downsell_1"]
+        d1_spec = resolve_price_fallback_formula(d1_formula)
         d1 = _pick_nth_prefer_band_else_closest(
             all_active_sorted=all_active_sorted,
             highlighted=highlighted,
             exclude=exclude,
-            n=1,
-            prefer="cheaper",
+            n=d1_spec.n,
+            prefer=d1_spec.direction,
+            cardholders=cardholders,
+            guests=guests,
+            tickets=tickets,
+            prefer_dimensions=d1_spec.prefer_dimensions,
+            match_dimensions=d1_spec.match_dimensions,
         )
         if d1:
-            d1_formula = PRICE_FALLBACK_FORMULAS["downsell_1"]
             logger.debug(
-                "Downsell 1 final fallback #2 prefer-cheaper-else-closest -> pk=%s price=%s (highlighted=%s)",
+                "Downsell 1 final fallback %s -> pk=%s price=%s (highlighted=%s)",
+                d1_formula,
                 d1.pk,
                 d1.price,
                 highlighted.price,
@@ -543,17 +738,24 @@ def recommend_levels(
 
     # 4) price fallback: prefer cheaper, else closest-by-price (2nd pick)
     if d2 is None:
+        d2_formula = normalized_price_fallbacks["downsell_2"]
+        d2_spec = resolve_price_fallback_formula(d2_formula)
         d2 = _pick_nth_prefer_band_else_closest(
             all_active_sorted=all_active_sorted,
             highlighted=highlighted,
             exclude=exclude,
-            n=2,
-            prefer="cheaper",
+            n=d2_spec.n,
+            prefer=d2_spec.direction,
+            cardholders=cardholders,
+            guests=guests,
+            tickets=tickets,
+            prefer_dimensions=d2_spec.prefer_dimensions,
+            match_dimensions=d2_spec.match_dimensions,
         )
         if d2:
-            d2_formula = PRICE_FALLBACK_FORMULAS["downsell_2"]
             logger.debug(
-                "Downsell 2 price final fallback #3 prefer-cheaper-else-closest (#2) -> pk=%s price=%s (highlighted=%s)",
+                "Downsell 2 price final fallback %s -> pk=%s price=%s (highlighted=%s)",
+                d2_formula,
                 d2.pk,
                 d2.price,
                 highlighted.price,
@@ -584,17 +786,24 @@ def recommend_levels(
 
     # 3) price fallback: prefer more expensive, else closest-by-price
     if u1 is None:
+        u1_formula = normalized_price_fallbacks["upsell_1"]
+        u1_spec = resolve_price_fallback_formula(u1_formula)
         u1 = _pick_nth_prefer_band_else_closest(
             all_active_sorted=all_active_sorted,
             highlighted=highlighted,
             exclude=exclude,
-            n=1,
-            prefer="expensive",
+            n=u1_spec.n,
+            prefer=u1_spec.direction,
+            cardholders=cardholders,
+            guests=guests,
+            tickets=tickets,
+            prefer_dimensions=u1_spec.prefer_dimensions,
+            match_dimensions=u1_spec.match_dimensions,
         )
         if u1:
-            u1_formula = PRICE_FALLBACK_FORMULAS["upsell_1"]
             logger.debug(
-                "Upsell 1 final fallback #2 prefer-expensive-else-closest -> pk=%s price=%s (highlighted=%s)",
+                "Upsell 1 final fallback %s -> pk=%s price=%s (highlighted=%s)",
+                u1_formula,
                 u1.pk,
                 u1.price,
                 highlighted.price,
@@ -625,17 +834,24 @@ def recommend_levels(
 
     # 4) price fallback: prefer more expensive, else closest-by-price (2nd pick)
     if u2 is None:
+        u2_formula = normalized_price_fallbacks["upsell_2"]
+        u2_spec = resolve_price_fallback_formula(u2_formula)
         u2 = _pick_nth_prefer_band_else_closest(
             all_active_sorted=all_active_sorted,
             highlighted=highlighted,
             exclude=exclude,
-            n=2,
-            prefer="expensive",
+            n=u2_spec.n,
+            prefer=u2_spec.direction,
+            cardholders=cardholders,
+            guests=guests,
+            tickets=tickets,
+            prefer_dimensions=u2_spec.prefer_dimensions,
+            match_dimensions=u2_spec.match_dimensions,
         )
         if u2:
-            u2_formula = PRICE_FALLBACK_FORMULAS["upsell_2"]
             logger.debug(
-                "Upsell 2 final fallback #3 prefer-expensive-else-closest (#2) -> pk=%s price=%s (highlighted=%s)",
+                "Upsell 2 final fallback %s -> pk=%s price=%s (highlighted=%s)",
+                u2_formula,
                 u2.pk,
                 u2.price,
                 highlighted.price,

@@ -1,5 +1,6 @@
 import pytest
 from memberships.services.recommendations import (
+    DEFAULT_PRICE_FALLBACK_FORMULAS,
     DEFAULT_RECOMMENDATION_FORMULAS,
     recommend_levels,
 )
@@ -108,8 +109,7 @@ def test_downsells_are_distinct_from_highlighted_and_annotated(
     valid_formulas = {
         *DEFAULT_RECOMMENDATION_FORMULAS["downsell_1"],
         *DEFAULT_RECOMMENDATION_FORMULAS["downsell_2"],
-        "price_fallback_2",
-        "price_fallback_3",
+        *DEFAULT_PRICE_FALLBACK_FORMULAS.values(),
     }
 
     if rec.downsell_1 is not None:

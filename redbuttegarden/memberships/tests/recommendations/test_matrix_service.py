@@ -8,7 +8,11 @@ from memberships.services.matrix import (
     build_membership_matrix_rows,
     build_membership_matrix_workbook_bytes,
 )
-from memberships.services.recommendations import DEFAULT_RECOMMENDATION_FORMULAS, Level
+from memberships.services.recommendations import (
+    DEFAULT_PRICE_FALLBACK_FORMULAS,
+    DEFAULT_RECOMMENDATION_FORMULAS,
+    Level,
+)
 
 
 def make_level(pk, name, cardholders, guests, tickets, price):
@@ -59,6 +63,32 @@ def test_matrix_rows_use_supplied_formulas_instead_of_defaults():
     assert row["downsell_1_formula"] == "(C+1, G, prev(T))"
 
 
+def test_matrix_rows_use_supplied_price_fallbacks():
+    levels = [
+        make_level(1, "Highlighted", 1, 2, 2, "100.00"),
+        make_level(2, "Cheaper First", 1, 0, 0, "70.00"),
+        make_level(3, "Cheaper Second", 1, 2, 0, "90.00"),
+        make_level(4, "Upsell", 1, 3, 2, "120.00"),
+    ]
+
+    rows = build_membership_matrix_rows(
+        levels=levels,
+        cfg=make_cfg(),
+        formulas={"downsell_1": ()},
+        price_fallbacks={"downsell_1": "cheaper(1; match=cardholders,guests)"},
+    )
+
+    row = next(
+        item
+        for item in rows
+        if item["cardholders"] == 1
+        and item["admissions"] == 2
+        and item["tickets"] == 2
+    )
+    assert row["downsell_1_name"] == "Cheaper Second"
+    assert row["downsell_1_formula"] == "cheaper(1; match=cardholders,guests)"
+
+
 def test_matrix_workbook_bytes_include_meta_for_level_source_and_formulas():
     levels = [
         make_level(1, "Highlighted", 1, 2, 2, "100.00"),
@@ -66,13 +96,20 @@ def test_matrix_workbook_bytes_include_meta_for_level_source_and_formulas():
         make_level(3, "Upsell", 1, 3, 2, "120.00"),
     ]
     formulas = {"downsell_1": ("(C+1, G, prev(T))",)}
-    rows = build_membership_matrix_rows(levels=levels, cfg=make_cfg(), formulas=formulas)
+    price_fallbacks = {"downsell_1": "cheaper(1; match=cardholders,guests)"}
+    rows = build_membership_matrix_rows(
+        levels=levels,
+        cfg=make_cfg(),
+        formulas=formulas,
+        price_fallbacks=price_fallbacks,
+    )
 
     workbook_bytes = build_membership_matrix_workbook_bytes(
         rows=rows,
         levels=levels,
         level_source="fixture:memberships/fixtures/membership_levels.json",
         formulas=formulas,
+        price_fallbacks=price_fallbacks,
     )
 
     workbook = load_workbook(BytesIO(workbook_bytes))
@@ -96,4 +133,17 @@ def test_matrix_workbook_bytes_include_meta_for_level_source_and_formulas():
     )
     assert meta["upsell_2_formulas"] == "\n".join(
         DEFAULT_RECOMMENDATION_FORMULAS["upsell_2"]
+    )
+    assert meta["downsell_1_price_fallback"] == "cheaper(1; match=cardholders,guests)"
+    assert (
+        meta["downsell_2_price_fallback"]
+        == DEFAULT_PRICE_FALLBACK_FORMULAS["downsell_2"]
+    )
+    assert (
+        meta["upsell_1_price_fallback"]
+        == DEFAULT_PRICE_FALLBACK_FORMULAS["upsell_1"]
+    )
+    assert (
+        meta["upsell_2_price_fallback"]
+        == DEFAULT_PRICE_FALLBACK_FORMULAS["upsell_2"]
     )

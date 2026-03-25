@@ -3,10 +3,15 @@ from decimal import Decimal
 import pytest
 
 from memberships.services.recommendations import (
+    DEFAULT_PRICE_FALLBACK_FORMULAS,
     DEFAULT_RECOMMENDATION_FORMULAS,
     Level,
+    PriceFallbackSpec,
+    get_default_price_fallback_formulas,
     recommend_levels,
+    resolve_price_fallback_formula,
     resolve_recommendation_formula,
+    validate_price_fallback_formula,
     validate_recommendation_formula,
 )
 
@@ -79,6 +84,13 @@ def test_default_formulas_match_configured_recommendation_order():
             "(C+1, G, T)",
         ),
     }
+    assert DEFAULT_PRICE_FALLBACK_FORMULAS == {
+        "downsell_1": "cheaper(1)",
+        "downsell_2": "cheaper(2)",
+        "upsell_1": "expensive(1)",
+        "upsell_2": "expensive(2)",
+    }
+    assert get_default_price_fallback_formulas() == DEFAULT_PRICE_FALLBACK_FORMULAS
 
 
 def test_custom_formula_can_change_downsell_1_result():
@@ -110,6 +122,89 @@ def test_custom_formula_can_change_downsell_1_result():
     assert custom_rec.downsell_1 is not None
     assert custom_rec.downsell_1.name == "Custom Downsell"
     assert custom_rec.downsell_1_formula == "(C+1, G, prev(T))"
+
+
+def test_custom_price_fallback_can_change_downsell_1_result():
+    levels = [
+        make_level(1, "Highlighted", 1, 2, 2, "100.00"),
+        make_level(2, "Cheaper First", 1, 0, 0, "70.00"),
+        make_level(3, "Cheaper Second", 1, 1, 0, "80.00"),
+        make_level(4, "Upsell", 1, 3, 2, "120.00"),
+    ]
+
+    default_rec = recommend_levels(
+        levels=levels,
+        cardholders=1,
+        guests=2,
+        tickets=2,
+        formulas={"downsell_1": ()},
+    )
+    assert default_rec.downsell_1 is not None
+    assert default_rec.downsell_1.name == "Cheaper First"
+    assert default_rec.downsell_1_formula == "cheaper(1)"
+
+    custom_rec = recommend_levels(
+        levels=levels,
+        cardholders=1,
+        guests=2,
+        tickets=2,
+        formulas={"downsell_1": ()},
+        price_fallbacks={"downsell_1": "cheaper(2)"},
+    )
+    assert custom_rec.downsell_1 is not None
+    assert custom_rec.downsell_1.name == "Cheaper Second"
+    assert custom_rec.downsell_1_formula == "cheaper(2)"
+
+
+def test_custom_price_fallback_can_limit_candidates_by_requested_dimensions():
+    levels = [
+        make_level(1, "Highlighted", 1, 2, 2, "100.00"),
+        make_level(2, "Cheapest Same Cardholders", 1, 0, 0, "70.00"),
+        make_level(3, "Same Cardholders And Guests", 1, 2, 0, "90.00"),
+        make_level(4, "Upsell", 1, 3, 2, "120.00"),
+    ]
+
+    default_rec = recommend_levels(
+        levels=levels,
+        cardholders=1,
+        guests=2,
+        tickets=2,
+        formulas={"downsell_1": ()},
+    )
+    assert default_rec.downsell_1 is not None
+    assert default_rec.downsell_1.name == "Cheapest Same Cardholders"
+    assert default_rec.downsell_1_formula == "cheaper(1)"
+
+    filtered_rec = recommend_levels(
+        levels=levels,
+        cardholders=1,
+        guests=2,
+        tickets=2,
+        formulas={"downsell_1": ()},
+        price_fallbacks={"downsell_1": "cheaper(1; match=cardholders,guests)"},
+    )
+    assert filtered_rec.downsell_1 is not None
+    assert filtered_rec.downsell_1.name == "Same Cardholders And Guests"
+    assert filtered_rec.downsell_1_formula == "cheaper(1; match=cardholders,guests)"
+
+
+def test_default_price_fallback_widens_when_no_preferred_dimension_matches():
+    levels = [
+        make_level(1, "Highlighted", 3, 2, 2, "100.00"),
+        make_level(2, "Only Remaining Option", 2, 2, 2, "90.00"),
+    ]
+
+    rec = recommend_levels(
+        levels=levels,
+        cardholders=3,
+        guests=2,
+        tickets=2,
+        formulas={"downsell_1": ()},
+    )
+
+    assert rec.downsell_1 is not None
+    assert rec.downsell_1.name == "Only Remaining Option"
+    assert rec.downsell_1_formula == "cheaper(1)"
 
 
 def test_formula_resolution_supports_offsets_and_prev_next():
@@ -167,6 +262,20 @@ def test_formula_resolution_supports_offsets_and_prev_next():
         )
         is None
     )
+    assert resolve_price_fallback_formula("cheaper(2)") == PriceFallbackSpec(
+        direction="cheaper",
+        n=2,
+        prefer_dimensions=("cardholders",),
+        match_dimensions=(),
+    )
+    assert resolve_price_fallback_formula(
+        "expensive(1; prefer=guests; match=cardholders,guests)"
+    ) == PriceFallbackSpec(
+        direction="expensive",
+        n=1,
+        prefer_dimensions=("guests",),
+        match_dimensions=("cardholders", "guests"),
+    )
 
 
 @pytest.mark.parametrize(
@@ -176,3 +285,18 @@ def test_formula_resolution_supports_offsets_and_prev_next():
 def test_formula_validation_rejects_invalid_syntax(formula):
     with pytest.raises(ValueError):
         validate_recommendation_formula(formula)
+
+
+@pytest.mark.parametrize(
+    "formula",
+    (
+        "price_fallback_2",
+        "cheaper()",
+        "closest(1)",
+        "cheaper(1; match=color)",
+        "expensive(1; unknown=guests)",
+    ),
+)
+def test_price_fallback_validation_rejects_invalid_syntax(formula):
+    with pytest.raises(ValueError):
+        validate_price_fallback_formula(formula)

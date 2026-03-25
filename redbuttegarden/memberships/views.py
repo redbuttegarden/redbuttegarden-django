@@ -8,11 +8,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from .decorators import basic_auth_required
-from .forms import (
-    FORMULA_FIELD_NAMES,
-    MembershipRecommendationFormulaForm,
-    MembershipSelectorForm,
-)
+from .forms import MembershipRecommendationFormulaForm, MembershipSelectorForm
 from .models import MembershipLevel
 from .services.matrix import (
     DEFAULT_MEMBERSHIP_MATRIX_FIXTURE_PATH,
@@ -216,13 +212,11 @@ def membership_formula_lab(request):
     requested = {}
     match_type = None
 
-    if request.method == "POST":
-        is_valid = form.is_valid()
+    if request.method == "POST" and form.is_valid():
+        formulas = form.get_formula_config()
+        price_fallbacks = form.get_price_fallback_config()
 
-        if action == "download_matrix" and all(
-            field_name not in form.errors for field_name in FORMULA_FIELD_NAMES
-        ):
-            formulas = form.get_formula_config()
+        if action == "download_matrix":
             fixture_levels = load_levels_from_fixture(
                 DEFAULT_MEMBERSHIP_MATRIX_FIXTURE_PATH
             )
@@ -230,12 +224,14 @@ def membership_formula_lab(request):
                 levels=fixture_levels,
                 cfg=cfg,
                 formulas=formulas,
+                price_fallbacks=price_fallbacks,
             )
             workbook_bytes = build_membership_matrix_workbook_bytes(
                 rows=rows,
                 levels=fixture_levels,
                 level_source=DEFAULT_MEMBERSHIP_MATRIX_FIXTURE_PATH,
                 formulas=formulas,
+                price_fallbacks=price_fallbacks,
             )
             response = HttpResponse(
                 workbook_bytes,
@@ -248,28 +244,27 @@ def membership_formula_lab(request):
             )
             return response
 
-        if is_valid:
-            formulas = form.get_formula_config()
-            cardholders = form.cleaned_data["cardholders"]
-            guests = form.cleaned_data["admissions"]
-            tickets = form.cleaned_data["member_tickets"]
+        cardholders = form.cleaned_data["cardholders"]
+        guests = form.cleaned_data["admissions"]
+        tickets = form.cleaned_data["member_tickets"]
 
-            by_pk, level_inputs = _load_active_recommendation_levels()
-            rec = recommend_levels(
-                levels=level_inputs,
-                cardholders=cardholders,
-                guests=guests,
-                tickets=tickets,
-                formulas=formulas,
-            )
+        by_pk, level_inputs = _load_active_recommendation_levels()
+        rec = recommend_levels(
+            levels=level_inputs,
+            cardholders=cardholders,
+            guests=guests,
+            tickets=tickets,
+            formulas=formulas,
+            price_fallbacks=price_fallbacks,
+        )
 
-            recommendation_rows = _build_recommendation_rows(rec, by_pk)
-            requested = {
-                "cardholders": cardholders,
-                "admissions": guests,
-                "tickets": tickets,
-            }
-            match_type = rec.match_type
+        recommendation_rows = _build_recommendation_rows(rec, by_pk)
+        requested = {
+            "cardholders": cardholders,
+            "admissions": guests,
+            "tickets": tickets,
+        }
+        match_type = rec.match_type
 
     return render(
         request,

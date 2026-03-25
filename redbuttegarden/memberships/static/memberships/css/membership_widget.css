@@ -147,3 +147,117 @@ h5 {
     white-space: nowrap;
     /* not strictly needed, but harmless */
 }
+
+.formula-lab-form .form-label {
+    margin-bottom: 0.55rem;
+    font-weight: 600;
+    color: var(--rbg-dark-blue);
+}
+
+.formula-lab-form .form-text {
+    margin-top: 0.65rem;
+    line-height: 1.55;
+}
+
+.formula-lab-form .text-danger.small {
+    margin-top: 0.5rem !important;
+    line-height: 1.45;
+}
+
+.formula-lab-section + .formula-lab-section {
+    margin-top: 2.5rem;
+}
+
+.formula-lab-docs + .formula-lab-section {
+    margin-top: 3rem;
+}
+
+.formula-lab-heading {
+    margin-bottom: 1rem;
+}
+
+.formula-lab-heading h2 {
+    font-weight: 700;
+}
+
+.formula-lab-caption {
+    max-width: 24rem;
+    line-height: 1.45;
+}
+
+.formula-lab-request-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.formula-lab-request-field .form-label {
+    min-height: 3rem;
+}
+
+.formula-lab-request-field .form-control {
+    margin-top: auto;
+}
+
+.formula-lab-panel {
+    padding-top: 1.75rem;
+    border-top: 1px solid rgba(var(--rbg-dark-blue-rgb), 0.08);
+}
+
+.formula-lab-docs-card {
+    border: 1px solid rgba(var(--rbg-dark-blue-rgb), 0.08) !important;
+    border-radius: 0.75rem;
+    background: linear-gradient(
+        180deg,
+        rgba(var(--rbg-dark-blue-rgb), 0.025) 0%,
+        rgba(var(--rbg-dark-blue-rgb), 0.01) 100%
+    ) !important;
+}
+
+.formula-lab-docs-card .card-body {
+    padding: 1.25rem 1.35rem;
+    line-height: 1.65;
+}
+
+.formula-lab-textarea {
+    min-height: 11rem;
+    padding: 0.9rem 1rem;
+    line-height: 1.55;
+    border-radius: 0.75rem;
+}
+
+.formula-lab-input {
+    min-height: 3rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.75rem;
+}
+
+.formula-lab-form .form-control {
+    border-color: rgba(var(--rbg-dark-blue-rgb), 0.14);
+}
+
+.formula-lab-form .form-control:focus {
+    border-color: rgba(var(--rbg-dark-blue-rgb), 0.28);
+    box-shadow: 0 0 0 0.2rem rgba(var(--rbg-dark-blue-rgb), 0.08);
+}
+
+@media (max-width: 767.98px) {
+    .formula-lab-section + .formula-lab-section {
+        margin-top: 2rem;
+    }
+
+    .formula-lab-docs + .formula-lab-section {
+        margin-top: 2.25rem;
+    }
+
+    .formula-lab-panel {
+        padding-top: 1.5rem;
+    }
+
+    .formula-lab-textarea {
+        min-height: 9.5rem;
+    }
+
+    .formula-lab-request-field .form-label {
+        min-height: 0;
+    }
+}

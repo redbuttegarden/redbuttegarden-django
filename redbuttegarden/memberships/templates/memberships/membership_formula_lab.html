@@ -16,13 +16,32 @@
         <div class="card card-rbg mb-4">
           <div class="card-body">
             <h1 class="h4 mb-2" style="color:var(--rbg-dark-blue)">Membership formula preview</h1>
-            <p class="text-muted mb-0">Edit the ordered formulas for each recommendation slot, then preview the live recommendation engine against the current active membership levels or download a fixture-backed matrix workbook that matches the command output.</p>
+            <p class="text-muted mb-0">Edit the ordered formulas and price fallback rules for each recommendation slot, then preview the live recommendation engine against the current active membership levels or download a fixture-backed matrix workbook that matches the command output.</p>
           </div>
         </div>
 
-        <form method="post" class="card card-rbg mb-4">
-          <div class="card-body">
+        <form method="post" class="card card-rbg mb-4 formula-lab-form">
+          <div class="card-body p-4 p-lg-5">
             {% csrf_token %}
+
+            <div class="formula-lab-section formula-lab-docs">
+              <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#formulaLabDocs" aria-expanded="false" aria-controls="formulaLabDocs">
+                Show formula lab documentation
+              </button>
+              <div class="collapse mt-3" id="formulaLabDocs">
+                <div class="card border-0 bg-light formula-lab-docs-card">
+                  <div class="card-body small">
+                    <p class="mb-2">This page has two kinds of fields. The four multi-line boxes under <strong>Recommendation formulas</strong> describe the exact membership setup to try for each slot. The four single-line boxes under <strong>Price fallback formulas</strong> are backup rules that are only used when the matching box above does not return a result.</p>
+                    <p class="mb-2">In the <strong>Recommendation formulas</strong> boxes, each line is checked from top to bottom, and the first line that finds a matching membership is used. These boxes use short labels: <code>C</code> for cardholders, <code>G</code> for guests, and <code>T</code> for tickets. <code>prev(T)</code> means the next lower ticket step and <code>next(T)</code> means the next higher ticket step. Example: <code>(C, G, prev(T))</code>.</p>
+                    <p class="mb-2">In each field under <strong>Price fallback formulas</strong>, enter one backup rule such as <code>cheaper(1)</code> or <code>expensive(2)</code>. Here, <code>1</code> means “use the first matching backup option,” <code>2</code> means “use the second matching backup option,” and so on.</p>
+                    <p class="mb-2">By default, a backup rule first looks for memberships with the same number of cardholders as the request, then widens to the closest remaining prices if needed. You can narrow or guide that search by adding extra options inside the same rule.</p>
+                    <p class="mb-2"><code>match=...</code> limits the search to memberships that match the requested values you name. For example, <code>cheaper(1; match=cardholders,guests)</code> only considers memberships with the same cardholder count and guest count as the request.</p>
+                    <p class="mb-2"><code>prefer=...</code> changes what the system tries to keep the same before widening the search. For example, <code>expensive(2; prefer=guests)</code> tries to keep the same guest count first, even if the cardholder count changes. Use <code>prefer=any</code> if you do not want any “keep this the same first” step.</p>
+                    <p class="mb-0">The values you can use with <code>match=...</code> and <code>prefer=...</code> are <code>cardholders</code>, <code>guests</code>, and <code>tickets</code>. Short forms <code>C</code>, <code>G</code>, and <code>T</code> also work. Examples you can paste directly into a price fallback field: <code>cheaper(1; match=cardholders)</code>, <code>cheaper(1; match=cardholders,guests)</code>, <code>expensive(1; prefer=tickets)</code>, <code>cheaper(1; prefer=any; match=tickets)</code>.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {% if form.non_field_errors %}
               <div class="alert alert-danger" role="alert">
@@ -34,24 +53,27 @@
               </div>
             {% endif %}
 
-            <div class="mb-4">
-              <h2 class="h6">Membership request</h2>
-              <div class="row g-3">
-                <div class="col-md-4">
+            <div class="formula-lab-section">
+              <div class="formula-lab-heading">
+                <h2 class="h6 mb-1">Membership request</h2>
+                <p class="text-muted small mb-0">Choose the request you want to test before reviewing the suggested membership levels.</p>
+              </div>
+              <div class="row g-4">
+                <div class="col-md-4 formula-lab-request-field">
                   <label class="form-label" for="{{ form.cardholders.id_for_label }}">{{ form.cardholders.label }}</label>
                   {{ form.cardholders }}
                   {% for err in form.cardholders.errors %}
                     <div class="text-danger small mt-1">{{ err }}</div>
                   {% endfor %}
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 formula-lab-request-field">
                   <label class="form-label" for="{{ form.admissions.id_for_label }}">{{ form.admissions.label }}</label>
                   {{ form.admissions }}
                   {% for err in form.admissions.errors %}
                     <div class="text-danger small mt-1">{{ err }}</div>
                   {% endfor %}
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 formula-lab-request-field">
                   <label class="form-label" for="{{ form.member_tickets.id_for_label }}">{{ form.member_tickets.label }}</label>
                   {{ form.member_tickets }}
                   {% for err in form.member_tickets.errors %}
@@ -61,12 +83,15 @@
               </div>
             </div>
 
-            <div class="mb-3">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <h2 class="h6 mb-0">Recommendation formulas</h2>
-                <span class="small text-muted">One tuple per line, evaluated top to bottom before price fallback.</span>
+            <div class="formula-lab-section formula-lab-panel">
+              <div class="d-flex justify-content-between align-items-start flex-column flex-lg-row gap-2 mb-4">
+                <div class="formula-lab-heading">
+                  <h2 class="h6 mb-1">Recommendation formulas</h2>
+                  <p class="text-muted small mb-0">These multi-line boxes control the main matching order for each slot. The first successful line in each box is used.</p>
+                </div>
+                <span class="small text-muted formula-lab-caption">One line per attempt, checked from top to bottom before the backup rule below is used.</span>
               </div>
-              <div class="row g-3">
+              <div class="row g-4">
                 <div class="col-md-6">
                   <label class="form-label" for="{{ form.downsell_1_formulas.id_for_label }}">{{ form.downsell_1_formulas.label }}</label>
                   {{ form.downsell_1_formulas }}
@@ -102,7 +127,51 @@
               </div>
             </div>
 
-            <div class="d-flex justify-content-end gap-2">
+            <div class="formula-lab-section formula-lab-panel">
+              <div class="d-flex justify-content-between align-items-start flex-column flex-lg-row gap-2 mb-4">
+                <div class="formula-lab-heading">
+                  <h2 class="h6 mb-1">Price fallback formulas</h2>
+                  <p class="text-muted small mb-0">These single-line rules act as backups for each slot when the matching recommendation box above does not return a result.</p>
+                </div>
+                <span class="small text-muted formula-lab-caption">One backup rule per field.</span>
+              </div>
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ form.downsell_1_price_fallback.id_for_label }}">{{ form.downsell_1_price_fallback.label }}</label>
+                  {{ form.downsell_1_price_fallback }}
+                  <div class="form-text">{{ form.downsell_1_price_fallback.help_text }}</div>
+                  {% for err in form.downsell_1_price_fallback.errors %}
+                    <div class="text-danger small mt-1">{{ err }}</div>
+                  {% endfor %}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ form.downsell_2_price_fallback.id_for_label }}">{{ form.downsell_2_price_fallback.label }}</label>
+                  {{ form.downsell_2_price_fallback }}
+                  <div class="form-text">{{ form.downsell_2_price_fallback.help_text }}</div>
+                  {% for err in form.downsell_2_price_fallback.errors %}
+                    <div class="text-danger small mt-1">{{ err }}</div>
+                  {% endfor %}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ form.upsell_1_price_fallback.id_for_label }}">{{ form.upsell_1_price_fallback.label }}</label>
+                  {{ form.upsell_1_price_fallback }}
+                  <div class="form-text">{{ form.upsell_1_price_fallback.help_text }}</div>
+                  {% for err in form.upsell_1_price_fallback.errors %}
+                    <div class="text-danger small mt-1">{{ err }}</div>
+                  {% endfor %}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ form.upsell_2_price_fallback.id_for_label }}">{{ form.upsell_2_price_fallback.label }}</label>
+                  {{ form.upsell_2_price_fallback }}
+                  <div class="form-text">{{ form.upsell_2_price_fallback.help_text }}</div>
+                  {% for err in form.upsell_2_price_fallback.errors %}
+                    <div class="text-danger small mt-1">{{ err }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 pt-3">
               <button type="submit" name="action" value="preview" class="btn btn-rbg-primary">Preview recommendations</button>
               <button type="submit" name="action" value="download_matrix" class="btn btn-outline-secondary">Download matrix (.xlsx)</button>
             </div>
