@@ -17,10 +17,60 @@ RECOMMENDATION_SLOT_ORDER: Tuple[str, ...] = (
     "upsell_2",
 )
 DEFAULT_RECOMMENDATION_FORMULAS: dict[str, Tuple[str, ...]] = {
-    "downsell_1": ("(C, G, prev(T))", "(C, G-1, T)"),
-    "downsell_2": ("(C-1, G+1, T)", "(C, G-1, T)", "(C, G-2, T)"),
-    "upsell_1": ("(C, G, next(T))", "(C, G+1, T)"),
-    "upsell_2": ("(C+1, G-1, T)", "(C, G+1, T)", "(C, G+2, T)"),
+    "downsell_1": (
+        "(C, G, prev(T))",
+        "(C-1, G+1, T)",
+        "(C, G-1, T)",
+        "(C, G-2, T)",
+        "(C-1, G+1, T+2)",
+        "(C, G-1, T+2)",
+        "(C, G-2, T+2)",
+    ),
+    "downsell_2": (
+        "(C, G, prev(T))",
+        "(C-1, G+1, T)",
+        "(C, G-1, T)",
+        "(C+1, G-2, T)",
+        "(C, G-2, T)",
+        "(C-1, G+1, T+2)",
+        "(C-2, G+2, T+2)",
+        "(C, G-1, T+2)",
+        "(C+1, G-2, T+2)",
+        "(C, G-2, T+2)",
+        "(C+1, G-1, prev(T))",
+        "(C, G-1, prev(T))",
+        "(C-1, G, prev(T))",
+        "(C+1, G-1, T)",
+        "(C-2, G+2, T)",
+        "(C-1, G, T)",
+        "(C, G, next(T))",
+        "(C, G+1, T)",
+        "(C, G+2, T)",
+    ),
+    "upsell_1": (
+        "(C, G, next(T))",
+        "(C+1, G-1, T)",
+        "(C, G+1, T)",
+        "(C+2, G-2, T)",
+        "(C, G+2, T)",
+        "(C+1, G-1, T+2)",
+        "(C, G+1, T+2)",
+        "(C+2, G-2, T+2)",
+        "(C, G+2, T+2)",
+    ),
+    "upsell_2": (
+        "(C, G, next(T))",
+        "(C+1, G-1, T)",
+        "(C, G+1, next(T))",
+        "(C, G+1, T)",
+        "(C+2, G-2, T)",
+        "(C+1, G-1, T+2)",
+        "(C, G+1, T+2)",
+        "(C+2, G-2, T+2)",
+        "(C, G+2, T+2)",
+        "(C, G, T+4)",
+        "(C+1, G, T)",
+    ),
 }
 PRICE_FALLBACK_FORMULAS: dict[str, str] = {
     "downsell_1": "price_fallback_2",
@@ -86,6 +136,14 @@ def _prev_step(tickets: int) -> Optional[int]:
     return prev
 
 
+def _shift_ticket_step(tickets: int, delta: int) -> Optional[int]:
+    if tickets not in TICKET_STEPS:
+        return None
+
+    target = tickets + delta
+    return target if target in TICKET_STEPS else None
+
+
 def _parse_formula_expression(expression: str) -> List[str]:
     expression = expression.strip()
     if not expression:
@@ -123,6 +181,8 @@ def _parse_formula_expression(expression: str) -> List[str]:
 def _evaluate_formula_expression(
     expression: str, *, cardholders: int, guests: int, tickets: int
 ) -> Optional[int]:
+    ticket_tokens = {"T", "prev(T)", "next(T)"}
+
     def resolve_term(token: str) -> Optional[int]:
         if token == "C":
             return cardholders
@@ -141,15 +201,33 @@ def _evaluate_formula_expression(
     if value is None:
         return None
 
+    uses_ticket_steps = tokens[0] in ticket_tokens
+
     for i in range(1, len(tokens), 2):
         operator = tokens[i]
-        term_value = resolve_term(tokens[i + 1])
+        term_token = tokens[i + 1]
+        if uses_ticket_steps and term_token.isdigit():
+            delta = int(term_token)
+            if operator == "-":
+                delta *= -1
+            value = _shift_ticket_step(value, delta)
+            if value is None:
+                return None
+            continue
+
+        if term_token in ticket_tokens:
+            uses_ticket_steps = True
+
+        term_value = resolve_term(term_token)
         if term_value is None:
             return None
         if operator == "+":
             value += term_value
         else:
             value -= term_value
+
+    if uses_ticket_steps and value not in TICKET_STEPS:
+        return None
 
     return value
 

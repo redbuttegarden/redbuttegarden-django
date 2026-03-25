@@ -3,6 +3,7 @@ from decimal import Decimal
 import pytest
 
 from memberships.services.recommendations import (
+    DEFAULT_RECOMMENDATION_FORMULAS,
     Level,
     recommend_levels,
     resolve_recommendation_formula,
@@ -19,6 +20,65 @@ def make_level(pk, name, cardholders, guests, tickets, price):
         member_sale_ticket_allowance=tickets,
         price=Decimal(price),
     )
+
+
+def test_default_formulas_match_configured_recommendation_order():
+    assert DEFAULT_RECOMMENDATION_FORMULAS == {
+        "downsell_1": (
+            "(C, G, prev(T))",
+            "(C-1, G+1, T)",
+            "(C, G-1, T)",
+            "(C, G-2, T)",
+            "(C-1, G+1, T+2)",
+            "(C, G-1, T+2)",
+            "(C, G-2, T+2)",
+        ),
+        "downsell_2": (
+            "(C, G, prev(T))",
+            "(C-1, G+1, T)",
+            "(C, G-1, T)",
+            "(C+1, G-2, T)",
+            "(C, G-2, T)",
+            "(C-1, G+1, T+2)",
+            "(C-2, G+2, T+2)",
+            "(C, G-1, T+2)",
+            "(C+1, G-2, T+2)",
+            "(C, G-2, T+2)",
+            "(C+1, G-1, prev(T))",
+            "(C, G-1, prev(T))",
+            "(C-1, G, prev(T))",
+            "(C+1, G-1, T)",
+            "(C-2, G+2, T)",
+            "(C-1, G, T)",
+            "(C, G, next(T))",
+            "(C, G+1, T)",
+            "(C, G+2, T)",
+        ),
+        "upsell_1": (
+            "(C, G, next(T))",
+            "(C+1, G-1, T)",
+            "(C, G+1, T)",
+            "(C+2, G-2, T)",
+            "(C, G+2, T)",
+            "(C+1, G-1, T+2)",
+            "(C, G+1, T+2)",
+            "(C+2, G-2, T+2)",
+            "(C, G+2, T+2)",
+        ),
+        "upsell_2": (
+            "(C, G, next(T))",
+            "(C+1, G-1, T)",
+            "(C, G+1, next(T))",
+            "(C, G+1, T)",
+            "(C+2, G-2, T)",
+            "(C+1, G-1, T+2)",
+            "(C, G+1, T+2)",
+            "(C+2, G-2, T+2)",
+            "(C, G+2, T+2)",
+            "(C, G, T+4)",
+            "(C+1, G, T)",
+        ),
+    }
 
 
 def test_custom_formula_can_change_downsell_1_result():
@@ -70,6 +130,42 @@ def test_formula_resolution_supports_offsets_and_prev_next():
             tickets=2,
         )
         == (1, 3, 2)
+    )
+    assert (
+        resolve_recommendation_formula(
+            "(C, G, T+2)",
+            cardholders=1,
+            guests=2,
+            tickets=2,
+        )
+        == (1, 2, 4)
+    )
+    assert (
+        resolve_recommendation_formula(
+            "(C, G, T+4)",
+            cardholders=1,
+            guests=2,
+            tickets=2,
+        )
+        == (1, 2, 6)
+    )
+    assert (
+        resolve_recommendation_formula(
+            "(C, G, T-2)",
+            cardholders=1,
+            guests=2,
+            tickets=2,
+        )
+        == (1, 2, 0)
+    )
+    assert (
+        resolve_recommendation_formula(
+            "(C, G, T+1)",
+            cardholders=1,
+            guests=2,
+            tickets=2,
+        )
+        is None
     )
 
 

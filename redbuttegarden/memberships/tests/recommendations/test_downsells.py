@@ -1,5 +1,8 @@
 import pytest
-from memberships.services.recommendations import recommend_levels
+from memberships.services.recommendations import (
+    DEFAULT_RECOMMENDATION_FORMULAS,
+    recommend_levels,
+)
 
 TICKET_STEPS = (0, 2, 4, 6)
 
@@ -103,10 +106,8 @@ def test_downsells_are_distinct_from_highlighted_and_annotated(
         return
 
     valid_formulas = {
-        "(C, G, prev(T))",
-        "(C, G-1, T)",
-        "(C-1, G+1, T)",
-        "(C, G-2, T)",
+        *DEFAULT_RECOMMENDATION_FORMULAS["downsell_1"],
+        *DEFAULT_RECOMMENDATION_FORMULAS["downsell_2"],
         "price_fallback_2",
         "price_fallback_3",
     }

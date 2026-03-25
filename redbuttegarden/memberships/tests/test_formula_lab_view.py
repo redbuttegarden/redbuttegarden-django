@@ -17,6 +17,14 @@ def create_level(name, cardholders, guests, tickets, price):
     )
 
 
+@pytest.fixture(autouse=True)
+def disable_debug_toolbar(settings):
+    settings.DEBUG_TOOLBAR_CONFIG = {
+        **getattr(settings, "DEBUG_TOOLBAR_CONFIG", {}),
+        "SHOW_TOOLBAR_CALLBACK": lambda request: False,
+    }
+
+
 @pytest.mark.django_db
 def test_formula_lab_view_previews_custom_results(client, settings):
     settings.MEMBERS_BASIC_AUTH_ENABLED = False
