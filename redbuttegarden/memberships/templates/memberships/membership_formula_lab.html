@@ -16,7 +16,7 @@
         <div class="card card-rbg mb-4">
           <div class="card-body">
             <h1 class="h4 mb-2" style="color:var(--rbg-dark-blue)">Membership formula preview</h1>
-            <p class="text-muted mb-0">Edit the ordered formulas for each recommendation slot, then run the live recommendation engine against the current active membership levels.</p>
+            <p class="text-muted mb-0">Edit the ordered formulas for each recommendation slot, then preview the live recommendation engine against the current active membership levels or download a fixture-backed matrix workbook that matches the command output.</p>
           </div>
         </div>
 
@@ -102,8 +102,9 @@
               </div>
             </div>
 
-            <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-rbg-primary">Preview recommendations</button>
+            <div class="d-flex justify-content-end gap-2">
+              <button type="submit" name="action" value="preview" class="btn btn-rbg-primary">Preview recommendations</button>
+              <button type="submit" name="action" value="download_matrix" class="btn btn-outline-secondary">Download matrix (.xlsx)</button>
             </div>
           </div>
         </form>

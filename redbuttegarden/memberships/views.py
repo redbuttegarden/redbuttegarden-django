@@ -3,12 +3,23 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import Dict, List, Optional, Tuple
 
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from .decorators import basic_auth_required
-from .forms import MembershipRecommendationFormulaForm, MembershipSelectorForm
+from .forms import (
+    FORMULA_FIELD_NAMES,
+    MembershipRecommendationFormulaForm,
+    MembershipSelectorForm,
+)
 from .models import MembershipLevel
+from .services.matrix import (
+    DEFAULT_MEMBERSHIP_MATRIX_FIXTURE_PATH,
+    build_membership_matrix_rows,
+    build_membership_matrix_workbook_bytes,
+    load_levels_from_fixture,
+)
 from .widget_config import MembershipWidgetConfig
 from .services.recommendations import Level, recommend_levels
 
@@ -194,6 +205,7 @@ def membership_suggest(request):
 @require_http_methods(["GET", "POST"])
 def membership_formula_lab(request):
     cfg = MembershipWidgetConfig.get_solo()
+    action = request.POST.get("action", "preview")
     form = (
         MembershipRecommendationFormulaForm(request.POST, cfg=cfg)
         if request.method == "POST"
@@ -204,27 +216,60 @@ def membership_formula_lab(request):
     requested = {}
     match_type = None
 
-    if request.method == "POST" and form.is_valid():
-        cardholders = form.cleaned_data["cardholders"]
-        guests = form.cleaned_data["admissions"]
-        tickets = form.cleaned_data["member_tickets"]
+    if request.method == "POST":
+        is_valid = form.is_valid()
 
-        by_pk, level_inputs = _load_active_recommendation_levels()
-        rec = recommend_levels(
-            levels=level_inputs,
-            cardholders=cardholders,
-            guests=guests,
-            tickets=tickets,
-            formulas=form.get_formula_config(),
-        )
+        if action == "download_matrix" and all(
+            field_name not in form.errors for field_name in FORMULA_FIELD_NAMES
+        ):
+            formulas = form.get_formula_config()
+            fixture_levels = load_levels_from_fixture(
+                DEFAULT_MEMBERSHIP_MATRIX_FIXTURE_PATH
+            )
+            rows = build_membership_matrix_rows(
+                levels=fixture_levels,
+                cfg=cfg,
+                formulas=formulas,
+            )
+            workbook_bytes = build_membership_matrix_workbook_bytes(
+                rows=rows,
+                levels=fixture_levels,
+                level_source=DEFAULT_MEMBERSHIP_MATRIX_FIXTURE_PATH,
+                formulas=formulas,
+            )
+            response = HttpResponse(
+                workbook_bytes,
+                content_type=(
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                ),
+            )
+            response["Content-Disposition"] = (
+                'attachment; filename="membership_matrix_formulas.xlsx"'
+            )
+            return response
 
-        recommendation_rows = _build_recommendation_rows(rec, by_pk)
-        requested = {
-            "cardholders": cardholders,
-            "admissions": guests,
-            "tickets": tickets,
-        }
-        match_type = rec.match_type
+        if is_valid:
+            formulas = form.get_formula_config()
+            cardholders = form.cleaned_data["cardholders"]
+            guests = form.cleaned_data["admissions"]
+            tickets = form.cleaned_data["member_tickets"]
+
+            by_pk, level_inputs = _load_active_recommendation_levels()
+            rec = recommend_levels(
+                levels=level_inputs,
+                cardholders=cardholders,
+                guests=guests,
+                tickets=tickets,
+                formulas=formulas,
+            )
+
+            recommendation_rows = _build_recommendation_rows(rec, by_pk)
+            requested = {
+                "cardholders": cardholders,
+                "admissions": guests,
+                "tickets": tickets,
+            }
+            match_type = rec.match_type
 
     return render(
         request,
