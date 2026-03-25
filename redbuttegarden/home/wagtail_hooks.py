@@ -1,7 +1,9 @@
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 from django.http import HttpResponse
 from django.utils.html import format_html
-from wagtail.admin.rich_text.converters.html_to_contentstate import InlineStyleElementHandler
+from wagtail.admin.rich_text.converters.html_to_contentstate import (
+    InlineStyleElementHandler,
+)
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
 from wagtail.snippets.models import register_snippet
@@ -9,18 +11,17 @@ from wagtail.snippets.models import register_snippet
 from home.views import RBGHoursViewSet
 
 
-@hooks.register('insert_global_admin_js')
+@hooks.register("insert_global_admin_js")
 def include_sweetalert2():
     return format_html(
-        """<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.2/dist/sweetalert2.all.min.js" integrity="sha256-Ua8fKA4E1l7RSqT5HOjK0m/PrSwP41XFTs++qmtWey8=" crossorigin="anonymous"></script>""")
+        """<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.2/dist/sweetalert2.all.min.js" integrity="sha256-Ua8fKA4E1l7RSqT5HOjK0m/PrSwP41XFTs++qmtWey8=" crossorigin="anonymous"></script>"""
+    )
 
 
-
-@hooks.register('insert_global_admin_js')
+@hooks.register("insert_global_admin_js")
 def warn_on_pdf_upload():
     return format_html(
-        '<script src="{}"></script>',
-        '/static/admin/js/warn_pdf_upload.js'  # Adjust path as needed
+        '<script src="{}"></script>', "/static/admin/js/warn_pdf_upload.js"
     )
 
 
@@ -31,11 +32,7 @@ def register_code_styling(features):
     type_ = "CODE"
     tag = "code"
 
-    control = {
-        "type": type_,
-        "label": "</>",
-        "description": "Code"
-    }
+    control = {"type": type_, "label": "</>", "description": "Code"}
 
     features.register_editor_plugin(
         "draftail", feature_name, draftail_features.InlineStyleFeature(control)
@@ -43,27 +40,72 @@ def register_code_styling(features):
 
     db_conversion = {
         "from_database_format": {tag: InlineStyleElementHandler(type_)},
-        "to_database_format": {"style_map": {type_: {"element": tag}}}
+        "to_database_format": {"style_map": {type_: {"element": tag}}},
     }
 
     features.register_converter_rule("contentstate", feature_name, db_conversion)
 
 
-@hooks.register('before_serve_document')
+@hooks.register("register_rich_text_features")
+def register_lead_feature(features):
+    feature_name = "lead"
+    type_ = "LEAD"
+
+    control = {
+        "type": type_,
+        "label": "Ld",
+        "description": "Lead text",
+        "style": {
+            "fontSize": "1.75rem",
+            "lineHeight": "1.5",
+        },
+    }
+
+    features.register_editor_plugin(
+        "draftail",
+        feature_name,
+        draftail_features.InlineStyleFeature(control),
+    )
+
+    features.register_converter_rule(
+        "contentstate",
+        feature_name,
+        {
+            "from_database_format": {
+                'span[class="text-lead"]': InlineStyleElementHandler(type_),
+            },
+            "to_database_format": {
+                "style_map": {
+                    type_: 'span class="text-lead"',
+                },
+            },
+        },
+    )
+
+
+@hooks.register("before_serve_document")
 def serve_pdf(document, request):
-    if document.file_extension != 'pdf':
+    if document.file_extension != "pdf":
         return
-    response = HttpResponse(document.file.read(), content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="' + document.file.name.split('/')[-1] + '"'
-    if request.GET.get('download', False) in [True, 'True', 'true']:
-        response['Content-Disposition'] = 'attachment; ' + response['Content-Disposition']
+    response = HttpResponse(document.file.read(), content_type="application/pdf")
+    response["Content-Disposition"] = (
+        'filename="' + document.file.name.split("/")[-1] + '"'
+    )
+    if request.GET.get("download", False) in [True, "True", "true"]:
+        response["Content-Disposition"] = (
+            "attachment; " + response["Content-Disposition"]
+        )
     return response
 
 
-@hooks.register('register_help_menu_item')
+@hooks.register("register_help_menu_item")
 def register_rbg_style_guide_menu_item():
-    return MenuItem(name='rbg_style_guide', label='RBG Style Guide',
-                    url='https://uofu.box.com/s/gb5psi7cn82tm62a8ndmouv53y47nre1', icon_name='link')
+    return MenuItem(
+        name="rbg_style_guide",
+        label="RBG Style Guide",
+        url="https://uofu.box.com/s/gb5psi7cn82tm62a8ndmouv53y47nre1",
+        icon_name="link",
+    )
 
 
 register_snippet(RBGHoursViewSet)

@@ -16,6 +16,11 @@ h2.accordion-header {
     margin: 0;
 }
 
+span.text-lead {
+    font-size: 1.75rem;
+    line-height: 1.5;
+}
+
 figcaption {
     text-align: center;
     font-style: italic;
