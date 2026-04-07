@@ -18,7 +18,7 @@ def send_to_automate(sender, **kwargs):
     instance = kwargs['instance']
     revision = kwargs['revision']
     if not revision.user:
-        logger.info("No revision user; using instance owner")
+        logger.debug("No revision user; using instance owner")
         user_fname = instance.owner.first_name
         user_lname = instance.owner.last_name
         user_username = instance.owner.username
@@ -27,7 +27,7 @@ def send_to_automate(sender, **kwargs):
         user_lname = revision.user.last_name
         user_username = revision.user.username
     url = os.environ.get('AUTOMATE_URL')
-    logger.info(f"Sending publish event to Microsoft Automate at url: {url}")
+    logger.debug(f"Sending publish event to Microsoft Automate at url: {url}")
     values = {
         "text": f"{instance.title} was published by {user_fname} {user_lname} "
                 f"({user_username}).",
@@ -35,26 +35,26 @@ def send_to_automate(sender, **kwargs):
     }
 
     response = requests.post(url, json=values)
-    logger.info(f'Response status code: {response.status_code}')
+    logger.debug(f'Response status code: {response.status_code}')
 
 
 def general_page_changed(general_page):
-    logger.info('Checking for index pages containing {}'.format(general_page))
+    logger.debug('Checking for index pages containing {}'.format(general_page))
     # Find all the live GeneralIndexPages that contain this general_page
     batch = PurgeBatch()
     for general_index in GeneralIndexPage.objects.live():
-        logger.info('Checking if general_page is in {}'.format(general_index))
+        logger.debug('Checking if general_page is in {}'.format(general_index))
         # The Paginator returns a list of Page class objects which won't match with our general_page object of class
         # GeneralPage or TwoColumnGeneralPage, we need to get convert the list to EventPages by calling their specific
         # attribute first
         pages = general_index.get_general_items().object_list
         general_items = [page.specific for page in pages]
         if general_page in general_items:
-            logger.info('Adding general_index to purge list')
+            logger.debug('Adding general_index to purge list')
             batch.add_page(general_index)
 
     # Purge all the event indexes we found in a single request
-    logger.info('Purging!')
+    logger.debug('Purging!')
     batch.purge()
 
 

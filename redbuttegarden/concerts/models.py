@@ -417,7 +417,7 @@ class ConcertPage(AbstractBase):
         """
         Returns a list of URLs whose cache should be invalidated after the page is changed.
         """
-        return ["/", f"/media/concert_calendar_{self.slug}.ics"]
+        return ["/"]
 
 
 class LineupBlock(blocks.StructBlock):
