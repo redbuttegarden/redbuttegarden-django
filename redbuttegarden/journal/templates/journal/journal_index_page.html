@@ -2,7 +2,13 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
-    {% include 'includes/page_banner.html' with banner=page.banner %}
+    {% if page.slug == 'whats-blooming-now' %}
+        <div id="journal-banner">
+            {% include 'includes/page_banner.html' with banner=page.banner %}
+        </div>
+    {% else %}
+        {% include 'includes/page_banner.html' with banner=page.banner %}
+    {% endif %}
 
     {% for block in page.body %}
         {% include_block block with id=block.id %}

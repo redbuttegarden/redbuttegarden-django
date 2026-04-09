@@ -57,7 +57,7 @@ function setSeasonalBanner(calculatedSeason) {
         calculatedSeason,
         'in northern hemisphere on 4 season astronomical calendar'
     )
-    if (typeof calculatedSeason !== "undefined") {
+    if (typeof calculatedSeason !== "undefined" && bannerDiv) {
         // Clear any existing banner image in the parent banner div
         bannerDiv.innerHTML = '';
         const bannerImage = document.createElement("img");
@@ -65,6 +65,7 @@ function setSeasonalBanner(calculatedSeason) {
         bannerImage.setAttribute("alt", "Seasonal banner for What's Blooming Now Blog");
         bannerImage.setAttribute("height", "100");
         bannerImage.setAttribute("width", "1280");
+        bannerImage.setAttribute("class", "img-fluid");
         bannerDiv.appendChild(bannerImage);
     }
 }
