@@ -1,0 +1,6 @@
+{% extends "wagtailadmin/generic/chooser/chooser.html" %}
+
+{% block filter_form %}
+    {% include "wagtailadmin/chooser/_link_types.html" %}
+    {{ block.super }}
+{% endblock %}

@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models.functions import Length
 from django.utils.dates import MONTHS
 from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import InlinePanel
@@ -74,12 +75,22 @@ class Species(ClusterableModel):
     bee_friend = models.BooleanField(default=False)
     high_elevation = models.BooleanField(default=False)
     arborist_rec = models.BooleanField(default=False)
+    autolink_enabled = models.BooleanField(
+        default=True,
+        help_text=_("If enabled, matching species names in rich text will automatically link to this species page."),
+    )
+    autolink_aliases = models.TextField(
+        blank=True,
+        help_text=_("Optional additional link names, one per line. The scientific full name is always included while auto-linking is enabled."),
+    )
 
     panels = [
         InlinePanel('species_images', label='Species Images'),
         FieldPanel('genus'),
         FieldPanel('name'),
         FieldPanel('full_name'),
+        FieldPanel('autolink_enabled'),
+        FieldPanel('autolink_aliases'),
         FieldPanel('subspecies'),
         FieldPanel('variety'),
         FieldPanel('subvariety'),
@@ -105,6 +116,26 @@ class Species(ClusterableModel):
 
     def __str__(self):
         return self.full_name
+
+    def get_absolute_url(self):
+        return reverse("plants:species-detail", args=[self.pk])
+
+    def get_rich_text_link_title(self):
+        return self.full_name
+
+    def get_autolink_terms(self):
+        terms = [self.full_name]
+        terms.extend(self.autolink_aliases.splitlines())
+
+        unique_terms = []
+        seen_terms = set()
+        for term in terms:
+            normalized_term = term.strip()
+            if normalized_term and normalized_term not in seen_terms:
+                unique_terms.append(normalized_term)
+                seen_terms.add(normalized_term)
+
+        return unique_terms
 
     class Meta:
         ordering = ['full_name']
@@ -167,6 +198,12 @@ class Collection(models.Model):
 
     def __str__(self):
         return self.plant_id
+
+    def get_absolute_url(self):
+        return reverse("plants:collection-detail", args=[self.pk])
+
+    def get_rich_text_link_title(self):
+        return f"{self.plant_id} ({self.species.full_name})"
 
 
 class BloomEvent(models.Model):

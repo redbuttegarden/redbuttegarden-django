@@ -1,4 +1,4 @@
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags plants_tags %}
 
 <section class="row my-3">
   <ul class="tan-bg list-unstyled">
@@ -18,7 +18,8 @@
               <div class="fs-2">{{ list_item.title }}</div>
               <div class="green fs-4">{{ list_item.sub_title }}</div>
             </div>
-            {% include_block list_item.text|richtext %}
+            {% species_autolinks_any_page list_item.text|richtext as linked_text %}
+            {{ linked_text }}
           </div>
         </div>
       </li>

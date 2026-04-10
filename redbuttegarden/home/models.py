@@ -51,8 +51,20 @@ from wagtail.telepath import register
 from home.abstract_models import AbstractBase
 from home.custom_fields import ChoiceArrayField
 from memberships.blocks import LinkedCarouselBlock
+from plants.species_autolinks import (
+    SpeciesAutoLinker,
+    autolink_rich_text_value,
+)
 
 logger = logging.getLogger(__name__)
+
+
+class SpeciesAutolinkRichTextBlock(blocks.RichTextBlock):
+    def clean(self, value):
+        cleaned_value = super().clean(value)
+        if hasattr(cleaned_value, "source"):
+            return autolink_rich_text_value(self, cleaned_value)
+        return cleaned_value
 
 
 class ImageInfo(blocks.StructBlock):
@@ -81,7 +93,7 @@ class ImageInfo(blocks.StructBlock):
         max_length=500,
         required=False,
     )
-    tan_bg_info = blocks.RichTextBlock(
+    tan_bg_info = SpeciesAutolinkRichTextBlock(
         label="Tan background info text",
         help_text=_("Text is centered, bold and green inside a tan background element"),
     )
@@ -91,7 +103,7 @@ class ImageInfo(blocks.StructBlock):
         required=False,
     )
     tan_bg_button_url = blocks.URLBlock(help_text=_("URL for button"), required=False)
-    additional_info = blocks.RichTextBlock(
+    additional_info = SpeciesAutolinkRichTextBlock(
         help_text=_("Text displayed below tan background element"), required=False
     )
 
@@ -187,12 +199,24 @@ class AlignedParagraphBlock(blocks.StructBlock):
         "bold",
         "italic",
         "link",
+        "plant-links",
         "ol",
         "ul",
         "document-link",
         "image",
         "embed",
     ], help_text='Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead (Ld) can be used to make slightly larger text for emphasis.')
+
+    def clean(self, value):
+        cleaned_value = super().clean(value)
+        if hasattr(cleaned_value["paragraph"], "source"):
+            autolinker = SpeciesAutoLinker.for_rich_text_storage()
+            cleaned_value["paragraph"] = autolink_rich_text_value(
+                self.child_blocks["paragraph"],
+                cleaned_value["paragraph"],
+                autolinker=autolinker,
+            )
+        return cleaned_value
 
     class Meta:
         template = "blocks/aligned_paragraph.html"
@@ -207,6 +231,22 @@ class MultiColumnAlignedParagraphBlock(AlignedParagraphBlock):
     paragraph = blocks.ListBlock(
         blocks.RichTextBlock(),
     )
+
+    def clean(self, value):
+        cleaned_value = super().clean(value)
+        autolinker = SpeciesAutoLinker.for_rich_text_storage()
+        paragraph_block = self.child_blocks["paragraph"]
+        cleaned_value["paragraph"] = paragraph_block.normalize(
+            [
+                autolink_rich_text_value(
+                    paragraph_block.child_block,
+                    paragraph,
+                    autolinker=autolinker,
+                )
+                for paragraph in cleaned_value["paragraph"]
+            ]
+        )
+        return cleaned_value
 
     class Meta:
         template = "blocks/multi_col_aligned_paragraph.html"
@@ -235,6 +275,16 @@ class SingleListImageDropdownInfo(blocks.StructBlock):
     )
     text = blocks.RichTextBlock(label="Text")
 
+    def clean(self, value):
+        cleaned_value = super().clean(value)
+        autolinker = SpeciesAutoLinker.for_rich_text_storage()
+        cleaned_value["text"] = autolink_rich_text_value(
+            self.child_blocks["text"],
+            cleaned_value["text"],
+            autolinker=autolinker,
+        )
+        return cleaned_value
+
 
 class ImageListDropdownInfo(blocks.StructBlock):
     list_items = blocks.ListBlock(SingleListImageDropdownInfo(), label="List Item")
@@ -248,9 +298,9 @@ class SingleListImageCardInfo(blocks.StructBlock):
         label="Image",
         required=False,
     )
-    text = blocks.RichTextBlock(
+    text = SpeciesAutolinkRichTextBlock(
         label="Text",
-        features=["bold", "italic", "link", "ul", "lead"],
+        features=["bold", "italic", "link", "plant-links", "ul", "lead"],
         help_text=_(
             "Lead text appears slightly larger"
         ),
@@ -309,9 +359,9 @@ class SingleListButtonDropdownInfo(blocks.StructBlock):
         label="Button Text",
         max_length=200,
     )
-    info_text = blocks.RichTextBlock(
+    info_text = SpeciesAutolinkRichTextBlock(
         label="Info Text",
-        features=["bold", "italic", "link", "document-link", "ul", "lead"],
+        features=["bold", "italic", "link", "plant-links", "document-link", "ul", "lead"],
         help_text=_("Lead (Ld) text appears slightly larger.")
     )
 
@@ -327,7 +377,7 @@ class SingleListCardDropdownInfo(blocks.StructBlock):
     card_info = AlignedParagraphBlock(
         label="Card Text",
     )
-    info_text = blocks.RichTextBlock(
+    info_text = SpeciesAutolinkRichTextBlock(
         label="Info Text",
     )
     info_button_text = blocks.CharBlock(
@@ -486,17 +536,17 @@ class SingleThreeColumnDropdownInfoPanel(blocks.StructBlock):
         ],
         default="default-panel",
     )
-    col_one_header = blocks.RichTextBlock(
+    col_one_header = SpeciesAutolinkRichTextBlock(
         label="Column One Panel Header",
         help_text=_("Header for first column of dropdown panel"),
         required=True,
     )
-    col_two_header = blocks.RichTextBlock(
+    col_two_header = SpeciesAutolinkRichTextBlock(
         label="Column Two Panel Header",
         help_text=_("Header for second column of dropdown panel"),
         required=True,
     )
-    col_three_header = blocks.RichTextBlock(
+    col_three_header = SpeciesAutolinkRichTextBlock(
         label="Column Three Panel Header",
         help_text=_("Header for third column of dropdown panel"),
         required=True,
@@ -508,17 +558,17 @@ class SingleThreeColumnDropdownInfoPanel(blocks.StructBlock):
             "Session, Location, Cost"
         ),
     )
-    col_one_top_info = blocks.RichTextBlock(
+    col_one_top_info = SpeciesAutolinkRichTextBlock(
         help_text=_(
             'If class subheaders are selected, this text appears after the "GRADE:" subheading'
         )
     )
-    col_two_top_info = blocks.RichTextBlock(
+    col_two_top_info = SpeciesAutolinkRichTextBlock(
         help_text=_(
             'If class subheaders are selected, this text appears after the "AGES:" subheading'
         )
     )
-    col_three_top_info = blocks.RichTextBlock(
+    col_three_top_info = SpeciesAutolinkRichTextBlock(
         help_text=_(
             'If class subheaders are selected, this text appears after the "SESSION:" subheading'
         )
@@ -529,17 +579,17 @@ class SingleThreeColumnDropdownInfoPanel(blocks.StructBlock):
         )
     )
     button = ButtonBlock(required=False)
-    col_one_bottom_info = blocks.RichTextBlock(
+    col_one_bottom_info = SpeciesAutolinkRichTextBlock(
         help_text=_(
             'If class subheaders are selected, this text appears beside the "LOCATION:" subheading'
         )
     )
-    col_two_bottom_info = blocks.RichTextBlock(
+    col_two_bottom_info = SpeciesAutolinkRichTextBlock(
         help_text=_(
             'If class subheaders are selected, this text appears beside the "COST:" subheading'
         )
     )
-    col_three_bottom_info = blocks.RichTextBlock(
+    col_three_bottom_info = SpeciesAutolinkRichTextBlock(
         help_text=_(
             'If class subheaders are selected, this text appears beside the "CONTACT INFORMATION:" subheading'
         )
@@ -564,7 +614,7 @@ class ColumnBlock(blocks.StreamBlock):
         classname="full title", help_text=_("Text will be red, italic and centered")
     )
     aligned_paragraph = AlignedParagraphBlock()
-    paragraph = blocks.RichTextBlock()
+    paragraph = SpeciesAutolinkRichTextBlock()
     image = ImageBlock()
     document = DocumentChooserBlock()
     button = ButtonBlock()
@@ -1160,12 +1210,13 @@ class RetailPartnerBlock(blocks.StructBlock):
     name = blocks.CharBlock(max_length=75)
     addresses = blocks.ListBlock(AddressBlock(), required=False)
     url = blocks.URLBlock(required=False)
-    info = blocks.RichTextBlock(
+    info = SpeciesAutolinkRichTextBlock(
         features=[
             "h3",
             "bold",
             "italic",
             "link",
+            "plant-links",
             "ol",
             "ul",
             "lead"

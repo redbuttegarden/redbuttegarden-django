@@ -36,6 +36,7 @@ from home.models import (
     Heading,
     MultiColumnAlignedParagraphBlock,
 )
+from plants.species_autolinks import SpeciesAutoLinker, autolink_rich_text_value
 from . import utils as event_utils
 
 
@@ -129,6 +130,16 @@ class SingleListImage(blocks.StructBlock):
         required=False,
         help_text=_("If provided, the link will be applied to the image"),
     )
+
+    def clean(self, value):
+        cleaned_value = super().clean(value)
+        autolinker = SpeciesAutoLinker.for_rich_text_storage()
+        cleaned_value["text"] = autolink_rich_text_value(
+            self.child_blocks["text"],
+            cleaned_value["text"],
+            autolinker=autolinker,
+        )
+        return cleaned_value
 
 
 class ListWithImagesBlock(blocks.StructBlock):

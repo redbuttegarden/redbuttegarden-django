@@ -1,4 +1,4 @@
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags plants_tags %}
 
 <div class="{{ value.background_color }}">
     {% if value.title %}
@@ -9,7 +9,8 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-{{ value.paragraph|length }} {{ value.alignment }}">
         {% for paragraph in value.paragraph %}
             <div class="col py-1 py-md-3 px-3">
-                {{ paragraph|richtext }}
+                {% species_autolinks_any_page paragraph|richtext as linked_paragraph %}
+                {{ linked_paragraph }}
             </div>
         {% endfor %}
     </div>

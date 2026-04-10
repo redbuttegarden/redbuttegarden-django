@@ -1,1 +1,4 @@
-<div class="{{ value.alignment }} {{ value.background_color }} clearfix">{{ value.paragraph }}</div>
+{% load plants_tags %}
+
+{% species_autolinks_any_page value.paragraph as linked_paragraph %}
+<div class="{{ value.alignment }} {{ value.background_color }} clearfix">{{ linked_paragraph }}</div>

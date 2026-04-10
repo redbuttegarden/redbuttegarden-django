@@ -1,0 +1,6 @@
+.Draftail-Editor .species-autolink-hint {
+    background: rgba(61, 125, 82, 0.14);
+    border-bottom: 1px dashed #3d7d52;
+    border-radius: 0.15rem;
+    box-shadow: inset 0 -0.08rem 0 rgba(61, 125, 82, 0.12);
+}

@@ -22,3 +22,11 @@ class SpeciesModelTestCase(TestCase):
 
     def test_cannot_create_species_without_any_names(self):
         self.assertRaises(IntegrityError, Species.objects.create, genus=self.genus)
+
+    def test_get_autolink_terms_includes_full_name_and_aliases(self):
+        self.species.autolink_aliases = "Red maple\n  Acer rubrum  \n"
+
+        self.assertEqual(
+            self.species.get_autolink_terms(),
+            ["Genus species", "Red maple", "Acer rubrum"],
+        )

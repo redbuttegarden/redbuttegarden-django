@@ -1,5 +1,6 @@
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 from django.http import HttpResponse
+from django.urls import reverse_lazy
 from django.utils.html import format_html
 from wagtail.admin.rich_text.converters.html_to_contentstate import (
     InlineStyleElementHandler,
@@ -81,6 +82,26 @@ def register_lead_feature(features):
             },
         },
     )
+
+
+@hooks.register("register_rich_text_features")
+def register_species_autolink_hint_feature(features):
+    feature_name = "species-autolink-hint"
+
+    features.register_editor_plugin(
+        "draftail",
+        feature_name,
+        draftail_features.PluginFeature(
+            {
+                "type": "SPECIES_AUTOLINK_HINT",
+                "termsUrl": reverse_lazy("species_autolink_terms"),
+            },
+            js=["plants/js/species_autolink_hints.js"],
+            css={"all": ["plants/css/species_autolink_hints.css"]},
+        ),
+    )
+
+    features.default_features.append(feature_name)
 
 
 @hooks.register("before_serve_document")
