@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static wagtailimages_tags %}
+{% load render_table from django_tables2 %}
 
 {% block title %}Red Butte Garden | {{ species.vernacular_name }}{% endblock %}
 
@@ -160,6 +161,17 @@
                                 <div class="copyright-text d-none">{{ species_image.copyright }}</div>
                             </div>
                         {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if collections_table %}
+            <div id="species-collections" class="row mt-4 mt-lg-5">
+                <div class="col-12">
+                    <h4>Collections</h4>
+                    <div class="table-responsive">
+                        {% render_table collections_table %}
                     </div>
                 </div>
             </div>

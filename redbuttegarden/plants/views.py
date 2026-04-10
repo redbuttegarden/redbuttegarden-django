@@ -383,8 +383,26 @@ def species_detail(request, species_id):
     """
     View for displaying detailed info about a single Species object.
     """
-    species = get_object_or_404(Species, pk=species_id)
+    species = get_object_or_404(
+        Species.objects.select_related("genus__family"), pk=species_id
+    )
     species_images = SpeciesImage.objects.filter(species=species)
+    species_collections = Collection.objects.filter(species=species).select_related(
+        "garden"
+    )
+    collections_table = None
+    if species_collections.exists():
+        collections_table = CollectionTable(
+            species_collections, exclude=("species",)
+        )
+        RequestConfig(
+            request,
+            paginate={
+                "per_page": 50,
+                "paginator_class": LazyPaginator,
+                "silent": True,
+            },
+        ).configure(collections_table)
 
     # Check if there are any BloomEvents associated with the species
     today_local = timezone.localdate()
@@ -394,7 +412,12 @@ def species_detail(request, species_id):
     return render(
         request,
         "plants/species_detail.html",
-        {"species": species, "in_bloom": in_bloom, "images": species_images},
+        {
+            "species": species,
+            "in_bloom": in_bloom,
+            "images": species_images,
+            "collections_table": collections_table,
+        },
     )
 
 
