@@ -12,7 +12,7 @@
         <p class="name"><span class="fw-bold">Phone Number: </span>{{ cdc_member.phone_number }}</p>
         <p class="name"><span class="fw-bold">Email: </span>{{ request.user.email }}</p>
         <p class="username"><span class="fw-bold">Username: </span>{{ request.user.username }}</p>
-        {% if cdc_member.active %}
+        {% if cdc_member.active and cdc_profile_enabled %}
             <p><a href="{% url 'concerts:cdc-profile' %}" title="Concert Donor Club Profile Page">Click here for
                 YOUR {% now "Y" %} Summer Concert Lineup</a>
             </p>

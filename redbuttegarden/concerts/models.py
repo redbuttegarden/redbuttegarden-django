@@ -27,7 +27,11 @@ from concerts.utils.constant_contact import (
     cc_add_contact_to_cdc_list,
     cc_get_contact_id,
 )
-from concerts.utils.utils import live_in_the_past, on_demand_expired
+from concerts.utils.utils import (
+    is_cdc_profile_enabled,
+    live_in_the_past,
+    on_demand_expired,
+)
 from home.abstract_models import AbstractBase
 from home.models import Heading, EmphaticText, AlignedParagraphBlock
 
@@ -563,6 +567,7 @@ class ConcertDonorClubPortalPage(AbstractBase):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, **kwargs)
+        context["cdc_profile_enabled"] = is_cdc_profile_enabled()
 
         if request.user.is_authenticated:
             try:

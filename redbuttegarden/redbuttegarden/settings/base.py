@@ -19,6 +19,13 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 
+def env_bool(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -297,3 +304,6 @@ INDEXNOW_KEY = os.environ.get("INDEXNOW_KEY")
 MEMBERS_BASIC_AUTH_ENABLED = os.environ.get('MEMBERS_BASIC_AUTH_ENABLED', True)
 MEMBERS_BASIC_AUTH_USERNAME = os.environ.get('MEMBERS_BASIC_AUTH_USERNAME')
 MEMBERS_BASIC_AUTH_PASSWORD = os.environ.get('MEMBERS_BASIC_AUTH_PASSWORD')
+
+# Temporary toggle for the Concert Donor Club lineup/profile page.
+CONCERTS_CDC_PROFILE_ENABLED = env_bool("CONCERTS_CDC_PROFILE_ENABLED", True)

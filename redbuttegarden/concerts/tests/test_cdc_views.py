@@ -87,7 +87,9 @@ def test_logged_in_active_cdc_member_correct_group_can_view_cdc_portal_page(clie
     assert cdc_user.groups.filter(name='Concert Donor Club Member').exists() is True
     response = client.get(cdc_portal_page.get_url())
     assert response.status_code == 200
-    assert 'CDC Portal' in response.content.decode('utf-8')
+    content = response.content.decode('utf-8')
+    assert 'CDC Portal' in content
+    assert reverse('concerts:cdc-profile') in content
 
 
 def test_logged_in_inactive_cdc_member_correct_group_cannot_view_cdc_portal_page_content(client, cdc_portal_page, create_user,
@@ -107,3 +109,43 @@ def test_logged_in_inactive_cdc_member_correct_group_cannot_view_cdc_portal_page
     response = client.get(cdc_portal_page.get_url())
     assert response.status_code == 200
     assert 'your Concert Donor Club membership isn\'t currently active' in response.content.decode('utf-8')
+
+
+def test_active_cdc_member_profile_view_returns_404_when_temporarily_disabled(client, create_user, create_cdc_member,
+                                                                              settings):
+    """
+    Test that the profile view is unreachable when the temporary feature
+    flag is disabled.
+    """
+    settings.CONCERTS_CDC_PROFILE_ENABLED = False
+    cdc_user = create_user()
+    cdc_member = create_cdc_member(user=cdc_user)
+    client.force_login(cdc_user)
+
+    assert cdc_member.active is True
+
+    response = client.get(reverse('concerts:cdc-profile'))
+    assert response.status_code == 404
+
+
+def test_active_cdc_member_portal_hides_profile_link_when_temporarily_disabled(client, cdc_portal_page, create_user,
+                                                                               create_cdc_member, settings):
+    """
+    Test that the portal page does not render the profile link when the
+    temporary feature flag is disabled.
+    """
+    settings.CONCERTS_CDC_PROFILE_ENABLED = False
+    cdc_user = create_user()
+    cdc_group = Group.objects.get(name='Concert Donor Club Member')
+    cdc_user.groups.add(cdc_group)
+    cdc_member = create_cdc_member(user=cdc_user)
+    client.force_login(cdc_user)
+
+    assert cdc_member.active is True
+
+    response = client.get(cdc_portal_page.get_url())
+    content = response.content.decode('utf-8')
+
+    assert response.status_code == 200
+    assert reverse('concerts:cdc-profile') not in content
+    assert 'Summer Concert Lineup' not in content

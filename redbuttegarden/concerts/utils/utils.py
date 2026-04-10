@@ -2,6 +2,7 @@ from abc import ABC
 from html.parser import HTMLParser
 from io import StringIO
 
+from django.conf import settings
 from django.utils import timezone
 
 """
@@ -49,3 +50,10 @@ def on_demand_expired(concert_block_value):
         return timezone.now() > concert_block_value['available_until']
     elif concert_block_value['virtual'] and concert_block_value['available_until'] is None:
         return True
+
+
+def is_cdc_profile_enabled():
+    value = getattr(settings, "CONCERTS_CDC_PROFILE_ENABLED", True)
+    if isinstance(value, str):
+        return value.strip().lower() not in {"", "0", "false", "no", "off"}
+    return bool(value)

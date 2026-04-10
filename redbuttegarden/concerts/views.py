@@ -34,6 +34,7 @@ from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSeria
     TicketSerializer
 from concerts.utils.constant_contact import oauth
 from concerts.utils.cdc_view_utils import summarize_tickets
+from concerts.utils.utils import is_cdc_profile_enabled
 
 logger = logging.getLogger(__name__)
 
@@ -368,6 +369,9 @@ def concert_donor_club_member_profile(request):
     concert detail page but at the moment it was requested to only show
     ticket count totals per package and concert.
     """
+    if not is_cdc_profile_enabled():
+        raise Http404("Concert Donor Club profile page is temporarily unavailable.")
+
     try:
         concert_donor_club_member = ConcertDonorClubMember.objects.get(user=request.user)
     except ConcertDonorClubMember.DoesNotExist:
