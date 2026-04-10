@@ -17,9 +17,15 @@
 }
 
 .thumb-row {
-    max-width: fit-content;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 100%;
     margin-inline: auto;
     gap: 1em;
+}
+
+.thumb-col {
+    flex: 0 0 auto;
 }
 
 #blooming {
