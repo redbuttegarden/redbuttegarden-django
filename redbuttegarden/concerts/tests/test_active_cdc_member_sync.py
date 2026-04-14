@@ -87,12 +87,32 @@ def test_fetch_active_cdc_member_snapshot_raises_on_request_exception(settings):
         )
 
 
-def test_sync_active_cdc_members_from_snapshot_handles_empty_snapshot(
+def test_sync_active_cdc_members_from_snapshot_rejects_empty_snapshot_when_it_would_deactivate_active_members(
     create_user,
     create_cdc_member,
     settings,
 ):
     settings.DEBUG = True
+    active_member = create_cdc_member(user=create_user(username="active-member"), active=True)
+    inactive_member = create_cdc_member(user=create_user(username="inactive-member"), active=False)
+
+    with pytest.raises(ActiveCDCRosterSyncError, match="Refusing to apply an empty active CDC member snapshot"):
+        sync_active_cdc_members_from_snapshot(make_snapshot())
+
+    active_member.refresh_from_db()
+    inactive_member.refresh_from_db()
+
+    assert active_member.active is True
+    assert inactive_member.active is False
+
+
+def test_sync_active_cdc_members_from_snapshot_allows_empty_snapshot_when_explicitly_enabled(
+    create_user,
+    create_cdc_member,
+    settings,
+):
+    settings.DEBUG = True
+    settings.INTRANET_ACTIVE_CDC_MEMBERS_ALLOW_EMPTY_SNAPSHOT = True
     active_member = create_cdc_member(user=create_user(username="active-member"), active=True)
     inactive_member = create_cdc_member(user=create_user(username="inactive-member"), active=False)
 

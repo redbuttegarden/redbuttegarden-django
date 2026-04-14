@@ -89,6 +89,7 @@ def sync_active_cdc_members_from_intranet(requests_module=requests):
 
 def sync_active_cdc_members_from_snapshot(snapshot):
     normalized_members = _normalize_snapshot(snapshot)
+    _validate_snapshot_safety(normalized_members)
     result = ActiveCDCRosterSyncResult(
         snapshot_generated_at=snapshot.get("snapshot_generated_at"),
         source=snapshot.get("source"),
@@ -173,6 +174,24 @@ def sync_active_cdc_members_from_snapshot(snapshot):
         result.deactivated_members,
     )
     return result
+
+
+def _validate_snapshot_safety(normalized_members):
+    if normalized_members:
+        return
+
+    active_member_count = ConcertDonorClubMember.objects.filter(active=True).count()
+    if active_member_count == 0:
+        return
+
+    if getattr(settings, "INTRANET_ACTIVE_CDC_MEMBERS_ALLOW_EMPTY_SNAPSHOT", False):
+        return
+
+    raise ActiveCDCRosterSyncError(
+        "Refusing to apply an empty active CDC member snapshot while "
+        f"{active_member_count} local CDC members are still active. "
+        "Set INTRANET_ACTIVE_CDC_MEMBERS_ALLOW_EMPTY_SNAPSHOT=true to allow this intentionally."
+    )
 
 
 def _normalize_snapshot(snapshot):
