@@ -323,12 +323,18 @@ def process_ticket_data(request):
         cdc_user, created = get_user_model().objects.update_or_create(username=request.data['etix_username'],
                                                                       defaults=filtered_user_defaults)
 
+        cdc_group, _ = Group.objects.get_or_create(name="Concert Donor Club Member")
         if created:
             logger.debug(f'Created user {cdc_user}. Adding them to CDC member group...')
-            cdc_user.groups.add(Group.objects.get(name="Concert Donor Club Member"))
+
+        cdc_user.groups.add(cdc_group)
 
         cdc_member, created = ConcertDonorClubMember.objects.update_or_create(user=cdc_user, defaults={
-            'phone_number': request.data['owner_phone']})
+            'phone_number': request.data['owner_phone'],
+            # The website no longer receives a full delete/roster sync, so an
+            # incoming ticket is our positive signal that this CDC member is active.
+            'active': True,
+        })
 
         if created:
             logger.debug(f'Created ConcertDonorClubMember {cdc_member}')
@@ -337,7 +343,7 @@ def process_ticket_data(request):
         if request.data['package_name'] is not None and request.data['package_name'].strip():
             package, package_created = ConcertDonorClubPackage.objects.get_or_create(name=request.data['package_name'],
                                                                                      defaults={
-                                                                                         'year': datetime.datetime.now().year})
+                                                                                         'year': concert.begin.year})
 
             if package_created:
                 logger.debug(f'Concert Donor Club Package created: {package}')

@@ -150,6 +150,32 @@ def test_process_ticket_data_view_issued(create_user, create_cdc_member, create_
     assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
 
 
+def test_process_ticket_data_reactivates_inactive_member_and_restores_group_membership(
+    create_api_user_and_token,
+    create_cdc_group,
+    drf_client_with_user,
+    make_ticket_data,
+    create_user,
+    create_cdc_member,
+):
+    user = create_user(username='inactive-member')
+    cdc_member = create_cdc_member(user=user, active=False)
+    user.groups.clear()
+
+    issued_ticket_data = make_ticket_data(ticket_status='ISSUED', etix_username=user.username)
+    response = drf_client_with_user.post(
+        reverse('concerts:api-cdc-etix-data'),
+        issued_ticket_data,
+        format='json',
+    )
+
+    assert response.status_code == 200
+    cdc_member.refresh_from_db()
+    user.refresh_from_db()
+    assert cdc_member.active is True
+    assert user.groups.filter(name='Concert Donor Club Member').exists() is True
+
+
 def test_process_ticket_data_view_blank_package_name(create_user, create_cdc_member, create_api_user_and_token,
                                                      drf_client_with_user, make_ticket_data):
     """
@@ -178,6 +204,32 @@ def test_process_ticket_data_view_package_name_missing(create_user, create_cdc_m
     assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
     assert not ConcertDonorClubPackage.objects.filter(name=None).exists()
     assert ConcertDonorClubPackage.objects.count() == original_package_count
+
+
+def test_process_ticket_data_sets_package_year_from_concert_year(
+    create_user,
+    create_cdc_member,
+    create_api_user_and_token,
+    drf_client_with_user,
+    make_ticket_data,
+):
+    cdc_user = create_user()
+    create_cdc_member(user=cdc_user)
+    issued_ticket_data = make_ticket_data(
+        ticket_status='ISSUED',
+        etix_username=cdc_user.username,
+        package_name='Season Package',
+    )
+
+    response = drf_client_with_user.post(
+        reverse('concerts:api-cdc-etix-data'),
+        issued_ticket_data,
+        format='json',
+    )
+
+    assert response.status_code == 200
+    package = ConcertDonorClubPackage.objects.get(name='Season Package')
+    assert package.year == 2024
 
 
 def test_process_ticket_data_updates_user_first_name(create_cdc_group, create_api_user_and_token,

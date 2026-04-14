@@ -72,12 +72,13 @@ def test_logged_in_active_cdc_member_wrong_group_cannot_view_cdc_portal_page(cli
 
 
 def test_logged_in_active_cdc_member_correct_group_can_view_cdc_portal_page(client, cdc_portal_page, create_user,
-                                                                            create_cdc_member):
+                                                                            create_cdc_member, settings):
     """
     Test that a logged in active CDC member can view the CDC portal
     Wagtail Page if they are also in the Concert Donor Club Member
     Group.
     """
+    settings.CONCERTS_CDC_PROFILE_ENABLED = True
     cdc_user = create_user()
     cdc_group = Group.objects.get(name='Concert Donor Club Member')
     cdc_user.groups.add(cdc_group)
