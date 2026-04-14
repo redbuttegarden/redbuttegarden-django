@@ -329,12 +329,22 @@ def process_ticket_data(request):
 
         cdc_user.groups.add(cdc_group)
 
-        cdc_member, created = ConcertDonorClubMember.objects.update_or_create(user=cdc_user, defaults={
-            'phone_number': request.data['owner_phone'],
-            # The website no longer receives a full delete/roster sync, so an
-            # incoming ticket is our positive signal that this CDC member is active.
-            'active': True,
-        })
+        # Active CDC membership now comes from the intranet roster snapshot,
+        # so ticket data should only refresh profile fields, not membership status.
+        cdc_member, created = ConcertDonorClubMember.objects.get_or_create(
+            user=cdc_user,
+            defaults={
+                'phone_number': request.data['owner_phone'],
+                'active': False,
+            },
+        )
+
+        update_fields = []
+        if not created and request.data['owner_phone'] is not None and cdc_member.phone_number != request.data['owner_phone']:
+            cdc_member.phone_number = request.data['owner_phone']
+            update_fields.append('phone_number')
+        if update_fields:
+            cdc_member.save(update_fields=update_fields)
 
         if created:
             logger.debug(f'Created ConcertDonorClubMember {cdc_member}')

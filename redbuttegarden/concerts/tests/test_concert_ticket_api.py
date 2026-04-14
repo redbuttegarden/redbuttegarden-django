@@ -150,7 +150,7 @@ def test_process_ticket_data_view_issued(create_user, create_cdc_member, create_
     assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
 
 
-def test_process_ticket_data_reactivates_inactive_member_and_restores_group_membership(
+def test_process_ticket_data_does_not_reactivate_inactive_member_but_restores_group_membership(
     create_api_user_and_token,
     create_cdc_group,
     drf_client_with_user,
@@ -172,7 +172,7 @@ def test_process_ticket_data_reactivates_inactive_member_and_restores_group_memb
     assert response.status_code == 200
     cdc_member.refresh_from_db()
     user.refresh_from_db()
-    assert cdc_member.active is True
+    assert cdc_member.active is False
     assert user.groups.filter(name='Concert Donor Club Member').exists() is True
 
 

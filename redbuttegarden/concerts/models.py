@@ -730,24 +730,25 @@ class ConcertDonorClubMember(models.Model):
             super().save(*args, **kwargs)
             return
 
-        # If the object is new send it to Constant Contact to create a new contact
+        # If the object is new and active, send it to Constant Contact to create a new contact.
         if not self.id:
-            request = HttpRequest()
-            oauth_token = OAuth2Token.objects.filter(name="constant_contact").first()
-            if oauth_token:
-                request.user = oauth_token.user
-                list_id = ConstantContactCDCListSettings.load().cdc_list_id
-                response = cc_add_contact_to_cdc_list(request, self, list_id)
-                json_response = response.json()
-                logger.debug(f"Constant Contact response: {json_response}")
-                if "contact_id" in json_response:
-                    self.constant_contact_id = json_response["contact_id"]
+            if self.active:
+                request = HttpRequest()
+                oauth_token = OAuth2Token.objects.filter(name="constant_contact").first()
+                if oauth_token:
+                    request.user = oauth_token.user
+                    list_id = ConstantContactCDCListSettings.load().cdc_list_id
+                    response = cc_add_contact_to_cdc_list(request, self, list_id)
+                    json_response = response.json()
+                    logger.debug(f"Constant Contact response: {json_response}")
+                    if "contact_id" in json_response:
+                        self.constant_contact_id = json_response["contact_id"]
+                    else:
+                        logger.warning(
+                            f"No Constant Contact ID returned from Constant Contact for {self}"
+                        )
                 else:
-                    logger.warning(
-                        f"No Constant Contact ID returned from Constant Contact for {self}"
-                    )
-            else:
-                logger.warning(f"No Constant Contact OAuth2Token found for {self}")
+                    logger.warning(f"No Constant Contact OAuth2Token found for {self}")
         else:
             if self.constant_contact_id is None:
                 request = HttpRequest()
