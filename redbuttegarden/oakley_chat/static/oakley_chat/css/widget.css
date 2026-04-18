@@ -1,0 +1,278 @@
+.oakley-chat {
+    --oakley-ink: #14352a;
+    --oakley-sage: #dfeee3;
+    --oakley-leaf: #1f5c42;
+    --oakley-gold: #d2b56d;
+    --oakley-paper: #fffdf8;
+    --oakley-sky: #d7ebff;
+    --oakley-shadow: 0 20px 48px rgba(20, 53, 42, 0.22);
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+}
+
+.oakley-chat__pointer {
+    margin: 0;
+    max-width: 12rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255, 253, 248, 0.94);
+    color: var(--oakley-ink);
+    font-family: "usual", sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    box-shadow: 0 10px 24px rgba(20, 53, 42, 0.14);
+}
+
+.oakley-chat__toggle {
+    width: 5.25rem;
+    height: 5.25rem;
+    border: 0;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.18), transparent 28%),
+        linear-gradient(145deg, #2d6a4c 0%, #1a4d37 100%);
+    color: #fff;
+    box-shadow: 0 14px 30px rgba(20, 53, 42, 0.3);
+    cursor: pointer;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.oakley-chat__toggle:hover,
+.oakley-chat__toggle:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 34px rgba(20, 53, 42, 0.34);
+}
+
+.oakley-chat__panel {
+    width: min(24rem, calc(100vw - 2rem));
+    height: min(40rem, calc(100vh - 8rem));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid rgba(20, 53, 42, 0.12);
+    border-radius: 1.35rem;
+    background:
+        radial-gradient(circle at top right, rgba(210, 181, 109, 0.18), transparent 32%),
+        linear-gradient(180deg, #fffdf8 0%, #f5efe3 100%);
+    box-shadow: var(--oakley-shadow);
+    backdrop-filter: blur(8px);
+}
+
+.oakley-chat__header {
+    padding: 1.1rem 1.15rem 1rem;
+    border-bottom: 1px solid rgba(20, 53, 42, 0.1);
+}
+
+.oakley-chat__header h2 {
+    margin: 0;
+    color: var(--oakley-ink);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.3rem;
+}
+
+.oakley-chat__eyebrow,
+.oakley-chat__subtitle {
+    margin: 0;
+    font-family: "usual", sans-serif;
+    color: rgba(20, 53, 42, 0.8);
+}
+
+.oakley-chat__eyebrow {
+    margin-bottom: 0.2rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.oakley-chat__subtitle {
+    margin-top: 0.35rem;
+    font-size: 0.92rem;
+}
+
+.oakley-chat__messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1rem 0.5rem;
+}
+
+.oakley-chat__message,
+.oakley-chat__typing {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 0.85rem;
+}
+
+.oakley-chat__message--user {
+    align-items: flex-end;
+}
+
+.oakley-chat__author {
+    color: rgba(20, 53, 42, 0.72);
+    font-family: "usual", sans-serif;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.oakley-chat__bubble {
+    max-width: 88%;
+    padding: 0.8rem 0.95rem;
+    border-radius: 1rem;
+    box-shadow: 0 6px 16px rgba(20, 53, 42, 0.08);
+}
+
+.oakley-chat__message--agent .oakley-chat__bubble,
+.oakley-chat__typing .oakley-chat__bubble {
+    background: var(--oakley-sage);
+    color: var(--oakley-ink);
+}
+
+.oakley-chat__message--user .oakley-chat__bubble {
+    background: var(--oakley-sky);
+    color: #10324b;
+}
+
+.oakley-chat__bubble p:last-child {
+    margin-bottom: 0;
+}
+
+.oakley-chat__bubble a {
+    color: inherit;
+    font-weight: 700;
+}
+
+.oakley-chat__bubble--typing {
+    display: inline-flex;
+    gap: 0.3rem;
+    align-items: center;
+    width: fit-content;
+}
+
+.oakley-chat__bubble--typing span {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: rgba(20, 53, 42, 0.5);
+    animation: oakley-chat-bounce 1.3s infinite ease-in-out;
+}
+
+.oakley-chat__bubble--typing span:nth-child(2) {
+    animation-delay: 0.12s;
+}
+
+.oakley-chat__bubble--typing span:nth-child(3) {
+    animation-delay: 0.24s;
+}
+
+.oakley-chat__prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0 1rem 0.9rem;
+}
+
+.oakley-chat__prompt {
+    border: 1px solid rgba(31, 92, 66, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--oakley-ink);
+    padding: 0.45rem 0.8rem;
+    font-family: "usual", sans-serif;
+    font-size: 0.82rem;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.oakley-chat__prompt:hover,
+.oakley-chat__prompt:focus-visible {
+    background: #fff;
+    border-color: rgba(31, 92, 66, 0.35);
+}
+
+.oakley-chat__form {
+    padding: 0.95rem 1rem 1rem;
+    border-top: 1px solid rgba(20, 53, 42, 0.1);
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.oakley-chat__controls {
+    display: flex;
+    gap: 0.65rem;
+}
+
+.oakley-chat__controls input {
+    min-width: 0;
+    flex: 1;
+    border: 1px solid rgba(20, 53, 42, 0.15);
+    border-radius: 999px;
+    background: #fff;
+    padding: 0.8rem 0.95rem;
+    color: var(--oakley-ink);
+}
+
+.oakley-chat__controls input:focus {
+    outline: 2px solid rgba(31, 92, 66, 0.2);
+    border-color: rgba(31, 92, 66, 0.4);
+}
+
+.oakley-chat__controls button {
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(145deg, #215d43 0%, #184633 100%);
+    color: #fff;
+    padding: 0.8rem 1rem;
+    font-family: "usual", sans-serif;
+    font-weight: 700;
+}
+
+.oakley-chat__controls button:disabled,
+.oakley-chat__controls input:disabled,
+.oakley-chat__prompt:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+@keyframes oakley-chat-bounce {
+    0%,
+    80%,
+    100% {
+        transform: scale(0.45);
+    }
+    40% {
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 640px) {
+    .oakley-chat {
+        right: 0.75rem;
+        bottom: 0.75rem;
+        left: 0.75rem;
+        align-items: stretch;
+    }
+
+    .oakley-chat__pointer {
+        align-self: flex-end;
+    }
+
+    .oakley-chat__panel {
+        width: 100%;
+        height: min(70vh, 34rem);
+    }
+
+    .oakley-chat__toggle {
+        align-self: flex-end;
+    }
+}

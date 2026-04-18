@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags wagtailuserbar wagtailaccessibility_tags %}
+{% load static wagtailcore_tags wagtailuserbar wagtailaccessibility_tags oakley_chat_tags %}
 
 <!DOCTYPE html>
 <html class="no-js" lang="en">
@@ -44,6 +44,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/rbg.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/theme.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'redbuttegarden/css/footer.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'oakley_chat/css/widget.css' %}">
 
     {# User uploaded CSS #}
     {% if page.custom_css %}
@@ -155,6 +156,7 @@
 </main>
 
 {% include 'includes/footer.html' %}
+{% oakley_chat_widget %}
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
@@ -166,6 +168,7 @@
 <script src="{% static 'redbuttegarden/js/navbar.js' %}"></script>
 <script src="{% static 'search/js/search.js' %}"></script>
 <script src="{% static 'redbuttegarden/js/rbg.js' %}"></script>
+<script src="{% static 'oakley_chat/js/widget.js' %}" defer></script>
 <!-- Begin Constant Contact Active Forms -->
 <script> var _ctct_m = "c0092df0026c38894a94e2e1d816b6e0"; </script>
 <script id="signupScript" src="//static.ctctcdn.com/js/signup-form-widget/current/signup-form-widget.min.js" async defer></script>

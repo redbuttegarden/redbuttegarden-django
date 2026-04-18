@@ -1,0 +1,67 @@
+{% if oakley_chat_enabled %}
+  <div
+    id="oakley-chat-widget"
+    class="oakley-chat"
+    data-send-url="{{ oakley_chat_send_url }}"
+    data-page-url="{{ oakley_chat_page_url }}"
+    data-csrf-token="{{ oakley_chat_csrf_token }}"
+  >
+    <p class="oakley-chat__pointer">Questions? Ask Oakley.</p>
+
+    <button
+      type="button"
+      class="oakley-chat__toggle"
+      aria-controls="oakley-chat-panel"
+      aria-expanded="false"
+    >
+      <span class="oakley-chat__toggle-label">Oakley</span>
+    </button>
+
+    <section
+      id="oakley-chat-panel"
+      class="oakley-chat__panel"
+      aria-label="Oakley chat assistant"
+      hidden
+    >
+      <header class="oakley-chat__header">
+        <p class="oakley-chat__eyebrow">Red Butte Garden</p>
+        <h2>Oakley Chat Assistant</h2>
+        <p class="oakley-chat__subtitle">
+          Ask about concerts, events, visiting, and more.
+        </p>
+      </header>
+
+      <div id="oakley-chat-messages" class="oakley-chat__messages" aria-live="polite">
+        <div class="oakley-chat__message oakley-chat__message--agent">
+          <span class="oakley-chat__author">Oakley</span>
+          <div class="oakley-chat__bubble">
+            <p>Hi there. I can help with Garden questions and concert information.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="oakley-chat-typing" class="oakley-chat__typing" hidden>
+        <span class="oakley-chat__author">Oakley</span>
+        <div class="oakley-chat__bubble oakley-chat__bubble--typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div id="oakley-chat-prompts" class="oakley-chat__prompts"></div>
+
+      <form id="oakley-chat-form" class="oakley-chat__form">
+        <label class="visually-hidden" for="oakley-chat-input">Message input</label>
+        <div class="oakley-chat__controls">
+          <input
+            type="text"
+            id="oakley-chat-input"
+            name="message"
+            placeholder="Type a message..."
+            autocomplete="off"
+          />
+          <button type="submit">Send</button>
+        </div>
+      </form>
+    </section>
+  </div>
+{% endif %}

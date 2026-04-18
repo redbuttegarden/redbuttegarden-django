@@ -6,7 +6,7 @@ INSTALLED_APPS.insert(0, 'debug_toolbar')
 
 MIDDLEWARE.insert(8, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
-ALLOWED_HOSTS += ['train.localhost', 'localhost', 'testserver', '127.0.0.1', 'rbg-it-web-dev.redbutte.utah.edu']
+ALLOWED_HOSTS += ['train.localhost', 'localhost', 'testserver', '127.0.0.1', 'rbg-it-web-dev.redbutte.utah.edu', 'web', 'rbg-web']
 
 BASE_URL = 'https://rbg-it-web-dev.redbutte.utah.edu'
 

@@ -10,7 +10,26 @@ services:
       - media_volume:/code/media
     depends_on:
       - db
+      - oakley-chat
     command: sh -c "python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+
+  oakley-chat:
+    container_name: oakley-chat
+    build:
+      context: /home/dev/PycharmProjects/oakley_2
+    env_file:
+      - path: $HOME/.config/oakley_2/.env
+        format: raw
+    working_dir: /app
+    volumes:
+      - /home/dev/PycharmProjects/oakley_2:/app
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - HOST=0.0.0.0
+      - PORT=8000
+      - RED_BUTTE_DATA_API_BASE_URL=http://web:8000/oakley-chat/data
+      - RELOAD=false
+    command: sh -c "unset AWS_PROFILE AWS_DEFAULT_PROFILE && python -m uvicorn app:app --host 0.0.0.0 --port 8000"
 
   db:
     container_name: rbg-db

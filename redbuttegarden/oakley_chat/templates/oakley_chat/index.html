@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Oakley Chat{% endblock %}
+
+{% block content %}
+  <section class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="p-4 p-md-5 rounded-4 border bg-white shadow-sm">
+          <p class="text-uppercase small fw-semibold mb-2">Oakley Assistant</p>
+          <h1 class="display-6 mb-3">Chat with Red Butte Garden&apos;s Oakley assistant</h1>
+          {% if oakley_chat_enabled %}
+            <p class="lead mb-3">
+              Oakley is available from the floating button in the lower-right corner of the site.
+            </p>
+            <p class="mb-0">
+              Ask about concerts, events, visits, or other Garden information and the widget will carry the conversation for this browser session.
+            </p>
+          {% else %}
+            <p class="lead mb-0">
+              Oakley chat is installed, but it is currently disabled until the chatbot service URL and API key are configured.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

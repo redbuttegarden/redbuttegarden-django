@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "journal",
     "memberships",
     "monitoring",
+    "oakley_chat",
     "plants",
     "redbuttegarden.apps.CustomUsersAppConfig",
     "search",
@@ -281,6 +282,25 @@ HCAPTCHA_SECRET_KEY = os.environ.get("HCAPTCHA_SECRET_KEY")
 
 # Dead simple chat
 DEAD_SIMPLE_CHAT_PRIVATE_KEY = os.environ.get("DEAD_SIMPLE_CHAT_PRIVATE_KEY", None)
+
+# Oakley chatbot consumer
+OAKLEY_CHAT_SERVICE_URL = os.environ.get(
+    "OAKLEY_CHAT_SERVICE_URL",
+    os.environ.get("CHATBOT_SERVICE_URL", ""),
+)
+OAKLEY_CHAT_API_KEY = os.environ.get(
+    "OAKLEY_CHAT_API_KEY",
+    os.environ.get("CHATBOT_API_KEY", ""),
+)
+OAKLEY_DATA_API_KEY = os.environ.get(
+    "OAKLEY_DATA_API_KEY",
+    OAKLEY_CHAT_API_KEY,
+)
+OAKLEY_CHAT_TIMEOUT_SECONDS = float(os.environ.get("OAKLEY_CHAT_TIMEOUT_SECONDS", "10"))
+OAKLEY_CHAT_ENABLED = env_bool(
+    "OAKLEY_CHAT_ENABLED",
+    bool(OAKLEY_CHAT_SERVICE_URL and OAKLEY_CHAT_API_KEY),
+)
 
 # OpenWeather API
 OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY")

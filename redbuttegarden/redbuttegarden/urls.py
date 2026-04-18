@@ -88,6 +88,23 @@ urlpatterns += [
     path("sitemap.xml", sitemap_index, name="sitemap-index"),
     path("sitemap-<str:section>.xml", sitemap_section, name="sitemap-section"),
     path("", include("home.urls", namespace="home")),
+    path(
+        "oakley_chat/",
+        RedirectView.as_view(pattern_name="oakley_chat:chat_page", permanent=False),
+    ),
+    path(
+        "oakley_chat/send/",
+        RedirectView.as_view(pattern_name="oakley_chat:send_chat", permanent=False),
+    ),
+    path(
+        "oakley_chat/proxy/",
+        RedirectView.as_view(pattern_name="oakley_chat:chat_proxy", permanent=False),
+    ),
+    path(
+        "oakley_chat/health/",
+        RedirectView.as_view(pattern_name="oakley_chat:healthcheck", permanent=False),
+    ),
+    path("oakley-chat/", include("oakley_chat.urls", namespace="oakley_chat")),
     # May need to temporarily comment out plants app urls to migrate fresh database
     path("plants/", include("plants.urls", namespace="plants")),
     path("accounts/", include("custom_user.urls", namespace="custom-user")),
