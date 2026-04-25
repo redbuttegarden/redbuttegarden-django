@@ -18,9 +18,20 @@ Array.from(alerts).forEach(alert => {
 
 if ("serviceWorker" in navigator) {
     console.log("Attempting SW register...");
+    let refreshingForServiceWorker = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (refreshingForServiceWorker) {
+            return;
+        }
+        refreshingForServiceWorker = true;
+        window.location.reload();
+    });
     navigator.serviceWorker
         .register("/service-worker.js")
-        .then((reg) => console.log("SW registered:", reg.scope))
+        .then((reg) => {
+            console.log("SW registered:", reg.scope);
+            reg.update();
+        })
         .catch((err) => console.error("SW registration failed:", err));
 } else {
     console.log("Service workers not supported in this browser/context");

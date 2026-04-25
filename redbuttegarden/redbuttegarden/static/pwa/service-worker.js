@@ -1,23 +1,29 @@
-const CACHE_VERSION = "v4"; // bump on deploy
+const CACHE_VERSION = "v6"; // bump on deploy
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const DATA_CACHE = `data-${CACHE_VERSION}`;
-const HTML_CACHE = `html-${CACHE_VERSION}`;
+const PAGE_CACHE = `pages-${CACHE_VERSION}`;
 
 // Keep this small. Do NOT pre-cache the whole site.
-const PRECACHE_URLS = [
-  "/plants/plant-map/",
+const PRECACHE_STATIC_URLS = [
   "/static/plants/css/plant_map.css",
   "/static/plants/js/plant_map.js",
   "/static/plants/js/name_styling.js",
   "/static/manifest.webmanifest",
   "/static/redbuttegarden/img/favicon/icon-192x192.png",
   "/static/redbuttegarden/img/favicon/icon-512x512.png",
-  "/offline/", // create a tiny offline page route
+];
+
+const PRECACHE_PAGE_URLS = [
+  "/plants/plant-map/",
+  "/offline/",
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
+    Promise.all([
+      caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_STATIC_URLS)),
+      caches.open(PAGE_CACHE).then((cache) => cache.addAll(PRECACHE_PAGE_URLS)),
+    ])
   );
   self.skipWaiting();
 });
@@ -25,7 +31,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    const allow = new Set([STATIC_CACHE, DATA_CACHE, HTML_CACHE]);
+    const allow = new Set([STATIC_CACHE, DATA_CACHE, PAGE_CACHE]);
     await Promise.all(keys.filter((k) => !allow.has(k)).map((k) => caches.delete(k)));
     await self.clients.claim();
   })());
@@ -61,7 +67,11 @@ self.addEventListener("fetch", (event) => {
 
   // ---- HTML navigations (pages) ----
   if (req.mode === "navigate") {
-    event.respondWith(networkFirstHtml(req));
+    if (PRECACHE_PAGE_URLS.includes(url.pathname)) {
+      event.respondWith(networkFirstPage(req));
+      return;
+    }
+    event.respondWith(networkOnlyHtml(req));
     return;
   }
 
@@ -138,20 +148,28 @@ async function networkFirst(request) {
   }
 }
 
-async function networkFirstHtml(request) {
-  const cache = await caches.open(HTML_CACHE);
-
+async function networkFirstPage(request) {
+  const cache = await caches.open(PAGE_CACHE);
   try {
-    // Use no-store to avoid weird interactions with browser HTTP cache
     const resp = await fetch(request, { cache: "no-store" });
     if (resp.ok) cache.put(request, resp.clone());
     return resp;
   } catch (e) {
     const cached = await cache.match(request);
     if (cached) return cached;
-
-    // Offline fallback
-    const offline = await caches.open(STATIC_CACHE).then((c) => c.match("/offline/"));
-    return offline || new Response("Offline", { status: 200, headers: { "Content-Type": "text/plain" } });
+    return offlineFallback();
   }
+}
+
+async function networkOnlyHtml(request) {
+  try {
+    return await fetch(request, { cache: "no-store" });
+  } catch (e) {
+    return offlineFallback();
+  }
+}
+
+async function offlineFallback() {
+  const offline = await caches.open(PAGE_CACHE).then((c) => c.match("/offline/"));
+  return offline || new Response("Offline", { status: 200, headers: { "Content-Type": "text/plain" } });
 }
