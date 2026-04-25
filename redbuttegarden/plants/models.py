@@ -1,4 +1,5 @@
 import logging
+import re
 import urllib.parse
 
 from django.contrib.postgres.fields import ArrayField
@@ -17,6 +18,15 @@ from wagtail.models import Orderable
 models.CharField.register_lookup(Length)
 
 logger = logging.getLogger(__name__)
+
+
+AUTOLINK_RANKS = (
+    ("subspecies", "subsp."),
+    ("variety", "var."),
+    ("subvariety", "subvar."),
+    ("forma", "f."),
+    ("subforma", "subf."),
+)
 
 
 class Family(models.Model):
@@ -124,7 +134,15 @@ class Species(ClusterableModel):
         return self.full_name
 
     def get_autolink_terms(self):
-        terms = [self.full_name]
+        scientific_terms = [self.full_name]
+        generated_taxon_name = self.get_generated_autolink_name()
+        if generated_taxon_name:
+            scientific_terms.append(generated_taxon_name)
+
+        terms = []
+        for term in scientific_terms:
+            terms.append(term)
+            terms.extend(self._get_cross_autolink_variants(term))
         terms.extend(self.autolink_aliases.splitlines())
 
         unique_terms = []
@@ -136,6 +154,50 @@ class Species(ClusterableModel):
                 seen_terms.add(normalized_term)
 
         return unique_terms
+
+    def get_generated_autolink_name(self):
+        full_name = self.full_name.strip()
+        taxon_fragments = []
+
+        for field_name, rank_label in AUTOLINK_RANKS:
+            value = self._clean_autolink_value(getattr(self, field_name))
+            if value and not self._full_name_includes_rank(full_name, rank_label, value):
+                taxon_fragments.append(f"{rank_label} {value}")
+
+        cultivar = self._clean_autolink_value(self.cultivar)
+        if cultivar and cultivar not in full_name:
+            taxon_fragments.append(self._format_cultivar_autolink_name(cultivar))
+
+        if not taxon_fragments:
+            return ""
+
+        return " ".join([full_name, *taxon_fragments])
+
+    def _full_name_includes_rank(self, full_name, rank_label, value):
+        return bool(
+            re.search(
+                rf"(^|\s){re.escape(rank_label)}\s+{re.escape(value)}($|\s)",
+                full_name,
+            )
+        )
+
+    def _format_cultivar_autolink_name(self, cultivar):
+        if cultivar.startswith("'") and cultivar.endswith("'"):
+            return cultivar
+        return f"'{cultivar}'"
+
+    def _clean_autolink_value(self, value):
+        if value is None:
+            return ""
+        return value.strip()
+
+    def _get_cross_autolink_variants(self, term):
+        variants = []
+        if re.search(r"\s×\s", term):
+            variants.append(re.sub(r"\s×\s", " x ", term))
+        if re.search(r"\sx\s", term, flags=re.IGNORECASE):
+            variants.append(re.sub(r"\sx\s", " × ", term, flags=re.IGNORECASE))
+        return variants
 
     class Meta:
         ordering = ['full_name']
