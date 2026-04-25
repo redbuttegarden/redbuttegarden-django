@@ -1,8 +1,21 @@
-import pytest
-from django.urls import reverse
+import io
 
-from plants.models import Collection
+import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse
+from PIL import Image as PILImage
+from wagtail.images import get_image_model
+
+from plants.models import Collection, SpeciesImage
 from plants.tests.utils import get_garden_area, get_location, get_species
+
+
+def _make_test_image_file(name="preview.jpg", size=(60, 60)):
+    buffer = io.BytesIO()
+    image = PILImage.new("RGB", size)
+    image.save(buffer, format="JPEG")
+    buffer.seek(0)
+    return SimpleUploadedFile(name, buffer.read(), content_type="image/jpeg")
 
 
 @pytest.mark.django_db
@@ -99,3 +112,66 @@ def test_species_detail_hides_collections_table_when_species_has_none(client, ge
     content = response.content.decode("utf-8")
     assert 'id="species-collections"' not in content
     assert 'id="collection-list-table"' not in content
+
+
+@pytest.mark.django_db
+def test_species_preview_returns_text_details_without_image(client, genus):
+    genus.family.name = "Pinaceae"
+    genus.family.vernacular_name = "Pine"
+    genus.family.save(update_fields=["name", "vernacular_name"])
+    species = get_species(
+        genus,
+        name="amabilis",
+        full_name="Abies amabilis 'Spreading Star'",
+        cultivar="Spreading Star",
+        vernacular_name="Spreading Star Pacific Fir",
+        habit="Evergreen Shrub",
+        water_regime="Average",
+        exposure="Full Sun",
+        hardiness=[5, 6, 7, 8],
+        plant_size="3' h x 5' w",
+        flower_color="Green, Brown, Inconspicuous",
+        bloom_time=["April"],
+    )
+
+    response = client.get(reverse("plants:species-preview", args=[species.id]))
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["vernacular_name"] == "Spreading Star Pacific Fir"
+    assert payload["full_name"] == "Abies amabilis 'Spreading Star'"
+    assert payload["family"] == "Pinaceae (Pine Family)"
+    assert payload["image"] is None
+    assert {"label": "Cultivar", "value": "Spreading Star"} in payload["details"]
+    assert {"label": "Hardiness", "value": "5, 6, 7, 8"} in payload["details"]
+    assert {"label": "Bloom Times", "value": "April"} in payload["details"]
+
+
+@pytest.mark.django_db
+def test_species_preview_returns_first_species_image(client, genus):
+    species = get_species(
+        genus,
+        name="woodsii",
+        full_name="Rosa woodsii",
+        vernacular_name="Woods rose",
+    )
+    ImageModel = get_image_model()
+    image = ImageModel.objects.create(
+        title="Woods rose flowers",
+        file=_make_test_image_file(),
+    )
+    SpeciesImage.objects.create(
+        species=species,
+        image=image,
+        caption="Woods rose in bloom",
+        sort_order=0,
+    )
+
+    response = client.get(reverse("plants:species-preview", args=[species.id]))
+
+    assert response.status_code == 200
+    image_payload = response.json()["image"]
+    assert image_payload["url"]
+    assert 0 < image_payload["width"] <= 320
+    assert 0 < image_payload["height"] <= 220
+    assert image_payload["alt"] == "Woods rose in bloom"

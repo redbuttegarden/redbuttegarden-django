@@ -64,6 +64,75 @@ logger = logging.getLogger(__name__)
 MAX_FEATURES = 5000
 
 
+def _join_list_field(value):
+    if not value:
+        return ""
+    return ", ".join(str(item) for item in value)
+
+
+def _species_preview_details(species):
+    detail_fields = [
+        ("Cultivar", species.cultivar),
+        ("Habit", species.habit),
+        ("Water Needs", species.water_regime),
+        ("Exposure", species.exposure),
+        ("Hardiness", _join_list_field(species.hardiness)),
+        ("Size", species.plant_size),
+        ("Flower Color", species.flower_color),
+        ("Bloom Times", _join_list_field(species.bloom_time)),
+    ]
+    return [
+        {"label": label, "value": value}
+        for label, value in detail_fields
+        if value
+    ]
+
+
+def _species_preview_image(species):
+    species_image = species.species_images.select_related("image").first()
+    if species_image is None:
+        return None
+
+    image = species_image.image
+    rendition = image.get_rendition("fill-320x220")
+    alt_text = (
+        species_image.caption
+        or getattr(image, "description", "")
+        or image.title
+        or species.full_name
+    )
+    return {
+        "url": rendition.url,
+        "width": rendition.width,
+        "height": rendition.height,
+        "alt": alt_text,
+    }
+
+
+@require_GET
+def species_preview(request, species_id):
+    species = get_object_or_404(
+        Species.objects.select_related("genus__family").prefetch_related(
+            "species_images__image"
+        ),
+        pk=species_id,
+    )
+    family = species.genus.family
+    family_name = family.name
+    if family.vernacular_name:
+        family_name = f"{family.name} ({family.vernacular_name} Family)"
+
+    return JsonResponse(
+        {
+            "vernacular_name": species.vernacular_name,
+            "full_name": species.full_name,
+            "family": family_name,
+            "details": _species_preview_details(species),
+            "image": _species_preview_image(species),
+        }
+    )
+
+
 class FamilyViewSet(viewsets.ModelViewSet):
     """
     List, create, retrieve, update or delete families.

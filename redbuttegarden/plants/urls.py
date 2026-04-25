@@ -46,6 +46,11 @@ urlpatterns = [
         name="collection-detail",
     ),
     path("species/<int:species_id>/", views.species_detail, name="species-detail"),
+    path(
+        "species/<int:species_id>/preview/",
+        views.species_preview,
+        name="species-preview",
+    ),
     path("plant-map/", views.plant_map_view, name="plant-map"),
     path("collections/results/", views.collection_results, name="collection-results"),
     path("collections/search/", views.collection_search_page, name="collection-search"),

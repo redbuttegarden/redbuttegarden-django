@@ -415,7 +415,14 @@ class SpeciesAutoLinker:
             )
 
         matched_url = matched_target["url"]
-        return f'<a href="{escape(matched_url, quote=True)}">'
+        preview_url = reverse(
+            "plants:species-preview", args=[matched_target["id"]]
+        )
+        return (
+            f'<a href="{escape(matched_url, quote=True)}" '
+            f'class="species-preview-link" '
+            f'data-species-preview-url="{escape(preview_url, quote=True)}">'
+        )
 
     def _compile_pattern(self, matches):
         if not matches:
@@ -427,7 +434,15 @@ class SpeciesAutoLinker:
     @staticmethod
     def _render_frontend_link(matched_text, matched_target):
         matched_url = matched_target["url"]
-        return f'<a href="{escape(matched_url, quote=True)}">{escape(matched_text)}</a>'
+        preview_url = reverse(
+            "plants:species-preview", args=[matched_target["id"]]
+        )
+        return (
+            f'<a href="{escape(matched_url, quote=True)}" '
+            f'class="species-preview-link" '
+            f'data-species-preview-url="{escape(preview_url, quote=True)}">'
+            f'{escape(matched_text)}</a>'
+        )
 
     @staticmethod
     def _render_rich_text_link(matched_text, matched_target):

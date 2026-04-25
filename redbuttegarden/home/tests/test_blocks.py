@@ -245,10 +245,13 @@ class TestMultiColumnAlignedParagraphBlock(WagtailPageTests):
         response = self.client.get("/species-link-test-page", follow=True)
         html = response.content.decode("utf8")
 
+        self.assertIn(f'href="/plants/species/{species.pk}/"', html)
+        self.assertIn("species-preview-link", html)
         self.assertIn(
-            f'<a href="/plants/species/{species.pk}/">Acer rubrum</a>',
+            f'data-species-preview-url="/plants/species/{species.pk}/preview/"',
             html,
         )
+        self.assertIn("Acer rubrum</a>", html)
 
 
 class TestSpeciesAutolinkBlockCleaning(WagtailPageTests):

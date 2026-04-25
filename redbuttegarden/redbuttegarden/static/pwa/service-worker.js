@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v2"; // bump on deploy
+const CACHE_VERSION = "v4"; // bump on deploy
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const DATA_CACHE = `data-${CACHE_VERSION}`;
 const HTML_CACHE = `html-${CACHE_VERSION}`;
@@ -53,6 +53,7 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/nav-fragment/") ||
     url.pathname.startsWith("/django-admin/") ||
     url.pathname.startsWith("/api/token/") ||
+    url.pathname.includes("/preview/") ||
     url.searchParams.has("preview")
   ) {
     return; // let network handle it
@@ -72,6 +73,10 @@ self.addEventListener("fetch", (event) => {
 
   // ---- Static assets ----
   if (url.pathname.startsWith("/static/")) {
+    if (url.pathname.endsWith(".js") || url.pathname.endsWith(".css")) {
+      event.respondWith(networkFirstStatic(req));
+      return;
+    }
     event.respondWith(cacheFirst(req, STATIC_CACHE));
     return;
   }
@@ -93,6 +98,18 @@ async function cacheFirst(request, cacheName) {
   const resp = await fetch(request);
   if (resp.ok) cache.put(request, resp.clone());
   return resp;
+}
+
+async function networkFirstStatic(request) {
+  const cache = await caches.open(STATIC_CACHE);
+  try {
+    const resp = await fetch(request, { cache: "no-store" });
+    if (resp.ok) cache.put(request, resp.clone());
+    return resp;
+  } catch (e) {
+    const cached = await cache.match(request);
+    return cached || new Response("", { status: 504 });
+  }
 }
 
 async function staleWhileRevalidate(request, cacheName) {

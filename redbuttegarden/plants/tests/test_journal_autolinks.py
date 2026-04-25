@@ -24,15 +24,20 @@ class SpeciesAutoLinkerTests(TestCase):
             vernacular_name="Red Maple",
         )
 
+    def assertFrontendSpeciesLink(self, linked_html, species, link_text):
+        species_url = reverse("plants:species-detail", args=[species.pk])
+        preview_url = reverse("plants:species-preview", args=[species.pk])
+        self.assertIn(f'href="{species_url}"', linked_html)
+        self.assertIn('class="species-preview-link"', linked_html)
+        self.assertIn(f'data-species-preview-url="{preview_url}"', linked_html)
+        self.assertIn(link_text, linked_html)
+
     def test_link_html_wraps_species_mentions(self):
         linker = SpeciesAutoLinker.from_database()
 
         linked_html = linker.link_html("<p>Acer rubrum is planted near the pond.</p>")
 
-        self.assertIn(
-            f'<a href="{reverse("plants:species-detail", args=[self.species.pk])}">Acer rubrum</a>',
-            linked_html,
-        )
+        self.assertFrontendSpeciesLink(linked_html, self.species, "Acer rubrum</a>")
 
     def test_rich_text_storage_linker_uses_species_linktype_markup(self):
         linker = SpeciesAutoLinker.for_rich_text_storage()
@@ -97,7 +102,9 @@ class SpeciesAutoLinkerTests(TestCase):
         linked_html = linker.link_html("<p><i>Acer rubrum</i> is planted nearby.</p>")
 
         self.assertIn(
-            f'<a href="{reverse("plants:species-detail", args=[self.species.pk])}">'
+            f'<a href="{reverse("plants:species-detail", args=[self.species.pk])}" '
+            f'class="species-preview-link" '
+            f'data-species-preview-url="{reverse("plants:species-preview", args=[self.species.pk])}">'
             "<i>Acer rubrum</i></a>",
             linked_html,
         )
@@ -109,10 +116,7 @@ class SpeciesAutoLinkerTests(TestCase):
         linker = SpeciesAutoLinker.from_database()
         linked_html = linker.link_html("<p>The red maple is turning color.</p>")
 
-        self.assertIn(
-            f'<a href="{reverse("plants:species-detail", args=[self.species.pk])}">red maple</a>',
-            linked_html,
-        )
+        self.assertFrontendSpeciesLink(linked_html, self.species, "red maple</a>")
 
     def test_link_html_ignores_disabled_species(self):
         self.species.autolink_enabled = False
@@ -277,10 +281,10 @@ class SpeciesAutoLinkerTests(TestCase):
                 linker = SpeciesAutoLinker.from_database()
                 linked_html = linker.link_html(f"<p>{case['term']} grows here.</p>")
 
-                self.assertIn(
-                    f'<a href="{reverse("plants:species-detail", args=[specific_taxon.pk])}">'
-                    f"{escape(case['term'])}</a>",
+                self.assertFrontendSpeciesLink(
                     linked_html,
+                    specific_taxon,
+                    f"{escape(case['term'])}</a>",
                 )
 
     def test_link_html_supports_cross_symbol_variants(self):
@@ -302,10 +306,10 @@ class SpeciesAutoLinkerTests(TestCase):
         linker = SpeciesAutoLinker.from_database()
         linked_html = linker.link_html("<p>Cypripedium x 'Sabine' flowers here.</p>")
 
-        self.assertIn(
-            f'<a href="{reverse("plants:species-detail", args=[cross.pk])}">'
-            "Cypripedium x &#x27;Sabine&#x27;</a>",
+        self.assertFrontendSpeciesLink(
             linked_html,
+            cross,
+            "Cypripedium x &#x27;Sabine&#x27;</a>",
         )
 
     def test_link_html_detects_specific_taxon_across_inline_formatting(self):
@@ -343,12 +347,16 @@ class SpeciesAutoLinkerTests(TestCase):
         )
 
         self.assertIn(
-            f'<a href="{reverse("plants:species-detail", args=[cultivar.pk])}">'
+            f'<a href="{reverse("plants:species-detail", args=[cultivar.pk])}" '
+            f'class="species-preview-link" '
+            f'data-species-preview-url="{reverse("plants:species-preview", args=[cultivar.pk])}">'
             "<i>Prunus maackii</i> &#x27;Jefree&#x27;</a>",
             linked_html,
         )
         self.assertEqual(
-            linked_html.count(reverse("plants:species-detail", args=[cultivar.pk])),
+            linked_html.count(
+                f'href="{reverse("plants:species-detail", args=[cultivar.pk])}"'
+            ),
             1,
         )
         self.assertNotIn(reverse("plants:species-detail", args=[base_species.pk]), linked_html)
