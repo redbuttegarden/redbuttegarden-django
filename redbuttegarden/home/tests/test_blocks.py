@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth.models import Group
+from wagtail.admin.rich_text.converters.contentstate import ContentstateConverter
 from wagtail.models import Page
 from wagtail.images.tests.utils import get_image_model, get_test_image_file
 from wagtail.test.utils import WagtailPageTests, get_user_model
@@ -252,6 +253,38 @@ class TestMultiColumnAlignedParagraphBlock(WagtailPageTests):
             html,
         )
         self.assertIn("Acer rubrum</a>", html)
+
+    def test_multi_column_editor_preserves_species_link_entities(self):
+        family = get_family(name="Rosaceae")
+        genus = get_genus(family, name="Rosa")
+        species = get_species(
+            genus,
+            name="woodsii",
+            full_name="Rosa woodsii",
+            subspecies=None,
+            variety=None,
+            subvariety=None,
+            forma=None,
+            subforma=None,
+            cultivar=None,
+            vernacular_name="Woods rose",
+        )
+        block = MultiColumnAlignedParagraphBlock()
+        rich_text_block = block.child_blocks["paragraph"].child_block
+        db_html = (
+            f'<p><a linktype="species" id="{species.pk}">'
+            "Rosa woodsii</a></p>"
+        )
+
+        contentstate = json.loads(
+            ContentstateConverter(
+                features=rich_text_block.features
+            ).from_database_format(db_html)
+        )
+
+        entity_data = next(iter(contentstate["entityMap"].values()))["data"]
+        self.assertEqual(entity_data["linkType"], "species")
+        self.assertEqual(entity_data["id"], species.pk)
 
 
 class TestSpeciesAutolinkBlockCleaning(WagtailPageTests):

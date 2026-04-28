@@ -58,6 +58,21 @@ from plants.species_autolinks import (
 
 logger = logging.getLogger(__name__)
 
+SPECIES_AUTOLINK_PARAGRAPH_FEATURES = [
+    "h2",
+    "h3",
+    "lead",
+    "bold",
+    "italic",
+    "link",
+    "plant-links",
+    "ol",
+    "ul",
+    "document-link",
+    "image",
+    "embed",
+]
+
 
 class SpeciesAutolinkRichTextBlock(blocks.RichTextBlock):
     def clean(self, value):
@@ -192,20 +207,10 @@ class AlignedParagraphBlock(blocks.StructBlock):
         ],
         default="default",
     )
-    paragraph = blocks.RichTextBlock(features=[
-        "h2",
-        "h3",
-        "lead",
-        "bold",
-        "italic",
-        "link",
-        "plant-links",
-        "ol",
-        "ul",
-        "document-link",
-        "image",
-        "embed",
-    ], help_text='Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead (Ld) can be used to make slightly larger text for emphasis.')
+    paragraph = blocks.RichTextBlock(
+        features=SPECIES_AUTOLINK_PARAGRAPH_FEATURES,
+        help_text='Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text. Lead (Ld) can be used to make slightly larger text for emphasis.',
+    )
 
     def clean(self, value):
         cleaned_value = super().clean(value)
@@ -229,7 +234,7 @@ class MultiColumnAlignedParagraphBlock(AlignedParagraphBlock):
         help_text=_("Green centered heading above column content"),
     )
     paragraph = blocks.ListBlock(
-        blocks.RichTextBlock(),
+        blocks.RichTextBlock(features=SPECIES_AUTOLINK_PARAGRAPH_FEATURES),
     )
 
     def clean(self, value):
