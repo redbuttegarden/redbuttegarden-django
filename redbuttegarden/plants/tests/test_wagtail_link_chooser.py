@@ -143,6 +143,41 @@ class TestWagtailRichTextLinkChoosers(TestCase):
         self.assertEqual(entity_data["id"], self.species.pk)
         self.assertIsNone(entity_data["parentId"])
 
+    def test_species_url_saves_as_species_link_when_link_type_is_missing(self):
+        contentstate = {
+            "blocks": [
+                {
+                    "key": "abcde",
+                    "text": "Rosa woodsii",
+                    "type": "unstyled",
+                    "depth": 0,
+                    "inlineStyleRanges": [],
+                    "entityRanges": [{"offset": 0, "length": 12, "key": 0}],
+                    "data": {},
+                }
+            ],
+            "entityMap": {
+                "0": {
+                    "type": "LINK",
+                    "mutability": "MUTABLE",
+                    "data": {
+                        "id": self.species.pk,
+                        "parentId": None,
+                        "url": self.species.get_absolute_url(),
+                    },
+                }
+            },
+        }
+
+        db_html = ContentstateConverter(features=["link", "plant-links"]).to_database_format(
+            json.dumps(contentstate)
+        )
+
+        self.assertIn('linktype="species"', db_html)
+        self.assertIn(f'id="{self.species.pk}"', db_html)
+        self.assertIn(">Rosa woodsii</a>", db_html)
+        self.assertNotIn('linktype="page"', db_html)
+
     def test_collection_db_link_is_exposed_to_editor_as_collection_link(self):
         db_html = (
             f'<p><a linktype="collection" id="{self.collection.pk}">'
@@ -159,3 +194,39 @@ class TestWagtailRichTextLinkChoosers(TestCase):
         self.assertEqual(entity_data["linkType"], "collection")
         self.assertEqual(entity_data["id"], self.collection.pk)
         self.assertIsNone(entity_data["parentId"])
+
+    def test_collection_url_saves_as_collection_link_when_link_type_is_missing(self):
+        link_text = self.collection.get_rich_text_link_title()
+        contentstate = {
+            "blocks": [
+                {
+                    "key": "abcde",
+                    "text": link_text,
+                    "type": "unstyled",
+                    "depth": 0,
+                    "inlineStyleRanges": [],
+                    "entityRanges": [{"offset": 0, "length": len(link_text), "key": 0}],
+                    "data": {},
+                }
+            ],
+            "entityMap": {
+                "0": {
+                    "type": "LINK",
+                    "mutability": "MUTABLE",
+                    "data": {
+                        "id": self.collection.pk,
+                        "parentId": None,
+                        "url": self.collection.get_absolute_url(),
+                    },
+                }
+            },
+        }
+
+        db_html = ContentstateConverter(features=["link", "plant-links"]).to_database_format(
+            json.dumps(contentstate)
+        )
+
+        self.assertIn('linktype="collection"', db_html)
+        self.assertIn(f'id="{self.collection.pk}"', db_html)
+        self.assertIn(f">{link_text}</a>", db_html)
+        self.assertNotIn('linktype="page"', db_html)

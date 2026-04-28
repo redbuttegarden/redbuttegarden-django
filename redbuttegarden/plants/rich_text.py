@@ -1,3 +1,5 @@
+import re
+
 from django.utils.html import escape
 from draftjs_exporter.dom import DOM
 
@@ -8,9 +10,34 @@ from wagtail.whitelist import check_url
 from .models import Collection, Species
 
 
+PLANT_LINK_URL_PATTERN = re.compile(
+    r"^https?://[^/]+/plants/(?P<link_type>species|collection)/(?P<id>\d+)/?$"
+    r"|^/plants/(?P<relative_link_type>species|collection)/(?P<relative_id>\d+)/?$"
+)
+
+
+def get_plant_link_type_from_url(url, id_):
+    if not url or id_ is None:
+        return None
+
+    match = PLANT_LINK_URL_PATTERN.match(url)
+    if not match:
+        return None
+
+    link_type = match.group("link_type") or match.group("relative_link_type")
+    url_id = match.group("id") or match.group("relative_id")
+    if str(id_) != url_id:
+        return None
+
+    return link_type
+
+
 def plant_link_entity(props):
     id_ = props.get("id")
-    link_type = props.get("linkType")
+    link_type = props.get("linkType") or get_plant_link_type_from_url(
+        props.get("url"),
+        id_,
+    )
 
     if id_ is not None and link_type in {"species", "collection"}:
         return DOM.create_element(
