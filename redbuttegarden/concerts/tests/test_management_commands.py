@@ -1,10 +1,8 @@
 from io import StringIO
-from types import SimpleNamespace
-from unittest.mock import Mock
 
 from django.core.management import call_command
 
-from concerts.models import OAuth2Token
+from concerts.models import ConcertDonorClubWelcomeListAdd
 
 
 def test_deactivate_cdc_members_marks_only_active_members_inactive(
@@ -27,31 +25,13 @@ def test_deactivate_cdc_members_marks_only_active_members_inactive(
     assert "Deactivated 1 Concert Donor Club members." in stdout.getvalue()
 
 
-def test_deactivate_cdc_members_skips_cc_removal_without_contact_id(
+def test_deactivate_cdc_members_does_not_queue_welcome_list_changes(
     create_user,
     create_cdc_member,
     settings,
-    monkeypatch,
 ):
     settings.DEBUG = False
     member = create_cdc_member(user=create_user(username="active-member"), active=True)
-    oauth_user = create_user(username="oauth-user", email="oauth@example.com")
-    OAuth2Token.objects.create(
-        name="constant_contact",
-        token_type="Bearer",
-        access_token="access-token",
-        refresh_token="refresh-token",
-        expires_at=123,
-        user=oauth_user,
-    )
-
-    monkeypatch.setattr(
-        "concerts.signals.ConstantContactCDCListSettings.load",
-        lambda: SimpleNamespace(cdc_list_id="list-123"),
-    )
-    monkeypatch.setattr("concerts.models.cc_get_contact_id", Mock(return_value=None))
-    remove_contact = Mock()
-    monkeypatch.setattr("concerts.signals.cc_remove_contact_from_cdc_list", remove_contact)
 
     stdout = StringIO()
     call_command("deactivate_cdc_members", stdout=stdout)
@@ -59,5 +39,5 @@ def test_deactivate_cdc_members_skips_cc_removal_without_contact_id(
     member.refresh_from_db()
 
     assert member.active is False
-    remove_contact.assert_not_called()
+    assert ConcertDonorClubWelcomeListAdd.objects.count() == 0
     assert "Deactivated 1 Concert Donor Club members." in stdout.getvalue()

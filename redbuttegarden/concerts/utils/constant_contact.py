@@ -62,20 +62,39 @@ def cc_add_contact_to_cdc_list(request, concert_donor_club_member, list_id):
 
 
 def cc_get_contact_id(request, email_address):
+    contact = cc_get_contact_by_email(request, email_address)
+    if contact is None:
+        return None
+
+    return contact.get('contact_id')
+
+
+def cc_get_contact_by_email(request, email_address):
     params = {
         "email": email_address,
+        "include": "list_memberships",
     }
     response = oauth.constant_contact.get('https://api.cc.email/v3/contacts',
                                    request=request, params=params)
     logger.debug(response.json())
     try:
-        contact_id = response.json()['contacts'][0]['contact_id']
+        contact = response.json()['contacts'][0]
     except IndexError as e:
         # Likely that the contact does not exist in CC
         logger.warning(f'Error getting CC ID when searching with {email_address}.\nError: {e}')
         return None
 
-    return contact_id
+    return contact
+
+
+def cc_contact_has_list_membership(contact, list_id):
+    memberships = contact.get("list_memberships") or []
+    for membership in memberships:
+        if membership == list_id:
+            return True
+        if isinstance(membership, dict) and membership.get("list_id") == list_id:
+            return True
+    return False
 
 
 def cc_remove_contact_from_cdc_list(request, concert_donor_club_member, list_id):

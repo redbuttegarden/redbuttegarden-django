@@ -6,7 +6,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.contrib.settings.models import BaseGenericSetting
@@ -23,10 +22,6 @@ from wagtail.admin.panels import (
 from wagtail.fields import RichTextField, StreamField
 from wagtail.search import index
 
-from concerts.utils.constant_contact import (
-    cc_add_contact_to_cdc_list,
-    cc_get_contact_id,
-)
 from concerts.utils.utils import (
     is_cdc_profile_enabled,
     live_in_the_past,
@@ -723,60 +718,6 @@ class ConcertDonorClubMember(models.Model):
     def __str__(self):
         return str(self.user)
 
-    def save(self, *args, **kwargs):
-        # If in DEBUG mode, skip saving to Constant Contact
-        if settings.DEBUG:
-            logger.debug(f"Skipping Constant Contact save for {self} in DEBUG mode.")
-            super().save(*args, **kwargs)
-            return
-
-        # If the object is new and active, send it to Constant Contact to create a new contact.
-        if not self.id:
-            if self.active:
-                request = HttpRequest()
-                oauth_token = OAuth2Token.objects.filter(name="constant_contact").first()
-                if oauth_token:
-                    request.user = oauth_token.user
-                    list_id = ConstantContactCDCListSettings.load().cdc_list_id
-                    response = cc_add_contact_to_cdc_list(request, self, list_id)
-                    json_response = response.json()
-                    logger.debug(f"Constant Contact response: {json_response}")
-                    if "contact_id" in json_response:
-                        self.constant_contact_id = json_response["contact_id"]
-                    else:
-                        logger.warning(
-                            f"No Constant Contact ID returned from Constant Contact for {self}"
-                        )
-                else:
-                    logger.warning(f"No Constant Contact OAuth2Token found for {self}")
-        else:
-            if self.constant_contact_id is None:
-                request = HttpRequest()
-                oauth_token = OAuth2Token.objects.filter(
-                    name="constant_contact"
-                ).first()
-                if oauth_token:
-                    request.user = oauth_token.user
-                    constant_contact_id = cc_get_contact_id(request, self.user.email)
-                    if constant_contact_id:
-                        self.constant_contact_id = constant_contact_id
-                    elif self.active:
-                        # Contact with email not found in Constant Contact so if active we create it by adding them to the CDC list
-                        list_id = ConstantContactCDCListSettings.load().cdc_list_id
-                        response = cc_add_contact_to_cdc_list(request, self, list_id)
-                        if response.ok:
-                            try:
-                                contact_id = response.json()["contact_id"]
-                                self.constant_contact_id = contact_id
-                            except:
-                                logger.error(
-                                    f"Something unexpected happened while trying to set the CC contact ID for {self}"
-                                )
-                else:
-                    logger.warning(f"No Constant Contact OAuth2Token found for {self}")
-
-        super().save(*args, **kwargs)
-
 
 class ConcertDonorClubMemberGroup(models.Model):
     members = models.ManyToManyField(ConcertDonorClubMember)
@@ -832,3 +773,57 @@ class ConstantContactCDCListSettings(BaseGenericSetting):
         max_length=255,
         help_text="List ID for the Concert Donor Club list in Constant Contact",
     )
+
+
+class ConcertDonorClubWelcomeListAdd(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", _("Pending")
+        PROCESSING = "processing", _("Processing")
+        ADDED = "added", _("Added")
+        ALREADY_MEMBER = "already_member", _("Already member")
+        SKIPPED = "skipped", _("Skipped")
+        FAILED = "failed", _("Failed")
+
+    class Source(models.TextChoices):
+        ROSTER_SYNC = "roster_sync", _("Roster sync")
+        MANUAL = "manual", _("Manual")
+        BACKFILL = "backfill", _("Backfill")
+
+    member = models.ForeignKey(
+        ConcertDonorClubMember,
+        related_name="welcome_list_adds",
+        on_delete=models.CASCADE,
+    )
+    list_id = models.CharField(max_length=255)
+    status = models.CharField(
+        max_length=32,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+    source = models.CharField(
+        max_length=32,
+        choices=Source.choices,
+        default=Source.MANUAL,
+    )
+    contact_id = models.UUIDField(blank=True, null=True)
+    last_error = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    attempted_at = models.DateTimeField(blank=True, null=True)
+    added_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["status", "list_id"]),
+            models.Index(fields=["member", "list_id"]),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["member", "list_id"],
+                name="unique_cdc_welcome_list_add_per_member_list",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.member} -> {self.list_id} ({self.status})"
