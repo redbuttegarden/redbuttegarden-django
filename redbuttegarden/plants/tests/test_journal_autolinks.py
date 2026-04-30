@@ -3,6 +3,7 @@ from html import escape
 from django.test import TestCase
 from django.urls import reverse
 
+from plants.models import SpeciesAutolinkIndex
 from plants.species_autolinks import SpeciesAutoLinker
 from plants.tests.utils import get_family, get_genus, get_species
 
@@ -175,10 +176,10 @@ class SpeciesAutoLinkerTests(TestCase):
     def test_from_database_reuses_cached_autolinker_until_species_changes(self):
         SpeciesAutoLinker.clear_cached_autolinkers()
 
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             first_linker = SpeciesAutoLinker.from_database()
 
-        with self.assertNumQueries(0):
+        with self.assertNumQueries(1):
             second_linker = SpeciesAutoLinker.from_database()
 
         self.assertIs(first_linker, second_linker)
@@ -186,10 +187,34 @@ class SpeciesAutoLinkerTests(TestCase):
         self.species.autolink_aliases = "scarlet maple"
         self.species.save(update_fields=["autolink_aliases"])
 
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             refreshed_linker = SpeciesAutoLinker.from_database()
 
         self.assertIsNot(first_linker, refreshed_linker)
+
+    def test_shared_version_bump_refreshes_cached_autolinkers(self):
+        SpeciesAutoLinker.clear_cached_autolinkers()
+        first_frontend_linker = SpeciesAutoLinker.from_database()
+        first_storage_linker = SpeciesAutoLinker.for_rich_text_storage()
+
+        type(self.species).objects.filter(pk=self.species.pk).update(
+            autolink_enabled=False
+        )
+        SpeciesAutolinkIndex.bump_version()
+
+        refreshed_frontend_linker = SpeciesAutoLinker.from_database()
+        refreshed_storage_linker = SpeciesAutoLinker.for_rich_text_storage()
+        frontend_html = refreshed_frontend_linker.link_html(
+            "<p>Acer rubrum is planted near the pond.</p>"
+        )
+        storage_html = refreshed_storage_linker.link_html(
+            "<p>Acer rubrum is planted near the pond.</p>"
+        )
+
+        self.assertIsNot(first_frontend_linker, refreshed_frontend_linker)
+        self.assertIsNot(first_storage_linker, refreshed_storage_linker)
+        self.assertNotIn("<a href=", frontend_html)
+        self.assertNotIn("<a linktype=", storage_html)
 
     def test_link_html_prefers_more_specific_taxon_names(self):
         cases = [

@@ -7,3 +7,4 @@ class PlantsConfig(AppConfig):
     def ready(self):
         # Implicitly connect signal handlers decorated with @receiver.
         from . import signals
+        from . import species_autolinks

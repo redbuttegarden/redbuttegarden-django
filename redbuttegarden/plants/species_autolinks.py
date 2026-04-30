@@ -10,7 +10,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from .models import Species
+from .models import Species, SpeciesAutolinkIndex
 
 
 SKIP_LINK_TAGS = {"a", "code", "pre", "script", "style"}
@@ -216,13 +216,17 @@ class SpeciesAutoLinker:
     @classmethod
     def from_database(cls):
         if cls is SpeciesAutoLinker:
-            return _get_cached_frontend_autolinker()
+            return _get_cached_frontend_autolinker(
+                SpeciesAutolinkIndex.get_current_version()
+            )
         return cls(cls.get_unique_match_targets_from_database())
 
     @classmethod
     def for_rich_text_storage(cls):
         if cls is SpeciesAutoLinker:
-            return _get_cached_rich_text_autolinker()
+            return _get_cached_rich_text_autolinker(
+                SpeciesAutolinkIndex.get_current_version()
+            )
         return cls(
             cls.get_unique_match_targets_from_database(),
             link_renderer=cls._render_rich_text_link,
@@ -465,13 +469,13 @@ def autolink_rich_text_value(block, rich_text_value, autolinker=None):
     return block.normalize(str(linked_html))
 
 
-@lru_cache(maxsize=1)
-def _get_cached_frontend_autolinker():
+@lru_cache(maxsize=4)
+def _get_cached_frontend_autolinker(version):
     return SpeciesAutoLinker(SpeciesAutoLinker.get_unique_match_targets_from_database())
 
 
-@lru_cache(maxsize=1)
-def _get_cached_rich_text_autolinker():
+@lru_cache(maxsize=4)
+def _get_cached_rich_text_autolinker(version):
     return SpeciesAutoLinker(
         SpeciesAutoLinker.get_unique_match_targets_from_database(),
         link_renderer=SpeciesAutoLinker._render_rich_text_link,
@@ -480,4 +484,5 @@ def _get_cached_rich_text_autolinker():
 
 @receiver([post_save, post_delete], sender=Species)
 def clear_species_autolinker_cache(**kwargs):
+    SpeciesAutolinkIndex.bump_version()
     SpeciesAutoLinker.clear_cached_autolinkers()

@@ -209,6 +209,26 @@ class Species(ClusterableModel):
         ]
 
 
+class SpeciesAutolinkIndex(models.Model):
+    SINGLETON_PK = 1
+
+    version = models.PositiveIntegerField(default=1)
+
+    @classmethod
+    def get_current_version(cls):
+        index, _ = cls.objects.get_or_create(pk=cls.SINGLETON_PK)
+        return index.version
+
+    @classmethod
+    def bump_version(cls):
+        index, _ = cls.objects.get_or_create(pk=cls.SINGLETON_PK)
+        cls.objects.filter(pk=index.pk).update(version=models.F("version") + 1)
+
+    class Meta:
+        verbose_name = "species autolink index"
+        verbose_name_plural = "species autolink index"
+
+
 class SpeciesImage(Orderable):
     species = ParentalKey(Species, on_delete=models.CASCADE, related_name='species_images')
     image = models.ForeignKey(
