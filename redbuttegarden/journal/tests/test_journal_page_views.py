@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.utils import timezone
 from wagtail.models import Page
 from wagtail.images.tests.utils import Image, get_test_image_file
 
@@ -43,6 +46,53 @@ class TestEventPage(TestCase):
 
         response = self.client.get(journal_page.url, follow=True)
         self.assertEqual(response.status_code, 200)
+
+    def test_event_page_shows_previous_and_next_posts_by_date(self):
+        now = timezone.now()
+        older_page = JournalPage(owner=self.user,
+                                 slug='older-journal-page',
+                                 title='Older Journal Page',
+                                 date=now - timedelta(days=2))
+        self.journal_index.add_child(instance=older_page)
+        older_page.save_revision().publish()
+
+        middle_page = JournalPage(owner=self.user,
+                                  slug='middle-journal-page',
+                                  title='Middle Journal Page',
+                                  date=now - timedelta(days=1))
+        self.journal_index.add_child(instance=middle_page)
+        middle_page.save_revision().publish()
+
+        newer_page = JournalPage(owner=self.user,
+                                 slug='newer-journal-page',
+                                 title='Newer Journal Page',
+                                 date=now)
+        self.journal_index.add_child(instance=newer_page)
+        newer_page.save_revision().publish()
+
+        response = self.client.get(middle_page.url, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Previous post')
+        self.assertContains(response, older_page.title)
+        self.assertContains(response, older_page.url)
+        self.assertContains(response, 'Next post')
+        self.assertContains(response, newer_page.title)
+        self.assertContains(response, newer_page.url)
+
+    def test_event_page_hides_post_navigation_when_no_adjacent_posts(self):
+        journal_page = JournalPage(owner=self.user,
+                                   slug='only-journal-page',
+                                   title='Only Journal Page')
+        self.journal_index.add_child(instance=journal_page)
+        journal_page.save_revision().publish()
+
+        response = self.client.get(journal_page.url, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'Journal post navigation')
+        self.assertNotContains(response, 'Previous post')
+        self.assertNotContains(response, 'Next post')
 
 
 class TestJournalCategory(TestCase):

@@ -170,10 +170,30 @@ class JournalPage(AbstractBase):
     def journal_index_page(self):
         return self.get_parent().specific
 
+    def get_previous_post(self):
+        return (
+            JournalPage.objects.descendant_of(self.journal_index_page)
+            .live()
+            .filter(date__lt=self.date)
+            .order_by('-date')
+            .first()
+        )
+
+    def get_next_post(self):
+        return (
+            JournalPage.objects.descendant_of(self.journal_index_page)
+            .live()
+            .filter(date__gt=self.date)
+            .order_by('date')
+            .first()
+        )
+
     def get_context(self, request, *args, **kwargs):
         context = super(JournalPage, self).get_context(request, *args, **kwargs)
         context['journal_index_page'] = self.journal_index_page
         context['post'] = self
+        context['previous_post'] = self.get_previous_post()
+        context['next_post'] = self.get_next_post()
         return context
 
     def save_revision(self, *args, **kwargs):
