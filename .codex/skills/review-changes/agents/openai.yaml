@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Changes"
+  short_description: "Check git changes before committing"
+  default_prompt: "Use $review-changes to inspect my git diff, flag risky files, and draft a commit message."
