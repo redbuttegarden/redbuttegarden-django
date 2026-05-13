@@ -108,7 +108,7 @@ High-risk changes also need rollback or mitigation notes.
 | --- | --- | --- | --- |
 | Acceptance criteria | Optional | Required when unclear | Required |
 | Architecture pass | Optional | Required | Required |
-| Type hints and docstrings for new public Python code | Required | Required | Required |
+| Type hints and docstrings for new or behavior-touched public Python code | Required | Required | Required |
 | Focused tests | Required for behavior changes | Required | Required |
 | Full test suite | Optional | Required when shared behavior changes | Required unless blocked |
 | Django system check | Optional | Required | Required |
@@ -117,6 +117,18 @@ High-risk changes also need rollback or mitigation notes.
 | Dedicated security pass | If relevant | Required | Required |
 | Reviewer approval | Required | Required | Required |
 | Rollback notes | Optional | When migration/deploy risk exists | Required |
+
+For this gate, "behavior-touched" means a Python function, method, class, or
+module whose signature, contract, return shape, validation, side effects, or
+substantive body logic changed. Pure formatting, import sorting, comments, and
+mechanical moves do not by themselves require expanding documentation unless
+the public contract becomes unclear.
+
+The builder must report type-hint and docstring compliance for new or
+behavior-touched public Python code before handoff. The reviewer must request
+changes when a touched public function, method, class, or module leaves review
+below the `SPEC.md` bar, unless an explicit exception is documented with a
+practical reason.
 
 ## Repository-Aware Verification
 
@@ -174,6 +186,8 @@ A change is done when:
 
 - Acceptance criteria are met.
 - Code conforms to `SPEC.md`.
+- New or behavior-touched public Python code satisfies `SPEC.md` type-hint and
+  docstring requirements, or documented exceptions are accepted by review.
 - Required tests and checks pass, or blocked checks are documented with reason.
 - WCAG 2.1 AA review is complete for user-facing changes.
 - Security review is complete at the required level.

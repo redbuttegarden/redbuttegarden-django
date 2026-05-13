@@ -6,8 +6,12 @@ This document defines the quality target for production code in this repository.
 
 - Prefer small, explicit code over clever abstractions.
 - Follow existing app boundaries and naming conventions.
-- Add type hints to new Python functions, methods, and public attributes where practical.
-- Add docstrings to new public modules, classes, functions, and methods. Add docstrings to private helpers when the intent is not obvious.
+- Add type hints to new or behavior-touched public Python functions, methods,
+  and public attributes. Add docstrings to new or behavior-touched public
+  modules, classes, functions, and methods. Document any practical exception in
+  the handoff and review notes.
+- Add type hints and docstrings to private helpers when their intent or contract
+  is not obvious.
 - Use comments to explain why code exists or why a non-obvious choice is safe. Do not comment what the next line already says.
 - Validate input at the server boundary.
 - Escape output by default.
@@ -371,7 +375,8 @@ Docstrings should describe the contract, not narrate each line.
 ## Production Readiness Checklist
 
 - The change satisfies the acceptance criteria.
-- New public Python code has type hints and docstrings.
+- New or behavior-touched public Python code has type hints and docstrings;
+  private helpers have them when intent or contract is not obvious.
 - Tests cover the changed behavior and important edge cases.
 - User-facing behavior meets WCAG 2.1 AA.
 - Security-sensitive code has been reviewed by the security agent.

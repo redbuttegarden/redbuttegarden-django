@@ -25,6 +25,8 @@ The architect owns system design, boundaries, data flow, and long-term maintaina
 - Identify the smallest design that satisfies the request without weakening existing behavior.
 - Define affected modules and ownership boundaries.
 - Decide whether the change needs a model migration, data migration, template change, JavaScript behavior, CSS, infrastructure, or documentation.
+- Identify new or behavior-touched public Python functions, methods, classes,
+  and modules that must meet `SPEC.md` type-hint and docstring expectations.
 - Call out accessibility requirements before implementation starts.
 - Call out security-sensitive areas before implementation starts.
 - Specify expected tests and regression coverage.

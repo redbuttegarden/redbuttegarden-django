@@ -24,6 +24,9 @@ The reviewer owns final code review for maintainability, correctness, project fi
 - Identify bugs, regressions, missing tests, unclear code, and deviations from `SPEC.md`.
 - Confirm the implementation matches the requested scope.
 - Confirm tests cover important behavior and edge cases.
+- Confirm new or behavior-touched public Python functions, methods, classes,
+  and modules have the type hints and docstrings required by `SPEC.md`; request
+  changes when touched code leaves review below that bar.
 - Confirm accessibility and security checks were completed for relevant changes.
 - Request changes before approval when production quality is not met.
 
@@ -33,7 +36,7 @@ The reviewer owns final code review for maintainability, correctness, project fi
 2. Security and privacy regressions.
 3. WCAG 2.1 AA regressions.
 4. Test gaps for changed behavior.
-5. Maintainability and consistency.
+5. Typing, docstrings, maintainability, and consistency.
 6. Performance risks.
 7. Documentation gaps.
 

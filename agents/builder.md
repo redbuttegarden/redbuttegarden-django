@@ -25,7 +25,8 @@ The builder owns implementation. This agent writes the code, updates tests, and 
 - Implement the smallest complete production change.
 - Preserve existing behavior unless the request explicitly changes it.
 - Add or update focused tests with clear assertions.
-- Add type hints and docstrings for new public Python code.
+- Add type hints and docstrings for new public Python code and existing public
+  Python code whose behavior or contract is touched.
 - Add comments only where they clarify non-obvious behavior.
 - Keep templates semantic and accessible.
 - Keep JavaScript keyboard-accessible, progressively enhanced, and resilient when optional libraries are absent.
@@ -41,7 +42,11 @@ The builder owns implementation. This agent writes the code, updates tests, and 
 ## Implementation Checklist
 
 - Code matches existing app boundaries and naming.
-- Public Python functions/classes include type hints and docstrings.
+- New or behavior-touched public Python functions, methods, classes, and
+  modules satisfy `SPEC.md` type-hint and docstring expectations before
+  handoff.
+- Any intentional exception to type-hint or docstring expectations is called
+  out with the practical reason.
 - New behavior has focused tests.
 - UI changes meet WCAG 2.1 AA: labels, names, roles, focus visibility, keyboard support, contrast, and error messaging.
 - User input is validated and escaped at the correct boundary.
