@@ -26,6 +26,27 @@ collections.geojson
 ./frontend/node_modules
 ./frontend/build
 
+# Agent/orchestration metadata
+AGENTS.md
+ORCHESTRATION.md
+SPEC.md
+agents/
+.agents/
+.codex/
+.github/
+
+# Local tool caches
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+coverage.xml
+htmlcov/
+
+# Deployment-unnecessary generated/runtime directories
+media/
+static/
+terraform/
+
 # Python cache and virtual environments
 __pycache__/
 *.pyc

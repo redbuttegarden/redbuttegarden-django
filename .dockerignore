@@ -26,6 +26,29 @@
 nginx/
 README.md
 
+# Agent/orchestration metadata
+AGENTS.md
+ORCHESTRATION.md
+SPEC.md
+agents/
+.agents/
+.codex/
+.github/
+
+# Test-only files excluded from the Lambda deployment image
+redbuttegarden/**/tests/
+redbuttegarden/**/tests.py
+redbuttegarden/conftest.py
+redbuttegarden/pytest.ini
+redbuttegarden/redbuttegarden/settings/testing.py
+coverage.xml
+htmlcov/
+
+# Local tool caches
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+
 # Python cache and virtual environments
 __pycache__/
 *.pyc
