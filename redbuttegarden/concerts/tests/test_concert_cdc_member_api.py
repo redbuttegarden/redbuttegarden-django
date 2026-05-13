@@ -1,5 +1,6 @@
 import pytest
 from django.urls import reverse
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
 
@@ -42,6 +43,20 @@ def test_get_list_concert_donor_club_member_drf_viewset_authorized(drf_client_wi
     response = drf_client_with_user.get(reverse('concerts:cdc-members-list'))
     assert response.status_code == 200
     assert response.json()['count'] == 1  # Assuming one member was created
+
+
+def test_get_list_concert_donor_club_member_drf_viewset_authorized_not_api_group(django_user_model):
+    """
+    Authenticated users NOT in the API group should not be able to list ConcertDonorClubMember objects.
+    """
+    user = django_user_model.objects.create_user(username='not_api_user')
+    token = Token.objects.create(user=user)
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    response = client.get(reverse('concerts:cdc-members-list'))
+
+    assert response.status_code == 403
 
 
 def test_get_detail_concert_donor_club_member_drf_viewset_unauthorized():

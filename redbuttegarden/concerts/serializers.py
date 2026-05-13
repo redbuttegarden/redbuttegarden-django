@@ -7,7 +7,14 @@ from custom_user.serializers import CustomUserSerializer
 class ConcertSerializer(serializers.ModelSerializer):
     class Meta:
         model = Concert
-        fields = '__all__'
+        fields = [
+            'etix_id',
+            'name',
+            'begin',
+            'end',
+            'doors_before_event_time_minutes',
+            'image_url',
+        ]
 
 
 class ConcertDonorClubPackageSerializer(serializers.ModelSerializer):
@@ -15,7 +22,7 @@ class ConcertDonorClubPackageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ConcertDonorClubPackage
-        fields = '__all__'
+        fields = ['id', 'name', 'year', 'concerts']
 
 
 class ConcertDonorClubMemberSerializer(serializers.ModelSerializer):
@@ -24,13 +31,21 @@ class ConcertDonorClubMemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ConcertDonorClubMember
-        fields = '__all__'
+        fields = ['id', 'user', 'phone_number', 'packages', 'active']
+
+
+class TicketOwnerSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer()
+
+    class Meta:
+        model = ConcertDonorClubMember
+        fields = ['id', 'user', 'active']
 
 
 class TicketSerializer(serializers.ModelSerializer):
-    owner = ConcertDonorClubMemberSerializer(partial=True)
+    owner = TicketOwnerSerializer(partial=True)
     concert = ConcertSerializer()
 
     class Meta:
         model = Ticket
-        fields = ['pk', 'owner', 'concert', 'package', 'order_id', 'etix_id']
+        fields = ['pk', 'owner', 'concert', 'package', 'order_id', 'etix_id', 'barcode']

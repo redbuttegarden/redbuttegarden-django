@@ -1,7 +1,11 @@
+import logging
+
 import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.urls import reverse
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient
 
 from concerts.models import Ticket, ConcertDonorClubMember, ConcertDonorClubPackage
 from concerts.views import process_ticket_data, TicketDRFViewSet
@@ -41,14 +45,18 @@ def test_anonymous_user_cannot_view_cdc_ticket_detail_view(drf_request_factory, 
     assert user.email == 'Initial'
 
 
-def test_ticket_drf_viewset_authorized_not_api_group(drf_client_with_user, create_cdc_ticket):
+def test_ticket_drf_viewset_authorized_not_api_group(create_cdc_ticket, django_user_model):
     """
     Authorized users NOT in the API group should NOT be able to view the details of a ticket from the TicketDRFViewSet
     """
+    user = django_user_model.objects.create_user(username='not_api_user')
+    token = Token.objects.create(user=user)
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
     assert not Ticket.objects.all().exists()
     ticket = create_cdc_ticket(barcode=1234567890, etix_id=1, concert_etix_id=1)
     assert Ticket.objects.all().exists()
-    response = drf_client_with_user.get(reverse('concerts:cdc-tickets-detail', args=[ticket.pk]))
+    response = client.get(reverse('concerts:cdc-tickets-detail', args=[ticket.pk]))
     assert response.status_code == 403
 
 
@@ -64,6 +72,58 @@ def test_ticket_drf_viewset_authorized_in_api_group(drf_client_with_user, create
     assert Ticket.objects.all().exists()
     response = drf_client_with_user.get(reverse('concerts:cdc-tickets-detail', args=[ticket.pk]))
     assert response.status_code == 200
+    response_json = response.json()
+    assert response_json['barcode'] == ticket.barcode
+    assert 'phone_number' not in response_json['owner']
+    assert 'constant_contact_id' not in response_json['owner']
+    assert 'chat_access_token' not in response_json['owner']
+
+
+def test_ticket_drf_viewset_authorized_in_api_group_can_update_ticket(
+    drf_client_with_user,
+    create_cdc_ticket,
+    django_user_model,
+):
+    """
+    Authorized users in the API group should still be able to edit existing tickets.
+    """
+    api_user = django_user_model.objects.get(username='api_user')
+    api_group, _ = Group.objects.get_or_create(name='API')
+    api_user.groups.add(api_group)
+    ticket = create_cdc_ticket(barcode=1234567890, etix_id=1, concert_etix_id=1)
+
+    response = drf_client_with_user.patch(
+        reverse('concerts:cdc-tickets-detail', args=[ticket.pk]),
+        {'order_id': 987654321},
+        format='json',
+    )
+
+    assert response.status_code == 200
+    ticket.refresh_from_db()
+    assert ticket.order_id == 987654321
+    assert response.json()['barcode'] == ticket.barcode
+
+
+def test_process_ticket_data_view_authorized_not_api_group(
+    django_user_model,
+    make_ticket_data,
+):
+    """
+    Authenticated users NOT in the API group should NOT be able to sync ticket data.
+    """
+    user = django_user_model.objects.create_user(username='not_api_user')
+    token = Token.objects.create(user=user)
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    response = client.post(
+        reverse('concerts:api-cdc-etix-data'),
+        make_ticket_data('ISSUED'),
+        format='json',
+    )
+
+    assert response.status_code == 403
+    assert not Ticket.objects.exists()
 
 
 def test_ticket_drf_viewset_authorized_query_by_year(drf_client_with_user, create_user, create_cdc_member,
@@ -125,6 +185,37 @@ def test_process_ticket_data_view_no_cdc_member(create_cdc_group, create_api_use
     assert Ticket.objects.filter(barcode=issued_ticket_data['ticket_barcode']).exists()
     assert get_user_model().objects.filter(username=issued_ticket_data['etix_username']).exists()
     assert ConcertDonorClubMember.objects.filter(user__username=issued_ticket_data['etix_username']).exists()
+
+
+def test_process_ticket_data_redacts_sensitive_values_from_logs(
+    create_cdc_group,
+    create_api_user_and_token,
+    drf_client_with_user,
+    make_ticket_data,
+    caplog,
+):
+    issued_ticket_data = make_ticket_data(
+        'ISSUED',
+        etix_username='sensitive-user',
+        owner_email='sensitive@example.com',
+        owner_first_name='Sensitive',
+        owner_last_name='Person',
+    )
+
+    with caplog.at_level(logging.INFO, logger='concerts.views'):
+        response = drf_client_with_user.post(
+            reverse('concerts:api-cdc-etix-data'),
+            issued_ticket_data,
+            format='json',
+        )
+
+    assert response.status_code == 200
+    assert issued_ticket_data['ticket_barcode'] not in caplog.text
+    assert issued_ticket_data['etix_username'] not in caplog.text
+    assert issued_ticket_data['owner_email'] not in caplog.text
+    assert str(issued_ticket_data['order_id']) not in caplog.text
+    assert "'has_order_id': True" in caplog.text
+    assert "'has_ticket_barcode': True" in caplog.text
 
 
 def test_process_ticket_data_view_no_cdc_member_first_name_asterisk(create_cdc_group, create_api_user_and_token,

@@ -2,6 +2,7 @@ import csv
 import datetime
 import logging
 import requests
+from collections.abc import Mapping
 from urllib.parse import urlparse
 
 from authlib.integrations.base_client import OAuthError
@@ -19,8 +20,7 @@ from django.utils import timezone
 from django.views import View
 from django_filters.rest_framework import FilterSet, CharFilter
 from rest_framework import viewsets
-from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from wagtail.admin.viewsets.base import ViewSetGroup, ViewSet
 from wagtail.admin.viewsets.model import ModelViewSet
@@ -37,6 +37,19 @@ from concerts.utils.cdc_view_utils import summarize_tickets
 from concerts.utils.utils import is_cdc_profile_enabled
 
 logger = logging.getLogger(__name__)
+
+
+def summarize_ticket_request_data_for_logging(data: Mapping[str, object]) -> dict[str, object]:
+    """Return allowlisted ticket request metadata safe for logs."""
+
+    return {
+        'event_id': data.get('event_id'),
+        'event_name': data.get('event_name'),
+        'ticket_status': data.get('ticket_status'),
+        'has_package_name': bool(data.get('package_name')),
+        'has_order_id': data.get('order_id') is not None,
+        'has_ticket_barcode': data.get('ticket_barcode') is not None,
+    }
 
 
 def cc_login(request):
@@ -77,6 +90,7 @@ class LargeResultsSetPagination(PageNumberPagination):
 class ConcertDRFViewSet(viewsets.ModelViewSet):
     queryset = Concert.objects.all()
     serializer_class = ConcertSerializer
+    permission_classes = [IsInAPIGroup]
 
 
 class ConcertViewSet(ModelViewSet):
@@ -91,6 +105,7 @@ class ConcertViewSet(ModelViewSet):
 class ConcertDonorClubPackageDRFViewSet(viewsets.ModelViewSet):
     queryset = ConcertDonorClubPackage.objects.all()
     serializer_class = ConcertDonorClubPackageSerializer
+    permission_classes = [IsInAPIGroup]
 
 
 class ConcertDonorClubPackageViewSet(ModelViewSet):
@@ -118,6 +133,7 @@ class ConcertDonorClubMemberDRFViewSet(viewsets.ModelViewSet):
     queryset = ConcertDonorClubMember.objects.all()
     serializer_class = ConcertDonorClubMemberSerializer
     filterset_class = ConcertDonorClubMemberFilter
+    permission_classes = [IsInAPIGroup]
 
 
 class ConcertDonorClubMemberViewSet(ModelViewSet):
@@ -267,112 +283,102 @@ class CreateUserAndConcertDonorClubMemberView(View):
 
 
 @api_view(['POST'])
+@permission_classes([IsInAPIGroup])
 def process_ticket_data(request):
-    # Check if user has a valid API Token
+    logger.info('Incoming ticket request data: %s', summarize_ticket_request_data_for_logging(request.data))
+
+    if not request.data['event_name']:
+        return JsonResponse({'status': 'Failure', 'msg': 'Event name required.'})
+
+    # We can't use update_or_create for Concerts because some incoming data may be less complete than others
+    # and we don't want to overwrite existing data with null values. This issue is most prevalent for the image_url.
+    concert_defaults = {
+        'etix_id': request.data['event_id'],
+        'name': request.data['event_name'],
+        'begin': datetime.datetime.fromisoformat(request.data['event_begin'].replace("Z", "+00:00")),
+        'end': datetime.datetime.fromisoformat(request.data['event_end'].replace("Z", "+00:00")),
+        'doors_before_event_time_minutes': int(request.data['event_doors_before_event_time_minutes']),
+        'image_url': request.data['event_image_url'],
+    }
     try:
-        token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
-    except KeyError:
-        return JsonResponse({'status': 'Auth failure'})
+        concert = Concert.objects.get(etix_id=request.data['event_id'])
+        for key, value in concert_defaults.items():
+            if value:
+                setattr(concert, key, value)
+            concert.save()
+    except Concert.DoesNotExist:
+        concert = Concert.objects.create(etix_id=request.data['event_id'],
+                                         name=request.data['event_name'],
+                                         begin=datetime.datetime.fromisoformat(
+                                             request.data['event_begin'].replace("Z", "+00:00")),
+                                         end=datetime.datetime.fromisoformat(
+                                             request.data['event_end'].replace("Z", "+00:00")),
+                                         doors_before_event_time_minutes=int(
+                                             request.data['event_doors_before_event_time_minutes']),
+                                         image_url=request.data['event_image_url'])
 
-    if Token.objects.filter(key=token).exists():
-        logger.info(f'Incoming ticket request data: {request.data}')
+        logger.info(f'Concert Donor Club Concert created: {concert}')
 
-        if not request.data['event_name']:
-            return JsonResponse({'status': 'Failure', 'msg': 'Event name required.'})
+    user_defaults = {
+        'email': request.data['owner_email'],
+        'first_name': request.data[
+            'owner_first_name'] if request.data[
+                                       'owner_first_name'] != '*' else '',
+        'last_name': request.data[
+            'owner_last_name']}
+    # Filter out any None values from the user_defaults dictionary so we don't replace existing values with None
+    filtered_user_defaults = {k: v for k, v in user_defaults.items() if v is not None}
+    cdc_user, created = get_user_model().objects.update_or_create(username=request.data['etix_username'],
+                                                                  defaults=filtered_user_defaults)
 
-        """
-        We can't use update_or_create for Concerts because some incoming data may be less complete than others
-        and we don't want to overwrite existing data with null values. This issue seems most prevalent for the image_url
-        """
-        concert_defaults = {
-            'etix_id': request.data['event_id'],
-            'name': request.data['event_name'],
-            'begin': datetime.datetime.fromisoformat(request.data['event_begin'].replace("Z", "+00:00")),
-            'end': datetime.datetime.fromisoformat(request.data['event_end'].replace("Z", "+00:00")),
-            'doors_before_event_time_minutes': int(request.data['event_doors_before_event_time_minutes']),
-            'image_url': request.data['event_image_url'],
-        }
-        try:
-            concert = Concert.objects.get(etix_id=request.data['event_id'])
-            for key, value in concert_defaults.items():
-                if value:
-                    setattr(concert, key, value)
-                concert.save()
-        except Concert.DoesNotExist:
-            concert = Concert.objects.create(etix_id=request.data['event_id'],
-                                             name=request.data['event_name'],
-                                             begin=datetime.datetime.fromisoformat(
-                                                 request.data['event_begin'].replace("Z", "+00:00")),
-                                             end=datetime.datetime.fromisoformat(
-                                                 request.data['event_end'].replace("Z", "+00:00")),
-                                             doors_before_event_time_minutes=int(
-                                                 request.data['event_doors_before_event_time_minutes']),
-                                             image_url=request.data['event_image_url'])
+    cdc_group, _ = Group.objects.get_or_create(name="Concert Donor Club Member")
+    if created:
+        logger.debug(f'Created user {cdc_user}. Adding them to CDC member group...')
 
-            logger.info(f'Concert Donor Club Concert created: {concert}')
+    cdc_user.groups.add(cdc_group)
 
-        user_defaults = {
-            'email': request.data['owner_email'],
-            'first_name': request.data[
-                'owner_first_name'] if request.data[
-                                           'owner_first_name'] != '*' else '',
-            'last_name': request.data[
-                'owner_last_name']}
-        # Filter out any None values from the user_defaults dictionary so we don't replace existing values with None
-        filtered_user_defaults = {k: v for k, v in user_defaults.items() if v is not None}
-        cdc_user, created = get_user_model().objects.update_or_create(username=request.data['etix_username'],
-                                                                      defaults=filtered_user_defaults)
+    # Active CDC membership now comes from the intranet roster snapshot,
+    # so ticket data should only refresh profile fields, not membership status.
+    cdc_member, created = ConcertDonorClubMember.objects.get_or_create(
+        user=cdc_user,
+        defaults={
+            'phone_number': request.data['owner_phone'],
+            'active': False,
+        },
+    )
 
-        cdc_group, _ = Group.objects.get_or_create(name="Concert Donor Club Member")
-        if created:
-            logger.debug(f'Created user {cdc_user}. Adding them to CDC member group...')
+    update_fields = []
+    if not created and request.data['owner_phone'] is not None and cdc_member.phone_number != request.data['owner_phone']:
+        cdc_member.phone_number = request.data['owner_phone']
+        update_fields.append('phone_number')
+    if update_fields:
+        cdc_member.save(update_fields=update_fields)
 
-        cdc_user.groups.add(cdc_group)
+    if created:
+        logger.debug(f'Created ConcertDonorClubMember {cdc_member}')
 
-        # Active CDC membership now comes from the intranet roster snapshot,
-        # so ticket data should only refresh profile fields, not membership status.
-        cdc_member, created = ConcertDonorClubMember.objects.get_or_create(
-            user=cdc_user,
-            defaults={
-                'phone_number': request.data['owner_phone'],
-                'active': False,
-            },
-        )
+    package = None
+    if request.data['package_name'] is not None and request.data['package_name'].strip():
+        package, package_created = ConcertDonorClubPackage.objects.get_or_create(name=request.data['package_name'],
+                                                                                 defaults={
+                                                                                     'year': concert.begin.year})
 
-        update_fields = []
-        if not created and request.data['owner_phone'] is not None and cdc_member.phone_number != request.data['owner_phone']:
-            cdc_member.phone_number = request.data['owner_phone']
-            update_fields.append('phone_number')
-        if update_fields:
-            cdc_member.save(update_fields=update_fields)
+        if package_created:
+            logger.debug(f'Concert Donor Club Package created: {package}')
 
-        if created:
-            logger.debug(f'Created ConcertDonorClubMember {cdc_member}')
+    ticket, ticket_created = Ticket.objects.update_or_create(barcode=request.data['ticket_barcode'],
+                                                             defaults={
+                                                                 'order_id': request.data['order_id'],
+                                                                 'owner': cdc_member,
+                                                                 'concert': concert,
+                                                                 'package': package,
+                                                             })
+    if package:
+        cdc_member.packages.add(package)
 
-        package = None
-        if request.data['package_name'] is not None and request.data['package_name'].strip():
-            package, package_created = ConcertDonorClubPackage.objects.get_or_create(name=request.data['package_name'],
-                                                                                     defaults={
-                                                                                         'year': concert.begin.year})
+    serialized_ticket = TicketSerializer(ticket).data
 
-            if package_created:
-                logger.debug(f'Concert Donor Club Package created: {package}')
-
-        ticket, ticket_created = Ticket.objects.update_or_create(barcode=request.data['ticket_barcode'],
-                                                                 defaults={
-                                                                     'order_id': request.data['order_id'],
-                                                                     'owner': cdc_member,
-                                                                     'concert': concert,
-                                                                     'package': package,
-                                                                 })
-        if package:
-            cdc_member.packages.add(package)
-
-        serialized_ticket = TicketSerializer(ticket).data
-
-        return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'created': ticket_created})
-
-    return JsonResponse({'status': 'Auth failure'})
+    return JsonResponse({'status': 'success', 'ticket': serialized_ticket, 'created': ticket_created})
 
 
 @user_passes_test(active_concert_donor_club_member_check)

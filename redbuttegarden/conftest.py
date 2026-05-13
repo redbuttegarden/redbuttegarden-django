@@ -156,6 +156,8 @@ def create_cdc_group():
 @pytest.fixture
 def create_api_user_and_token(django_user_model):
     user = django_user_model.objects.create_user(username='api_user')
+    api_group, _ = Group.objects.get_or_create(name='API')
+    user.groups.add(api_group)
     token = Token.objects.create(user=user)
     return user, token
 
@@ -166,6 +168,7 @@ def drf_client_with_user(create_api_user_and_token):
     client = APIClient()
     client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
     return client
+
 
 @pytest.fixture
 def family():
