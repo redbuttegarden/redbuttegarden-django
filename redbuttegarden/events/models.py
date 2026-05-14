@@ -335,7 +335,7 @@ class EventPage(AbstractBase):
         help_text="Optional direct registration/ticketing URL. If provided, search engines will use this when linking to the event page.",
     )
     body = StreamField(BLOCK_TYPES)
-    policies = models.ManyToManyField(
+    policies = ParentalManyToManyField(
         "events.PolicyLink", blank=True, related_name="event_policies"
     )
     order_date = models.DateTimeField(
