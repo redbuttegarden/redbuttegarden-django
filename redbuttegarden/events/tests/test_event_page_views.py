@@ -45,3 +45,4 @@ class TestEventPage(TestCase):
 
         response = self.client.get(event_page.url, follow=True)
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<h1 class="event-page-title mt-5 mt-md-3">Event Page</h1>')

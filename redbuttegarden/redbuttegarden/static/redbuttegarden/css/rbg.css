@@ -968,8 +968,10 @@ a.apply-button,
 /****************  Begin Event CSS *******************/
 /*****************************************************/
 
-body.event-page h1 {
-    font-size: 24px;
+.event-page-title {
+    font-size: clamp(2.25rem, 7vw, 3.25rem);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
 }
 
 .event-pic,
