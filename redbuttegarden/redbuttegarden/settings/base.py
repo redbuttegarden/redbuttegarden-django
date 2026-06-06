@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "concerts",
     "custom_user",
     "events",
+    "external_integrations.apps.ExternalIntegrationsConfig",
     "home",
     "journal",
     "memberships",
@@ -245,6 +246,39 @@ MESSAGE_TAGS = {
     messages.WARNING: "alert-warning",
     messages.ERROR: "alert-danger",
 }
+
+# External integration foundation. These flags intentionally default off so
+# deployment can add configuration before any outbound behavior is enabled.
+EXTERNAL_INTEGRATION_ENABLED = env_bool("EXTERNAL_INTEGRATION_ENABLED", False)
+EXTERNAL_INTEGRATION_LIVE_REQUESTS_ENABLED = env_bool(
+    "EXTERNAL_INTEGRATION_LIVE_REQUESTS_ENABLED", False
+)
+EXTERNAL_INTEGRATION_WRITE_ENABLED = env_bool(
+    "EXTERNAL_INTEGRATION_WRITE_ENABLED", False
+)
+EXTERNAL_INTEGRATION_ACCOUNT_LINKING_ENABLED = env_bool(
+    "EXTERNAL_INTEGRATION_ACCOUNT_LINKING_ENABLED", False
+)
+EXTERNAL_INTEGRATION_ACCESS_CHECKS_ENABLED = env_bool(
+    "EXTERNAL_INTEGRATION_ACCESS_CHECKS_ENABLED", False
+)
+EXTERNAL_INTEGRATION_CHECKOUT_ENABLED = env_bool(
+    "EXTERNAL_INTEGRATION_CHECKOUT_ENABLED", False
+)
+EXTERNAL_INTEGRATION_REDIRECT_FALLBACK_ENABLED = env_bool(
+    "EXTERNAL_INTEGRATION_REDIRECT_FALLBACK_ENABLED", False
+)
+EXTERNAL_INTEGRATION_ALLOWED_ITEM_TYPES = os.environ.get(
+    "EXTERNAL_INTEGRATION_ALLOWED_ITEM_TYPES", ""
+)
+EXTERNAL_INTEGRATION_BASE_URL = os.environ.get("EXTERNAL_INTEGRATION_BASE_URL", "")
+EXTERNAL_INTEGRATION_API_TOKEN = os.environ.get("EXTERNAL_INTEGRATION_API_TOKEN", "")
+EXTERNAL_INTEGRATION_TIMEOUT_SECONDS = os.environ.get(
+    "EXTERNAL_INTEGRATION_TIMEOUT_SECONDS", "5"
+)
+EXTERNAL_INTEGRATION_MAX_RETRIES = os.environ.get(
+    "EXTERNAL_INTEGRATION_MAX_RETRIES", "1"
+)
 
 # Django REST Framework
 REST_FRAMEWORK = {
