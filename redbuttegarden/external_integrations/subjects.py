@@ -85,6 +85,33 @@ class LocalMembershipLevelSummary:
 
 
 @dataclass(frozen=True)
+class LocalAccountReadinessSummary:
+    """Small local account readiness snapshot for integration checks."""
+
+    id: int | None
+    username: str
+    first_name: str
+    last_name: str
+    email: str
+    is_active: bool
+    has_usable_password: bool
+
+    def as_external_payload(self) -> dict[str, object]:
+        """Return allowlisted local account readiness fields."""
+
+        return {
+            "schema_version": 1,
+            "id": self.id,
+            "username": self.username,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "is_active": self.is_active,
+            "has_usable_password": self.has_usable_password,
+        }
+
+
+@dataclass(frozen=True)
 class LocalIntegrationSubject:
     """Serializable local subject snapshot for a Django user."""
 
@@ -129,6 +156,22 @@ def get_local_integration_subject(user: AbstractUser) -> LocalIntegrationSubject
         email=user.email,
         cdc_status=get_local_cdc_status_summary(user),
         membership_levels=get_active_membership_level_summaries(),
+    )
+
+
+def get_local_account_readiness_summary(
+    user: AbstractUser,
+) -> LocalAccountReadinessSummary:
+    """Return a read-only local account readiness snapshot for a user."""
+
+    return LocalAccountReadinessSummary(
+        id=user.id,
+        username=user.username,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        email=user.email,
+        is_active=user.is_active,
+        has_usable_password=user.has_usable_password(),
     )
 
 

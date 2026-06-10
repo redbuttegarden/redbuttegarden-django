@@ -16,11 +16,99 @@ from concerts.models import (
     OAuth2Token,
     Ticket,
 )
-from external_integrations.subjects import get_local_integration_subject
+from external_integrations.subjects import (
+    get_local_account_readiness_summary,
+    get_local_integration_subject,
+)
 from memberships.models import MembershipLevel
 
 
 pytestmark = pytest.mark.django_db
+
+
+def test_account_readiness_payload_uses_exact_allowlisted_keys(create_user) -> None:
+    """Account readiness serialization exposes only the small public allowlist."""
+
+    user = create_user(
+        username="ready-user",
+        first_name="Ready",
+        last_name="User",
+        email="ready@example.com",
+    )
+
+    payload = get_local_account_readiness_summary(user).as_external_payload()
+
+    assert set(payload) == {
+        "schema_version",
+        "id",
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "is_active",
+        "has_usable_password",
+    }
+    assert payload == {
+        "schema_version": 1,
+        "id": user.id,
+        "username": "ready-user",
+        "first_name": "Ready",
+        "last_name": "User",
+        "email": "ready@example.com",
+        "is_active": user.is_active,
+        "has_usable_password": user.has_usable_password(),
+    }
+
+
+def test_account_readiness_represents_inactive_users(create_user) -> None:
+    """Inactive local accounts remain represented as inactive."""
+
+    user = create_user(username="inactive-account")
+    user.is_active = False
+    user.save(update_fields=["is_active"])
+
+    payload = get_local_account_readiness_summary(user).as_external_payload()
+
+    assert payload["is_active"] is False
+
+
+def test_account_readiness_represents_unusable_password_without_secret_data(
+    create_user,
+) -> None:
+    """Unusable local passwords are summarized without exposing stored secrets."""
+
+    user = create_user(username="unusable-account")
+    user.set_password("temporary-secret")
+    user.set_unusable_password()
+    user.save(update_fields=["password"])
+
+    payload = get_local_account_readiness_summary(user).as_external_payload()
+    payload_text = repr(payload)
+
+    assert payload["has_usable_password"] is False
+    assert user.password not in payload_text
+    assert "temporary-secret" not in payload_text
+
+
+def test_local_integration_subject_payload_schema_is_unchanged(create_user) -> None:
+    """The existing subject payload remains separate from account readiness."""
+
+    user = create_user(username="schema-user")
+
+    payload = get_local_integration_subject(user).as_external_payload()
+
+    assert set(payload) == {
+        "schema_version",
+        "id",
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "cdc_status",
+        "membership_levels",
+    }
+    assert "is_active" not in payload
+    assert "has_usable_password" not in payload
 
 
 def test_subject_for_user_without_cdc_record_has_no_cdc_status(create_user) -> None:
