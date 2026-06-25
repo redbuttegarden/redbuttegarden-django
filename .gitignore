@@ -15,6 +15,7 @@
 /redbuttegarden/journal/fixtures/
 /redbuttegarden/redbuttegarden/fixtures/
 /redbuttegarden/collections.geojson
+migration_scratchpad/
 /.vscode/
 **/.coverage
 *.pyc
