@@ -78,6 +78,7 @@ class Species(ClusterableModel):
                             null=True)
     plant_size = models.CharField(max_length=255, blank=True, null=True)
     flower_color = models.CharField(max_length=255, blank=True, null=True)
+    label_range_text = models.CharField(max_length=255, blank=True, null=True)  # e.g. Taxon origin
     utah_native = models.BooleanField(default=False)
     plant_select = models.BooleanField(default=False)
     deer_resist = models.BooleanField(default=False)
