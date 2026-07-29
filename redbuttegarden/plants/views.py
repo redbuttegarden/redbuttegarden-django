@@ -382,7 +382,8 @@ def collections_geojson(request):
                 location__latitude__gte=south,
                 location__latitude__lte=north,
             ).filter(
-                (Q(location__longitude__gte=west) | Q(location__longitude__lte=east))
+                (Q(location__longitude__gte=west) |
+                 Q(location__longitude__lte=east))
             )
 
     qs = CollectionFilter(request.GET or None, queryset=qs).qs
@@ -558,7 +559,8 @@ def species_or_collection_feedback(request, species_id=None, collection_id=None)
                 ]
 
                 subject = "RBG Website Plants Feedback: " + subject
-                message = style_message(request, species, collection, original_message)
+                message = style_message(
+                    request, species, collection, original_message)
                 email = EmailMessage(
                     subject=subject,
                     body=message,
@@ -744,7 +746,8 @@ def collection_search_page(request):
     No POST; no filtering here beyond binding the form for UX.
     """
     base_qs = Collection.objects.none()  # we don't need results here
-    collection_filter = CollectionFilter(request.GET or None, queryset=base_qs)
+    collection_filter = CollectionFilter(
+        request.GET or None, queryset=base_qs, exclude_hidden_gardens=True)
 
     return render(
         request,
@@ -766,9 +769,11 @@ def get_filtered_collections(request, species_id):
     Used for AJAX requests to dynamically populate options in a form field of BloomEvent admin Snippet.
     """
     # Filter collections to those that match the given species_id
-    options = Collection.objects.filter(species=species_id).values("id", "plant_id")
+    options = Collection.objects.filter(
+        species=species_id).values("id", "plant_id")
     return JsonResponse(
-        {"options": [{"value": o["id"], "label": o["plant_id"]} for o in options]}
+        {"options": [{"value": o["id"], "label": o["plant_id"]}
+                     for o in options]}
     )
 
 
@@ -791,12 +796,14 @@ def top_trees(request):
     # --- configure table with an explicit per_page so we can compute ranges ---
     per_page = 50  # choose your page size
     table = TopTreesSpeciesTable(f.qs)
-    RequestConfig(request, paginate={"paginator_class": LazyPaginator}).configure(table)
+    RequestConfig(request, paginate={
+                  "paginator_class": LazyPaginator}).configure(table)
 
     raw_page = request.GET.get("page", "1")
     if not re.fullmatch(r"\d+", str(raw_page)):
         logger.warning(
-            "Invalid page param: %r from %s", raw_page, request.META.get("REMOTE_ADDR")
+            "Invalid page param: %r from %s", raw_page, request.META.get(
+                "REMOTE_ADDR")
         )
         page_for_pagination = 1
     else:

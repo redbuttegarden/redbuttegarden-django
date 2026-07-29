@@ -190,7 +190,7 @@ class CollectionFilter(django_filters.FilterSet):
             "available_memorial",
         ]
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, data=None, exclude_hidden_gardens=False, *args, **kwargs):
         data = self._canonicalize_querydict(data)
         super().__init__(data=data, *args, **kwargs)
 
@@ -219,7 +219,18 @@ class CollectionFilter(django_filters.FilterSet):
             .values_list("name", flat=True)
             .distinct()
         )
-        self.form.fields["garden_name"].choices = [(g, g) for g in garden_choices if g]
+        excluded_names_lower = {
+            "greenhouse", 
+            "interiors", 
+            "trial bed", 
+            "unknown", 
+            "visitor center"
+        } if exclude_hidden_gardens else set()
+
+        self.form.fields["garden_name"].choices = [
+            (g, g) for g in garden_choices 
+            if g and g.lower() not in excluded_names_lower
+        ]
 
         # Habit / exposure / water regime
         habit_choices = (
