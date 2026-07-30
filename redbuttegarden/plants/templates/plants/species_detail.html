@@ -104,7 +104,7 @@
 
       <div class="col-md-6 main-image text-center mt-5 mt-md-0">
         {% if images %}
-          {% image images.first.image max - 500 x500 as main_img %}
+          {% image images.first.image max-500x500 as main_img %}
           <img src="{{ main_img.url }}" width="{{ main_img.width }}" height="{{ main_img.height }}" alt="{{ main_img.alt }}" onclick="openModal();currentSlide(1)" class="hover-shadow cursor" />
         {% else %}
           <picture>
@@ -122,7 +122,7 @@
           <div class="d-flex justify-content-evenly thumb-row">
             {% for species_image in images|slice:'1:' %}
               <div class="thumb-col">
-                {% image species_image.image height - 100 as thumb %}
+                {% image species_image.image height-100 as thumb %}
                 <img src="{{ thumb.url }}" width="{{ thumb.width }}" height="{{ thumb.height }}" alt="{{ thumb.alt }}" onclick="openModal();currentSlide({{ forloop.counter|add:1 }})" class="hover-shadow cursor" />
               </div>
             {% endfor %}
@@ -155,7 +155,7 @@
           <div class="d-flex justify-content-evenly thumbnails p-2">
             {% for species_image in images %}
               <div class="thumb">
-                {% image species_image.image height - 100 as modal_thumb %}
+                {% image species_image.image height-100 as modal_thumb %}
                 <img src="{{ modal_thumb.url }}" width="{{ modal_thumb.width }}" height="{{ modal_thumb.height }}" alt="{{ modal_thumb.copyright }}" onclick="currentSlide({{ forloop.counter }})" class="demo cursor" title="{{ modal_thumb.title }}" />
                 <div class="caption-text d-none">{{ species_image.caption }}</div>
                 <div class="copyright-text d-none">{{ species_image.copyright }}</div>
