@@ -2,7 +2,7 @@
 {% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block extra_css %}
-  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js" integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V" crossorigin="anonymous"></script>
   <link href="{% static 'memberships/css/membership_page.css' %}" rel="stylesheet" />
   <link href="{% static 'memberships/css/pricing_card.css' %}" rel="stylesheet" />
   <link href="{% static 'memberships/css/membership_widget.css' %}" rel="stylesheet" />
@@ -20,6 +20,5 @@
   {{ cfg.presale_qualification_error_message_template|json_script:'presale-msg-template' }}
   {{ '2,4,6'|json_script:'presale-levels' }}
 
-  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   <script src="{% static 'memberships/js/membership_widget.js' %}"></script>
 {% endblock %}
