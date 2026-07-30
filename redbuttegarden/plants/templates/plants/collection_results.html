@@ -31,9 +31,6 @@
       hx-trigger="keyup changed delay:500ms, change, submit"
     {% endif %}
   >
-    {% if htmx_enabled %}
-      <input type="hidden" name="_hx" value="1" />
-    {% endif %}
 
     {% for field in filter.form %}
       <div class="col-sm-6 col-md-4">
