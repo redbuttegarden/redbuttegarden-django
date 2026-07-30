@@ -38,11 +38,13 @@ class GenusSerializer(serializers.ModelSerializer):
 
 class SpeciesSerializer(serializers.ModelSerializer):
     genus = GenusSerializer()
-    habit = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    habit = serializers.CharField(
+        max_length=255, required=False, allow_blank=True)
     hardiness = serializers.ListField(
         allow_empty=True,
         allow_null=True,
-        child=serializers.IntegerField(label="Hardiness", max_value=13, min_value=1),
+        child=serializers.IntegerField(
+            label="Hardiness", max_value=13, min_value=1),
         required=False,
     )
 
@@ -132,8 +134,19 @@ class CollectionSerializer(serializers.ModelSerializer):
         location_data = validated_data.pop("location")
         garden_data = validated_data.pop("garden")
 
-        family, _ = Family.objects.get_or_create(**family_data)
-        genus, _ = Genus.objects.get_or_create(family=family, **genus_data)
+        family, _ = Family.objects.update_or_create(
+            name=family_data["name"],
+            defaults={
+                "vernacular_name": family_data.get("vernacular_name", "")
+            }
+        )
+
+        genus, _ = Genus.objects.update_or_create(
+            name=genus_data["name"],
+            defaults={
+                "family": family
+            }
+        )
         species, _ = Species.objects.update_or_create(
             genus=genus,
             name=species_data["name"],
@@ -167,7 +180,13 @@ class CollectionSerializer(serializers.ModelSerializer):
         else:
             location = None
 
-        garden, _ = GardenArea.objects.get_or_create(**garden_data)
+        garden, _ = GardenArea.objects.update_or_create(
+            code=garden_data["code"],
+            defaults={
+                "area": garden_data["area"],
+                "name": garden_data["name"]
+            }
+        )
         collection, _ = Collection.objects.update_or_create(
             plant_id=validated_data["plant_id"],
             defaults={
@@ -218,7 +237,8 @@ class SpeciesImageEditImageDescriptionSerializer(serializers.Serializer):
     image_id = serializers.IntegerField(source="image.id", read_only=True)
 
     # Read from the related Wagtail image
-    description = serializers.CharField(source="image.description", read_only=True)
+    description = serializers.CharField(
+        source="image.description", read_only=True)
 
     # Write input
     description_write = serializers.CharField(
