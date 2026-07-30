@@ -164,6 +164,7 @@ class CollectionSerializer(serializers.ModelSerializer):
                 "bloom_time": species_data["bloom_time"],
                 "plant_size": species_data["plant_size"],
                 "flower_color": species_data["flower_color"],
+                "label_range_text": species_data["label_range_text"],
                 "utah_native": species_data["utah_native"],
                 "plant_select": species_data["plant_select"],
                 "deer_resist": species_data["deer_resist"],
