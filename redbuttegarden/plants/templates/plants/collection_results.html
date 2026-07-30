@@ -28,7 +28,7 @@
       hx-target="#results-container"
       hx-swap="outerHTML"
       hx-push-url="true"
-      hx-trigger="keyup changed delay:500ms, submit"
+      hx-trigger="keyup changed delay:500ms, change, submit"
     {% endif %}
   >
     {% if htmx_enabled %}
@@ -56,7 +56,7 @@
 
 {% block extra_js %}
   {% if htmx_enabled %}
-    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js" integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V" crossorigin="anonymous"></script>
   {% endif %}
   <script src="{% static 'plants/js/name_styling.js' %}"></script>
   <script src="{% static 'plants/js/style_rows.js' %}"></script>

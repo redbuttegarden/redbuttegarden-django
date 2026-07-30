@@ -1,0 +1,6 @@
+<select name="garden_code" class="form-control" id="id_garden_code">
+    <option value="">---------</option>
+    {% for code in codes %}
+        <option value="{{ code }}">{{ code }}</option>
+    {% endfor %}
+</select>

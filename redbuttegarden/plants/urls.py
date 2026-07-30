@@ -40,6 +40,7 @@ urlpatterns = [
         views.collections_geojson,
         name="api-collections-geojson",
     ),
+    path("api/get-garden-code/", views.get_garden_code_view, name="get-garden-code"),
     path(
         "collection/<int:collection_id>/",
         views.collection_detail,

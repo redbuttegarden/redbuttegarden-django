@@ -42,6 +42,7 @@ from .models import (
     Location,
     SpeciesImage,
     BloomEvent,
+    GardenArea
 )
 from .serializers import (
     FamilySerializer,
@@ -631,6 +632,9 @@ def collection_results(request):
     collection_filter = CollectionFilter(request.GET or None, queryset=base_qs)
     filtered_qs = collection_filter.qs
 
+    if collection_filter.form.is_bound and not collection_filter.form.is_valid():
+        messages.error(request, "Invalid search criteria. Please adjust your filters and try again.")
+
     context = {
         "page_title": "Living Collections",
         "heading": "Living Collections",
@@ -701,6 +705,9 @@ def collection_results(request):
         table_end = 0
         if total_known and table_total is None:
             table_total = 0
+
+        if collection_filter.form.is_bound and collection_filter.form.is_valid():
+            messages.info(request, "No collections found matching your search criteria.")
     else:
         table_start = (page_number - 1) * per_page + 1
         if total_known and isinstance(table_total, int):
@@ -755,6 +762,23 @@ def collection_search_page(request):
         {
             "filter": collection_filter,
         },
+    )
+
+
+def get_garden_code_view(request):
+    selected_name = request.GET.get("garden_name", "").strip()
+
+    qs = GardenArea.objects.exclude(code__isnull=True).exclude(code="")
+
+    if selected_name:
+        qs = qs.filter(name__iexact=selected_name)
+
+    codes = qs.values_list("code", flat=True).distinct().order_by("code")
+
+    return render(
+        request,
+        "plants/partials/garden_code_select.html",
+        {"codes": codes}
     )
 
 

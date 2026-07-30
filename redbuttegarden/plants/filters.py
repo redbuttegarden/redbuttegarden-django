@@ -4,12 +4,22 @@ import django_filters
 from django import forms
 from django.http import QueryDict
 from django.contrib.postgres.search import SearchQuery, SearchVector
+from django.urls import reverse_lazy
 from django.utils.dates import MONTHS
 
 from .models import Collection, Species, GardenArea, Family
 
 
 TRUE_VALUES = {"1", "true", "t", "yes", "y", "on"}
+
+
+def get_dynamic_garden_codes():
+    code_choices = (
+        GardenArea.objects.order_by("code")
+        .values_list("code", flat=True)
+        .distinct()
+    )
+    return [(c, c) for c in code_choices if c]
 
 
 class CollectionFilter(django_filters.FilterSet):
@@ -46,11 +56,11 @@ class CollectionFilter(django_filters.FilterSet):
         widget=forms.TextInput(),
     )
 
-    garden_code = django_filters.CharFilter(
+    garden_code = django_filters.ChoiceFilter(
         field_name="garden__code",
-        lookup_expr="icontains",
         label="Garden code",
-        widget=forms.TextInput(),
+        choices=get_dynamic_garden_codes,
+        lookup_expr="iexact",
     )
 
     common_name = django_filters.CharFilter(
@@ -207,7 +217,8 @@ class CollectionFilter(django_filters.FilterSet):
         # Let Django render the default "---------" empty option consistently.
 
         # Families
-        family_choices = Family.objects.order_by("name").values_list("id", "name")
+        family_choices = Family.objects.order_by(
+            "name").values_list("id", "name")
         self.form.fields["family_name"].choices = [
             (fid, name) for fid, name in family_choices
         ]
@@ -220,40 +231,52 @@ class CollectionFilter(django_filters.FilterSet):
             .distinct()
         )
         excluded_names_lower = {
-            "greenhouse", 
-            "interiors", 
-            "trial bed", 
-            "unknown", 
+            "greenhouse",
+            "interiors",
+            "trial bed",
+            "unknown",
             "visitor center"
         } if exclude_hidden_gardens else set()
 
         self.form.fields["garden_name"].choices = [
-            (g, g) for g in garden_choices 
+            (g, g) for g in garden_choices
             if g and g.lower() not in excluded_names_lower
         ]
 
+        # Attach HTMX attributes so selecting a name triggers an endpoint request
+        self.form.fields["garden_name"].widget.attrs.update({
+            "hx-get": reverse_lazy("plants:get-garden-code"),
+            "hx-target": "#id_garden_code",
+            "hx-swap": "outerHTML",
+        })
+
         # Habit / exposure / water regime
         habit_choices = (
-            Species.objects.order_by("habit").values_list("habit", flat=True).distinct()
+            Species.objects.order_by("habit").values_list(
+                "habit", flat=True).distinct()
         )
-        self.form.fields["habits"].choices = [(h, h) for h in habit_choices if h]
+        self.form.fields["habits"].choices = [
+            (h, h) for h in habit_choices if h]
 
         exposure_choices = (
             Species.objects.order_by("exposure")
             .values_list("exposure", flat=True)
             .distinct()
         )
-        self.form.fields["exposures"].choices = [(e, e) for e in exposure_choices if e]
+        self.form.fields["exposures"].choices = [
+            (e, e) for e in exposure_choices if e]
 
         water_choices = (
             Species.objects.order_by("water_regime")
             .values_list("water_regime", flat=True)
             .distinct()
         )
-        self.form.fields["water_needs"].choices = [(w, w) for w in water_choices if w]
+        self.form.fields["water_needs"].choices = [
+            (w, w) for w in water_choices if w]
 
         # Bloom months
-        self.form.fields["bloom_months"].choices = [(v, v) for _, v in MONTHS.items()]
+        self.form.fields["bloom_months"].choices = [
+            (v, v) for _, v in MONTHS.items()]
 
         # Flower colors: split, strip, unique, sorted
         raw_colors = (
@@ -268,7 +291,8 @@ class CollectionFilter(django_filters.FilterSet):
             split_colors.extend([c.strip() for c in s.split(",") if c.strip()])
 
         unique_colors = sorted(list(OrderedDict.fromkeys(split_colors)))
-        self.form.fields["flower_colors"].choices = [(c, c) for c in unique_colors]
+        self.form.fields["flower_colors"].choices = [
+            (c, c) for c in unique_colors]
 
         # Memorial people
         people = (
@@ -276,7 +300,8 @@ class CollectionFilter(django_filters.FilterSet):
             .values_list("commemoration_person", flat=True)
             .distinct()
         )
-        self.form.fields["memorial_person"].choices = [(p, p) for p in people if p]
+        self.form.fields["memorial_person"].choices = [
+            (p, p) for p in people if p]
 
         # Widget class tweaks
         for field in self.form.fields.values():
