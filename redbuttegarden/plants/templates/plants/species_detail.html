@@ -105,7 +105,7 @@
       <div class="col-md-6 main-image text-center mt-5 mt-md-0">
         {% if images %}
           {% image images.first.image max-500x500 as main_img %}
-          <img src="{{ main_img.url }}" width="{{ main_img.width }}" height="{{ main_img.height }}" alt="{{ main_img.alt }}" onclick="openModal();currentSlide(1)" class="hover-shadow cursor" />
+          <img src="{{ main_img.url }}" width="{{ main_img.width }}" height="{{ main_img.height }}" alt="{{ main_img.alt }}" onclick="openModal();currentSlide(1)" class="hover-shadow cursor img-fluid" />
         {% else %}
           <picture>
             <source srcset="{% static 'redbuttegarden/img/Image_Coming_Soon.webp' %}" type="image/webp" />
@@ -131,14 +131,15 @@
       </div>
 
       <div id="myModal" class="modal">
-        <span class="close cursor" onclick="closeModal()">&times;</span>
-        <div class="modal-content mb-5">
-          {% for species_image in images %}
+        <div class="modal-content">
+            <span class="close cursor" onclick="closeModal()">&times;</span>
+            
+            {% for species_image in images %}
             <div class="mySlides text-center">
-              <div class="numbertext">{{ forloop.counter }} / {{ images|length }}</div>
-              {% image species_image.image original %}
+                <div class="numbertext">{{ forloop.counter }} / {{ images|length }}</div>
+                {% image species_image.image original %}
             </div>
-          {% endfor %}
+            {% endfor %}
 
           <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
           <a class="next" onclick="plusSlides(1)">&#10095;</a>

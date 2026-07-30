@@ -26,7 +26,7 @@ function showSlides(n) {
     const copyrightText = document.getElementsByClassName("copyright-text");
     const copyrightDisplay = document.getElementById("copyright-display");
 
-    if (n > slides.length) {slideIndex = 1}
+    if (n > slides.length) { slideIndex = 1 }
 
     for (i = 0; i < slides.length; i++) {
         slides[i].style.display = "none";
@@ -37,6 +37,17 @@ function showSlides(n) {
 
     slides[slideIndex - 1].style.display = "block";
     images[slideIndex - 1].className += " active";
+
+    // Automatically scroll the thumbnail container to keep the active image in view
+    let activeThumbnail = document.querySelector(".demo.active");
+    if (activeThumbnail) {
+        activeThumbnail.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "center"
+        });
+    }
+
     captionDisplay.innerHTML = captionText[slideIndex - 1].innerHTML;
     copyrightDisplay.innerHTML = copyrightText[slideIndex - 1].innerHTML;
 }
