@@ -33,9 +33,16 @@
                 <span class="fw-bold">Cultivar:</span> {{ species.cultivar }}
               </div>
             {% endif %}
-            <div>
-              <span class="fw-bold">Habit:</span> {{ species.habit }}
-            </div>
+            {% if species.label_range_text %}
+              <div>
+                <span class="fw-bold">Origin:</span> {{ species.label_range_text }}
+              </div>
+            {% endif %}
+            {% if species.habit %}
+              <div>
+                <span class="fw-bold">Habit:</span> {{ species.habit }}
+              </div>
+            {% endif %}
             {% if species.water_regime %}
               <div>
                 <span class="fw-bold">Water Needs:</span> {{ species.water_regime }}
