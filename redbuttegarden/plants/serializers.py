@@ -141,11 +141,9 @@ class CollectionSerializer(serializers.ModelSerializer):
             }
         )
 
-        genus, _ = Genus.objects.update_or_create(
+        genus, _ = Genus.objects.get_or_create(
             name=genus_data["name"],
-            defaults={
-                "family": family
-            }
+            family=family
         )
         species, _ = Species.objects.update_or_create(
             genus=genus,
