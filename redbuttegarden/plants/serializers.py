@@ -67,6 +67,7 @@ class SpeciesSerializer(serializers.ModelSerializer):
             "bloom_time",
             "plant_size",
             "flower_color",
+            "label_range_text",
             "utah_native",
             "plant_select",
             "deer_resist",
