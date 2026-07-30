@@ -170,8 +170,10 @@
     {% if collections_table %}
       <div id="species-collections" class="row mt-4 mt-lg-5">
         <div class="col-12">
-          <a href="{% url 'plants:plant-map' %}?species_full_name={{ species.full_name|urlencode }}" class="btn btn-outline-primary btn-sm">View on Map</a>
-          <h4>Collections</h4>
+            {% if has_geolocation %}
+              <a href="{% url 'plants:plant-map' %}?species_full_name={{ species.full_name|urlencode }}" class="btn btn-outline-primary btn-sm">View on Map</a>
+            {% endif %}
+            <h4>Collections</h4>
           <div class="table-responsive">
             {% render_table collections_table %}
           </div>

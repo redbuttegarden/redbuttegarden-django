@@ -462,6 +462,8 @@ def species_detail(request, species_id):
         "garden"
     )
     collections_table = None
+    has_geolocation = False
+
     if species_collections.exists():
         collections_table = CollectionTable(
             species_collections, exclude=("species",)
@@ -474,6 +476,13 @@ def species_detail(request, species_id):
                 "silent": True,
             },
         ).configure(collections_table)
+
+        # Check if at least one collection has a linked location with non-null latitude and longitude
+        has_geolocation = species_collections.filter(
+            location__isnull=False,
+            location__latitude__isnull=False,
+            location__longitude__isnull=False
+        ).exists()
 
     # Check if there are any BloomEvents associated with the species
     today_local = timezone.localdate()
@@ -488,6 +497,7 @@ def species_detail(request, species_id):
             "in_bloom": in_bloom,
             "images": species_images,
             "collections_table": collections_table,
+            "has_geolocation": has_geolocation,
         },
     )
 
