@@ -192,6 +192,6 @@
   <script src="{% static 'plants/js/lightbox-modal.js' %}"></script>
   <script src="{% static 'plants/js/name_styling.js' %}"></script>
   <script>
-    document.getElementById('full-name').innerHTML = style_full_name('{{ species.full_name|safe }}')
+    document.getElementById('full-name').innerHTML = style_full_name('{{ species.full_name|escapejs }}')
   </script>
 {% endblock %}

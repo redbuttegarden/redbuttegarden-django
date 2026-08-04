@@ -58,6 +58,6 @@
     <script src="{% static 'plants/js/collection_detail_map.js' %}"></script>
     <script src="{% static 'plants/js/name_styling.js' %}"></script>
     <script>
-        document.getElementById("full-name").innerHTML = style_full_name("{{ collection.species.full_name|safe }}");
+        document.getElementById("full-name").innerHTML = style_full_name("{{ collection.species.full_name|escapejs }}");
     </script>
 {% endblock %}
