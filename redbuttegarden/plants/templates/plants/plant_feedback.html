@@ -25,7 +25,7 @@
             <form action="{% url 'plants:collection-feedback' collection_id %}" method="post">
                 {% csrf_token %}
                 {{ form }}
-                <div class="h-captcha" data-sitekey="{{ HCAPTCHA_SITE_KEY }}"></div>
+                <div class="h-captcha" data-sitekey="{{ hcaptcha_site_key }}"></div>
 
                 <button type="submit" class="btn btn-primary">Submit</button>
                 <button type="reset" class="btn btn-light">Reset Form</button>
