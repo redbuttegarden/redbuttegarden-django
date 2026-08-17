@@ -74,7 +74,7 @@ setuptools==78.1.1
 simplejson==3.19.3
 six==1.16.0
 soupsieve==2.8.4
-sqlparse==0.5.4
+sqlparse==0.6.0
 tablib==3.1.0
 TatSu==5.8.3
 telepath==0.3.1
