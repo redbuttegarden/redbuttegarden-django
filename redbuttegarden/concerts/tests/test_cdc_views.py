@@ -1,10 +1,16 @@
+import html
+from types import SimpleNamespace
+from unittest.mock import patch
+
 import pytest
 from django.contrib.auth.models import Group
+from django.template.loader import render_to_string
 from django.urls import reverse
 
 from wagtail.models import Page, PageViewRestriction
 
 from concerts.models import ConcertDonorClubPortalPage
+from concerts.services.image_probe import ImageProbeResult
 
 
 @pytest.fixture
@@ -150,3 +156,112 @@ def test_active_cdc_member_portal_hides_profile_link_when_temporarily_disabled(c
     assert response.status_code == 200
     assert reverse('concerts:cdc-profile') not in content
     assert 'Summer Concert Lineup' not in content
+
+
+def test_check_image_url_returns_placeholder_for_invalid_input(client) -> None:
+    """Invalid query parameters fail closed without starting a network probe."""
+
+    with patch("concerts.views.probe_public_image_url") as probe:
+        response = client.get(
+            reverse("concerts:check-img"),
+            {"image_url": "http://", "concert_name": "Concert"},
+        )
+
+    assert response.status_code == 200
+    assert b'class="placeholder w-100 h-100"' in response.content
+    assert b'aria-hidden="true"' in response.content
+    assert b"<img" not in response.content
+    probe.assert_not_called()
+
+
+def test_check_image_url_requires_explicit_http_scheme(client) -> None:
+    """A hostname without an explicit safe scheme does not start a probe."""
+
+    with patch("concerts.views.probe_public_image_url") as probe:
+        response = client.get(
+            reverse("concerts:check-img"),
+            {"image_url": "example.com/image.jpg", "concert_name": "Concert"},
+        )
+
+    assert response.status_code == 200
+    assert b'class="placeholder w-100 h-100"' in response.content
+    probe.assert_not_called()
+
+
+def test_check_image_url_returns_placeholder_when_probe_fails(client) -> None:
+    """A rejected or unavailable resource still gives HTMX swappable markup."""
+
+    with patch("concerts.views.probe_public_image_url", return_value=None):
+        response = client.get(
+            reverse("concerts:check-img"),
+            {"image_url": "https://example.com/image.jpg", "concert_name": "Concert"},
+        )
+
+    assert response.status_code == 200
+    assert b'class="placeholder w-100 h-100"' in response.content
+
+
+def test_check_image_url_escapes_final_url_and_concert_name(client) -> None:
+    """The successful image fragment autoescapes all reflected values."""
+
+    final_url = 'https://cdn.example.com/image.jpg?label="onerror=alert(1)'
+    concert_name = '"><script>alert(1)</script>'
+    with patch(
+        "concerts.views.probe_public_image_url",
+        return_value=ImageProbeResult(final_url=final_url),
+    ):
+        response = client.get(
+            reverse("concerts:check-img"),
+            {"image_url": "https://example.com/image.jpg", "concert_name": concert_name},
+        )
+
+    content = response.content.decode()
+    assert response.status_code == 200
+    assert 'src="https://cdn.example.com/image.jpg?label=&quot;onerror=alert(1)"' in content
+    assert 'referrerpolicy="no-referrer"' in content
+    assert "<script>" not in content
+    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in content
+
+
+def test_check_image_url_uses_accessible_fallback_for_blank_concert_name(client) -> None:
+    """A missing optional concert name still produces meaningful alt text."""
+
+    with patch(
+        "concerts.views.probe_public_image_url",
+        return_value=ImageProbeResult(final_url="https://example.com/image.jpg"),
+    ):
+        response = client.get(
+            reverse("concerts:check-img"),
+            {"image_url": "https://example.com/image.jpg", "concert_name": ""},
+        )
+
+    assert response.status_code == 200
+    assert b'alt="Concert promo art for this concert"' in response.content
+
+
+def test_ticket_card_url_encodes_htmx_query_parameters() -> None:
+    """Reserved characters cannot add parameters to the HTMX image request."""
+
+    ticket = SimpleNamespace(
+        image_url="https://example.com/image.jpg?existing=1&injected=2",
+        name="Band & Guests = Great",
+        begin="7:00 PM",
+        doors="6:00 PM",
+        ticket_count=2,
+    )
+    content = html.unescape(
+        render_to_string(
+            "concerts/includes/cdc_concert_ticket_cards.html",
+            {
+                "id": "test",
+                "count": 1,
+                "button_text": "Tickets",
+                "tickets_dict": {"ticket": ticket},
+            },
+        )
+    )
+
+    assert (
+        'hx-get="/concerts/api/check-img/?image_url=https%3A%2F%2Fexample.com%2Fimage.jpg%3Fexisting%3D1%26injected%3D2'
+        '&concert_name=Band%20%26%20Guests%20%3D%20Great"'
+    ) in content

@@ -14,7 +14,7 @@
                 <div class="row g-0">
                     <div class="col-md-4">
                         <div class="h-100"
-                             hx-get="{% url 'concerts:check-img' %}?image_url={{ ticket_info.image_url }}&concert_name={{ ticket_info.name }}"
+                             hx-get="{% url 'concerts:check-img' %}?image_url={{ ticket_info.image_url|urlencode:"" }}&amp;concert_name={{ ticket_info.name|urlencode:"" }}"
                              hx-trigger="load"
                              hx-swap="outerHTML">
                             <div class="placeholder-wave w-100 h-100">

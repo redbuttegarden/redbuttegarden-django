@@ -1,11 +1,38 @@
+"""Forms used by the concerts application."""
+
+from __future__ import annotations
+
 import datetime
+from urllib.parse import urlsplit
 
 from django import forms
-from django.contrib.auth import get_user_model
+from django.core.validators import URLValidator
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.forms import WagtailAdminModelForm
 
 from .models import ConcertDonorClubPackage, Concert, ConcertDonorClubMember
+
+
+class ImageURLCheckForm(forms.Form):
+    """Validate inputs used by the HTMX concert image check."""
+
+    image_url = forms.URLField(
+        max_length=2048,
+        validators=[URLValidator(schemes=("http", "https"))],
+        assume_scheme="https",
+    )
+    concert_name = forms.CharField(max_length=300, required=False)
+
+    def clean_image_url(self) -> str:
+        """Return an explicitly HTTP(S) image URL with no embedded credentials."""
+
+        image_url: str = self.cleaned_data["image_url"]
+        submitted_url = self.data.get("image_url", "")
+        parsed = urlsplit(submitted_url)
+        if parsed.scheme.lower() not in {"http", "https"}:
+            raise forms.ValidationError("Enter an absolute HTTP(S) URL.")
+        if parsed.username is not None or parsed.password is not None:
+            raise forms.ValidationError("URL credentials are not allowed.")
+        return image_url
 
 
 class ConcertDonorClubMemberForm(forms.ModelForm):

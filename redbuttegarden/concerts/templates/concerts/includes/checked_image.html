@@ -1,0 +1,5 @@
+{% if image_url %}
+    <img class="img-fluid rounded-start" src="{{ image_url }}" alt="Concert promo art for {{ concert_name }}" referrerpolicy="no-referrer">
+{% else %}
+    <div class="placeholder w-100 h-100" aria-hidden="true"><div class="placeholder col-12 h-100 w-100 rounded-1"></div></div>
+{% endif %}

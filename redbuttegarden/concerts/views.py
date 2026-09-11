@@ -1,7 +1,10 @@
+"""Views and administrative viewsets for the concerts application."""
+
+from __future__ import annotations
+
 import csv
 import datetime
 import logging
-import requests
 from collections.abc import Mapping
 from urllib.parse import urlparse
 
@@ -13,7 +16,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group
 from django.db import IntegrityError
 from django.db.models import Count
-from django.http import Http404, JsonResponse, HttpResponse, StreamingHttpResponse
+from django.http import Http404, HttpRequest, JsonResponse, HttpResponse, StreamingHttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, path
 from django.utils import timezone
@@ -26,12 +29,13 @@ from wagtail.admin.viewsets.base import ViewSetGroup, ViewSet
 from wagtail.admin.viewsets.model import ModelViewSet
 
 from concerts.forms import ConcertDonorClubPackageForm, UserAndConcertDonorClubMemberCreationForm, \
-    ConcertDonorClubMemberForm
+    ConcertDonorClubMemberForm, ImageURLCheckForm
 from concerts.models import Concert, ConcertDonorClubPackage, ConcertDonorClubMember, Ticket, OAuth2Token, \
     ConcertDonorClubMemberGroup
 from concerts.permissions import IsInAPIGroup
 from concerts.serializers import ConcertSerializer, ConcertDonorClubPackageSerializer, ConcertDonorClubMemberSerializer, \
     TicketSerializer
+from concerts.services.image_probe import probe_public_image_url
 from concerts.utils.constant_contact import oauth
 from concerts.utils.cdc_view_utils import summarize_tickets
 from concerts.utils.utils import is_cdc_profile_enabled
@@ -469,25 +473,25 @@ def concert_detail_tickets_view(request, concert_pk):
     return render(request, 'concerts/concert_donor_club_tickets.html', context)
 
 
-def check_image_url(request):
-    """
-    Check if the Etix band image will actually load
-    Annoyingly, Etix returns a 200 status code when requesting an image
-    url that doesn't load so instead we have to check the header content
-    length to check if the image actually exists
-    """
-    image_url = request.GET.get('image_url')
-    concert_name = request.GET.get('concert_name')
-    response = requests.head(image_url)
+def check_image_url(request: HttpRequest) -> HttpResponse:
+    """Render an image fragment only when its public URL passes a safe probe."""
 
-    # HTMX won't swap content if we return 204
-    if not 'Content-Length' in response.headers or response.headers['Content-Length'] == '0':
-        # Image won't load so replace it with a placeholder that doesn't use an animation
-        return HttpResponse(
-            '<div class="placeholder w-100 h-100"><div class="placeholder col-12 h-100 w-100 rounded-1"></div></div>')
-    else:
-        return HttpResponse(
-            f'<img class="img-fluid rounded-start" src="{image_url}" alt="Concert promo art for {concert_name}">')
+    form = ImageURLCheckForm(request.GET)
+    image_url = None
+    concert_name = "this concert"
+    if form.is_valid():
+        concert_name = form.cleaned_data["concert_name"] or concert_name
+        probe_result = probe_public_image_url(form.cleaned_data["image_url"])
+        if probe_result is not None:
+            image_url = probe_result.final_url
+
+    # A 200 placeholder lets HTMX replace the loading animation on every
+    # validation or network failure.
+    return render(
+        request,
+        "concerts/includes/checked_image.html",
+        {"image_url": image_url, "concert_name": concert_name},
+    )
 
 
 class Echo:
