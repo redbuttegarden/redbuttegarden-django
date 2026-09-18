@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from plants.models import Collection
 from plants.tests.utils import get_collection
-from plants.views import collection_results
+from plants.views import collection_results, plant_map_view
 
 
 class PlantSearchViewTestCase(TestCase):
@@ -427,3 +427,107 @@ class CollectionResultsRedirectTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.has_header("Location"))
         self.assertTemplateUsed(response, "plants/includes/_results_container.html")
+
+
+class PlantMapRedirectTestCase(TestCase):
+    """Verify plant-map canonical redirects are limited to allowed URLs."""
+
+    def test_canonical_redirect_uses_cleaned_allowed_url(self) -> None:
+        """A dirty query string redirects to its cleaned map URL."""
+
+        url = reverse("plants:plant-map")
+
+        response = self.client.get(url, {"scientific_name": " Acer "})
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], f"{url}?scientific_name=Acer")
+
+    def test_unsafe_redirect_urls_fall_through_to_render(self) -> None:
+        """External and backslash-confusable paths render without redirecting."""
+
+        unsafe_paths = (
+            "//evil.example/plant-map/",
+            "https://evil.example/plant-map/",
+            "/\\evil.example/plant-map/",
+        )
+
+        for path in unsafe_paths:
+            with self.subTest(path=path):
+                request = RequestFactory().get(
+                    reverse("plants:plant-map"),
+                    {"scientific_name": " Acer "},
+                )
+                request.path = path
+
+                with self.assertTemplateUsed("plants/collection_map.html"):
+                    response = plant_map_view(request)
+
+                self.assertEqual(response.status_code, 200)
+                self.assertFalse(response.has_header("Location"))
+
+    def test_secure_request_rejects_http_redirect_url(self) -> None:
+        """An HTTPS request does not redirect to a same-host HTTP URL."""
+
+        url = reverse("plants:plant-map")
+        request = RequestFactory().get(
+            url,
+            {"scientific_name": " Acer "},
+            secure=True,
+        )
+        request.path = f"http://{request.get_host()}{url}"
+
+        response = plant_map_view(request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.has_header("Location"))
+
+    def test_external_url_query_value_remains_in_local_redirect(self) -> None:
+        """An external-looking filter remains encoded local query data."""
+
+        url = reverse("plants:plant-map")
+
+        response = self.client.get(
+            url,
+            {"scientific_name": " //evil.example "},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response["Location"],
+            f"{url}?scientific_name=%2F%2Fevil.example",
+        )
+
+    def test_clean_and_empty_querystrings_do_not_redirect(self) -> None:
+        """Canonical and absent map filters render without redirecting."""
+
+        url = reverse("plants:plant-map")
+
+        for params in ({"scientific_name": "Acer"}, {}):
+            with self.subTest(params=params):
+                response = self.client.get(url, params)
+
+                self.assertEqual(response.status_code, 200)
+                self.assertFalse(response.has_header("Location"))
+
+    def test_htmx_request_does_not_redirect(self) -> None:
+        """An HTMX map request skips query-string canonicalization."""
+
+        response = self.client.get(
+            reverse("plants:plant-map"),
+            {"scientific_name": " Acer "},
+            HTTP_HX_REQUEST="true",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.has_header("Location"))
+
+    def test_post_does_not_redirect(self) -> None:
+        """A non-GET map request does not enter canonical redirect handling."""
+
+        response = self.client.post(
+            reverse("plants:plant-map"),
+            {"scientific_name": " Acer "},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.has_header("Location"))

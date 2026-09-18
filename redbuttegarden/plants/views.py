@@ -400,7 +400,9 @@ def collections_geojson(request):
     return JsonResponse(get_feature_collection(qs), safe=False)
 
 
-def plant_map_view(request):
+def plant_map_view(request: HttpRequest) -> HttpResponse:
+    """Render the filtered plant map with safe query-string canonicalization."""
+
     mapbox_api_token = getattr(settings, "MAPBOX_API_TOKEN", None)
 
     # Use the same filterset contract as list view
@@ -421,7 +423,13 @@ def plant_map_view(request):
         if cleaned.urlencode() != request.GET.urlencode():
             url = request.path
             qs = cleaned.urlencode()
-            return HttpResponseRedirect(f"{url}?{qs}" if qs else url)
+            redirect_url = f"{url}?{qs}" if qs else url
+            if url_has_allowed_host_and_scheme(
+                redirect_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure(),
+            ):
+                return HttpResponseRedirect(redirect_url)
 
     return render(
         request,
