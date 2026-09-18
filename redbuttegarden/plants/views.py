@@ -10,10 +10,17 @@ from django.core.mail import EmailMessage
 from django.core.paginator import PageNotAnInteger, EmptyPage
 from django.db import IntegrityError
 from django.db.models import Q
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.middleware.csrf import get_token
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_GET
 from requests import HTTPError
 from urllib.parse import urlencode
@@ -616,7 +623,28 @@ def _coerce_positive_int(value, default=1):
     return value if value > 0 else default
 
 
-def collection_results(request):
+def _is_safe_local_url(url: str, *, require_https: bool) -> bool:
+    """Return whether a URL is a root-relative path without an external host."""
+
+    return (
+        url.startswith("/")
+        and not url.startswith("//")
+        and url_has_allowed_host_and_scheme(
+            url,
+            allowed_hosts=set(),
+            require_https=require_https,
+        )
+    )
+
+
+def collection_results(request: HttpRequest) -> HttpResponse:
+    """Render filtered collection results using only safe local request URLs."""
+
+    request_path = request.path
+    require_https = request.is_secure()
+    if not _is_safe_local_url(request_path, require_https=require_https):
+        return HttpResponseBadRequest("Invalid request path.")
+
     # HTMX detection
     is_htmx = (
         request.headers.get("HX-Request") == "true"
@@ -628,10 +656,12 @@ def collection_results(request):
     if request.method == "GET" and not is_htmx and request.GET:
         cleaned = clean_querydict(request.GET)
         if cleaned.urlencode() != request.GET.urlencode():
-            url = request.path
+            url = request_path
             qs = cleaned.urlencode()
             if qs:
                 url = f"{url}?{qs}"
+            if not _is_safe_local_url(url, require_https=require_https):
+                return HttpResponseBadRequest("Invalid redirect URL.")
             return HttpResponseRedirect(url)
 
     mode = request.GET.get("mode", "list")
@@ -652,7 +682,7 @@ def collection_results(request):
         "mode": mode,
         "show_mode_toggle": True,
         "htmx_enabled": (mode == "list"),
-        "clear_url": f"{request.path}?mode={mode}",
+        "clear_url": f"{request_path}?mode={mode}",
         "table_template": "plants/collection_list_table.html",
     }
 

@@ -1,10 +1,11 @@
 from urllib.parse import urlencode
 
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
 from plants.models import Collection
 from plants.tests.utils import get_collection
+from plants.views import collection_results
 
 
 class PlantSearchViewTestCase(TestCase):
@@ -332,3 +333,97 @@ class PlantSearchViewTestCase(TestCase):
         # Should return 1 since only plants 3 has 'don smith' in their vernacular_name or cultivar name
         json_response = self._get_geojson({"common_name": "don smith"})
         self.assertEqual(len(json_response["features"]), 1)
+
+
+class CollectionResultsRedirectTestCase(TestCase):
+    """Verify collection-result redirects remain local and preserve request behavior."""
+
+    def test_canonical_redirect_uses_cleaned_local_url(self) -> None:
+        """A dirty query string redirects to its cleaned local URL."""
+
+        url = reverse("plants:collection-results")
+
+        response = self.client.get(url, {"scientific_name": " Acer "})
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], f"{url}?scientific_name=Acer")
+
+    def test_clean_querystring_does_not_redirect(self) -> None:
+        """An already canonical query string renders without redirecting."""
+
+        response = self.client.get(
+            reverse("plants:collection-results"),
+            {"scientific_name": "Acer"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.has_header("Location"))
+
+    def test_empty_querystring_does_not_redirect(self) -> None:
+        """A request without query parameters renders without redirecting."""
+
+        response = self.client.get(reverse("plants:collection-results"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.has_header("Location"))
+
+    def test_post_does_not_redirect(self) -> None:
+        """A non-GET request does not enter canonical redirect handling."""
+
+        response = self.client.post(
+            reverse("plants:collection-results"),
+            {"scientific_name": " Acer "},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.has_header("Location"))
+
+    def test_external_url_query_value_remains_in_local_redirect(self) -> None:
+        """An external-looking query value remains encoded local query data."""
+
+        url = reverse("plants:collection-results")
+
+        response = self.client.get(
+            url,
+            {"scientific_name": " //evil.example "},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response["Location"],
+            f"{url}?scientific_name=%2F%2Fevil.example",
+        )
+
+    def test_unsafe_request_paths_are_rejected_without_a_redirect(self) -> None:
+        """Unsafe request path variants return 400 without a redirect target."""
+
+        unsafe_paths = (
+            "//evil.example/collections/results/",
+            "https://evil.example/collections/results/",
+            "/\\evil.example/collections/results/",
+        )
+
+        for path in unsafe_paths:
+            with self.subTest(path=path):
+                request = RequestFactory().get(reverse("plants:collection-results"))
+                request.path = path
+
+                response = collection_results(request)
+
+                self.assertEqual(response.status_code, 400)
+                self.assertFalse(response.has_header("Location"))
+
+    def test_htmx_request_skips_querystring_canonicalization(self) -> None:
+        """An HTMX request renders its partial without canonical redirection."""
+
+        url = reverse("plants:collection-results")
+
+        response = self.client.get(
+            url,
+            {"scientific_name": " Acer "},
+            HTTP_HX_REQUEST="true",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.has_header("Location"))
+        self.assertTemplateUsed(response, "plants/includes/_results_container.html")
