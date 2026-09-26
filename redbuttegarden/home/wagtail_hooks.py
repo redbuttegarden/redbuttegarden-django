@@ -1,15 +1,85 @@
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.urls import reverse_lazy
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin.rich_text.converters.html_to_contentstate import (
     InlineStyleElementHandler,
 )
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
+from wagtail.admin.userbar import BaseItem, ContentCheckerItem
+from wagtail.models import Page
 from wagtail.snippets.models import register_snippet
 
 from home.views import RBGHoursViewSet
+
+
+class RBGContentCheckerItem(ContentCheckerItem):
+    """Extend Wagtail's native checker with a focused ambiguous-link rule."""
+
+    def get_axe_run_only(self, request: HttpRequest) -> list[str]:
+        """Return native rule IDs plus the RBG link-text rule."""
+
+        return [*super().get_axe_run_only(request), "rbg-link-text-quality"]
+
+    def get_axe_custom_rules(self, request: HttpRequest) -> list[dict]:
+        """Return native Axe rules plus the RBG link selector."""
+
+        return [
+            *super().get_axe_custom_rules(request),
+            {
+                "id": "rbg-link-text-quality",
+                "impact": "moderate",
+                "selector": "a[href]",
+                "tags": ["best-practice"],
+                "any": ["check-rbg-link-text"],
+                "enabled": True,
+            },
+        ]
+
+    def get_axe_custom_checks(self, request: HttpRequest) -> list[dict]:
+        """Return native checks plus exact ambiguous-link text options."""
+
+        return [
+            *super().get_axe_custom_checks(request),
+            {
+                "id": "check-rbg-link-text",
+                "options": {
+                    "antipattern": r"^(?:click here|here|more)$",
+                },
+            },
+        ]
+
+    def get_axe_messages(self, request: HttpRequest) -> dict:
+        """Return native messages plus editorial guidance for ambiguous links."""
+
+        return {
+            **super().get_axe_messages(request),
+            "rbg-link-text-quality": {
+                "error_name": _("Ambiguous link text found"),
+                "help_text": _("Describe where the link goes instead"),
+            },
+        }
+
+    class Media:
+        js = ("admin/js/rbg_content_checks.js",)
+
+
+@hooks.register("construct_wagtail_userbar")
+def customise_content_checker(
+    request: HttpRequest,
+    items: list[BaseItem],
+    page: Page | None,
+) -> None:
+    """Replace Wagtail's checker while preserving editor-mode behavior."""
+
+    items[:] = [
+        RBGContentCheckerItem(in_editor=item.in_editor)
+        if isinstance(item, ContentCheckerItem)
+        else item
+        for item in items
+    ]
 
 
 @hooks.register("insert_global_admin_js")

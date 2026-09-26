@@ -7,7 +7,7 @@
 
     <!-- meta tags for SEO and indexing -->
     <meta name="description"
-          content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.title }}{% endif %}">
+          content="{% if request.is_preview %}{{ page.search_description }}{% elif page.search_description %}{{ page.search_description }}{% else %}{{ page.title }}{% endif %}">
     <meta name="author" content="Red Butte Garden">
     <!-- Facebook Domain Verification -->
     <meta name="facebook-domain-verification" content="7xf5nzx39bpdnc9taftqhsn1zzvr2e">
