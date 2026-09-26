@@ -225,6 +225,32 @@ class ConcertBlock(blocks.StructBlock):
 
     class Meta:
         icon = "music"
+        form_layout = blocks.BlockGroup(
+            children=[
+                blocks.BlockGroup(
+                    ["band_img", "band_name", "band_info"],
+                    heading="Concert content",
+                ),
+                blocks.BlockGroup(
+                    ["concert_dates", "gates_time", "show_time"],
+                    heading="Dates and times",
+                ),
+                blocks.BlockGroup(
+                    ["member_price", "public_price", "ticket_url"],
+                    heading="Ticketing",
+                ),
+            ],
+            settings=[
+                "wave",
+                "hidden",
+                "on_sale",
+                "virtual",
+                "canceled",
+                "postponed",
+                "sold_out",
+                "available_until",
+            ],
+        )
 
 
 class SimpleConcertBlock(blocks.StructBlock):

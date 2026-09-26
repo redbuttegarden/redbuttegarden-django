@@ -1,6 +1,7 @@
 import logging
 
 from datetime import date
+from typing import Any
 from django import forms
 from django.conf import settings
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -14,7 +15,7 @@ from wagtail.admin.panels import InlinePanel
 from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, re_path
 from wagtail.fields import StreamField
-from wagtail.models import Orderable
+from wagtail.models import Orderable, Revision
 from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
@@ -196,7 +197,9 @@ class JournalPage(AbstractBase):
         context['next_post'] = self.get_next_post()
         return context
 
-    def save_revision(self, *args, **kwargs):
+    def save_revision(self, *args: Any, **kwargs: Any) -> Revision:
+        """Create a revision after applying missing seasonal defaults once."""
+
         if self.get_parent().slug == 'whats-blooming-now' and self.banner is None:
             # Get the appropriate banner based on the current month
             season = get_season(date.today())
@@ -209,10 +212,11 @@ class JournalPage(AbstractBase):
             try:
                 banner = banner_query[0]
                 self.banner = banner
-            except IndexError as e:
-                logger.error('[!] Failed to find seasonal banner for Journal Page: ', e)
-            except TypeError as e:
-                logger.error('[!] Failed to find seasonal banner for Journal Page: ', e)
+            except (IndexError, TypeError) as error:
+                logger.error(
+                    "[!] Failed to find seasonal banner for Journal Page: %s",
+                    error,
+                )
         if not self.authors.all():
             self.authors.add(self.owner)
         return super().save_revision(*args, **kwargs)

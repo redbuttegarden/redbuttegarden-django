@@ -1,4 +1,5 @@
 import json
+from unittest.mock import patch
 from django.contrib.auth.models import Group
 from wagtail.models import Page
 from wagtail.test.utils import WagtailPageTests, get_user_model
@@ -49,3 +50,33 @@ class JournalInstanceTests(WagtailPageTests):
              'body': streamfield([]),
              'bottom_button_info': streamfield([])}
         ))
+
+    def test_repeated_revision_saves_do_not_duplicate_default_author(self):
+        page = JournalPage(
+            title="Autosave journal page",
+            owner=self.user,
+            body=json.dumps([]),
+        )
+        self.journal_index.add_child(instance=page)
+
+        page.save_revision()
+        page.save_revision()
+
+        self.assertEqual(list(page.authors.all()), [self.user])
+
+    def test_missing_default_banner_does_not_prevent_revision(self):
+        self.journal_index.slug = "whats-blooming-now"
+        self.journal_index.save()
+        page = JournalPage(
+            title="Draft without default banner",
+            owner=self.user,
+            body=json.dumps([]),
+        )
+        self.journal_index.add_child(instance=page)
+
+        with patch("journal.models.Image.objects.filter") as image_filter:
+            image_filter.return_value.search.return_value = []
+            revision = page.save_revision()
+
+        self.assertIsNotNone(revision.pk)
+        self.assertIsNone(page.banner)

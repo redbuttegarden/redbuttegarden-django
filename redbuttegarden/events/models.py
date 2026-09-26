@@ -164,19 +164,19 @@ class ImageRow(blocks.StructBlock):
 
 
 BLOCK_TYPES = [
-    ("button", ButtonBlock()),
+    ("button", ButtonBlock(group=_("Calls to action"))),
     (
         "green_heading",
-        Heading(classname="full title", help_text=_("Text will be green and centered")),
+        Heading(classname="full title", help_text=_("Text will be green and centered"), group=_("Text")),
     ),
-    ("emphatic_text", EmphaticText(required=False, help_text="Red italic text")),
-    ("paragraph", AlignedParagraphBlock(required=True, classname="paragraph")),
-    ("multi_column_paragraph", MultiColumnAlignedParagraphBlock()),
-    ("image", ImageBlock()),
-    ("image_link_list", ImageLinkList()),
-    ("html", blocks.RawHTMLBlock(required=False)),
-    ("image_list", ListWithImagesBlock(required=False)),
-    ("image_row", ImageRow()),
+    ("emphatic_text", EmphaticText(required=False, help_text="Red italic text", group=_("Text"))),
+    ("paragraph", AlignedParagraphBlock(required=True, classname="paragraph", group=_("Text"))),
+    ("multi_column_paragraph", MultiColumnAlignedParagraphBlock(group=_("Text"))),
+    ("image", ImageBlock(group=_("Media"))),
+    ("image_link_list", ImageLinkList(group=_("Lists and cards"))),
+    ("html", blocks.RawHTMLBlock(required=False, group=_("Advanced"))),
+    ("image_list", ListWithImagesBlock(required=False, group=_("Lists and cards"))),
+    ("image_row", ImageRow(group=_("Media"))),
 ]
 
 

@@ -52,7 +52,9 @@ class LinkBlock(blocks.StructBlock):
         icon = "link"
         label = "Link"
 
-    def clean(self, value):
+    def clean(self, value: blocks.StructValue) -> blocks.StructValue:
+        """Validate complete destinations while allowing incomplete draft links."""
+
         cleaned = super().clean(value)
 
         is_internal = bool(cleaned.get("internal_page"))
@@ -65,7 +67,11 @@ class LinkBlock(blocks.StructBlock):
             or cleaned.get("route_kwargs_json")
         )
 
-        if sum([is_internal, is_external, is_named, is_routable]) != 1:
+        destination_count = sum([is_internal, is_external, is_named, is_routable])
+        if self.is_deferred_validation and destination_count == 0:
+            return cleaned
+
+        if destination_count != 1:
             raise StructBlockValidationError(
                 {
                     "internal_page": ValidationError(
@@ -76,7 +82,13 @@ class LinkBlock(blocks.StructBlock):
 
         # If routable mode, enforce required fields + JSON validation/normalization
         if is_routable:
-            if not cleaned.get("routable_page") or not cleaned.get("route_name"):
+            if (
+                not self.is_deferred_validation
+                and (
+                    not cleaned.get("routable_page")
+                    or not cleaned.get("route_name")
+                )
+            ):
                 raise StructBlockValidationError(
                     {
                         "route_name": ValidationError(

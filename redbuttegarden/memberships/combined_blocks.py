@@ -24,35 +24,35 @@ from home.models import (
 )
 
 CONTENT_BLOCKS = [
-    ("carousel", LinkedCarouselBlock()),
-    ("pricing_card", PricingCardBlock()),
-    ("button", ButtonBlock()),
-    ("custom_heading", HeadingBlock(help_text=_('Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text'))),
+    ("carousel", LinkedCarouselBlock(group=_("Media"))),
+    ("pricing_card", PricingCardBlock(group=_("Lists and cards"))),
+    ("button", ButtonBlock(group=_("Calls to action"))),
+    ("custom_heading", HeadingBlock(group=_("Text"), help_text=_('Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text'))),
     (
         "heading",
         Heading(
             classname="full title",
-            help_text=_("Text will be green and centered"),
+            help_text=_("Text will be green and centered"), group=_("Text"),
         ),
     ),
     (
         "emphatic_text",
         EmphaticText(
             classname="full title",
-            help_text=_("Text will be red, italic and centered"),
+            help_text=_("Text will be red, italic and centered"), group=_("Text"),
         ),
     ),
-    ("paragraph", AlignedParagraphBlock(required=True, classname="paragraph")),
-    ("multi_column_paragraph", MultiColumnAlignedParagraphBlock()),
-    ("image", ImageBlock(help_text=_("Centered image"))),
-    ("html", blocks.RawHTMLBlock()),
-    ("dropdown_image_list", ImageListDropdownInfo()),
-    ("dropdown_button_list", ButtonListDropdownInfo()),
-    ("card_info_list", ImageListCardInfo()),
-    ("image_info_list", ImageInfoList()),
-    ("image_link_list", ImageLinkList()),
-    ("three_column_dropdown_info_panel", ThreeColumnDropdownInfoPanel()),
-    ("membership_widget", MembershipWidgetBlock()),
+    ("paragraph", AlignedParagraphBlock(required=True, classname="paragraph", group=_("Text"))),
+    ("multi_column_paragraph", MultiColumnAlignedParagraphBlock(group=_("Text"))),
+    ("image", ImageBlock(help_text=_("Centered image"), group=_("Media"))),
+    ("html", blocks.RawHTMLBlock(group=_("Advanced"))),
+    ("dropdown_image_list", ImageListDropdownInfo(group=_("Lists and cards"))),
+    ("dropdown_button_list", ButtonListDropdownInfo(group=_("Lists and cards"))),
+    ("card_info_list", ImageListCardInfo(group=_("Lists and cards"))),
+    ("image_info_list", ImageInfoList(group=_("Lists and cards"))),
+    ("image_link_list", ImageLinkList(group=_("Lists and cards"))),
+    ("three_column_dropdown_info_panel", ThreeColumnDropdownInfoPanel(group=_("Lists and cards"))),
+    ("membership_widget", MembershipWidgetBlock(group=_("Advanced"))),
 ]
 
 BOOTSTRAP_GAP_CHOICES = [
@@ -79,22 +79,22 @@ COLUMN_WIDTH_CHOICES = [
 
 
 class ContentStreamBlock(blocks.StreamBlock):
-    pricing_card = PricingCardBlock()
-    arousel = LinkedCarouselBlock()
-    button = ButtonBlock()
-    custom_heading = HeadingBlock()
-    heading = Heading()
-    emphatic_text = EmphaticText()
-    paragraph = AlignedParagraphBlock()
-    multi_column_paragraph = MultiColumnAlignedParagraphBlock()
-    image = ImageBlock()
-    html = blocks.RawHTMLBlock()
-    dropdown_image_list = ImageListDropdownInfo()
-    dropdown_button_list = ButtonListDropdownInfo()
-    card_info_list = ImageListCardInfo()
-    image_info_list = ImageInfoList()
-    image_link_list = ImageLinkList()
-    three_column_dropdown_info_panel = ThreeColumnDropdownInfoPanel()
+    pricing_card = PricingCardBlock(group=_("Lists and cards"))
+    arousel = LinkedCarouselBlock(group=_("Media"))
+    button = ButtonBlock(group=_("Calls to action"))
+    custom_heading = HeadingBlock(group=_("Text"))
+    heading = Heading(group=_("Text"))
+    emphatic_text = EmphaticText(group=_("Text"))
+    paragraph = AlignedParagraphBlock(group=_("Text"))
+    multi_column_paragraph = MultiColumnAlignedParagraphBlock(group=_("Text"))
+    image = ImageBlock(group=_("Media"))
+    html = blocks.RawHTMLBlock(group=_("Advanced"))
+    dropdown_image_list = ImageListDropdownInfo(group=_("Lists and cards"))
+    dropdown_button_list = ButtonListDropdownInfo(group=_("Lists and cards"))
+    card_info_list = ImageListCardInfo(group=_("Lists and cards"))
+    image_info_list = ImageInfoList(group=_("Lists and cards"))
+    image_link_list = ImageLinkList(group=_("Lists and cards"))
+    three_column_dropdown_info_panel = ThreeColumnDropdownInfoPanel(group=_("Lists and cards"))
 
     class Meta:
         label = "Content"

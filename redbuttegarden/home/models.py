@@ -1,5 +1,6 @@
 import json
 import logging
+from typing import Any
 
 from django import forms
 from django.apps import apps
@@ -42,6 +43,7 @@ from wagtail.models import (
     DraftStateMixin,
     RevisionMixin,
     PreviewableMixin,
+    Revision,
     TranslatableMixin,
     Collection,
 )
@@ -121,6 +123,23 @@ class ImageInfo(blocks.StructBlock):
     additional_info = SpeciesAutolinkRichTextBlock(
         help_text=_("Text displayed below tan background element"), required=False
     )
+
+    class Meta:
+        form_layout = blocks.BlockGroup(
+            children=[
+                blocks.BlockGroup(
+                    ["image", "title", "subtitle"], heading="Image overlay"
+                ),
+                blocks.BlockGroup(
+                    ["info_title", "info_subtitle", "additional_info"],
+                    heading="Information",
+                ),
+                blocks.BlockGroup(
+                    ["tan_bg_info", "tan_bg_button_text", "tan_bg_button_url"],
+                    heading="Highlight panel",
+                ),
+            ]
+        )
 
 
 class ImageInfoList(blocks.StructBlock):
@@ -600,6 +619,32 @@ class SingleThreeColumnDropdownInfoPanel(blocks.StructBlock):
         )
     )
 
+    class Meta:
+        form_layout = blocks.BlockGroup(
+            children=[
+                blocks.BlockGroup(
+                    ["col_one_header", "col_two_header", "col_three_header"],
+                    heading="Headers",
+                ),
+                blocks.BlockGroup(
+                    ["col_one_top_info", "col_two_top_info", "col_three_top_info"],
+                    heading="Top content",
+                ),
+                blocks.BlockGroup(
+                    ["middle_info", "button"], heading="Expanded content"
+                ),
+                blocks.BlockGroup(
+                    [
+                        "col_one_bottom_info",
+                        "col_two_bottom_info",
+                        "col_three_bottom_info",
+                    ],
+                    heading="Bottom content",
+                ),
+            ],
+            settings=["background_color", "class_info_subheaders"],
+        )
+
 
 class ThreeColumnDropdownInfoPanel(blocks.StructBlock):
     list_items = blocks.ListBlock(
@@ -642,13 +687,14 @@ class TwoColumnBlock(blocks.StructBlock):
 class GeneralPage(AbstractBase):
     body = StreamField(
         block_types=[
-            ("button", ButtonBlock()),
-            ("custom_heading", HeadingBlock(help_text=_('Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text'))),
+            ("button", ButtonBlock(group=_("Calls to action"))),
+            ("custom_heading", HeadingBlock(group=_("Text"), help_text=_('Headings must be used sequentially. In other words, if you want to use an h3 it must appear after an h2 and be part of the same context/section. Do not use heading tags (e.g. h2, h3) to emphasize text'))),
             (
                 "heading",
                 Heading(
                     classname="full title",
                     help_text=_("Text will be green and centered"),
+                    group=_("Text"),
                 ),
             ),
             (
@@ -656,21 +702,22 @@ class GeneralPage(AbstractBase):
                 EmphaticText(
                     classname="full title",
                     help_text=_("Text will be red, italic and centered"),
+                    group=_("Text"),
                 ),
             ),
-            ("paragraph", AlignedParagraphBlock(required=True, classname="paragraph")),
-            ("multi_column_paragraph", MultiColumnAlignedParagraphBlock()),
-            ("image", ImageBlock(help_text=_("Centered image"))),
-            ("image_carousel", ImageCarousel()),
-            ("linked_carousel", LinkedCarouselBlock()),
-            ("html", blocks.RawHTMLBlock()),
-            ("dropdown_image_list", ImageListDropdownInfo()),
-            ("dropdown_button_list", ButtonListDropdownInfo()),
-            ("card_info_list", ImageListCardInfo()),
-            ("image_info_list", ImageInfoList()),
-            ("image_link_list", ImageLinkList()),
-            ("three_column_dropdown_info_panel", ThreeColumnDropdownInfoPanel()),
-            ("newsletters", NewsletterListBlock()),
+            ("paragraph", AlignedParagraphBlock(required=True, classname="paragraph", group=_("Text"))),
+            ("multi_column_paragraph", MultiColumnAlignedParagraphBlock(group=_("Text"))),
+            ("image", ImageBlock(help_text=_("Centered image"), group=_("Media"))),
+            ("image_carousel", ImageCarousel(group=_("Media"))),
+            ("linked_carousel", LinkedCarouselBlock(group=_("Media"))),
+            ("html", blocks.RawHTMLBlock(group=_("Advanced"))),
+            ("dropdown_image_list", ImageListDropdownInfo(group=_("Lists and cards"))),
+            ("dropdown_button_list", ButtonListDropdownInfo(group=_("Lists and cards"))),
+            ("card_info_list", ImageListCardInfo(group=_("Lists and cards"))),
+            ("image_info_list", ImageInfoList(group=_("Lists and cards"))),
+            ("image_link_list", ImageLinkList(group=_("Lists and cards"))),
+            ("three_column_dropdown_info_panel", ThreeColumnDropdownInfoPanel(group=_("Lists and cards"))),
+            ("newsletters", NewsletterListBlock(group=_("Advanced"))),
         ],
         blank=False,
     )
@@ -793,6 +840,7 @@ class GeneralIndexPage(AbstractBase):
                 Heading(
                     classname="full title",
                     help_text=_("Text will be green and centered"),
+                    group=_("Text"),
                 ),
             ),
             (
@@ -800,16 +848,17 @@ class GeneralIndexPage(AbstractBase):
                 EmphaticText(
                     classname="full title",
                     help_text=_("Text will be red, italic and centered"),
+                    group=_("Text"),
                 ),
             ),
-            ("paragraph", AlignedParagraphBlock(required=True, classname="paragraph")),
-            ("image", ImageBlock()),
-            ("html", blocks.RawHTMLBlock()),
-            ("dropdown_image_list", ImageListDropdownInfo()),
-            ("dropdown_button_list", ButtonListDropdownInfo()),
-            ("image_link_list", ImageLinkList()),
-            ("button", ButtonBlock()),
-            ("button_row", ButtonRow()),
+            ("paragraph", AlignedParagraphBlock(required=True, classname="paragraph", group=_("Text"))),
+            ("image", ImageBlock(group=_("Media"))),
+            ("html", blocks.RawHTMLBlock(group=_("Advanced"))),
+            ("dropdown_image_list", ImageListDropdownInfo(group=_("Lists and cards"))),
+            ("dropdown_button_list", ButtonListDropdownInfo(group=_("Lists and cards"))),
+            ("image_link_list", ImageLinkList(group=_("Lists and cards"))),
+            ("button", ButtonBlock(group=_("Calls to action"))),
+            ("button_row", ButtonRow(group=_("Calls to action"))),
         ],
         blank=True,
     )
@@ -1280,14 +1329,19 @@ class RetailPartnerPage(AbstractBase):
         context["partner_rows"] = rows
         return context
 
-    def save_revision(self, *args, **kwargs):
+    def save_revision(self, *args: Any, **kwargs: Any) -> Revision:
+        """Create a revision after applying a missing default banner once."""
+
         if self.banner is None:
             banner_query = Image.objects.filter().search("Retail Partner Banner")
             try:
                 banner = banner_query[0]
                 self.banner = banner
-            except IndexError as e:
-                logger.error("[!] Failed to find banner for Retail Partner Page: ", e)
+            except IndexError as error:
+                logger.error(
+                    "[!] Failed to find banner for Retail Partner Page: %s",
+                    error,
+                )
         return super().save_revision(*args, **kwargs)
 
 

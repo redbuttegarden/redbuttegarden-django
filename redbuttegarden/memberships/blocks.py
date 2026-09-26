@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 from wagtail import blocks
+from wagtail.blocks import StructBlockValidationError
 from wagtail.images.blocks import ImageChooserBlock
 
 from .wcag import contrast_ratio
@@ -98,6 +99,36 @@ class LinkedCarouselSlideBlock(blocks.StructBlock):
         required=False, default=False, help_text="Open the link in a new tab"
     )
 
+    def clean(self, value: blocks.StructValue) -> blocks.StructValue:
+        """Require linked image slides to have one destination and useful alt text."""
+
+        cleaned = super().clean(value)
+        link_page = cleaned.get("link_page")
+        link_url = cleaned.get("link_url")
+
+        if link_page and link_url:
+            raise StructBlockValidationError(
+                {
+                    "link_url": ValidationError(
+                        "Choose either an internal page or an external URL, not both."
+                    )
+                }
+            )
+
+        if self.is_deferred_validation:
+            return cleaned
+
+        if (link_page or link_url) and not (cleaned.get("alt_text") or "").strip():
+            raise StructBlockValidationError(
+                {
+                    "alt_text": ValidationError(
+                        "Alt text is required when the image is a link."
+                    )
+                }
+            )
+
+        return cleaned
+
     class Meta:
         icon = "image"
         label = "Slide"
@@ -151,11 +182,19 @@ class PricingCardCTA(blocks.StructBlock):
         label="Open link in new tab",
     )
 
-    def clean(self, value):
+    def clean(self, value: blocks.StructValue) -> blocks.StructValue:
+        """Validate complete CTA pairs while allowing incomplete draft CTAs."""
+
         cleaned = super().clean(value)
         text = (cleaned.get("text") or "").strip()
         page = cleaned.get("page")
         url = cleaned.get("url")
+
+        if page and url:
+            raise ValidationError({"url": "Choose either Page or URL (not both)."})
+
+        if self.is_deferred_validation:
+            return cleaned
 
         if (page or url) and not text:
             raise ValidationError(
@@ -163,8 +202,6 @@ class PricingCardCTA(blocks.StructBlock):
             )
         if text and not (page or url):
             raise ValidationError({"page": "Choose a Page or URL for the button."})
-        if page and url:
-            raise ValidationError({"url": "Choose either Page or URL (not both)."})
         return cleaned
 
     class Meta:
@@ -355,6 +392,40 @@ class PricingCardDisplayOptions(blocks.StructBlock):
     class Meta:
         icon = "cog"
         label = "Display options"
+        form_layout = blocks.BlockGroup(
+            children=[
+                blocks.BlockGroup(
+                    ["width", "align", "margin_y", "padding"], heading="Layout"
+                ),
+                blocks.BlockGroup(
+                    ["variant", "border", "shadow", "border_width", "border_radius"],
+                    heading="Card appearance",
+                ),
+                blocks.BlockGroup(
+                    ["text_align", "heading_align", "heading_placement", "show_heading"],
+                    heading="Typography",
+                ),
+                blocks.BlockGroup(
+                    [
+                        "show_prices_section",
+                        "show_concert_section",
+                        "show_definitions_section",
+                        "prices_heading",
+                        "concert_heading",
+                        "definitions_heading",
+                        "show_maximums",
+                        "show_dividers",
+                        "definitions_layout",
+                    ],
+                    heading="Sections",
+                ),
+                blocks.BlockGroup(
+                    ["background_color", "border_color", "text_color", "heading_color"],
+                    heading="Colors",
+                ),
+            ],
+            settings=["anchor_id", "extra_classes"],
+        )
 
 
 class PricingCardBlock(blocks.StructBlock):
@@ -695,4 +766,41 @@ class PricingCardBlock(blocks.StructBlock):
         template = "blocks/pricing_card_block.html"
         icon = "list-ul"
         label = "Pricing / Options Card"
-
+        form_layout = blocks.BlockGroup(
+            children=[
+                "heading",
+                blocks.BlockGroup(
+                    [
+                        "first_cardholder_price",
+                        "additional_cardholder_price",
+                        "additional_cardholder_max",
+                        "guest_admission_price",
+                        "guest_admission_max",
+                    ],
+                    heading="Prices",
+                ),
+                blocks.BlockGroup(
+                    [
+                        "two_tickets_included",
+                        "four_tickets_price",
+                        "four_tickets_qualifier",
+                        "six_tickets_price",
+                        "six_tickets_qualifier",
+                        "concert_access_footer_note",
+                    ],
+                    heading="Concert upgrades",
+                ),
+                blocks.BlockGroup(
+                    [
+                        "membership_level_benefits_text",
+                        "cardholder_level_benefits_text",
+                        "primary_member_text",
+                        "additional_cardholders_text",
+                        "guests_text",
+                    ],
+                    heading="Membership definitions",
+                ),
+                "cta",
+            ],
+            settings=["display"],
+        )

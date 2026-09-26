@@ -1,4 +1,5 @@
 import json
+from unittest.mock import patch
 from django.contrib.auth.models import Group
 from wagtail.models import Page
 from wagtail.images import get_image_model
@@ -19,6 +20,39 @@ class TestRetailPartnerPage(WagtailPageTests):
         self.image = get_image_model().objects.create(
             title="Test image", file=get_test_image_file()
         )
+
+    def test_repeated_revision_saves_preserve_existing_banner(self):
+        page = RetailPartnerPage(
+            owner=self.user,
+            title="Autosave retail partner page",
+            banner=self.image,
+            body=json.dumps([]),
+            retail_partners=json.dumps([]),
+        )
+        Page.objects.get(slug="home").add_child(instance=page)
+
+        with patch("home.models.Image.objects.filter") as image_filter:
+            page.save_revision()
+            page.save_revision()
+
+        image_filter.assert_not_called()
+        self.assertEqual(page.banner, self.image)
+
+    def test_missing_default_banner_does_not_prevent_revision(self):
+        page = RetailPartnerPage(
+            owner=self.user,
+            title="Draft retail partner page",
+            body=json.dumps([]),
+            retail_partners=json.dumps([]),
+        )
+        Page.objects.get(slug="home").add_child(instance=page)
+
+        with patch("home.models.Image.objects.filter") as image_filter:
+            image_filter.return_value.search.return_value = []
+            revision = page.save_revision()
+
+        self.assertIsNotNone(revision.pk)
+        self.assertIsNone(page.banner)
 
     def test_retail_partner_with_three_retail_partners(self):
         """
