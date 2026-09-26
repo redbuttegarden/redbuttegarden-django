@@ -6,7 +6,8 @@
         <div class="columns">
             <div class="column col-4">
                 {% image page.image max-300x300 as temp_image %}
-                <img src="{{ temp_image.url }}" alt=""/>
+                <img src="{{ temp_image.url }}" width="{{ temp_image.width }}" height="{{ temp_image.height }}"
+                     alt="{{ page.title }}"/>
             </div>
             <div class="column col-8">
                 <h1>

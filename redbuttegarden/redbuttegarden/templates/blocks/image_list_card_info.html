@@ -26,7 +26,7 @@
                     <div class="row h-100 g-0">
                         {% if list_item.image %}
                             <div class="col-3 mempic rounded-start">
-                                <img src="{{ list_item.image.file.url }}" alt="{{ list_item.image.alt }}">
+                                {% picture list_item.image format-{webp,avif,jpeg} width-{200,400} sizes="(max-width: 767px) 25vw, 15vw" class="img-fluid" loading="lazy" %}
                             </div>
                         {% endif %}
                         <div class="{% if list_item.image %}col-9{% else %}col-12{% endif %}">

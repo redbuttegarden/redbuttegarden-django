@@ -11,19 +11,20 @@
     <div id="poster-holder" class="row">
         {% for lineup in page.lineups %}
             <div class="col-4">
-                <div id="poster-outer-{{ forloop.counter0 }}" class="poster-outer collapsed"
-                     data-target="#{{ lineup.id }}" data-bs-toggle="collapse" href="#{{ lineup.id }}"
-                     aria-expanded="false" aria-controls="{{ lineup.id }}" role="button">
+                <button type="button" id="poster-outer-{{ forloop.counter0 }}" class="poster-outer collapsed hover"
+                        data-target="#{{ lineup.id }}" data-bs-toggle="collapse" data-bs-target="#{{ lineup.id }}"
+                        aria-expanded="false" aria-controls="{{ lineup.id }}">
                     {% image lineup.value.poster max-285x285 as poster %}
-                    <img class="poster-img" src="{{ poster.url }}" alt="{{ poster.alt }}"/>
+                    <img class="poster-img" src="{{ poster.url }}" width="{{ poster.width }}" height="{{ poster.height }}"
+                         alt="{{ lineup.value.poster.contextual_alt_text }}" loading="lazy"/>
 
-                    <div class="eventinfo">
-                        <div class="eventname">{{ lineup.value.year|stringformat:"s" }}</div>
-                    </div>
-                    <div class="poster-inner">
-                        <div id="innermost-{{ forloop.counter0 }}" class="poster-innermost"></div>
-                    </div>
-                </div>
+                    <span class="eventinfo d-block">
+                        <span class="eventname d-block">{{ lineup.value.year|stringformat:"s" }}</span>
+                    </span>
+                    <span class="poster-inner d-block">
+                        <span id="innermost-{{ forloop.counter0 }}" class="poster-innermost d-block"></span>
+                    </span>
+                </button>
 
                 <div id="{{ lineup.id }}" class="poster-info-pane panel-border collapse">
                     <div class="tan-bg">

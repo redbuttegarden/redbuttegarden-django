@@ -6,7 +6,7 @@
     <div class="d-flex align-items-center h-100 carousel-inner">
       {% for item in carousel_images %}
         <div class="carousel-item text-center {% if forloop.first %}active{% endif %}">
-          <img src="{{ item.rendition.url }}" width="{{ item.rendition.width }}" height="{{ item.rendition.height }}" alt="{{ item.image.title|default:'' }}" class="img-fluid" loading="lazy" />
+          <img src="{{ item.rendition.url }}" width="{{ item.rendition.width }}" height="{{ item.rendition.height }}" alt="{{ item.image.contextual_alt_text }}" class="img-fluid" loading="lazy" />
         </div>
       {% endfor %}
     </div>
