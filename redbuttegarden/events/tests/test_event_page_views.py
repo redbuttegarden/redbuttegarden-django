@@ -3,7 +3,7 @@ from django.test import TestCase
 from wagtail.models import Page
 from wagtail.images.tests.utils import Image, get_test_image_file
 
-from events.models import EventIndexPage, EventPage
+from events.models import EventGeneralPage, EventIndexPage, EventPage
 
 
 class TestEventIndex(TestCase):
@@ -64,3 +64,61 @@ class TestEventPage(TestCase):
         response = self.client.get(event_page.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h1 class="event-page-title mt-5 mt-md-3">Event Page</h1>')
+
+
+class TestEventGeneralPage(TestCase):
+    """Verify event general pages use the shared optional banner markup."""
+
+    def setUp(self) -> None:
+        self.root_page = Page.objects.get(id=2)
+        self.user = get_user_model().objects.create_user(
+            "Event editor",
+            "event-editor@example.com",
+            "password",
+        )
+        self.event_index = EventIndexPage(
+            owner=self.user,
+            slug="general-event-index",
+            title="General Event Index",
+        )
+        self.root_page.add_child(instance=self.event_index)
+        self.event_index.save_revision().publish()
+
+    def _create_event_general_page(
+        self,
+        *,
+        banner: Image | None = None,
+    ) -> EventGeneralPage:
+        """Create and publish an event general page with an optional banner."""
+
+        page = EventGeneralPage(
+            owner=self.user,
+            slug="event-general-page",
+            title="Event General Page",
+            event_dates="December 10th",
+            banner=banner,
+        )
+        self.event_index.add_child(instance=page)
+        page.save_revision().publish()
+        return page
+
+    def test_page_with_banner_uses_shared_responsive_markup(self) -> None:
+        banner = Image.objects.create(
+            title="Event banner",
+            file=get_test_image_file(filename="event-banner.png"),
+        )
+        page = self._create_event_general_page(banner=banner)
+
+        response = self.client.get(page.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<div class="row text-center my-3">')
+        self.assertContains(response, 'class="img-fluid"')
+
+    def test_page_without_banner_renders_successfully(self) -> None:
+        page = self._create_event_general_page()
+
+        response = self.client.get(page.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Event General Page")
