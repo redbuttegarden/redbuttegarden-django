@@ -1,18 +1,25 @@
 {% load wagtailimages_tags %}
 
-<div id="image-link-list-{{ id }}" class="container-fluid d-flex flex-wrap justify-content-evenly">
+<div id="image-link-list-{{ id }}" class="container-fluid d-flex flex-wrap justify-content-evenly linked-thumbnail-grid">
     {% for image_item in value.list_items %}
-        <div class="p-1 mb-3">
-            <a href="{{ image_item.url }}" title="{% firstof image_item.url_title image_item.title %}">
-                <div class="img-link hover">
-                    {% image image_item.image original %}
-                    {% if image_item.title %}
-                        <div class="eventinfo">
-                            <div class="eventname">{{ image_item.title }}</div>
-                        </div>
-                    {% endif %}
-                </div>
-            </a>
-        </div>
+        {% with visible_title=image_item.title.strip accessible_title=image_item.url_title.strip %}
+            <div class="linked-thumbnail-card mb-3">
+                <a class="linked-thumbnail-link" href="{{ image_item.url }}" {% if not visible_title %}aria-label="{{ accessible_title }}"{% endif %}>
+                    <div class="img-link linked-thumbnail-media">
+                        {% comment %}
+                            Added blank alt attribute to image thumbnails since these are primarily to create a
+                            larger surface area for the page links and alt attributes would unnecessarily complicate
+                            page navigation for users using screen readers.
+                        {% endcomment %}
+                        {% picture image_item.image format-{webp,avif,jpeg} fill-385x385 alt="" loading="lazy" %}
+                        {% if visible_title %}
+                            <div class="eventinfo">
+                                <div class="eventname">{{ visible_title }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+        {% endwith %}
     {% endfor %}
 </div>

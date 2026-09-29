@@ -22,8 +22,22 @@ class TestJournalIndex(TestCase):
         self.root_page.add_child(instance=journal_index)
         journal_index.save_revision().publish()
 
+        journal_page = JournalPage(
+            owner=self.user,
+            slug='linked-journal-page',
+            title='Linked Journal Page',
+            thumbnail=self.image,
+        )
+        journal_index.add_child(instance=journal_page)
+        journal_page.save_revision().publish()
+
         response = self.client.get(journal_index.url, follow=True)
         self.assertEqual(response.status_code, 200)
+        html = response.content.decode('utf8')
+        self.assertIn('linked-thumbnail-grid', html)
+        self.assertIn('index-tile linked-thumbnail-card', html)
+        self.assertIn('class="linked-thumbnail-link"', html)
+        self.assertIn('index-thumbnail linked-thumbnail-media', html)
 
 
 class TestEventPage(TestCase):

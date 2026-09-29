@@ -2,7 +2,7 @@ from django.test import TestCase
 from wagtail.images import get_image_model
 from wagtail.images.tests.utils import get_test_image_file
 
-from home.models import ImageCarousel, ImageListCardInfo, ImageListDropdownInfo
+from home.models import ImageCarousel, ImageLinkList, ImageListCardInfo, ImageListDropdownInfo
 from memberships.blocks import LinkedCarouselBlock
 
 
@@ -91,6 +91,83 @@ class ImageBlockRenderingTests(TestCase):
 
         self.assertIn('alt="Carousel garden view"', html)
         self.assertNotIn('alt="Library title"', html)
+
+    def test_image_link_list_uses_shared_linked_thumbnail_classes(self) -> None:
+        block = ImageLinkList()
+        value = block.to_python(
+            {
+                "list_items": [
+                    {
+                        "title": "Visit the garden",
+                        "url": "https://example.com/visit/",
+                        "url_title": "",
+                        "image": self.image_value("", decorative=True),
+                    }
+                ]
+            }
+        )
+
+        html = block.render(value, context={"id": "links"})
+
+        self.assertIn("linked-thumbnail-grid", html)
+        self.assertIn('class="linked-thumbnail-card mb-3"', html)
+        self.assertIn('class="linked-thumbnail-link"', html)
+        self.assertIn('class="img-link linked-thumbnail-media"', html)
+        self.assertNotIn('class="img-link hover"', html)
+        self.assertIn(
+            '<div class="eventname">Visit the garden</div>',
+            html,
+        )
+        self.assertNotIn("aria-label=", html)
+
+    def test_titleless_image_link_uses_escaped_aria_label(self) -> None:
+        block = ImageLinkList()
+        value = block.to_python(
+            {
+                "list_items": [
+                    {
+                        "title": "",
+                        "url": "https://example.com/visit/",
+                        "url_title": 'Garden "hours" & tickets',
+                        "image": self.image_value("", decorative=True),
+                    }
+                ]
+            }
+        )
+
+        html = block.render(value, context={"id": "fallback-title"})
+
+        self.assertIn(
+            'aria-label="Garden &quot;hours&quot; &amp; tickets"',
+            html,
+        )
+        self.assertNotIn('class="eventname"', html)
+
+    def test_whitespace_image_link_title_uses_escaped_url_title(self) -> None:
+        block = ImageLinkList()
+        value = block.to_python(
+            {
+                "list_items": [
+                    {
+                        "title": "   ",
+                        "url": "https://example.com/visit/",
+                        "url_title": '  Garden "hours" & tickets  ',
+                        "image": self.image_value("", decorative=True),
+                    }
+                ]
+            }
+        )
+
+        html = block.render(
+            value,
+            context={"id": "whitespace-visible-title"},
+        )
+
+        self.assertIn(
+            'aria-label="Garden &quot;hours&quot; &amp; tickets"',
+            html,
+        )
+        self.assertNotIn('class="eventname"', html)
 
     def test_linked_carousel_is_bounded_and_preserves_explicit_alt(self) -> None:
         block = LinkedCarouselBlock()

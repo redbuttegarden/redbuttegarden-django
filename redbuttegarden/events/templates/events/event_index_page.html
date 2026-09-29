@@ -14,12 +14,12 @@
 
   <div class="row text-center">{{ page.intro|richtext }}</div>
 
-  <div class="d-flex flex-wrap justify-content-around">
+  <div class="d-flex flex-wrap justify-content-around linked-thumbnail-grid">
     {% for event in events %}
-      <div class="index-tile">
+      <div class="index-tile linked-thumbnail-card">
         {% with event=event.specific %}
-          <a class="hover" href="{% pageurl event %}">
-            <div class="index-thumbnail">
+          <a class="linked-thumbnail-link" href="{% pageurl event %}">
+            <div class="index-thumbnail linked-thumbnail-media">
               {% comment %}Added blank alt attribute to image thumbnails since these are primarily to create a larger surface area for the page links and alt attributes would unnecessarily complicate page navigation for users using screen readers.{% endcomment %}
               {% image event.thumbnail fill-385x385 alt='' %}
               <div class="eventinfo">
@@ -71,7 +71,7 @@
     {% endfor %}
   </div>
 
-  <div class="row mt-5">
+  <div class="row mt-5 linked-thumbnail-grid">
     {% for block in page.body %}
       {% if block.block_type == 'image' %}
         <div class="text-center">
@@ -80,9 +80,9 @@
       {% elif block.block_type == 'page_link' %}
         <!-- spage is just short for specific page -->
         {% with spage=block.value.specific %}
-          <div class="col-sm-4 page-link">
-            <a class="hover" href="{% pageurl spage %}">
-              <div class="index-thumbnail">
+          <div class="col-sm-4 page-link linked-thumbnail-card">
+            <a class="linked-thumbnail-link" href="{% pageurl spage %}">
+              <div class="index-thumbnail linked-thumbnail-media">
                 {% comment %}Added blank alt attribute to image thumbnails since these are primarily to create a larger surface area for the page links and alt attributes would unnecessarily complicate page navigation for users using screen readers.{% endcomment %}
                 {% image spage.thumbnail fill-385x385 alt='' %}
                 <div class="eventinfo">

@@ -19,8 +19,26 @@ class TestEventIndex(TestCase):
         self.root_page.add_child(instance=event_index)
         event_index.save_revision().publish()
 
+        event_page = EventPage(
+            owner=self.user,
+            slug='linked-event-page',
+            title='Linked Event Page',
+            location='Red Butte Garden',
+            event_dates='December 10th',
+            thumbnail=self.image,
+        )
+        event_index.add_child(instance=event_page)
+        event_page.save_revision().publish()
+        event_index.body = [('page_link', event_page)]
+        event_index.save_revision().publish()
+
         response = self.client.get('/event-index-page', follow=True)
         self.assertEqual(response.status_code, 200)
+        html = response.content.decode('utf8')
+        self.assertEqual(html.count('linked-thumbnail-grid'), 2)
+        self.assertEqual(html.count('linked-thumbnail-card'), 2)
+        self.assertEqual(html.count('linked-thumbnail-link'), 2)
+        self.assertEqual(html.count('linked-thumbnail-media'), 2)
 
 
 class TestEventPage(TestCase):

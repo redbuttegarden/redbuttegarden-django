@@ -16,12 +16,12 @@
 
     <hr class="my-3">
 
-    <div class="d-flex flex-wrap justify-content-around">
+    <div class="d-flex flex-wrap justify-content-around linked-thumbnail-grid">
         {% for post in posts %}
-            <div class="index-tile">
+            <div class="index-tile linked-thumbnail-card">
                 {% with post=post.specific %}
-                    <a class="hover" href="{% pageurl post %}">
-                        <div class="index-thumbnail">
+                    <a class="linked-thumbnail-link" href="{% pageurl post %}">
+                        <div class="index-thumbnail linked-thumbnail-media">
                             {% comment %}
                                 Added blank alt attribute to image thumbnails since these are primarily to create a
                                 larger surface area for the page links and alt attributes would unnecessarily complicate
