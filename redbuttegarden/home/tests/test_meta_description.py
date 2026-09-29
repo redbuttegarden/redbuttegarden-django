@@ -52,3 +52,19 @@ class MetaDescriptionTemplateTests(TestCase):
         html = self.render("base.html", is_preview=False)
 
         self.assertIn('content="A concise description"', html)
+
+    def test_base_has_one_skip_link_and_focusable_main_target(self) -> None:
+        html = self.render("base.html", is_preview=False)
+
+        self.assertEqual(
+            html.count('<a class="skip-main" href="#main">Skip to main content</a>'),
+            1,
+        )
+        self.assertIn('<main id="main" tabindex="-1">', html)
+        self.assertLess(html.index("<body"), html.index('class="skip-main"'))
+        self.assertLess(html.index('class="skip-main"'), html.index('id="rbg-nav"'))
+
+    def test_noscript_nav_does_not_duplicate_skip_link(self) -> None:
+        html = render_to_string("includes/navbar_noscript.html")
+
+        self.assertNotIn('class="skip-main"', html)

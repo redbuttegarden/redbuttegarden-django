@@ -66,6 +66,8 @@
 
 <body class="{% block body_class %}{% endblock %}">
 
+<a class="skip-main" href="#main">Skip to main content</a>
+
 {% wagtailuserbar %}
 {% tota11y %}
 
@@ -110,7 +112,7 @@
 
 {% block extra_includes %}{% endblock %}
 
-<main id="main">
+<main id="main" tabindex="-1">
     {% block abnormal_content %}
         <div id="rbgdefaultbody" class="container-xl p-4 p-lg-5">
             {% block content %}{% endblock %}
