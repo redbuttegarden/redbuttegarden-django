@@ -184,22 +184,48 @@ class ImageCarousel(blocks.StructBlock):
 
 
 class ImageLink(blocks.StructBlock):
+    """Link an image using visible title text or a fallback accessible name."""
+
     title = blocks.CharBlock(
         label="Title",
         max_length=200,
         required=False,
-        help_text=_("Visible text title that is overlayed on the image"),
+        help_text=_("Visible text title that is overlaid on the image"),
     )
     url = blocks.URLBlock(label="URL")
     url_title = blocks.CharBlock(
-        label="URL Title",
+        label="URL title",
         max_length=200,
-        required=True,
+        required=False,
         help_text=_(
-            "Screen reader title used to describe the link. This is not displayed visually but is important for accessibility."
+            "Required when Title is blank. Used as the link's accessible name."
         ),
     )
     image = ImageBlock()
+
+    def clean(self, value: blocks.StructValue) -> blocks.StructValue:
+        """Require an accessible link name when no visible title is provided."""
+
+        cleaned = super().clean(value)
+        title = (cleaned.get("title") or "").strip()
+        url_title = (cleaned.get("url_title") or "").strip()
+        cleaned["title"] = title
+        cleaned["url_title"] = url_title
+
+        # Permit incomplete work-in-progress drafts under Wagtail 7.4.
+        if self.is_deferred_validation:
+            return cleaned
+
+        if not title and not url_title:
+            raise blocks.StructBlockValidationError(
+                block_errors={
+                    "url_title": ValidationError(
+                        _("Provide a URL title when the visible Title is blank.")
+                    )
+                }
+            )
+
+        return cleaned
 
 
 class ImageLinkList(blocks.StructBlock):
