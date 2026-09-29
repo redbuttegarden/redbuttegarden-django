@@ -27,7 +27,7 @@ class AbstractBase(Page):
         on_delete=models.SET_NULL,
         related_name="+",
         help_text=_(
-            "You only need to add a thumbnail if this page is the child of a another page"
+            "You only need to add a thumbnail if this page is the child of another page. Thumbnails should be a minimum of 385x385px in size."
         ),
     )
     custom_css = models.ForeignKey(
