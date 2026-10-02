@@ -88,6 +88,7 @@ urlpatterns += [
     path("sitemap.xml", sitemap_index, name="sitemap-index"),
     path("sitemap-<str:section>.xml", sitemap_section, name="sitemap-section"),
     path("", include("home.urls", namespace="home")),
+    path("push/", include("push_notifications.urls", namespace="push_notifications")),
     # May need to temporarily comment out plants app urls to migrate fresh database
     path("plants/", include("plants.urls", namespace="plants")),
     path("accounts/", include("custom_user.urls", namespace="custom-user")),

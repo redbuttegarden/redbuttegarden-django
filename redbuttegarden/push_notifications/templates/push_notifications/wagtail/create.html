@@ -1,0 +1,9 @@
+{% extends "wagtailsnippets/snippets/create.html" %}
+
+{% block before_form %}
+  {% include "push_notifications/wagtail/includes/editor_guidance.html" %}
+{% endblock %}
+
+{% block actions %}
+  {% include "push_notifications/wagtail/includes/editor_actions.html" %}
+{% endblock %}

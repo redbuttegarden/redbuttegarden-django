@@ -196,9 +196,11 @@ resource "aws_s3_bucket_acl" "private_static_bucket" {
 resource "aws_cloudfront_cache_policy" "no_cache_with_csrf" {
   name = "NoCacheWithCSRF"
 
-  default_ttl = 1
-  max_ttl     = 1
-  min_ttl     = 1
+  # These routes include CSRF-bearing and preference responses.  A zero TTL
+  # prevents CloudFront from retaining a response even briefly.
+  default_ttl = 0
+  max_ttl     = 0
+  min_ttl     = 0
 
   parameters_in_cache_key_and_forwarded_to_origin {
     enable_accept_encoding_brotli = true
@@ -228,8 +230,79 @@ resource "aws_cloudfront_cache_policy" "no_cache_with_csrf" {
 
 }
 
+resource "aws_wafv2_web_acl" "push_rate_limit" {
+  name  = "${var.environment}-push-rate-limit"
+  scope = "CLOUDFRONT"
+
+  default_action {
+    allow {}
+  }
+
+  rule {
+    name     = "rate-limit-push-writes"
+    priority = 1
+
+    action {
+      block {}
+    }
+
+    statement {
+      rate_based_statement {
+        aggregate_key_type = "IP"
+        limit              = 100
+
+        scope_down_statement {
+          or_statement {
+            statement {
+              byte_match_statement {
+                field_to_match {
+                  uri_path {}
+                }
+                positional_constraint = "EXACTLY"
+                search_string         = "/push/subscriptions/"
+                text_transformation {
+                  priority = 0
+                  type     = "NONE"
+                }
+              }
+            }
+            statement {
+              byte_match_statement {
+                field_to_match {
+                  uri_path {}
+                }
+                positional_constraint = "EXACTLY"
+                search_string         = "/push/click/"
+                text_transformation {
+                  priority = 0
+                  type     = "NONE"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "${var.environment}-push-rate-limit"
+      # Sampled requests can contain subscription or click request details.
+      # Retain aggregate CloudWatch metrics without retaining samples.
+      sampled_requests_enabled = false
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "${var.environment}-push-web-acl"
+    sampled_requests_enabled   = false
+  }
+}
+
 resource "aws_cloudfront_distribution" "cdn" {
   aliases = ["${var.environment}.redbuttegarden.org"]
+  web_acl_id = aws_wafv2_web_acl.push_rate_limit.arn
 
   origin {
     domain_name = var.lambda_endpoint_url
@@ -247,6 +320,11 @@ resource "aws_cloudfront_distribution" "cdn" {
       name  = "X-Forwarded-Host"
       value = "${var.environment}.redbuttegarden.org"
     }
+
+    custom_header {
+      name  = "X-RBG-Push-Origin"
+      value = var.push_origin_header_secret
+    }
   }
 
   origin {
@@ -261,6 +339,15 @@ resource "aws_cloudfront_distribution" "cdn" {
     allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods = ["GET", "HEAD"]
     cache_policy_id        = "53a64cc9-dc83-47e0-80e1-68fcd20d45f9" # Custom Zappa-Django-Cache Policy
+  }
+
+  ordered_cache_behavior {
+    path_pattern           = "/push/*"
+    target_origin_id       = "code-bucket-origin"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS", "POST", "DELETE"]
+    cached_methods         = ["GET", "HEAD"]
+    cache_policy_id        = aws_cloudfront_cache_policy.no_cache_with_csrf.id
   }
 
   # Do not cache the staticfiles.json file

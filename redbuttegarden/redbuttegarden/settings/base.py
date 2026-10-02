@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "memberships",
     "monitoring",
     "plants",
+    "push_notifications",
     "redbuttegarden.apps.CustomUsersAppConfig",
     "search",
     "shop",
@@ -272,6 +273,24 @@ SPECTACULAR_SETTINGS = {
 }
 
 MAPBOX_API_TOKEN = os.environ.get("MAPBOX_API_TOKEN", None)
+
+# Web Push credentials are deployment secrets. The public key is deliberately
+# separate because it is embedded on the opt-in page.
+VAPID_PUBLIC_KEY = os.environ.get("VAPID_PUBLIC_KEY", "")
+VAPID_PRIVATE_KEY = os.environ.get("VAPID_PRIVATE_KEY", "")
+VAPID_CLAIMS_SUBJECT = os.environ.get("VAPID_CLAIMS_SUBJECT", "")
+PUSH_ALLOWED_ENDPOINT_HOSTS = tuple(
+    host.strip().lower()
+    for host in os.environ.get(
+        "PUSH_ALLOWED_ENDPOINT_HOSTS",
+        "fcm.googleapis.com,updates.push.services.mozilla.com,web.push.apple.com",
+    ).split(",")
+    if host.strip()
+)
+PUSH_REQUEST_TIMEOUT_SECONDS = int(os.environ.get("PUSH_REQUEST_TIMEOUT_SECONDS", "10"))
+PUSH_REQUESTS_PER_HOUR = int(os.environ.get("PUSH_REQUESTS_PER_HOUR", "30"))
+PUSH_DISPATCH_MAX_SECONDS = int(os.environ.get("PUSH_DISPATCH_MAX_SECONDS", "240"))
+PUSH_ORIGIN_HEADER_SECRET = os.environ.get("PUSH_ORIGIN_HEADER_SECRET", "")
 
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap5.html"
 

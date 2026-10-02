@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v6"; // bump on deploy
+const CACHE_VERSION = "v7"; // bump on deploy
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const DATA_CACHE = `data-${CACHE_VERSION}`;
 const PAGE_CACHE = `pages-${CACHE_VERSION}`;
@@ -42,6 +42,57 @@ self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
+});
+
+self.addEventListener("push", (event) => {
+  const payload = event.data ? event.data.json() : {};
+  if (!payload.title || !payload.notificationId) return;
+
+  event.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body || "",
+      icon: payload.icon || "/static/redbuttegarden/img/favicon/icon-192x192.png",
+      tag: payload.notificationId,
+      data: {
+        destinationPath: payload.destinationPath || "/",
+        clickEndpoint: payload.clickEndpoint || "/push/click/",
+        clickToken: payload.clickToken || "",
+      },
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  event.waitUntil((async () => {
+    const notificationData = event.notification.data || {};
+    const clickEndpoint = new URL(
+      notificationData.clickEndpoint || "/push/click/",
+      self.location.origin
+    );
+    if (notificationData.clickToken && clickEndpoint.origin === self.location.origin) {
+      await fetch(clickEndpoint.href, {
+        method: "POST",
+        credentials: "omit",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: notificationData.clickToken }),
+      }).catch(() => undefined);
+    }
+
+    const destination = new URL(
+      notificationData.destinationPath || "/",
+      self.location.origin
+    );
+    if (destination.origin !== self.location.origin) return;
+
+    const windows = await clients.matchAll({
+      type: "window",
+      includeUncontrolled: true,
+    });
+    const matching = windows.find((client) => client.url === destination.href);
+    return matching ? matching.focus() : clients.openWindow(destination.href);
+  })());
 });
 
 self.addEventListener("fetch", (event) => {

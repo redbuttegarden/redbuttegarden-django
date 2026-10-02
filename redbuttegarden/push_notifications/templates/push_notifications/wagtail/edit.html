@@ -1,0 +1,33 @@
+{% extends "wagtailsnippets/snippets/edit.html" %}
+
+{% block before_form %}
+  {% include "push_notifications/wagtail/includes/editor_guidance.html" %}
+  {% if notification_is_locked %}
+    <section class="help-block help-critical" role="alert" aria-labelledby="notification-locked-title">
+      <h2 id="notification-locked-title">This notification is {{ notification_status_label|lower }} and cannot be edited</h2>
+      <p>Its message and schedule are now read-only so the delivery history stays accurate.</p>
+    </section>
+  {% endif %}
+{% endblock %}
+
+{% block form_content %}
+  {{ block.super }}
+  {% if analytics_notification.status == "sent" or analytics_notification.status == "failed" %}
+    <section aria-labelledby="push-analytics-title" class="w-panel">
+      <h2 id="push-analytics-title">Analytics dashboard</h2>
+      <dl>
+        <dt>Active subscribers at send</dt><dd>{{ analytics_notification.subscriber_count_at_send }}</dd>
+        <dt>Accepted by push service</dt><dd>{{ analytics_notification.accepted_count }}{% if analytics_notification.accepted_rate is not None %} ({{ analytics_notification.accepted_rate|floatformat:1 }}%){% else %} (Not available){% endif %}</dd>
+        <dt>Clicks</dt><dd>{{ analytics_notification.click_count }}{% if analytics_notification.click_rate is not None %} ({{ analytics_notification.click_rate|floatformat:1 }}%){% else %} (Not available){% endif %}</dd>
+        <dt>Failed or expired</dt><dd>{{ analytics_notification.failure_count }}</dd>
+        <dt>Scheduled</dt><dd>{{ analytics_notification.scheduled_time|default:"Not scheduled" }}</dd>
+        <dt>Started</dt><dd>{{ analytics_notification.dispatch_started_at|default:"Not started" }}</dd>
+        <dt>Completed</dt><dd>{{ analytics_notification.sent_at|default:"Not completed" }}</dd>
+      </dl>
+    </section>
+  {% endif %}
+{% endblock %}
+
+{% block actions %}
+  {% include "push_notifications/wagtail/includes/editor_actions.html" %}
+{% endblock %}

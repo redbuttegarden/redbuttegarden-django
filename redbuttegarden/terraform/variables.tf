@@ -57,3 +57,8 @@ variable "cloudfront_origin_access_id" {
   description = "Cloudfront origin access identity ID"
   type        = string
 }
+variable "push_origin_header_secret" {
+  description = "Private CloudFront-to-origin header value required by push write endpoints."
+  type        = string
+  sensitive   = true
+}

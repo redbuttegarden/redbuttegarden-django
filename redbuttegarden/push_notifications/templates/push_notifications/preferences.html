@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notification preferences | Red Butte Garden{% endblock %}
+
+{% block meta_description %}
+  <meta name="description" content="Manage browser notifications from Red Butte Garden for seasonal updates, bloom alerts, and upcoming Garden events.">
+{% endblock %}
+
+{% block body_class %}push-preferences-page{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'push_notifications/css/preferences.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="push-preferences" aria-labelledby="push-preferences-title">
+    <div class="push-preferences__intro">
+      <p class="push-preferences__eyebrow">Stay connected to the Garden</p>
+      <h1 id="push-preferences-title">Garden notification preferences</h1>
+      <p class="push-preferences__lede">Choose whether this browser may receive seasonal updates, bloom alerts, and Garden events.</p>
+    </div>
+
+    <div class="push-preferences__card">
+      <div class="push-preferences__card-heading">
+        <svg class="push-preferences__icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+          <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M9.5 21h5" />
+        </svg>
+        <div>
+          <h2>Choose notifications for this browser</h2>
+          <p>We send occasional, timely updates—not a daily stream of messages.</p>
+        </div>
+      </div>
+
+      <dl class="push-preferences__details">
+        <div>
+          <dt>What you may receive</dt>
+          <dd>Seasonal news, bloom alerts, and upcoming Garden events.</dd>
+        </div>
+        <div>
+          <dt>Who receives them</dt>
+          <dd>Only visitors who choose to enable notifications in their browser.</dd>
+        </div>
+      </dl>
+
+      <div id="push-preferences-status" class="push-preferences__status" role="status" aria-live="polite"></div>
+      <div class="push-preferences__actions">
+        <button id="enable-push" class="push-preferences__button push-preferences__button--primary" type="button" aria-describedby="push-preferences-status">Enable notifications</button>
+        <button id="disable-push" class="push-preferences__button push-preferences__button--secondary" type="button" aria-describedby="push-preferences-status">Disable notifications</button>
+      </div>
+
+      <noscript>
+        <style>.push-preferences__actions { display: none; }</style>
+        <div class="push-preferences__noscript" role="note">
+          <h2>Notifications require JavaScript</h2>
+          <p>This browser needs JavaScript and Web Push support to manage Garden notifications. You can also <a href="/newsletter/">subscribe to our newsletter</a> for Garden news.</p>
+        </div>
+      </noscript>
+    </div>
+  </section>
+  {{ vapid_public_key|json_script:"push-vapid-public-key" }}
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  <script src="{% static 'push_notifications/js/preferences.js' %}"></script>
+{% endblock %}

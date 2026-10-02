@@ -1,0 +1,7 @@
+{% if notification_is_locked %}
+  <a class="button button-secondary" href="{{ notification_index_url }}">Back to notifications</a>
+{% else %}
+  <button type="submit" name="action-save-draft" value="1" class="button button-secondary">Save Draft</button>
+  <button type="submit" name="action-schedule" value="1" class="button button-primary">Schedule Notification</button>
+  <button type="submit" name="action-send-now" value="1" class="button button-secondary">Send Now</button>
+{% endif %}
