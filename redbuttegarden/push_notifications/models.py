@@ -89,6 +89,9 @@ class PushNotification(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        permissions = [
+            ("manage_push_notifications", "Can manage push notifications"),
+        ]
 
     def clean(self) -> None:
         """Enforce valid scheduling and immutable completed notification content."""

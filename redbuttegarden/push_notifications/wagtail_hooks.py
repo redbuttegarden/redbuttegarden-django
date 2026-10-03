@@ -4,17 +4,24 @@ from __future__ import annotations
 
 from typing import Any
 
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.db.models import QuerySet
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.urls import URLPattern
 from django.utils import timezone
 from wagtail import hooks
+from wagtail.admin.panels import ObjectList
 from wagtail.admin.ui.tables import UpdatedAtColumn
 from wagtail.snippets.models import register_snippet
+from wagtail.snippets.bulk_actions.delete import DeleteBulkAction
 from wagtail.snippets.views.snippets import CreateView, EditView, SnippetViewSet
 
 from .forms import PushNotificationForm, TERMINAL_STATUSES
 from .models import PushNotification
+from .permissions import PushNotificationPermissionPolicy
 
 
 class PushNotificationEditorViewMixin:
@@ -58,7 +65,10 @@ class PushNotificationEditorViewMixin:
             return HttpResponseBadRequest("Choose a notification action.")
 
         with transaction.atomic():
-            if form.instance.pk:
+            # UUID primary keys are assigned before an unsaved model instance
+            # reaches CreateView, so `_state.adding` is the reliable persisted
+            # record check here.
+            if not form.instance._state.adding:
                 current = PushNotification.objects.select_for_update().get(pk=form.instance.pk)
                 if current.status in TERMINAL_STATUSES:
                     # A scheduler claim may have happened after this editor opened the form.
@@ -86,7 +96,8 @@ class PushNotificationEditorViewMixin:
                 if hasattr(error, "message_dict"):
                     for field, messages in error.message_dict.items():
                         for message in messages:
-                            form.add_error(field if field in form.fields else None, message)
+                            form.add_error(
+                                field if field in form.fields else None, message)
                 else:
                     form.add_error(None, error)
                 return self.form_invalid(form)
@@ -109,11 +120,24 @@ class PushNotificationEditView(PushNotificationEditorViewMixin, EditView):
         return context
 
 
+class DisabledPushNotificationBulkDeleteAction(DeleteBulkAction):
+    """Block the globally registered snippet bulk-delete action for audit history."""
+
+    models = [PushNotification]
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Make bulk deletion unavailable even when the generic Wagtail route exists."""
+
+        raise Http404
+
+
 class PushNotificationViewSet(SnippetViewSet):
     """Configure the editor-facing history and edit experience."""
 
     model = PushNotification
-    form_class = PushNotificationForm
+    edit_handler = ObjectList(PushNotification.panels,
+                              base_form_class=PushNotificationForm)
+    permission_policy = PushNotificationPermissionPolicy(PushNotification)
     icon = "mail"
     menu_label = "Notifications"
     menu_order = 260
@@ -128,7 +152,8 @@ class PushNotificationViewSet(SnippetViewSet):
         "click_count",
         UpdatedAtColumn(),
     ]
-    list_filter = {"status": ["exact"], "scheduled_time": ["date"], "sent_at": ["date"]}
+    list_filter = {"status": ["exact"],
+                   "scheduled_time": ["date"], "sent_at": ["date"]}
     search_fields = ("title", "body")
     ordering = ("-created_at",)
     copy_view_enabled = False
@@ -140,5 +165,22 @@ class PushNotificationViewSet(SnippetViewSet):
     create_template_name = "push_notifications/wagtail/create.html"
     edit_template_name = "push_notifications/wagtail/edit.html"
 
+    def get_permissions_to_register(self) -> QuerySet[Permission]:
+        """Expose only the custom notification permission in Groups UI."""
+
+        content_type = ContentType.objects.get_for_model(self.model)
+        return Permission.objects.filter(
+            content_type=content_type,
+            codename="manage_push_notifications",
+        )
+
+    def get_urlpatterns(self) -> list[URLPattern]:
+        """Remove the destructive single-notification route from this viewset."""
+
+        return [
+            pattern for pattern in super().get_urlpatterns() if pattern.name != "delete"
+        ]
+
 
 register_snippet(PushNotificationViewSet)
+hooks.register("register_bulk_action", DisabledPushNotificationBulkDeleteAction)

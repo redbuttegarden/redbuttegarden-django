@@ -6,6 +6,7 @@ from datetime import timedelta
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import Permission
 from django.http import HttpResponse
 from django.template.loader import get_template
@@ -14,7 +15,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from push_notifications.forms import PushNotificationForm
-from push_notifications.models import PushNotification
+from push_notifications.models import DEFAULT_ICON_PATH, PushNotification
 from push_notifications.wagtail_hooks import (
     PushNotificationEditView,
     PushNotificationViewSet,
@@ -36,6 +37,26 @@ def form_data() -> dict[str, str]:
     }
 
 
+def create_notification_editor() -> AbstractBaseUser:
+    """Create a staff user authorized to add broadcast notifications."""
+
+    user = get_user_model().objects.create_user(
+        username="notification-create-editor",
+        email="notification-create@example.test",
+        password="password",
+        is_staff=True,
+    )
+    user.user_permissions.add(
+        Permission.objects.get(codename="access_admin"),
+        Permission.objects.get(
+            content_type__app_label="push_notifications",
+            content_type__model="pushnotification",
+            codename="manage_push_notifications",
+        )
+    )
+    return user
+
+
 def test_viewset_is_a_top_level_notifications_menu_item() -> None:
     """Notifications are directly available from Wagtail's main sidebar."""
 
@@ -44,6 +65,9 @@ def test_viewset_is_a_top_level_notifications_menu_item() -> None:
     assert viewset.add_to_admin_menu is True
     assert viewset.menu_label == "Notifications"
     assert viewset.menu_icon == "mail"
+    form_class = viewset.get_form_class()
+    assert issubclass(form_class, PushNotificationForm)
+    assert form_class().fields["icon_path"].required is False
 
 
 @pytest.mark.django_db
@@ -60,25 +84,54 @@ def test_wagtail_create_view_requires_an_authenticated_editor(client: Client) ->
 def test_wagtail_create_view_requires_csrf_for_an_authorized_editor() -> None:
     """The custom template/view does not bypass Django's CSRF protection."""
 
-    user = get_user_model().objects.create_user(
-        username="notification-editor",
-        email="notifications@example.test",
-        password="password",
-        is_staff=True,
-    )
-    user.user_permissions.add(
-        Permission.objects.get(
-            content_type__app_label="push_notifications",
-            content_type__model="pushnotification",
-            codename="add_pushnotification",
-        )
-    )
+    user = create_notification_editor()
     client = Client(enforce_csrf_checks=True)
     client.force_login(user)
 
     response = client.post(reverse("wagtailsnippets_push_notifications_pushnotification:add"), form_data())
 
     assert response.status_code == 403
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("action", "scheduled_time", "expected_status", "expect_scheduled_time"),
+    [
+        ("action-save-draft", "", PushNotification.Status.DRAFT, False),
+        (
+            "action-schedule",
+            (timezone.now() + timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M:%S"),
+            PushNotification.Status.SCHEDULED,
+            True,
+        ),
+        ("action-send-now", "", PushNotification.Status.SCHEDULED, True),
+    ],
+)
+def test_wagtail_create_actions_persist_editor_owned_states(
+    client: Client,
+    action: str,
+    scheduled_time: str,
+    expected_status: str,
+    expect_scheduled_time: bool,
+) -> None:
+    """Authorized CreateView posts persist each explicit notification action."""
+
+    client.force_login(create_notification_editor())
+
+    response = client.post(
+        reverse("wagtailsnippets_push_notifications_pushnotification:add"),
+        {**form_data(), "scheduled_time": scheduled_time, action: "1"},
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse("wagtailsnippets_push_notifications_pushnotification:list")
+    notification = PushNotification.objects.get()
+    assert notification.title == "Spring bloom alert"
+    assert notification.body == "The cherry blossoms are starting to bloom."
+    assert notification.destination_path == "/blooms"
+    assert notification.icon_path == DEFAULT_ICON_PATH
+    assert notification.status == expected_status
+    assert (notification.scheduled_time is not None) is expect_scheduled_time
 
 
 @pytest.mark.django_db
