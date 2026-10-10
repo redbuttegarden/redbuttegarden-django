@@ -9,7 +9,6 @@ from django.core.validators import (
     ValidationError,
     RegexValidator,
     validate_slug,
-    URLValidator,
 )
 from django.db import models
 from django.urls import reverse
@@ -52,6 +51,7 @@ from wagtail.telepath import register
 
 from home.abstract_models import AbstractBase
 from home.custom_fields import ChoiceArrayField
+from home.utils import build_instagram_gallery_item
 from memberships.blocks import LinkedCarouselBlock
 from plants.species_autolinks import (
     SpeciesAutoLinker,
@@ -59,6 +59,24 @@ from plants.species_autolinks import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class InstagramMedia(models.Model):
+    """Map an immutable Instagram media ID to its locally stored Wagtail image."""
+
+    external_id = models.CharField(max_length=255, unique=True)
+    image = models.OneToOneField(
+        Image,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="instagram_media_mapping",
+    )
+
+    def __str__(self) -> str:
+        """Return the immutable Instagram media identifier for admin displays."""
+
+        return self.external_id
 
 SPECIES_AUTOLINK_PARAGRAPH_FEATURES = [
     "h2",
@@ -1140,7 +1158,11 @@ class HomePage(AbstractBase):
         ),  # Arbitrary permission name; only superusers can access this
     ]
 
-    def get_context(self, request, *args, **kwargs):
+    def get_context(
+        self, request: Any, *args: Any, **kwargs: Any
+    ) -> dict[str, Any]:
+        """Return homepage context including safe Instagram gallery links."""
+
         context = super().get_context(request, **kwargs)
 
         if self.concert_page:
@@ -1168,10 +1190,9 @@ class HomePage(AbstractBase):
         )  # Get next 3 events
         context["upcoming_events"] = events
 
-        # Get social media images
         try:
             instagram_collection = Collection.objects.get(name="Instagram Data")
-        except Collection.DoesNotExist as e:
+        except Collection.DoesNotExist:
             instagram_collection = None
 
         if instagram_collection:
@@ -1180,32 +1201,14 @@ class HomePage(AbstractBase):
             ).order_by("-created_at")[:10]
 
             images_and_links = []
-            url_validator = URLValidator()
+            alt_text_occurrences: dict[str, int] = {}
+
             for image in social_media_images:
-                # Try to get permalink from image's description
-                try:
-                    permalink = image.description.split(" ")[0]
-                    url_validator(permalink)
-                except (IndexError,):
-                    logger.warning(
-                        f"Image {image.id} does not have a valid permalink in its description."
-                    )
-                    continue
-                except (ValidationError,) as e:
-                    logger.warning(f"Failed to validate URL: {permalink}\n\n{e}")
-                    continue
-
-                # Try to get the the caption from the image's description
-                try:
-                    caption = " ".join(image.description.split(" ")[1:])
-                except IndexError:
-                    logger.warning(
-                        f"Image {image.id} does not have a caption in its description."
-                    )
-                    caption = None
-
+                base_item = build_instagram_gallery_item(image)
+                occurrence = alt_text_occurrences.get(base_item.alt_text, 0) + 1
+                alt_text_occurrences[base_item.alt_text] = occurrence
                 images_and_links.append(
-                    {"image": image, "url": permalink, "caption": caption}
+                    build_instagram_gallery_item(image, occurrence=occurrence)
                 )
 
             context["social_media_images_links"] = images_and_links
