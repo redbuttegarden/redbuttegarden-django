@@ -87,6 +87,7 @@ body.template-homepage {
 
         #visitTextInner {
             padding: 3rem;
+            word-wrap: break-word;
         }
 
         @media screen and (min-width: 576px) {
