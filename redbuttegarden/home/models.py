@@ -1,5 +1,8 @@
+"""Content models and editor components for the garden website."""
+
 import json
 import logging
+from datetime import time
 from typing import Any
 
 from django import forms
@@ -51,6 +54,7 @@ from wagtail.telepath import register
 
 from home.abstract_models import AbstractBase
 from home.custom_fields import ChoiceArrayField
+from home.hour_blocks import OpeningPeriodBlock
 from home.utils import build_instagram_gallery_item
 from memberships.blocks import LinkedCarouselBlock
 from plants.species_autolinks import (
@@ -1032,6 +1036,15 @@ class RBGHours(models.Model):
     garden_close = models.TimeField(
         null=True, blank=True, help_text=_("The time the garden closes")
     )
+    garden_hours_label = models.CharField(
+        max_length=200, blank=True, default="",
+        help_text=_("Optional label for the primary hours, e.g. Regular visitation"),
+    )
+    additional_hours = StreamField(
+        [("opening_period", OpeningPeriodBlock())],
+        blank=True, default=list,
+        help_text=_("Add separate opening periods on the same day. Periods must not overlap."),
+    )
     additional_message = RichTextField(
         null=True,
         blank=True,
@@ -1069,6 +1082,8 @@ class RBGHours(models.Model):
             [
                 FieldPanel("garden_open"),
                 FieldPanel("garden_close"),
+                FieldPanel("garden_hours_label"),
+                FieldPanel("additional_hours"),
             ],
             heading="Hours",
             classname="collapsible",
@@ -1097,11 +1112,62 @@ class RBGHours(models.Model):
         verbose_name_plural = "RBG Hours"
         ordering = ["-last_modified"]
 
-    def __str__(self):
+    def clean(self) -> None:
+        """Validate paired, same-day, non-overlapping primary and extra periods."""
+
+        super().clean()
+        errors: dict[str, Any] = {}
+        if bool(self.garden_open) != bool(self.garden_close):
+            missing = "garden_close" if self.garden_open else "garden_open"
+            errors[missing] = "Enter both opening and closing times."
+        elif self.garden_open and self.garden_close <= self.garden_open:
+            errors["garden_close"] = "Closing time must be later than opening time on the same day."
+        if self.garden_hours_label and not self.garden_open:
+            errors["garden_hours_label"] = "Enter primary opening and closing times for this label."
+        try:
+            self.additional_hours = self.additional_hours.stream_block.clean(self.additional_hours)
+        except ValidationError as error:
+            errors["additional_hours"] = error
+        if not errors:
+            periods = self._opening_periods()
+            if any(current[0] < previous[1]
+                   for previous, current in zip(periods, periods[1:])):
+                errors["additional_hours"] = blocks.StreamBlockValidationError(
+                    non_block_errors=ValidationError("Opening periods must not overlap.")
+                )
+        if errors:
+            raise ValidationError(errors)
+
+    def get_time_ranges(self) -> list[dict[str, str]]:
+        """Return valid periods chronologically with API-compatible time strings."""
+
+        return [
+            {"garden_open": start.strftime("%H:%M"),
+             "garden_close": end.strftime("%H:%M"), "label": label}
+            for start, end, label in self._opening_periods()
+        ]
+
+    def _opening_periods(self) -> list[tuple[time, time, str]]:
+        """Keep exact time precision when ordering and validating periods."""
+
+        periods: list[tuple[time, time, str]] = []
+        if self.garden_open and self.garden_close and self.garden_open < self.garden_close:
+            periods.append((self.garden_open, self.garden_close, self.garden_hours_label))
+        for block in self.additional_hours:
+            start, end = block.value.get("garden_open"), block.value.get("garden_close")
+            if start and end and start < end:
+                periods.append((start, end, block.value.get("label") or ""))
+        return sorted(periods, key=lambda period: period[0])
+
+    def __str__(self) -> str:
+        """Return the editor-facing name of this hours schedule."""
+
         return self.name
 
 
 class HomePage(AbstractBase):
+    """Garden homepage with ordered hours schedules and event summaries."""
+
     hours_section_text = RichTextField(
         null=True,
         blank=True,
@@ -1161,10 +1227,11 @@ class HomePage(AbstractBase):
     def get_context(
         self, request: Any, *args: Any, **kwargs: Any
     ) -> dict[str, Any]:
-        """Return homepage context including safe Instagram gallery links."""
+        """Return homepage context including concert calendar dates and safe Instagram gallery links."""
 
         context = super().get_context(request, **kwargs)
 
+        context["concert_info"] = []
         if self.concert_page:
             concerts = self.concert_page.get_visible_concerts()
             concert_info = [
@@ -1172,13 +1239,13 @@ class HomePage(AbstractBase):
                     "TicketURL": (
                         concert["ticket_url"] if not concert["sold_out"] else None
                     ),
-                    "Date": concert_date,
+                    "Date": str(concert_date),
                     "BandName": concert["band_name"],
                 }
                 for concert in concerts
                 for concert_date in concert["concert_dates"]
             ]
-            context["concert_info"] = json.dumps(concert_info, default=str)
+            context["concert_info"] = concert_info
 
         # Get upcoming events; avoid circular import
         EventPage = apps.get_model(app_label="events", model_name="EventPage")

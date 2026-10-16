@@ -1,9 +1,11 @@
+"""Public homepage fragments, hours data, and snippet administration."""
+
 import logging
 import os
 
 from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.http import JsonResponse, HttpResponse, Http404
+from django.http import JsonResponse, HttpResponse, Http404, HttpRequest
 from django.shortcuts import render
 from django.utils.cache import patch_vary_headers
 from django.views.decorators.cache import cache_control
@@ -118,9 +120,9 @@ def latest_weather(request):
     return HttpResponse(status=204)
 
 
-def get_hours(request, page_id: int):
+def get_hours(request: HttpRequest, page_id: int) -> HttpResponse:
     """
-    Get the RGGHours objects associated with the given page ID.
+    Return ordered schedules, preserving legacy fields and adding time_ranges.
     """
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         try:
@@ -128,34 +130,25 @@ def get_hours(request, page_id: int):
         except HomePage.DoesNotExist:
             return HttpResponse(status=404)
 
-        hours_orderables = page.rbg_hours
-        if hours_orderables.all().exists():
-            json_response = {}
-            for idx, rbg_hours_orderable in enumerate(hours_orderables.all()):
-                json_response[idx] = {
-                    "name": rbg_hours_orderable.hours.name,
-                    "garden_open": (
-                        rbg_hours_orderable.hours.garden_open.strftime("%-H:%M")
-                        if rbg_hours_orderable.hours.garden_open
-                        else None
-                    ),
-                    "garden_close": (
-                        rbg_hours_orderable.hours.garden_close.strftime("%-H:%M")
-                        if rbg_hours_orderable.hours.garden_close
-                        else None
-                    ),
-                    "open_message": rbg_hours_orderable.hours.garden_open_message,
-                    "closed_message": rbg_hours_orderable.hours.garden_closed_message,
-                    "additional_message": rbg_hours_orderable.hours.additional_message,
-                    "additional_emphatic_mesg": rbg_hours_orderable.hours.additional_emphatic_mesg,
-                    "days_of_week": rbg_hours_orderable.hours.days_of_week,
-                    "months_of_year": rbg_hours_orderable.hours.months_of_year,
-                }
+        hours_orderables = page.rbg_hours.select_related("hours").all()
+        json_response = {}
+        for idx, orderable in enumerate(hours_orderables):
+            hours = orderable.hours
+            json_response[idx] = {
+                "name": hours.name,
+                "garden_open": hours.garden_open.strftime("%-H:%M") if hours.garden_open else None,
+                "garden_close": hours.garden_close.strftime("%-H:%M") if hours.garden_close else None,
+                "time_ranges": hours.get_time_ranges(),
+                "open_message": hours.garden_open_message,
+                "closed_message": hours.garden_closed_message,
+                "additional_message": hours.additional_message,
+                "additional_emphatic_mesg": hours.additional_emphatic_mesg,
+                "days_of_week": hours.days_of_week,
+                "months_of_year": hours.months_of_year,
+            }
+        if json_response:
             return JsonResponse(json_response)
-        else:
-            logger.warning(
-                f"Page with ID {page_id} does not have any RBGHours associated with it."
-            )
+        logger.warning("Page with ID %s does not have any RBGHours associated with it.", page_id)
 
     return HttpResponse(status=204)
 
