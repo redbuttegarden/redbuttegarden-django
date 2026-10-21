@@ -1,0 +1,19 @@
+<nav class="search-pagination" aria-label="Search result pages">
+  <ul>
+    {% if search_results.has_previous %}
+      <li><a href="?{{ query_prefix }}page={{ search_results.previous_page_number }}" rel="prev" aria-label="Previous page">Previous</a></li>
+    {% endif %}
+    {% for number in page_range %}
+      {% if number == search_results.paginator.ELLIPSIS %}
+        <li class="search-pagination__gap"><span aria-hidden="true">{{ number }}</span><span class="visually-hidden">More pages</span></li>
+      {% elif number == search_results.number %}
+        <li><span class="search-pagination__current" aria-current="page"><span class="visually-hidden">Page </span>{{ number }}</span></li>
+      {% else %}
+        <li><a href="?{{ query_prefix }}page={{ number }}" aria-label="Page {{ number }}">{{ number }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if search_results.has_next %}
+      <li><a href="?{{ query_prefix }}page={{ search_results.next_page_number }}" rel="next" aria-label="Next page">Next</a></li>
+    {% endif %}
+  </ul>
+</nav>

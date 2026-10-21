@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from bs4 import BeautifulSoup
 from django.test import TestCase
 from django.urls import reverse
 from wagtail.contrib.search_promotions.models import Query
@@ -97,3 +98,42 @@ class SearchTestCase(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["search_query"], "True")
+
+    def test_search_metadata_form_and_result_semantics(self) -> None:
+        """Expose descriptive metadata and a labelled, semantic search page."""
+
+        page = self.create_page("Accessible Result", "accessible-result")
+        response = self.client.get(reverse("search"), {"q": "Accessible Result"})
+        soup = BeautifulSoup(response.content, "html.parser")
+        main = soup.select_one("#search-parent")
+
+        self.assertEqual(soup.find("meta", attrs={"name": "description"})["content"],
+                         "Search Red Butte Garden’s website for garden information, events, classes, articles, and visitor resources.")
+        self.assertEqual(len(main.find_all("h1")), 1)
+        self.assertEqual([heading.name for heading in main.find_all(["h2", "h3", "h4"])], ["h2"])
+        result = main.select_one("ul.search-results > li")
+        self.assertEqual(result.h2.a.get_text(), page.title)
+        self.assertEqual(result.h2.a["href"], page.url)
+        self.assertEqual(len(result.find_all("a")), 1)
+        self.assertIsNone(result.find("img"))
+        self.assertNotIn("No image", result.get_text())
+        self.assertNotIn("Read more", result.get_text())
+        field = main.find("input", attrs={"name": "q"})
+        self.assertEqual(main.find("label")["for"], field["id"])
+        self.assertNotIn("visually-hidden", main.find("label").get("class", []))
+        self.assertFalse(field.has_attr("autofocus"))
+        self.assertEqual(main.form["method"], "get")
+        self.assertEqual(field["value"], "Accessible Result")
+        self.assertEqual(main.form.button["type"], "submit")
+
+    def test_empty_and_no_result_states_escape_query(self) -> None:
+        """Show useful empty states while escaping untrusted query markup."""
+
+        response = self.client.get(reverse("search"))
+        self.assertContains(response, "Enter a search term above")
+        response = self.client.get(reverse("search"), {"q": '<script>alert("missing")</script>'})
+        soup = BeautifulSoup(response.content, "html.parser")
+        main = soup.select_one("#search-parent")
+        self.assertIn("No results found", main.get_text())
+        self.assertIsNone(main.find("script"))
+        self.assertEqual(main.input["value"], '<script>alert("missing")</script>')

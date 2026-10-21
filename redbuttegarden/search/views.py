@@ -1,3 +1,5 @@
+"""Public site search responses and presentation context."""
+
 import logging
 import re
 
@@ -75,4 +77,7 @@ def search(request: HttpRequest) -> HttpResponse:
         'search_query': search_query,
         'search_results': paginated_results,
         'query_prefix': query_prefix,
+        'page_range': paginator.get_elided_page_range(
+            paginated_results.number, on_each_side=1, on_ends=1,
+        ),
     })
