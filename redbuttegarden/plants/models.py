@@ -273,6 +273,7 @@ class Collection(models.Model):
     plant_id = models.CharField(max_length=255, unique=True)
     commemoration_category = models.CharField(max_length=255, null=True, blank=True)
     commemoration_person = models.CharField(max_length=255, null=True, blank=True)
+    commemoration_text = models.TextField(null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 

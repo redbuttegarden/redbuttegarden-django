@@ -121,6 +121,7 @@ class CollectionSerializer(serializers.ModelSerializer):
             "plant_id",
             "commemoration_category",
             "commemoration_person",
+            "commemoration_text",
             "created_on",
             "last_modified",
         ]
@@ -186,16 +187,22 @@ class CollectionSerializer(serializers.ModelSerializer):
                 "name": garden_data["name"]
             }
         )
+        collection_defaults = {
+            "location": location,
+            "garden": garden,
+            "species": species,
+            "plant_date": validated_data["plant_date"],
+            "commemoration_category": validated_data["commemoration_category"],
+            "commemoration_person": validated_data["commemoration_person"],
+        }
+        if "commemoration_text" in validated_data:
+            collection_defaults["commemoration_text"] = validated_data[
+                "commemoration_text"
+            ]
+
         collection, _ = Collection.objects.update_or_create(
             plant_id=validated_data["plant_id"],
-            defaults={
-                "location": location,
-                "garden": garden,
-                "species": species,
-                "plant_date": validated_data["plant_date"],
-                "commemoration_category": validated_data["commemoration_category"],
-                "commemoration_person": validated_data["commemoration_person"],
-            },
+            defaults=collection_defaults,
         )
 
         return collection

@@ -1,3 +1,4 @@
+from copy import deepcopy
 from io import BytesIO
 
 import pytest
@@ -152,6 +153,60 @@ def test_collection_creation_api_two_cultivars(collections_same_species_differen
     api_client.auth_user.post('/plants/api/collections/', collection_two_payload, format='json')
 
     assert Collection.objects.all().count() == 1
+
+
+@pytest.mark.django_db
+def test_collection_commemoration_text_api(
+    collections_same_species_different_cultivars,
+):
+    """Collection upserts persist optional multiline commemoration text."""
+    api_client = APITestSetup()
+    create_payload = deepcopy(collections_same_species_different_cultivars[0])
+    create_payload["commemoration_text"] = "In memory of Ada Lovelace\nA lasting gift"
+
+    response = api_client.auth_user.post(
+        "/plants/api/collections/", create_payload, format="json"
+    )
+
+    assert response.status_code == 201
+    assert response.data["commemoration_text"] == "In memory of Ada Lovelace\nA lasting gift"
+    collection = Collection.objects.get(plant_id=create_payload["plant_id"])
+    assert collection.commemoration_text == "In memory of Ada Lovelace\nA lasting gift"
+    assert collection.commemoration_category == "Available"
+    assert collection.commemoration_person == "Person Name"
+
+    update_payload = deepcopy(create_payload)
+    update_payload["commemoration_text"] = "Dedicated to Ada\nWith gratitude"
+    response = api_client.auth_user.post(
+        "/plants/api/collections/", update_payload, format="json"
+    )
+
+    assert response.status_code == 201
+    collection.refresh_from_db()
+    assert collection.commemoration_text == "Dedicated to Ada\nWith gratitude"
+    assert collection.commemoration_category == "Available"
+    assert collection.commemoration_person == "Person Name"
+
+
+@pytest.mark.django_db
+def test_collection_commemoration_text_is_optional(
+    collections_same_species_different_cultivars,
+):
+    """Legacy collection payloads without commemoration text remain valid."""
+    api_client = APITestSetup()
+    payload = deepcopy(collections_same_species_different_cultivars[0])
+    payload["plant_id"] = "0001-0002*1"
+
+    response = api_client.auth_user.post(
+        "/plants/api/collections/", payload, format="json"
+    )
+
+    assert response.status_code == 201
+    assert response.data["commemoration_text"] is None
+    collection = Collection.objects.get(plant_id=payload["plant_id"])
+    assert collection.commemoration_text is None
+    assert collection.commemoration_category == "Available"
+    assert collection.commemoration_person == "Person Name"
 
 
 @pytest.mark.django_db

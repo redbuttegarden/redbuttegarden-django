@@ -43,6 +43,7 @@ def get_collection(
     plant_id="2000-1024*1",
     commemoration_category=None,
     commemoration_person=None,
+    commemoration_text=None,
 ):
     if hardiness is None:
         hardiness = [5, 6, 7, 8]
@@ -87,6 +88,7 @@ def get_collection(
         plant_id=plant_id,
         commemoration_category=commemoration_category,
         commemoration_person=commemoration_person,
+        commemoration_text=commemoration_text,
     )
 
 
