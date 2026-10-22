@@ -15,6 +15,7 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseRedirect,
+    HttpResponsePermanentRedirect,
     JsonResponse,
 )
 from django.middleware.csrf import get_token
@@ -39,7 +40,9 @@ from wagtail.images.models import Image
 from wagtail.images.permissions import permission_policy as image_permission_policy
 
 from .tables import CollectionTable, TopTreesSpeciesTable
-from .filters import CollectionFilter, TopTreesSpeciesFilter
+from .filters import CollectionFilter, DedicationFilter, TopTreesSpeciesFilter
+from .constants import DEDICATION_FAMILY_NAME
+from .selectors import dedication_collections, public_collections, public_species
 from .forms import FeedbackReportForm
 from .models import (
     Family,
@@ -49,7 +52,6 @@ from .models import (
     Location,
     SpeciesImage,
     BloomEvent,
-    GardenArea
 )
 from .serializers import (
     FamilySerializer,
@@ -62,6 +64,7 @@ from .serializers import (
 )
 from .utils import (
     clean_querydict,
+    get_dedication_feature_collection,
     get_feature_collection,
     style_message,
 )
@@ -118,9 +121,11 @@ def _species_preview_image(species):
 
 
 @require_GET
-def species_preview(request, species_id):
+def species_preview(request: HttpRequest, species_id: int) -> JsonResponse:
+    """Return preview data for a publicly visible species."""
+
     species = get_object_or_404(
-        Species.objects.select_related("genus__family").prefetch_related(
+        public_species().select_related("genus__family").prefetch_related(
             "species_images__image"
         ),
         pk=species_id,
@@ -364,8 +369,10 @@ def _parse_bbox(bbox: str):
 
 
 @require_GET
-def collections_geojson(request):
-    qs = Collection.objects.exclude(location=None).select_related(
+def collections_geojson(request: HttpRequest) -> JsonResponse:
+    """Return GeoJSON features for public plant collections within an optional bbox."""
+
+    qs = public_collections().exclude(location=None).select_related(
         "location", "species", "species__genus", "species__genus__family", "garden"
     )
 
@@ -406,7 +413,7 @@ def plant_map_view(request: HttpRequest) -> HttpResponse:
     mapbox_api_token = getattr(settings, "MAPBOX_API_TOKEN", None)
 
     # Use the same filterset contract as list view
-    base_qs = Collection.objects.exclude(location=None).select_related(
+    base_qs = public_collections().exclude(location=None).select_related(
         "location", "species", "garden"
     )
     f = CollectionFilter(request.GET or None, queryset=base_qs)
@@ -442,11 +449,14 @@ def plant_map_view(request: HttpRequest) -> HttpResponse:
     )
 
 
-def collection_detail(request, collection_id):
-    """
-    View for displaying detailed info about a single Collection object.
-    """
-    collection = get_object_or_404(Collection, pk=collection_id)
+def collection_detail(request: HttpRequest, collection_id: int) -> HttpResponse:
+    """Render a plant collection or redirect a dedication to its canonical URL."""
+
+    collection = get_object_or_404(
+        Collection.objects.select_related("species__genus__family"), pk=collection_id
+    )
+    if collection.species.genus.family.name == DEDICATION_FAMILY_NAME:
+        return HttpResponsePermanentRedirect(collection.get_absolute_url())
     mapbox_api_token = getattr(settings, "MAPBOX_API_TOKEN", None)
 
     # Check if there are any BloomEvents associated with the collection
@@ -465,15 +475,68 @@ def collection_detail(request, collection_id):
     )
 
 
+def dedication_detail(request: HttpRequest, collection_id: int) -> HttpResponse:
+    """Render the public dedicated detail page for one dedication."""
+
+    collection = get_object_or_404(
+        dedication_collections().select_related("location", "garden", "species"),
+        pk=collection_id,
+    )
+    species_images = SpeciesImage.objects.filter(species=collection.species).select_related(
+        "image"
+    )
+    return render(
+        request,
+        "plants/dedication_detail.html",
+        {
+            "collection": collection,
+            "images": species_images,
+            "mapbox_token": getattr(settings, "MAPBOX_API_TOKEN", None),
+        },
+    )
+
+
+@require_GET
+def dedications_geojson(request: HttpRequest) -> JsonResponse:
+    """Return mapped dedication records without exposing general plant records."""
+
+    queryset = dedication_collections().exclude(location=None).select_related(
+        "location", "species__genus__family", "garden"
+    )
+    filtered = DedicationFilter(request.GET or None, queryset=queryset).qs
+    return JsonResponse(
+        get_dedication_feature_collection(filtered.order_by("-id")[:MAX_FEATURES]),
+        safe=False,
+    )
+
+
+def dedication_map_view(request: HttpRequest) -> HttpResponse:
+    """Render the dedicated map and its narrowly scoped discovery filters."""
+
+    queryset = dedication_collections().exclude(location=None).select_related(
+        "location", "species__genus__family", "garden"
+    )
+    dedication_filter = DedicationFilter(request.GET or None, queryset=queryset)
+    return render(
+        request,
+        "plants/dedication_map.html",
+        {
+            "filter": dedication_filter,
+            "dedications": dedication_filter.qs,
+            "mapbox_token": getattr(settings, "MAPBOX_API_TOKEN", None),
+        },
+    )
+
+
 def species_detail(request, species_id):
     """
     View for displaying detailed info about a single Species object.
     """
     species = get_object_or_404(
-        Species.objects.select_related("genus__family"), pk=species_id
+        public_species().select_related("genus__family"), pk=species_id
     )
     species_images = SpeciesImage.objects.filter(species=species)
-    species_collections = Collection.objects.filter(species=species).select_related(
+    species_collections = public_collections().filter(species=species).select_related(
         "garden"
     )
     collections_table = None
@@ -676,7 +739,7 @@ def collection_results(request: HttpRequest) -> HttpResponse:
     if mode not in ("list", "map"):
         mode = "list"
 
-    base_qs = Collection.objects.all()
+    base_qs = public_collections()
     collection_filter = CollectionFilter(request.GET or None, queryset=base_qs)
     filtered_qs = collection_filter.qs
 
@@ -813,15 +876,19 @@ def collection_search_page(request):
     )
 
 
-def get_garden_code_view(request):
+def get_garden_code_view(request: HttpRequest) -> HttpResponse:
+    """Render public plant garden-code options for an optionally selected garden."""
+
     selected_name = request.GET.get("garden_name", "").strip()
 
-    qs = GardenArea.objects.exclude(code__isnull=True).exclude(code="")
+    qs = public_collections().exclude(garden__code__isnull=True).exclude(
+        garden__code=""
+    )
 
     if selected_name:
-        qs = qs.filter(name__iexact=selected_name)
+        qs = qs.filter(garden__name__iexact=selected_name)
 
-    codes = qs.values_list("code", flat=True).distinct().order_by("code")
+    codes = qs.values_list("garden__code", flat=True).distinct().order_by("garden__code")
 
     return render(
         request,
@@ -849,13 +916,13 @@ def get_filtered_collections(request, species_id):
     )
 
 
-def top_trees(request):
+def top_trees(request: HttpRequest) -> HttpResponse:
     """
     List of Species that have been marked as Arborist Recommended in BRAHMS,
     with filtering, export, and HTMX partial responses. Uses LazyPaginator
     so total may be unknown; compute display values safely.
     """
-    qs = Species.objects.filter(arborist_rec=True)
+    qs = public_species().filter(arborist_rec=True)
     f = TopTreesSpeciesFilter(request.GET, queryset=qs)
 
     # Export handling

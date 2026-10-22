@@ -128,6 +128,30 @@ class SpeciesAutoLinkerTests(TestCase):
 
         self.assertNotIn("<a href=", linked_html)
 
+    def test_link_html_excludes_dedication_species(self):
+        dedication_family = get_family(name="Dedicataceae")
+        dedication_genus = get_genus(dedication_family, name="Dedica")
+        dedication_species = get_species(
+            dedication_genus,
+            name="honorata",
+            full_name="Dedica honorata",
+            subspecies=None,
+            variety=None,
+            subvariety=None,
+            forma=None,
+            subforma=None,
+            cultivar=None,
+            vernacular_name="Dedication record",
+        )
+
+        linker = SpeciesAutoLinker.from_database()
+        linked_html = linker.link_html("<p>Dedica honorata commemorates a donor.</p>")
+
+        self.assertNotIn("Dedica honorata</a>", linked_html)
+        self.assertNotIn(
+            reverse("plants:species-detail", args=[dedication_species.pk]), linked_html
+        )
+
     def test_link_html_skips_ambiguous_aliases(self):
         self.species.autolink_aliases = "maple"
         self.species.save(update_fields=["autolink_aliases"])

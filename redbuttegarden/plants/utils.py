@@ -2,6 +2,7 @@ import logging
 
 from django.contrib.postgres.search import SearchVector
 from django.core.exceptions import ValidationError
+from django.db.models import QuerySet
 from django.http import QueryDict
 from django.urls import reverse
 from geojson import FeatureCollection, Feature, Point
@@ -14,7 +15,9 @@ logger = logging.getLogger(__name__)
 TRUE_VALUES = {"1", "true", "t", "yes", "y", "on"}
 
 
-def get_feature_collection(collections):
+def get_feature_collection(collections: QuerySet[Collection]) -> FeatureCollection:
+    """Return GeoJSON properties required by the general plant map."""
+
     features = []
     for collection in collections:
         plant_date = (
@@ -41,13 +44,41 @@ def get_feature_collection(collections):
                 "exposure": collection.species.exposure,
                 "bloom_time": collection.species.bloom_time,
                 "plant_size": collection.species.plant_size,
-                "garden_area": collection.garden.area,
-                "garden_name": collection.garden.name,
-                "garden_code": collection.garden.code,
+                "garden_area": collection.garden.area if collection.garden else None,
+                "garden_name": collection.garden.name if collection.garden else None,
+                "garden_code": collection.garden.code if collection.garden else None,
                 "planted_on": plant_date,
+                "url": collection.get_absolute_url(),
             },
         )
         features.append(feature)
+
+    return FeatureCollection(features)
+
+
+def get_dedication_feature_collection(
+    dedications: QuerySet[Collection],
+) -> FeatureCollection:
+    """Return GeoJSON with only the fields needed by the public dedication map."""
+
+    features = []
+    for dedication in dedications:
+        features.append(
+            Feature(
+                geometry=Point(
+                    (dedication.location.longitude, dedication.location.latitude)
+                ),
+                properties={
+                    "id": dedication.id,
+                    "detail_url": dedication.get_absolute_url(),
+                    "dedication_id": dedication.plant_id,
+                    "honoree": dedication.commemoration_person,
+                    "garden_name": dedication.garden.name if dedication.garden else None,
+                    "garden_area": dedication.garden.area if dedication.garden else None,
+                    "garden_code": dedication.garden.code if dedication.garden else None,
+                },
+            )
+        )
 
     return FeatureCollection(features)
 
@@ -58,9 +89,7 @@ def style_message(request, species, collection, original_message):
             reverse("plants:species-detail", args=[species.id])
         )
     elif collection:
-        url = request.build_absolute_uri(
-            reverse("plants:collection-detail", args=[collection.id])
-        )
+        url = request.build_absolute_uri(collection.get_absolute_url())
     else:
         logger.error("No species or collection provided")
         raise ValueError("No species or collection provided")

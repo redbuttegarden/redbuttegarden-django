@@ -46,6 +46,11 @@ urlpatterns = [
         views.collection_detail,
         name="collection-detail",
     ),
+    path(
+        "dedication/<int:collection_id>/",
+        views.dedication_detail,
+        name="dedication-detail",
+    ),
     path("species/<int:species_id>/", views.species_detail, name="species-detail"),
     path(
         "species/<int:species_id>/preview/",
@@ -53,6 +58,12 @@ urlpatterns = [
         name="species-preview",
     ),
     path("plant-map/", views.plant_map_view, name="plant-map"),
+    path("dedication-map/", views.dedication_map_view, name="dedication-map"),
+    path(
+        "api/dedications-geojson/",
+        views.dedications_geojson,
+        name="api-dedications-geojson",
+    ),
     path("collections/results/", views.collection_results, name="collection-results"),
     path("collections/search/", views.collection_search_page, name="collection-search"),
     path(

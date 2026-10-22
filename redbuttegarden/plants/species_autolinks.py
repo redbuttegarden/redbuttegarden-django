@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from .models import Species, SpeciesAutolinkIndex
+from .selectors import public_species
 
 
 SKIP_LINK_TAGS = {"a", "code", "pre", "script", "style"}
@@ -177,10 +178,12 @@ class SpeciesAutoLinker:
         }
 
     @classmethod
-    def get_unique_match_targets_from_database(cls):
+    def get_unique_match_targets_from_database(cls) -> dict[str, dict[str, int | str]]:
+        """Return unambiguous public plant terms mapped to species link targets."""
+
         species_matches = defaultdict(set)
 
-        species_queryset = Species.objects.filter(autolink_enabled=True).only(
+        species_queryset = public_species().filter(autolink_enabled=True).only(
             "id",
             "full_name",
             "subspecies",

@@ -94,6 +94,7 @@ CSP_STYLE_SRC = (
     "davlmcslie.execute-api.us-east-1.amazonaws.com",
     "rbg-web-code.s3.amazonaws.com",
     "rbg-web-static.s3.amazonaws.com",
+    "api.mapbox.com",
 )
 CSP_SCRIPT_SRC = (
     "'self'",
@@ -110,6 +111,7 @@ CSP_SCRIPT_SRC = (
     "davlmcslie.execute-api.us-east-1.amazonaws.com",
     "rbg-web-code.s3.amazonaws.com",
     "rbg-web-static.s3.amazonaws.com",
+    "api.mapbox.com",
 )
 CSP_FONT_SRC = (
     "'self'",
@@ -133,7 +135,16 @@ CSP_IMG_SRC = (
     "davlmcslie.execute-api.us-east-1.amazonaws.com",
     "rbg-web-code.s3.amazonaws.com",
     "rbg-web-static.s3.amazonaws.com",
+    "api.mapbox.com",
+    "*.tiles.mapbox.com",
 )
+CSP_CONNECT_SRC = (
+    "'self'",
+    "api.mapbox.com",
+    "events.mapbox.com",
+    "*.tiles.mapbox.com",
+)
+CSP_WORKER_SRC = ("'self'", "blob:")
 
 CORS_ALLOWED_ORIGINS = [
     "redbuttegarden.org",

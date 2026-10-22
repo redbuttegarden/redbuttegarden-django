@@ -66,7 +66,8 @@ CSP_STYLE_SRC = ("'self'",
                  'maxcdn.bootstrapcdn.com',
                  'pzr1yumqbe.execute-api.us-east-1.amazonaws.com',
                  'zappa-rbg-dev.s3.amazonaws.com',
-                 'zappa-rbg-dev-static-east.s3.amazonaws.com')
+                 'zappa-rbg-dev-static-east.s3.amazonaws.com',
+                 'api.mapbox.com')
 CSP_SCRIPT_SRC = ("'self'",
                   "'unsafe-inline'",
                   'dev.redbuttegarden.org',
@@ -78,7 +79,8 @@ CSP_SCRIPT_SRC = ("'self'",
                   'connect.facebook.net',
                   'pzr1yumqbe.execute-api.us-east-1.amazonaws.com',
                   'zappa-rbg-dev.s3.amazonaws.com',
-                  'zappa-rbg-dev-static-east.s3.amazonaws.com')
+                  'zappa-rbg-dev-static-east.s3.amazonaws.com',
+                  'api.mapbox.com')
 CSP_FONT_SRC = ("'self'",
                 'dev.redbuttegarden.org',
                 'dhsyi82ptcyu5.cloudfront.net',
@@ -93,7 +95,11 @@ CSP_IMG_SRC = ("'self'",
                'www.gravatar.com',
                'pzr1yumqbe.execute-api.us-east-1.amazonaws.com',
                'zappa-rbg-dev.s3.amazonaws.com',
-               'zappa-rbg-dev-static-east.s3.amazonaws.com')
+               'zappa-rbg-dev-static-east.s3.amazonaws.com',
+               'api.mapbox.com',
+               '*.tiles.mapbox.com')
+CSP_CONNECT_SRC = ("'self'", 'api.mapbox.com', 'events.mapbox.com', '*.tiles.mapbox.com')
+CSP_WORKER_SRC = ("'self'", 'blob:')
 
 # CORS_ALLOWED_ORIGINS = [
 #     "https://pzr1yumqbe.execute-api.us-east-1.amazonaws.com",

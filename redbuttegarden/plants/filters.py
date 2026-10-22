@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from typing import Any
 
 import django_filters
 from django import forms
@@ -7,16 +8,20 @@ from django.contrib.postgres.search import SearchQuery, SearchVector
 from django.urls import reverse_lazy
 from django.utils.dates import MONTHS
 
-from .models import Collection, Species, GardenArea, Family
+from .models import Collection, Species, Family
+from .constants import DEDICATION_FAMILY_NAME
+from .selectors import dedication_collections, public_collections, public_species
 
 
 TRUE_VALUES = {"1", "true", "t", "yes", "y", "on"}
 
 
-def get_dynamic_garden_codes():
+def get_dynamic_garden_codes() -> list[tuple[str, str]]:
+    """Return garden-code choices represented by public plant collections."""
+
     code_choices = (
-        GardenArea.objects.order_by("code")
-        .values_list("code", flat=True)
+        public_collections().order_by("garden__code")
+        .values_list("garden__code", flat=True)
         .distinct()
     )
     return [(c, c) for c in code_choices if c]
@@ -217,7 +222,9 @@ class CollectionFilter(django_filters.FilterSet):
         # Let Django render the default "---------" empty option consistently.
 
         # Families
-        family_choices = Family.objects.order_by(
+        family_choices = Family.objects.exclude(
+            name=DEDICATION_FAMILY_NAME
+        ).order_by(
             "name").values_list("id", "name")
         self.form.fields["family_name"].choices = [
             (fid, name) for fid, name in family_choices
@@ -226,8 +233,8 @@ class CollectionFilter(django_filters.FilterSet):
 
         # Garden names
         garden_choices = (
-            GardenArea.objects.order_by("name")
-            .values_list("name", flat=True)
+            public_collections().order_by("garden__name")
+            .values_list("garden__name", flat=True)
             .distinct()
         )
         excluded_names_lower = {
@@ -252,14 +259,14 @@ class CollectionFilter(django_filters.FilterSet):
 
         # Habit / exposure / water regime
         habit_choices = (
-            Species.objects.order_by("habit").values_list(
+            public_species().order_by("habit").values_list(
                 "habit", flat=True).distinct()
         )
         self.form.fields["habits"].choices = [
             (h, h) for h in habit_choices if h]
 
         exposure_choices = (
-            Species.objects.order_by("exposure")
+            public_species().order_by("exposure")
             .values_list("exposure", flat=True)
             .distinct()
         )
@@ -267,7 +274,7 @@ class CollectionFilter(django_filters.FilterSet):
             (e, e) for e in exposure_choices if e]
 
         water_choices = (
-            Species.objects.order_by("water_regime")
+            public_species().order_by("water_regime")
             .values_list("water_regime", flat=True)
             .distinct()
         )
@@ -280,7 +287,7 @@ class CollectionFilter(django_filters.FilterSet):
 
         # Flower colors: split, strip, unique, sorted
         raw_colors = (
-            Species.objects.order_by("flower_color")
+            public_species().order_by("flower_color")
             .values_list("flower_color", flat=True)
             .distinct()
         )
@@ -296,7 +303,7 @@ class CollectionFilter(django_filters.FilterSet):
 
         # Memorial people
         people = (
-            Collection.objects.order_by("commemoration_person")
+            public_collections().order_by("commemoration_person")
             .values_list("commemoration_person", flat=True)
             .distinct()
         )
@@ -375,6 +382,46 @@ class CollectionFilter(django_filters.FilterSet):
         if isinstance(value, str):
             value = value.strip().lower() in TRUE_VALUES
         return qs.filter(commemoration_category="Available") if value else qs
+
+
+class DedicationFilter(django_filters.FilterSet):
+    """Limit dedication-map filtering to dedication garden and honoree choices."""
+
+    garden_name = django_filters.ChoiceFilter(
+        field_name="garden__name", label="Garden name", choices=[], lookup_expr="iexact"
+    )
+    commemoration_person = django_filters.ChoiceFilter(
+        field_name="commemoration_person",
+        label="Honoree",
+        choices=[],
+        lookup_expr="iexact",
+    )
+
+    class Meta:
+        model = Collection
+        fields = ["garden_name", "commemoration_person"]
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Populate filter choices only from classified dedication records."""
+
+        super().__init__(*args, **kwargs)
+        dedications = dedication_collections()
+        self.form.fields["garden_name"].choices = [
+            (name, name)
+            for name in dedications.order_by("garden__name")
+            .values_list("garden__name", flat=True)
+            .distinct()
+            if name
+        ]
+        self.form.fields["commemoration_person"].choices = [
+            (person, person)
+            for person in dedications.order_by("commemoration_person")
+            .values_list("commemoration_person", flat=True)
+            .distinct()
+            if person
+        ]
+        for field in self.form.fields.values():
+            field.widget.attrs["class"] = "form-control"
 
 
 class TopTreesSpeciesFilter(django_filters.FilterSet):

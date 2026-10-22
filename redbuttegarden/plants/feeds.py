@@ -1,21 +1,37 @@
 import logging
 
 from django.contrib.syndication.views import Feed
+from django.db.models import QuerySet
 from django.urls import reverse
 from django_ical.views import ICalFeed
 
+from .constants import DEDICATION_FAMILY_NAME
 from .models import BloomEvent
 
 logger = logging.getLogger(__name__)
 
 
+def public_bloom_events() -> QuerySet[BloomEvent]:
+    """Return bloom events that do not include dedication-only collection records."""
+
+    return (
+        BloomEvent.objects.exclude(species__genus__family__name=DEDICATION_FAMILY_NAME)
+        .exclude(collections__species__genus__family__name=DEDICATION_FAMILY_NAME)
+        .distinct()
+    )
+
+
 class GardenBloomFeed(Feed):
+    """RSS feed for public blooming plant events."""
+
     title = "What's Blooming Now @ Red Butte Garden"
     link = "/whats-blooming-now/"
     description = "Bloom events to describe which plants are blooming at Red Butte Garden."
 
-    def items(self):
-        bloom_events = BloomEvent.objects.order_by('-bloom_start', '-created_on')[:25]
+    def items(self) -> QuerySet[BloomEvent]:
+        """Return only bloom events that belong in general plant discovery."""
+
+        bloom_events = public_bloom_events().order_by('-bloom_start', '-created_on')[:25]
 
         return bloom_events
 
@@ -39,12 +55,15 @@ class GardenBloomFeed(Feed):
 
     # item_link is only needed if NewsItem has no get_absolute_url method.
     def item_link(self, item):
-        if item.species:
+        if (
+            item.species
+            and item.species.genus.family.name != DEDICATION_FAMILY_NAME
+        ):
             return reverse('plants:species-detail', args=[item.species.id])
-        elif item.collections:
-            return reverse('plants:collection-detail', args=[item.collections.first().id])
-        else:
-            return reverse('plants:plant-map')
+        collection = item.collections.first()
+        if collection:
+            return collection.get_absolute_url()
+        return reverse('plants:plant-map')
 
 
 class GardenBloomICalFeed(ICalFeed):
@@ -55,8 +74,10 @@ class GardenBloomICalFeed(ICalFeed):
     timezone = 'MST'
     file_name = "bloom_events.ics"
 
-    def items(self):
-        return BloomEvent.objects.all().order_by('-bloom_start', '-created_on')
+    def items(self) -> QuerySet[BloomEvent]:
+        """Return only bloom events that belong in general plant discovery."""
+
+        return public_bloom_events().order_by('-bloom_start', '-created_on')
 
     def item_title(self, item):
         return item.title
@@ -85,22 +106,20 @@ class GardenBloomICalFeed(ICalFeed):
         return item.bloom_end
 
     def item_link(self, item):
-        if item.species:
+        if (
+            item.species
+            and item.species.genus.family.name != DEDICATION_FAMILY_NAME
+        ):
             return reverse('plants:species-detail', args=[item.species.id])
-        elif item.collections:
-            # Prioritize returning the first collection with a location the link matches up with the geolocation.
-            collection_to_link = None
-            for collection in item.collections.all():
-                if collection.location:
-                    collection_to_link = collection
-                    break
-
-            if collection_to_link:
-                return reverse('plants:collection-detail', args=[collection_to_link.id])
-            else:
-                return reverse('plants:collection-detail', args=[item.collections.first().id])
-        else:
-            return reverse('plants:plant-map')
+        # Prioritize a collection with a location so the link matches geolocation.
+        collections = item.collections.all()
+        collection = next(
+            (candidate for candidate in collections if candidate.location),
+            collections.first(),
+        )
+        if collection:
+            return collection.get_absolute_url()
+        return reverse('plants:plant-map')
 
     def item_location(self, item):
         if item.area and item.area.name:

@@ -1,0 +1,11 @@
+#dedication-map {
+    min-height: 500px;
+}
+
+.dedication-details dt {
+    font-weight: 700;
+}
+
+.dedication-details dd {
+    margin-bottom: 0.75rem;
+}

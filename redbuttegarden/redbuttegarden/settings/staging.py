@@ -35,7 +35,8 @@ CSP_STYLE_SRC = ("'self'",
                  'maxcdn.bootstrapcdn.com',
                  'rbg-code-staging.s3.amazonaws.com',
                  'rbg-static-staging.s3.amazonaws.com',
-                 'staging.redbuttegarden.org',)
+                 'staging.redbuttegarden.org',
+                 'api.mapbox.com',)
 CSP_SCRIPT_SRC = ("'self'",
                   "'unsafe-inline'",
                   'www.googletagmanager.com',
@@ -45,7 +46,8 @@ CSP_SCRIPT_SRC = ("'self'",
                   'connect.facebook.net',
                   'rbg-code-staging.s3.amazonaws.com',
                   'rbg-static-staging.s3.amazonaws.com',
-                  'staging.redbuttegarden.org',)
+                  'staging.redbuttegarden.org',
+                  'api.mapbox.com',)
 CSP_FONT_SRC = ("'self'",
                 'fonts.gstatic.com',
                 'maxcdn.bootstrapcdn.com',
@@ -56,7 +58,11 @@ CSP_IMG_SRC = ("'self'",
                'www.gravatar.com',
                'rbg-code-staging.s3.amazonaws.com',
                'rbg-static-staging.s3.amazonaws.com',
-               'staging.redbuttegarden.org',)
+               'staging.redbuttegarden.org',
+               'api.mapbox.com',
+               '*.tiles.mapbox.com',)
+CSP_CONNECT_SRC = ("'self'", 'api.mapbox.com', 'events.mapbox.com', '*.tiles.mapbox.com',)
+CSP_WORKER_SRC = ("'self'", 'blob:',)
 
 CORS_ALLOWED_ORIGINS = [
     'https://staging.redbuttegarden.org',

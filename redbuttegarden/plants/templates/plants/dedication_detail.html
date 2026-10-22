@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static wagtailimages_tags %}
+
+{% block title %}
+  Dedication{% if collection.commemoration_person %}
+    | {{ collection.commemoration_person }}
+  {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" rel="stylesheet" />
+  <link href="{% static 'plants/css/dedication.css' %}" rel="stylesheet" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
+{% endblock %}
+
+{% block content %}
+  <main class="container py-4" id="main-content">
+    <h1>Dedication Detail</h1>
+    <div class="row g-4">
+      <section class="col-md-6" aria-label="Dedication details">
+        {% if collection.species.vernacular_name %}
+          <h2>{{ collection.species.vernacular_name }}</h2>
+        {% endif %}
+        {% if collection.commemoration_person %}
+          <h3>{{ collection.commemoration_person }}</h3>
+        {% endif %}
+        <dl class="dedication-details">
+          <dt>Dedication ID</dt>
+          <dd>{{ collection.plant_id }}</dd>
+          {% if collection.garden and collection.garden.name %}
+            <dt>Garden</dt>
+            <dd>{{ collection.garden.name }}</dd>
+          {% endif %}
+          {% if collection.garden and collection.garden.code %}
+            <dt>Garden code</dt>
+            <dd>{{ collection.garden.code }}</dd>
+          {% endif %}
+          {% if collection.location %}
+            <dt>Location</dt>
+            <dd id="dedication-coordinates" data-latitude="{{ collection.location.latitude }}" data-longitude="{{ collection.location.longitude }}">{{ collection.location.latitude }}, {{ collection.location.longitude }}</dd>
+          {% endif %}
+          {% if collection.commemoration_text %}
+            <dt>Dedication</dt>
+            <dd class="dedication-text">{{ collection.commemoration_text|linebreaksbr }}</dd>
+          {% endif %}
+        </dl>
+        {% for species_image in images %}
+          {% image species_image.image fill-500x350 as rendition %}
+          <img class="img-fluid mb-3" src="{{ rendition.url }}" width="{{ rendition.width }}" height="{{ rendition.height }}" alt="{{ species_image.caption|default:species_image.image.title }}" />
+        {% endfor %}
+      </section>
+      {% if collection.location %}
+        <section class="col-md-6">
+          <div id="dedication-map" aria-label="Map showing this dedication location"></div>
+          <p id="dedication-map-status" class="visually-hidden" aria-live="polite"></p>
+        </section>
+      {% endif %}
+    </div>
+  </main>
+{% endblock %}
+
+{% block extra_js %}
+  {{ mapbox_token|json_script:'mapboxToken' }}
+  <script src="{% static 'plants/js/dedication_detail_map.js' %}"></script>
+{% endblock %}

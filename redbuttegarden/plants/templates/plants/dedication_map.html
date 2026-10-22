@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dedication Map{% endblock %}
+
+{% block extra_css %}
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" rel="stylesheet">
+  <link href="{% static 'plants/css/dedication.css' %}" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
+{% endblock %}
+
+{% block content %}
+  <main class="container py-4" id="main-content">
+    <h1>Dedication Map</h1>
+    <form class="row g-3 mb-3" method="get" action="{% url 'plants:dedication-map' %}">
+      <div class="col-md-4">{{ filter.form.garden_name.label_tag }}{{ filter.form.garden_name }}</div>
+      <div class="col-md-4">{{ filter.form.commemoration_person.label_tag }}{{ filter.form.commemoration_person }}</div>
+      <div class="col-md-4 align-self-end"><button class="btn btn-primary" type="submit">Apply filters</button> <a class="btn btn-outline-secondary" href="{% url 'plants:dedication-map' %}">Reset</a></div>
+    </form>
+    <div id="dedication-map" aria-label="Map of garden dedications"></div>
+    <p class="mt-3 mb-0" id="dedication-results" aria-live="polite">Loading dedications…</p>
+    <section class="mt-3" aria-labelledby="dedication-list-heading">
+      <h2 class="h4" id="dedication-list-heading">Dedications</h2>
+      <ul id="dedication-list">
+        {% for dedication in dedications %}
+          <li><a href="{{ dedication.get_absolute_url }}">{{ dedication.commemoration_person|default:dedication.plant_id }}{% if dedication.garden and dedication.garden.name %} — {{ dedication.garden.name }}{% endif %}</a></li>
+        {% empty %}
+          <li>No dedications match these filters.</li>
+        {% endfor %}
+      </ul>
+    </section>
+  </main>
+{% endblock %}
+
+{% block extra_js %}
+  {{ mapbox_token|json_script:'mapboxToken' }}
+  <script src="{% static 'plants/js/dedication_map.js' %}"></script>
+{% endblock %}
