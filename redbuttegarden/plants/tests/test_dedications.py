@@ -11,6 +11,7 @@ from rest_framework.test import APIClient
 from wagtail.images import get_image_model
 
 from plants.feeds import GardenBloomFeed, GardenBloomICalFeed
+from plants.filters import DedicationFilter
 from plants.models import BloomEvent, Collection, SpeciesImage
 from sitemaps.sitemaps import (
     CollectionDetailSitemap,
@@ -167,6 +168,42 @@ def test_dedication_map_preloads_taxonomy_for_canonical_urls(client):
 
     assert "genus" in rendered_dedication.species._state.fields_cache
     assert "family" in rendered_dedication.species.genus._state.fields_cache
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "query",
+    [
+        "Ada",
+        "Children's Garden",
+        "First line",
+    ],
+)
+def test_dedication_map_searches_public_dedication_fields(client, query):
+    """The dedication search only matches its dedicated public discovery fields."""
+
+    dedication = create_dedication()
+    response = client.get(reverse("plants:api-dedications-geojson"), {"q": query})
+
+    assert response.status_code == 200
+    assert [feature["properties"]["id"] for feature in response.json()["features"]] == [
+        dedication.id
+    ]
+
+
+@pytest.mark.django_db
+def test_dedication_search_rejects_queries_longer_than_200_characters():
+    """Overlong public map searches are invalid and safely leave results unfiltered."""
+
+    dedication = create_dedication()
+    dedication_filter = DedicationFilter(
+        {"q": "a" * 201},
+        queryset=Collection.objects.filter(pk=dedication.pk),
+    )
+
+    assert not dedication_filter.form.is_valid()
+    assert dedication_filter.form.errors.as_data()["q"][0].code == "max_length"
+    assert list(dedication_filter.qs) == [dedication]
 
 
 @pytest.mark.django_db

@@ -127,7 +127,7 @@ function renderListings(features) {
     );
 
     let empty = document.createElement('p');
-    listingEl.innerHTML = '';
+    listingEl.replaceChildren();
 
     if (features.length) {
         features.forEach(function (feature) {
@@ -136,11 +136,15 @@ function renderListings(features) {
                 let collection = document.createElement('a');
                 collection.href = "/plants/collection/" + prop.id + "/";
                 collection.target = '_blank';
-                collection.innerHTML = '<div class="feature-listing">' + prop.family_name + ' ' + style_full_name(prop.species_full_name) + '</div>';
+                collection.rel = 'noopener';
+                const name = document.createElement('div');
+                name.className = 'feature-listing';
+                name.textContent = `${prop.family_name || ''} ${prop.species_full_name || ''}`.trim();
+                collection.append(name);
                 collection.addEventListener('mouseover', function () {
                     popup
                         .setLngLat(feature.geometry.coordinates)
-                        .setHTML(style_full_name(prop.species_full_name))
+                        .setText(prop.species_full_name || '')
                         .addTo(map);
                 });
                 listingEl.appendChild(collection);
@@ -254,16 +258,49 @@ function hideLoader() {
     if (el) el.style.display = "none";
 }
 
-function formatSpeciesFullName(species_id, species_full_name) {
-    if (species_id) {
-        return (
-            '<span class="pop-up-label">Full Name: </span>' +
-            '<a href="/plants/species/' + species_id + '/">' +
-            style_full_name(species_full_name) +
-            "</a>"
-        );
+function createPopupRow(label, value) {
+    const row = document.createElement('div');
+    row.className = 'pop-up-row';
+    const labelElement = document.createElement('span');
+    labelElement.className = 'pop-up-label';
+    labelElement.textContent = `${label}: `;
+    row.append(labelElement, document.createTextNode(value || 'Not recorded'));
+    return row;
+}
+
+function displayList(value) {
+    if (!value) return "";
+    try {
+        const values = Array.isArray(value) ? value : JSON.parse(value);
+        if (Array.isArray(values)) return values.join(", ");
+    } catch {
+        if (typeof value === "string") {
+            return value.split(",").map((item) => item.trim()).filter(Boolean).join(", ");
+        }
     }
-    return '<span class="pop-up-label">Full Name: </span>' + style_full_name(species_full_name);
+    return "";
+}
+
+function createCollectionPopupContent(properties) {
+    const container = document.createElement('div');
+    const detailRow = document.createElement('div');
+    detailRow.className = 'pop-up-row';
+    const detailLink = document.createElement('a');
+    detailLink.href = `/plants/collection/${properties.id}/`;
+    detailLink.textContent = 'Collection detail page';
+    detailRow.append(detailLink);
+    container.append(detailRow);
+    [
+        ['Family Name', properties.family_name], ['Genus Name', properties.genus_name],
+        ['Species Name', properties.species_name], ['Full Name', properties.species_full_name],
+        ['Vernacular Name', properties.vernacular_name], ['Habit', properties.habit],
+        ['Hardiness Zones', displayList(properties.hardiness)], ['Water Regime', properties.water_regime],
+        ['Exposure', properties.exposure], ['Bloom Times', displayList(properties.bloom_time)],
+        ['Plant Size', properties.plant_size], ['Garden Area', properties.garden_area],
+        ['Garden Name', properties.garden_name], ['Garden Code', properties.garden_code],
+        ['Planted On', properties.planted_on],
+    ].forEach(([label, value]) => container.append(createPopupRow(label, value)));
+    return container;
 }
 
 async function refreshCollectionsData(map) {
@@ -339,73 +376,13 @@ function bindHandlersOnce(map) {
         const f = e.features[0];
         const coordinates = f.geometry.coordinates.slice();
 
-        const family_name = f.properties.family_name;
-        const genus_name = f.properties.genus_name;
-        const species_name = f.properties.species_name;
-        const species_full_name = f.properties.species_full_name;
-        const species_id = f.properties.species_id;
-        const collection_id = f.properties.id;
-        const vernacular_name = f.properties.vernacular_name;
-        const habit = f.properties.habit;
-        const hardiness = f.properties.hardiness;
-        const water_regime = f.properties.water_regime;
-        const exposure = f.properties.exposure;
-        const bloom_time = f.properties.bloom_time;
-        const plant_size = f.properties.plant_size;
-        const garden_area = f.properties.garden_area;
-        const garden_name = f.properties.garden_name;
-        const garden_code = f.properties.garden_code;
-        const planted_on = f.properties.planted_on;
-
-        function displayList(value) {
-            if (!value) return "";
-
-            try {
-                const arr = Array.isArray(value) ? value : JSON.parse(value);
-                if (Array.isArray(arr)) return arr.join(", ");
-            } catch {
-                if (typeof value === "string") {
-                    return value
-                        .split(",")
-                        .map(s => s.trim())
-                        .filter(Boolean)
-                        .join(", ");
-                }
-            }
-            return "";
-        }
-
-        const hardinessDisplay = displayList(hardiness);   // "5, 6, 7, 8, 9"
-        const bloomTimeDisplay = displayList(bloom_time);  // "April, May"
-
-        const formatted_species_full_name = formatSpeciesFullName(species_id, species_full_name);
-
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
 
         new mapboxgl.Popup()
             .setLngLat(coordinates)
-            .setHTML(
-                '<div class="pop-up-row">' +
-                '<a href="/plants/collection/' + collection_id + '/">Collection Detail Page</a>' +
-                '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Family Name: </span>' + family_name + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Genus Name: </span><span class="scientific-name">' + genus_name + '</span></div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Species Name: </span><span class="scientific-name">' + species_name + '</span></div>' +
-                '<div class="pop-up-row">' + formatted_species_full_name + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Vernacular Name: </span>' + vernacular_name + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Habit: </span>' + habit + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Hardiness Zones: </span>' + hardinessDisplay + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Water Regime: </span>' + water_regime + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Exposure: </span>' + exposure + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Bloom Times: </span>' + bloomTimeDisplay + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Plant Size: </span>' + plant_size + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Garden Area: </span>' + garden_area + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Garden Name: </span>' + garden_name + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Garden Code: </span>' + garden_code + '</div>' +
-                '<div class="pop-up-row"><span class="pop-up-label">Planted On: </span>' + planted_on + '</div>'
-            )
+            .setDOMContent(createCollectionPopupContent(f.properties))
             .addTo(map);
     });
 
@@ -573,7 +550,7 @@ async function initialMapSetup(map) {
     } catch (error) {
         console.error("Initial collections fetch failed:", error);
         hideLoader();
-        if (listingEl) listingEl.innerHTML = "<p>Unable to load collections.</p>";
+        if (listingEl) listingEl.textContent = "Unable to load collections.";
     }
 
     // 5) Bind interactions once (not duplicated on style change)
@@ -701,7 +678,7 @@ function bindMapFiltersForm(map) {
 
             await refreshCollectionsData(map);
 
-            if (listingEl) listingEl.innerHTML = "<p>Drag the map to populate results</p>";
+            if (listingEl) listingEl.textContent = "Drag the map to populate results";
             resetMapFilter(map);
         });
     }

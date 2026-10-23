@@ -38,6 +38,22 @@
     color: #fff;
 }
 
+.map-loading-spinner {
+    display: block;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 0.3rem solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: map-loading-spin 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .map-loading-spinner { animation-duration: 2s; }
+}
+
+@keyframes map-loading-spin { to { transform: rotate(360deg); } }
+
 /* ---------- Sidebar / overlay ---------- */
 .map-overlay {
     font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
@@ -91,6 +107,14 @@
 
 .map-overlay .listing a:hover {
     background: #f0f0f0;
+}
+
+.map-overlay .listing a:focus-visible,
+.map-overlay input:focus-visible,
+.map-overlay select:focus-visible,
+.map-overlay summary:focus-visible {
+    outline: 3px solid #005fcc;
+    outline-offset: 2px;
 }
 
 /* ---------- Map style switcher ---------- */

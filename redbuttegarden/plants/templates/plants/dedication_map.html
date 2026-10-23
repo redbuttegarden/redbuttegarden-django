@@ -4,32 +4,43 @@
 {% block title %}Dedication Map{% endblock %}
 
 {% block extra_css %}
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" rel="stylesheet">
-  <link href="{% static 'plants/css/dedication.css' %}" rel="stylesheet">
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" integrity="sha384-Sdx78Z6nqVgiCnAlgCe5s/P74CeyLMH/hI61WTXUO7kbN/HJ81e3MAkMTz1jxsm+" crossorigin="anonymous" />
+  <link href="{% static 'plants/css/plant_map.css' %}" rel="stylesheet" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js" integrity="sha384-/TrjtPGu/gYA2W0pthEIcd2shlv/VWamCvc9tZ776cfv6X9dyG34BWLygYZeItjZ" crossorigin="anonymous"></script>
 {% endblock %}
 
-{% block content %}
-  <main class="container py-4" id="main-content">
-    <h1>Dedication Map</h1>
-    <form class="row g-3 mb-3" method="get" action="{% url 'plants:dedication-map' %}">
-      <div class="col-md-4">{{ filter.form.garden_name.label_tag }}{{ filter.form.garden_name }}</div>
-      <div class="col-md-4">{{ filter.form.commemoration_person.label_tag }}{{ filter.form.commemoration_person }}</div>
-      <div class="col-md-4 align-self-end"><button class="btn btn-primary" type="submit">Apply filters</button> <a class="btn btn-outline-secondary" href="{% url 'plants:dedication-map' %}">Reset</a></div>
-    </form>
-    <div id="dedication-map" aria-label="Map of garden dedications"></div>
-    <p class="mt-3 mb-0" id="dedication-results" aria-live="polite">Loading dedications…</p>
-    <section class="mt-3" aria-labelledby="dedication-list-heading">
-      <h2 class="h4" id="dedication-list-heading">Dedications</h2>
-      <ul id="dedication-list">
-        {% for dedication in dedications %}
-          <li><a href="{{ dedication.get_absolute_url }}">{{ dedication.commemoration_person|default:dedication.plant_id }}{% if dedication.garden and dedication.garden.name %} — {{ dedication.garden.name }}{% endif %}</a></li>
-        {% empty %}
-          <li>No dedications match these filters.</li>
-        {% endfor %}
-      </ul>
-    </section>
-  </main>
+{% block abnormal_content %}
+  <div class="container-fluid px-0">
+    <h1 class="visually-hidden">Dedication Map</h1>
+    <div id="map-load-overlay"><div id="load-icon" role="status" aria-label="Loading dedication map"><span class="map-loading-spinner" aria-hidden="true"></span></div></div>
+    <div class="map-overlay">
+      <details class="map-filters" id="mapFilters" open>
+        <summary class="map-filters__toggle"><span class="fw-semibold">Search filters</span><span id="active-filters" class="active-filters small text-muted ms-2"><noscript>{% if request.GET %}Active filters: {{ request.GET.urlencode }}{% else %}No active filters{% endif %}</noscript></span></summary>
+        <div class="map-filter-panel map-filters__body">
+          <form id="map-filters-form" method="get" action="{% url 'plants:dedication-map' %}">
+            <div class="filter-grid">
+              <div class="filter-field">{{ filter.form.q.label_tag }}{{ filter.form.q }}</div>
+              <div class="filter-field">{{ filter.form.garden_name.label_tag }}{{ filter.form.garden_name }}</div>
+              <div class="filter-field">{{ filter.form.commemoration_person.label_tag }}{{ filter.form.commemoration_person }}</div>
+            </div>
+            <div class="filter-actions"><button type="submit" class="btn btn-primary btn-sm">Apply</button><button type="button" id="filters-reset" class="btn btn-light btn-sm">Reset</button></div>
+          </form>
+        </div>
+      </details>
+      <fieldset><label for="feature-filter">Filter visible dedications</label><input id="feature-filter" type="search" placeholder="Filter results by name or garden" autocomplete="off" /></fieldset>
+      <p class="small text-center">Select a dedication to open its detail page.</p>
+      <div id="feature-listing" class="listing" aria-live="polite"><noscript>{% for dedication in dedications %}<a href="{{ dedication.get_absolute_url }}">{{ dedication.commemoration_person|default:dedication.plant_id }}{% if dedication.garden and dedication.garden.name %} — {{ dedication.garden.name }}{% endif %}</a>{% empty %}<p>No dedications match these filters.</p>{% endfor %}</noscript></div>
+    </div>
+    <div id="map">
+      <div id="mapMenu">
+        <input id="rbg-custom" type="radio" name="rtoggle" value="rbg" checked /><label for="rbg-custom">RBG&amp;A custom</label>
+        <input id="satellite-v9" type="radio" name="rtoggle" value="satellite" /><label for="satellite-v9">satellite</label>
+        <input id="light-v10" type="radio" name="rtoggle" value="light" /><label for="light-v10">light</label>
+        <input id="dark-v10" type="radio" name="rtoggle" value="dark" /><label for="dark-v10">dark</label>
+        <input id="streets-v11" type="radio" name="rtoggle" value="streets" /><label for="streets-v11">streets</label>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block extra_js %}

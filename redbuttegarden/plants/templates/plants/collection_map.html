@@ -6,17 +6,16 @@
 {% endblock %}
 
 {% block extra_css %}
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" integrity="sha384-Sdx78Z6nqVgiCnAlgCe5s/P74CeyLMH/hI61WTXUO7kbN/HJ81e3MAkMTz1jxsm+" crossorigin="anonymous" />
   <link href="{% static 'plants/css/plant_map.css' %}" rel="stylesheet" />
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
-  <script src="https://kit.fontawesome.com/332beda55d.js" crossorigin="anonymous"></script>
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js" integrity="sha384-/TrjtPGu/gYA2W0pthEIcd2shlv/VWamCvc9tZ776cfv6X9dyG34BWLygYZeItjZ" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block abnormal_content %}
   <div class="container-fluid px-0">
     <div id="map-load-overlay">
-      <div id="load-icon" class="fa-3x">
-        <i class="fas fa-sync-alt fa-spin"></i>
+      <div id="load-icon" role="status" aria-label="Loading plant map">
+        <span class="map-loading-spinner" aria-hidden="true"></span>
       </div>
     </div>
 
@@ -98,8 +97,8 @@
         <label for="feature-filter">Collection filter</label>
         <input id="feature-filter" type="text" placeholder="Filter results by name" />
       </fieldset>
-      <p class="small text-center">Click a collection to open it's detail page</p>
-      <div id="feature-listing" class="listing"></div>
+      <p class="small text-center">Select a collection to open its detail page.</p>
+      <div id="feature-listing" class="listing" aria-live="polite"></div>
     </div>
 
     <div id="map">

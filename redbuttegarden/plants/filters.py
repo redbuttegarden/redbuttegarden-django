@@ -3,6 +3,7 @@ from typing import Any
 
 import django_filters
 from django import forms
+from django.db.models import Q, QuerySet
 from django.http import QueryDict
 from django.contrib.postgres.search import SearchQuery, SearchVector
 from django.urls import reverse_lazy
@@ -396,10 +397,21 @@ class DedicationFilter(django_filters.FilterSet):
         choices=[],
         lookup_expr="iexact",
     )
+    q = django_filters.CharFilter(
+        method="filter_search",
+        label="Search dedications",
+        max_length=200,
+        widget=forms.SearchInput(
+            attrs={
+                "placeholder": "Name, garden, or dedication text",
+                "autocomplete": "off",
+            }
+        ),
+    )
 
     class Meta:
         model = Collection
-        fields = ["garden_name", "commemoration_person"]
+        fields = ["q", "garden_name", "commemoration_person"]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Populate filter choices only from classified dedication records."""
@@ -422,6 +434,20 @@ class DedicationFilter(django_filters.FilterSet):
         ]
         for field in self.form.fields.values():
             field.widget.attrs["class"] = "form-control"
+
+    def filter_search(
+        self, queryset: QuerySet[Collection], name: str, value: str
+    ) -> QuerySet[Collection]:
+        """Match a dedication's public name, garden, or commemoration text."""
+
+        query = value.strip()
+        if not query:
+            return queryset
+        return queryset.filter(
+            Q(commemoration_person__icontains=query)
+            | Q(garden__name__icontains=query)
+            | Q(commemoration_text__icontains=query)
+        )
 
 
 class TopTreesSpeciesFilter(django_filters.FilterSet):
