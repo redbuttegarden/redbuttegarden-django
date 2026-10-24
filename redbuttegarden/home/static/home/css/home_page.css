@@ -87,6 +87,7 @@ body.template-homepage {
 
         #visitTextInner {
             padding: 3rem;
+            word-wrap: break-word;
         }
 
         @media screen and (min-width: 576px) {
@@ -261,10 +262,16 @@ body.template-homepage {
         top: 70%;
         cursor: pointer;
         color: black;
+        border: 0;
         background-image: radial-gradient(circle at 50% 50%, rgb(208, 232, 229) 0%, rgba(208, 232, 229, 0.72) 50%, rgba(0, 0, 0, 0) 100%);
         padding: 0.15rem;
         border-radius: 1rem;
         z-index: 1;
+    }
+
+    .arrow:focus-visible {
+        outline: 3px solid var(--rbg-oak-green);
+        outline-offset: 0.2rem;
     }
 
     .arrow-right {

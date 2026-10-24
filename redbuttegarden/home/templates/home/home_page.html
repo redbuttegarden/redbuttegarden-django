@@ -14,8 +14,8 @@
 {% endblock %}
 
 {% block abnormal_content %}
-    <div class="container-fluid p-4 p-lg-5">
-        <div id="visitContainer" class="container-fluid mb-3 p-4 p-lg-5">
+    <div class="container-fluid mt-5 p-0">
+        <div id="visitContainer" class="container-fluid mb-3 p-0 p-md-4 p-lg-5">
             <div class="row g-0 d-lg-flex">  <!-- allow equal-height columns on large screens -->    
                 <div id="visitInfoImg" class="col-12 col-lg-6 p-0">
                     <div class="h-100">
@@ -36,7 +36,7 @@
                 <div id="visitInfoText" class="col-12 col-lg-6 p-0 d-flex">
                     <div id="visitTextInner" class="d-flex flex-column justify-content-center h-100 w-100">
                         <h1>Visit the Garden</h1>
-                        <div id="hours"></div>
+                        <div id="hours" aria-live="polite"></div>
                         <div id="emphaticText" class="red fw-bold"></div>
                         <div id="visitText" class="fs-5 mt-4 mb-1"></div>
                         <div id="hoursSectionText" class="fs-5 mt-4 mb-1">
@@ -150,14 +150,7 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script>
-        // List of concert dates and their ticket URL
-        const concertInfo = {{ concert_info|safe }};
-        // Convert date strings to javascript Date objects
-        for (let i = 0; i < concertInfo.length; i++) {
-            concertInfo[i]["Date"] = new Date(concertInfo[i]["Date"]);
-        }
-    </script>
+    {{ concert_info|json_script:"concert-info" }}
     {{ self.id|json_script:"pageID" }}
     <script src="{% static 'home/js/hours.js' %}"></script>
     <script src="{% static 'home/js/weather.js' %}"></script>

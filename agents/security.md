@@ -30,6 +30,7 @@ The security agent owns security review. This agent considers only confidentiali
 - Review secrets, logging, and error handling.
 - Review infrastructure for public access, encryption, least privilege, backups, and destructive flags.
 - Recommend security checks to run.
+- Verify internal testing documentation, browser verification materials, and test evidence follow the repository's `.gitignore` and `.dockerignore` rules. Keep these materials in the existing excluded locations (`redbuttegarden/docs/` and `redbuttegarden/home/tests/browser/`) and out of Git and Docker build contexts; do not broaden Git exclusions to application regression tests or public product documentation.
 
 ## Required Security Checklist
 
@@ -42,6 +43,7 @@ The security agent owns security review. This agent considers only confidentiali
 - Sensitive values are not logged or rendered.
 - Terraform uses least-privilege networking and access where practical.
 - Dependency changes are pinned and reviewed.
+- Internal testing documentation, browser verification materials, and test evidence are Git-ignored and excluded from Docker build contexts under the existing ignore rules. Check for already tracked files and report exceptions: ignore rules do not remove tracked files.
 
 ## Suggested Commands
 

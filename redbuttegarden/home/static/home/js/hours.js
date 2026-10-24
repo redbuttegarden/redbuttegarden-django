@@ -1,206 +1,142 @@
-const pageID = document.getElementById('pageID').textContent;
+/** Display the first matching schedule using the garden's local calendar. */
+const pageID = document.getElementById('pageID')?.textContent;
 const hoursElem = document.getElementById('hours');
 const visitTextElem = document.getElementById('visitText');
 const emphaticTextElem = document.getElementById('emphaticText');
-let concertDay = false;
+const concertInfo = JSON.parse(document.getElementById('concert-info')?.textContent || '[]');
 
 async function getGardenHours() {
+    if (!pageID) return null;
     try {
         const response = await fetch(`/api/hours/${pageID}`, {
-            headers: {
-                'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest',
-            }
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
         });
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
+        if (!response.ok || response.status === 204) return null;
         return await response.json();
-    } catch (error) {
-        console.error('Fetch error: ', error);
+    } catch {
+        return null;
     }
 }
 
-function processGardenHours(garden_open, garden_close) {
-    if (!garden_open || !garden_close) {
-        console.warn("Garden hours are not defined.");
+/** Get Denver calendar parts independently of the visitor's timezone and DST. */
+function gardenDateParts(date) {
+    const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Denver', year: 'numeric', month: '2-digit', day: '2-digit',
+        weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+    }).formatToParts(date);
+    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return {
+        calendarDate: `${values.year}-${values.month}-${values.day}`,
+        month: Number(values.month) - 1,
+        weekday: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(values.weekday),
+        minutes: Number(values.hour) * 60 + Number(values.minute) + Number(values.second) / 60,
+    };
+}
+
+function getFirstRBGHoursMatch(rbgHours, currentMonth, dayIndex) {
+    return Object.values(rbgHours || {}).find((hours) =>
+        Array.isArray(hours?.months_of_year) && hours.months_of_year.includes(currentMonth) &&
+        Array.isArray(hours.days_of_week) && hours.days_of_week.includes(dayIndex)
+    ) || null;
+}
+
+function timeMinutes(value) {
+    if (typeof value !== 'string' || !/^\d{1,2}:\d{2}$/.test(value)) return null;
+    const [hour, minute] = value.split(':').map(Number);
+    return hour < 24 && minute < 60 ? hour * 60 + minute : null;
+}
+
+function formatTime(minutes) {
+    const hour = Math.floor(minutes / 60);
+    const minute = minutes % 60;
+    return `${hour % 12 || 12}${minute ? `:${String(minute).padStart(2, '0')}` : ''} ${hour >= 12 ? 'PM' : 'AM'}`;
+}
+
+/** Accept legacy responses while ignoring incomplete periods defensively. */
+function scheduleRanges(schedule) {
+    const ranges = Array.isArray(schedule.time_ranges) ? schedule.time_ranges : [schedule];
+    return ranges.map((range) => ({
+        start: timeMinutes(range?.garden_open), end: timeMinutes(range?.garden_close),
+        label: typeof range?.label === 'string' ? range.label : '',
+    })).filter((range) => range.start !== null && range.end !== null && range.start < range.end)
+        .sort((first, second) => first.start - second.start);
+}
+
+function displayOpenClosed(isOpen, schedule) {
+    const container = document.getElementById('visitInfoImg');
+    if (!container) return;
+    let bubble = document.getElementById('openClosedBubble');
+    if (!bubble) {
+        bubble = document.createElement('div');
+        bubble.id = 'openClosedBubble';
+        bubble.setAttribute('role', 'status');
+        container.appendChild(bubble);
+    }
+    bubble.className = isOpen ? 'rbg-open' : 'rbg-closed';
+    bubble.textContent = (isOpen ? schedule.open_message : schedule.closed_message) ||
+        (isOpen ? 'THE GARDEN IS OPEN' : 'THE GARDEN IS CLOSED');
+    const icon = document.createElement('i');
+    icon.className = 'bi bi-clock float-start';
+    icon.setAttribute('aria-hidden', 'true');
+    bubble.appendChild(icon);
+}
+
+function updateConcertLink(concert) {
+    document.getElementById('buyLink')?.remove();
+    if (!concert?.TicketURL || !hoursElem) return;
+    let url;
+    try {
+        url = new URL(concert.TicketURL, window.location.origin);
+    } catch {
         return;
     }
-
-    let openTime = garden_open.split(":");
-    let closeTime = garden_close.split(":");
-    let openHour = parseInt(openTime[0]);
-    let closeHour = parseInt(closeTime[0]);
-    let openMinute = parseInt(openTime[1]);
-    let closeMinute = parseInt(closeTime[1]);
-
-    let currentDate = new Date();
-
-    let openDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), openHour, openMinute);
-    let closeDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), closeHour, closeMinute);
-
-    let openTimeStr;
-    let closeTimeStr;
-    let openHour12 = openHour === 0 ? 12 : openHour > 12 ? openHour - 12 : openHour;
-    let closeHour12 = closeHour === 0 ? 12 : closeHour > 12 ? closeHour - 12 : closeHour;
-
-    let openPeriod = openHour >= 12 ? "PM" : "AM";
-    let closePeriod = closeHour >= 12 ? "PM" : "AM";
-
-    if (openMinute !== 0) {
-        openTimeStr = `${openHour12}:${openMinute.toString().padStart(2, "0")} ${openPeriod}`;
-    } else {
-        openTimeStr = `${openHour12} ${openPeriod}`;
-    }
-
-    if (closeMinute !== 0) {
-        closeTimeStr = `${closeHour12}:${closeMinute.toString().padStart(2, "0")} ${closePeriod}`;
-    } else {
-        closeTimeStr = `${closeHour12} ${closePeriod}`;
-    }
-
-    return {
-        openDate: openDate, closeDate: closeDate, openTimeStr: openTimeStr, closeTimeStr: closeTimeStr,
-    }
-}
-
-/**
- * Return the first RBGHours object that matches the current month and day
- * @param rbgHours
- * @param currentMonth
- * @param dayIndex
- * @returns {*|null}
- */
-function getFirstRBGHoursMatch(rbgHours, currentMonth, dayIndex) {
-    for (let i = 0; i < Object.keys(rbgHours).length; i++) {
-        console.log(`Checking if months_of_year: ${rbgHours[i]['months_of_year']} includes currentMonth (zero indexed): ${currentMonth} and days_of_week: ${rbgHours[i]['days_of_week']} includes dayIndex (zero indexed): ${dayIndex}`);
-        console.log(rbgHours[i]['months_of_year'].includes(currentMonth) + " && " + rbgHours[i]['days_of_week'].includes(dayIndex));
-        if (rbgHours[i]['months_of_year'].includes(currentMonth) && rbgHours[i]['days_of_week'].includes(dayIndex)) {
-            return rbgHours[i];
-        }
-    }
-    return null;
+    if (!['http:', 'https:'].includes(url.protocol)) return;
+    const link = document.createElement('a');
+    link.id = 'buyLink';
+    link.href = url.href;
+    link.className = 'fw-bold';
+    link.textContent = concert.BandName ? `Buy tickets to see ${concert.BandName}!` : "Buy tickets to today's show!";
+    hoursElem.after(link);
 }
 
 function setHours(rbgHours, date = new Date()) {
-    const DAYS_OF_WEEK = [[0, "Sunday"], [1, "Monday"], [2, "Tuesday"], [3, "Wednesday"], [4, "Thursday"], [5, "Friday"], [6, "Saturday"]];
-
-    const today = new Date();
-    const dayIndex = today.getDay();
-    const dayName = DAYS_OF_WEEK.find(([index]) => index === dayIndex)[1];
-
-    console.log(`Today is ${dayName}`);
-
-    let offset = date.getTimezoneOffset() / 60;
-    let offsetDifference = offset - 6;
-
-    let currentMonth = date.getMonth();
-    let currentDay = date.getDate();
-    let currentHour = date.getHours() + offsetDifference;
-    let currentMinute = date.getMinutes();
-    let minutesBeforeOpeningOrClosing = 60 - currentMinute;
-
-    // Get the RBGHours object for the current day of the week and month of the year
-    console.log(`Current Month (Zero indexed; e.g. January = 0): ${currentMonth}, Current Day: ${currentDay}, Current Hour: ${currentHour}, Current Minute: ${currentMinute}`);
-    console.log(`RBG Hours: `, rbgHours);
-    let matchedRBGHours = getFirstRBGHoursMatch(rbgHours, currentMonth, dayIndex);
-
-    let processedTimes = processGardenHours(matchedRBGHours.garden_open, matchedRBGHours.garden_close);
-
-    handleConcertDay(currentMonth, currentDay, currentHour, minutesBeforeOpeningOrClosing);
-    if (!concertDay) {
-        if (processedTimes) {
-            hoursElem.textContent = processedTimes.openTimeStr + " - " + processedTimes.closeTimeStr;
-        }
-        visitTextElem.innerHTML = matchedRBGHours.additional_message;
-        emphaticTextElem.innerHTML = matchedRBGHours.additional_emphatic_mesg;
+    if (!hoursElem) return;
+    const today = gardenDateParts(date);
+    const schedule = getFirstRBGHoursMatch(rbgHours, today.month, today.weekday);
+    hoursElem.replaceChildren();
+    if (!schedule) {
+        hoursElem.textContent = 'Hours unavailable';
+        if (visitTextElem) visitTextElem.replaceChildren();
+        if (emphaticTextElem) emphaticTextElem.replaceChildren();
+        document.getElementById('openClosedBubble')?.remove();
+        updateConcertLink(null);
+        return;
     }
-    displayOpenClosed(processedTimes);
+    let ranges = scheduleRanges(schedule);
+    const concert = concertInfo.find((item) => String(item.Date).slice(0, 10) === today.calendarDate);
+    updateConcertLink(concert);
+    const concertOverride = concert && ranges.length === 1;
+    if (concertOverride) ranges = [{start: 9 * 60, end: 17 * 60, label: ''}];
+    for (const range of ranges) {
+        const line = document.createElement('div');
+        line.style.overflowWrap = 'anywhere';
+        const prefix = concertOverride ? 'Today (Concert Day): ' : range.label ? `${range.label}: ` : '';
+        line.textContent = `${prefix}${formatTime(range.start)} - ${formatTime(range.end)}`;
+        hoursElem.appendChild(line);
+    }
+    // These existing messages are Wagtail editor-authored rich text. Period labels
+    // and concert names above are plain text and never enter this HTML boundary.
+    if (visitTextElem) visitTextElem.innerHTML = concertOverride ? '' : schedule.additional_message || '';
+    if (emphaticTextElem) emphaticTextElem.innerHTML = concertOverride ? '' : schedule.additional_emphatic_mesg || '';
+    displayOpenClosed(ranges.some((range) => today.minutes >= range.start && today.minutes < range.end), schedule);
 }
 
-// Display open or closed icon/bubble over the "Visit the garden" image
-function displayOpenClosed(timeInfoDict) {
-    const visitGardenImgContainer = document.getElementById('visitInfoImg');
-    let openClosedBubbleElem = document.getElementById('openClosedBubble');
-
-    // Check if openClosedBubbleElem doesn't exist, create it
-    if (!openClosedBubbleElem) {
-        openClosedBubbleElem = document.createElement('div');
-        openClosedBubbleElem.id = "openClosedBubble";
-
-        visitGardenImgContainer.appendChild(openClosedBubbleElem);
-    }
-
-    let currentDate = new Date();
-
-    // Check if the current time is between the open and close times
-    // Also check if it's a concert day and before 5pm or not a concert day
-    if ((timeInfoDict && currentDate >= timeInfoDict.openDate && currentDate <= timeInfoDict.closeDate) &&
-        (concertDay && currentDate.getHours() < 17 || !concertDay)) {
-        openClosedBubbleElem.className = "rbg-open";
-        openClosedBubbleElem.textContent = "THE GARDEN IS OPEN";
-    } else {
-        openClosedBubbleElem.className = "rbg-closed";
-        openClosedBubbleElem.textContent = "THE GARDEN IS CLOSED";
-    }
-
-    // Add bootstrap clock icon to openClosedBubbleElem
-    let clockIcon = document.createElement('i');
-    clockIcon.className = "bi bi-clock float-start";
-    openClosedBubbleElem.appendChild(clockIcon);
+async function refreshGardenHours() {
+    const hours = await getGardenHours();
+    setHours(hours);
 }
 
-
-// If concert date; change hours and add buy link
-function handleConcertDay(currentMonth, currentDay) {
-    // Check if buyLink already exists
-    let buyLink = document.getElementById('buyLink');
-    console.log(`buyLink exists: ${!!buyLink}`);
-
-    for (let i = 0; i < concertInfo.length; i++) {
-        console.log(`Checking concert date: ${concertInfo[i]["Date"]} against current date (zero indexed month): ${currentMonth}/${currentDay}`);
-        console.log(concertInfo[i]["Date"].getMonth() === currentMonth && concertInfo[i]["Date"].getDate() === currentDay);
-        if (concertInfo[i]["Date"].getMonth() === currentMonth && concertInfo[i]["Date"].getDate() === currentDay) {
-            if (concertInfo[i]["TicketURL"]) {
-                if (!buyLink) {
-                    buyLink = document.createElement('a');
-                    console.log("Creating new buyLink element.");
-                }
-                buyLink.id = "buyLink";
-                buyLink.setAttribute("href", concertInfo[i]["TicketURL"]);
-                buyLink.className = "fw-bold";
-                // The BandName is not null, use that as the text content
-                buyLink.textContent = concertInfo[i]["BandName"] ? `Buy tickets to see ${concertInfo[i]["BandName"]}!` : "Buy tickets to today's show!";
-                if (hoursElem) {
-                    hoursElem.after(buyLink);
-                    console.log("Buy link added after hours element.");
-                } else {
-                    console.warn("Element with ID 'hours' not found.");
-                }
-            } else {
-                console.warn("Ticket URL not found for concert: ", concertInfo[i]);
-            }
-            hoursElem.textContent = "Today (Concert Day): 9 AM - 5 PM";
-
-            concertDay = true;
-            break;
-        } else {
-            if (buyLink) {
-                buyLink.remove();
-                console.log("Buy link removed.");
-            }
-
-            concertDay = false;
-        }
-    }
-}
-
-setInterval(async () => {
-    let rbgHours = await getGardenHours();
-    setHours(rbgHours);
-}, 300000); // Update every 5 minutes
-
-let rbgHours;
-window.onload = async () => {
-    rbgHours = await getGardenHours();
-    setHours(rbgHours);
+if (pageID && hoursElem) {
+    window.addEventListener('load', refreshGardenHours);
+    setInterval(refreshGardenHours, 300000);
 }
