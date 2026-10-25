@@ -296,6 +296,25 @@ class Collection(models.Model):
         return f"{self.plant_id} ({self.species.full_name})"
 
 
+class PlantImage(Orderable):
+    """Store an image assigned to one specific living-collection record."""
+
+    collection = models.ForeignKey(
+        Collection, on_delete=models.CASCADE, related_name="plant_images"
+    )
+    image = models.ForeignKey(
+        "wagtailimages.Image", on_delete=models.CASCADE, related_name="+"
+    )
+    caption = models.CharField(blank=True, max_length=250)
+    copyright = models.CharField(blank=True, max_length=300)
+
+    panels = [
+        FieldPanel("image"),
+        FieldPanel("caption"),
+        FieldPanel("copyright"),
+    ]
+
+
 class BloomEvent(models.Model):
     """
     A model to represent a bloom event for a species and/or collections.

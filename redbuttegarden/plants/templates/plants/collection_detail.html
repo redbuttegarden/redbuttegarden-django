@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static wagtailimages_tags %}
 
 {% block title %}Collection Detail{% if collection.species.vernacular_name %}| {{ collection.species.vernacular_name }}{% endif %}{% endblock %}
 
@@ -40,6 +40,10 @@
                         {% include 'plants/includes/blooming.html' %}
                     {% endif %}
                 </div>
+                {% for plant_image in images %}
+                    {% image plant_image.image fill-500x350 as rendition %}
+                    <img class="img-fluid mb-3" src="{{ rendition.url }}" width="{{ rendition.width }}" height="{{ rendition.height }}" alt="{{ plant_image.caption|default:plant_image.image.title }}">
+                {% endfor %}
             </div>
             <div class="col-md-6 mt-3 mt-md-0">
                 <div id="map"></div>

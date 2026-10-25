@@ -27,7 +27,14 @@ urlpatterns = [
         name="api-species-detail",
     ),
     path(
-        "api/species/<int:pk>/set-image/", views.set_image, name="api-set-species-image"
+        "api/species/<int:pk>/set-image/",
+        views.set_species_image,
+        name="api-set-species-image",
+    ),
+    path(
+        "api/plants/<str:plant_id>/set-image/",
+        views.set_plant_image,
+        name="api-set-plant-image",
     ),
     path("species-images/", views.SpeciesImageListView.as_view(), name="speciesimage-list"),
     path(

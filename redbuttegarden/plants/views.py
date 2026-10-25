@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from django.core.paginator import PageNotAnInteger, EmptyPage
 from django.db import IntegrityError
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.http import (
     HttpRequest,
     HttpResponse,
@@ -34,6 +34,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.request import Request
 from rest_framework.response import Response
 from wagtail.models import Collection as WagtailCollection
 from wagtail.images.models import Image
@@ -50,6 +51,7 @@ from .models import (
     Species,
     Collection,
     Location,
+    PlantImage,
     SpeciesImage,
     BloomEvent,
 )
@@ -168,7 +170,8 @@ class SpeciesList(generics.ListCreateAPIView):
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Species]:
+        """Return species matching the supplied taxonomy and plant ID filters."""
         queryset = Species.objects.all()
 
         genus = self.request.query_params.get("genus", "unspecified")
@@ -180,6 +183,7 @@ class SpeciesList(generics.ListCreateAPIView):
         forma = self.request.query_params.get("forma", "unspecified")
         subforma = self.request.query_params.get("subforma", "unspecified")
         cultivar = self.request.query_params.get("cultivar", "unspecified")
+        plant_id = self.request.query_params.get("plant_id", "unspecified")
 
         if genus != "unspecified":
             queryset = queryset.filter(genus__name=genus)
@@ -199,6 +203,8 @@ class SpeciesList(generics.ListCreateAPIView):
             queryset = queryset.filter(subforma=subforma)
         if cultivar != "unspecified":
             queryset = queryset.filter(cultivar=cultivar)
+        if plant_id != "unspecified":
+            queryset = queryset.filter(collection__plant_id=plant_id).distinct()
 
         return queryset
 
@@ -255,7 +261,9 @@ class CustomAuthToken(ObtainAuthToken):
 
 
 @api_view(["POST"])
-def set_image(request, pk):
+def set_species_image(request: Request, pk: int) -> JsonResponse:
+    """Upload an image and associate it with one species."""
+
     # Check if user has a valid API Token
     try:
         token = request.META["HTTP_AUTHORIZATION"].split(" ")[1]
@@ -316,6 +324,68 @@ def set_image(request, pk):
         )
 
     return JsonResponse({"status": "failure"})
+
+
+@api_view(["POST"])
+def set_plant_image(request: Request, plant_id: str) -> JsonResponse:
+    """Upload an image and associate it with the exact living-collection ID."""
+
+    try:
+        token = request.META["HTTP_AUTHORIZATION"].split(" ")[1]
+    except (KeyError, IndexError):
+        return JsonResponse({"status": "failure"})
+    if not Token.objects.filter(key=token).exists():
+        return JsonResponse({"status": "failure"})
+
+    try:
+        collection = Collection.objects.select_related("species").get(plant_id=plant_id)
+    except Collection.DoesNotExist:
+        return JsonResponse({"status": "failure"}, status=404)
+
+    uploaded_image = request.FILES.get("image")
+    if uploaded_image is None:
+        return JsonResponse({"status": "failure"}, status=400)
+
+    copyright_text = request.data.get("copyright_info", "")
+    try:
+        image, img_created = Image.objects.get_or_create(
+            title=uploaded_image.name,
+            defaults={
+                "file": uploaded_image,
+                "collection": WagtailCollection.objects.get(name="BRAHMS Data"),
+            },
+        )
+    except WagtailCollection.DoesNotExist:
+        logger.error('"BRAHMS DATA" Collection is missing. Unable to save new images.')
+        return JsonResponse({"status": "failure"})
+
+    if img_created:
+        image.tags.add("BRAHMS")
+
+    try:
+        plant_image, plant_img_created = PlantImage.objects.get_or_create(
+            collection=collection,
+            image=image,
+            copyright=copyright_text,
+            defaults={"caption": collection.species.full_name},
+        )
+    except IntegrityError:
+        logger.debug("Failed to add plant image relationship.")
+        return JsonResponse(
+            {
+                "status": "failure",
+                "image_created": img_created,
+                "plant_image_created": False,
+            }
+        )
+
+    return JsonResponse(
+        {
+            "status": "success",
+            "image_created": img_created,
+            "plant_image_created": plant_img_created,
+        }
+    )
 
 
 class SpeciesImageListView(generics.ListAPIView):
@@ -453,7 +523,10 @@ def collection_detail(request: HttpRequest, collection_id: int) -> HttpResponse:
     """Render a plant collection or redirect a dedication to its canonical URL."""
 
     collection = get_object_or_404(
-        Collection.objects.select_related("species__genus__family"), pk=collection_id
+        Collection.objects.select_related("species__genus__family").prefetch_related(
+            "plant_images__image"
+        ),
+        pk=collection_id,
     )
     if collection.species.genus.family.name == DEDICATION_FAMILY_NAME:
         return HttpResponsePermanentRedirect(collection.get_absolute_url())
@@ -469,6 +542,7 @@ def collection_detail(request: HttpRequest, collection_id: int) -> HttpResponse:
         "plants/collection_detail.html",
         {
             "collection": collection,
+            "images": collection.plant_images.select_related("image"),
             "in_bloom": in_bloom,
             "mapbox_token": mapbox_api_token,
         },
@@ -482,15 +556,13 @@ def dedication_detail(request: HttpRequest, collection_id: int) -> HttpResponse:
         dedication_collections().select_related("location", "garden", "species"),
         pk=collection_id,
     )
-    species_images = SpeciesImage.objects.filter(species=collection.species).select_related(
-        "image"
-    )
+    plant_images = collection.plant_images.select_related("image")
     return render(
         request,
         "plants/dedication_detail.html",
         {
             "collection": collection,
-            "images": species_images,
+            "images": plant_images,
             "mapbox_token": getattr(settings, "MAPBOX_API_TOKEN", None),
         },
     )

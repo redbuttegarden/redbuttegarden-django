@@ -12,7 +12,7 @@ from wagtail.images import get_image_model
 
 from plants.feeds import GardenBloomFeed, GardenBloomICalFeed
 from plants.filters import DedicationFilter
-from plants.models import BloomEvent, Collection, SpeciesImage
+from plants.models import BloomEvent, Collection, PlantImage, SpeciesImage
 from sitemaps.sitemaps import (
     CollectionDetailSitemap,
     DedicationDetailSitemap,
@@ -85,15 +85,15 @@ def test_dedication_detail_escapes_multiline_text_and_hides_plant_metadata(clien
 
 
 @pytest.mark.django_db
-def test_dedication_detail_handles_null_text_and_shows_species_images(client):
-    """Optional text stays absent while the related species imagery is displayed."""
+def test_dedication_detail_handles_null_text_and_shows_plant_images(client):
+    """Optional text stays absent while only its own imagery is displayed."""
 
     dedication = create_dedication()
     dedication.commemoration_text = None
     dedication.save(update_fields=["commemoration_text"])
     image = get_image_model().objects.create(title="Dedication flower", file=make_image_file())
-    SpeciesImage.objects.create(
-        species=dedication.species,
+    PlantImage.objects.create(
+        collection=dedication,
         image=image,
         caption="Flower for Ada",
         sort_order=0,
@@ -105,6 +105,76 @@ def test_dedication_detail_handles_null_text_and_shows_species_images(client):
     assert response.status_code == 200
     assert "dedication-text" not in content
     assert "Flower for Ada" in content
+
+
+@pytest.mark.django_db
+def test_dedication_detail_hides_shared_species_images(client):
+    """A dedication never renders images attached only to its shared species."""
+
+    dedication = create_dedication()
+    image = get_image_model().objects.create(title="Shared species image", file=make_image_file())
+    SpeciesImage.objects.create(
+        species=dedication.species,
+        image=image,
+        caption="Wrong dedication image",
+        sort_order=0,
+    )
+
+    response = client.get(dedication.get_absolute_url())
+
+    assert response.status_code == 200
+    assert "Wrong dedication image" not in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_collection_detail_renders_its_own_plant_images(client, genus):
+    """Ordinary plant collection pages render images owned by that collection."""
+
+    species = get_species(genus, name="publica", full_name="Plantus publica")
+    collection = Collection.objects.create(
+        location=get_location(latitude=40.03, longitude=-111.03),
+        garden=get_garden_area(code="PUB-IMAGES"),
+        species=species,
+        plant_id="PUB-IMAGE-1",
+    )
+    image = get_image_model().objects.create(title="Plant collection image", file=make_image_file())
+    PlantImage.objects.create(
+        collection=collection,
+        image=image,
+        caption="Plant image caption",
+        sort_order=0,
+    )
+
+    response = client.get(collection.get_absolute_url())
+
+    assert response.status_code == 200
+    assert "Plant image caption" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_plant_images_are_ordered_and_deleted_with_their_collection(genus):
+    """Collection-owned images retain order and do not outlive their collection."""
+
+    species = get_species(genus, name="orderata", full_name="Plantus orderata")
+    collection = Collection.objects.create(species=species, plant_id="PUB-IMAGE-ORDER")
+    first_image = get_image_model().objects.create(title="First", file=make_image_file())
+    second_image = get_image_model().objects.create(title="Second", file=make_image_file())
+    later = PlantImage.objects.create(
+        collection=collection,
+        image=first_image,
+        sort_order=2,
+    )
+    earlier = PlantImage.objects.create(
+        collection=collection,
+        image=second_image,
+        sort_order=1,
+    )
+
+    assert list(collection.plant_images.values_list("pk", flat=True)) == [earlier.pk, later.pk]
+
+    collection.delete()
+
+    assert not PlantImage.objects.filter(pk__in=[earlier.pk, later.pk]).exists()
 
 
 @pytest.mark.django_db
