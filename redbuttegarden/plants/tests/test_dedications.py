@@ -108,6 +108,44 @@ def test_dedication_detail_handles_null_text_and_shows_plant_images(client):
 
 
 @pytest.mark.django_db
+def test_dedication_detail_renders_ordered_accessible_image_gallery(client):
+    """Dedication-owned images render as a primary image and ordered thumbnails."""
+
+    dedication = create_dedication()
+    first_image = get_image_model().objects.create(
+        title="First dedication flower", file=make_image_file()
+    )
+    second_image = get_image_model().objects.create(
+        title="Second dedication flower", file=make_image_file()
+    )
+    PlantImage.objects.create(
+        collection=dedication,
+        image=second_image,
+        caption="Second flower",
+        copyright="Garden photographer",
+        sort_order=2,
+    )
+    PlantImage.objects.create(
+        collection=dedication,
+        image=first_image,
+        sort_order=1,
+    )
+
+    response = client.get(dedication.get_absolute_url())
+
+    content = response.content.decode()
+    assert response.status_code == 200
+    assert content.index("First dedication flower") < content.index("Second flower")
+    assert 'class="dedication-gallery__primary"' in content
+    assert 'class="dedication-gallery__thumbnail"' in content
+    assert 'id="dedication-gallery-modal"' in content
+    assert "max-1600x1200" in content
+    assert "Garden photographer" in content
+    assert 'data-gallery-index="0"' in content
+    assert 'data-gallery-index="1"' in content
+
+
+@pytest.mark.django_db
 def test_dedication_detail_hides_shared_species_images(client):
     """A dedication never renders images attached only to its shared species."""
 

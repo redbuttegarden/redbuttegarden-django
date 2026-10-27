@@ -9,3 +9,110 @@
 .dedication-details dd {
     margin-bottom: 0.75rem;
 }
+
+.dedication-media {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.dedication-gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.dedication-gallery__primary,
+.dedication-gallery__thumbnail,
+.dedication-gallery-modal__thumbnail {
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.dedication-gallery__primary {
+    max-width: 500px;
+}
+
+.dedication-gallery__primary img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.dedication-gallery__heading {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.dedication-gallery__thumbnails,
+.dedication-gallery-modal__thumbnails,
+.dedication-gallery-modal__navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.dedication-gallery__thumbnail img,
+.dedication-gallery-modal__thumbnail img {
+    display: block;
+    height: 100px;
+    width: auto;
+    max-width: 140px;
+    object-fit: cover;
+}
+
+.dedication-gallery-modal__thumbnail img {
+    height: 75px;
+    max-width: 105px;
+}
+
+.dedication-gallery__primary:focus-visible,
+.dedication-gallery__thumbnail:focus-visible,
+.dedication-gallery-modal__thumbnail:focus-visible {
+    outline: 3px solid var(--rbg-oak-green);
+    outline-offset: 3px;
+}
+
+.dedication-gallery-modal__body {
+    text-align: center;
+}
+
+.dedication-gallery-modal__slide img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 65vh;
+    height: auto;
+    margin: 0 auto;
+}
+
+.dedication-gallery-modal__caption,
+.dedication-gallery-modal__copyright {
+    margin: 1rem 0 0;
+}
+
+.dedication-gallery-modal__copyright {
+    font-size: 0.875rem;
+}
+
+.dedication-gallery-modal__footer {
+    justify-content: space-between;
+}
+
+@media (max-width: 767.98px) {
+    .dedication-gallery__primary {
+        max-width: 100%;
+    }
+
+    .dedication-gallery__thumbnails {
+        gap: 0.5rem;
+    }
+
+    .dedication-gallery-modal__footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

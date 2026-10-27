@@ -44,22 +44,124 @@
             <dd class="dedication-text">{{ collection.commemoration_text|linebreaksbr }}</dd>
           {% endif %}
         </dl>
-        {% for species_image in images %}
-          {% image species_image.image fill-500x350 as rendition %}
-          <img class="img-fluid mb-3" src="{{ rendition.url }}" width="{{ rendition.width }}" height="{{ rendition.height }}" alt="{{ species_image.caption|default:species_image.image.title }}" />
-        {% endfor %}
       </section>
-      {% if collection.location %}
-        <section class="col-md-6">
+
+      {% if images or collection.location %}
+        <section class="col-md-6 dedication-media">
+          {% if images %}
+            <section class="dedication-gallery" data-dedication-gallery aria-label="Dedication photos">
+              {% with primary_image=images.first %}
+                {% image primary_image.image max-500x500 as primary_rendition %}
+                <button
+                  type="button"
+                  class="dedication-gallery__primary"
+                  data-gallery-index="0"
+                  aria-label="View larger image of {{ primary_image.caption|default:primary_image.image.title }}"
+                >
+                  <img
+                    src="{{ primary_rendition.url }}"
+                    width="{{ primary_rendition.width }}"
+                    height="{{ primary_rendition.height }}"
+                    alt="{{ primary_image.caption|default:primary_image.image.title }}"
+                  />
+                </button>
+              {% endwith %}
+
+              {% if images.count > 1 %}
+                <h2 class="dedication-gallery__heading">Additional photos</h2>
+                <div class="dedication-gallery__thumbnails">
+                  {% for plant_image in images|slice:'1:' %}
+                    {% image plant_image.image height-100 as thumbnail %}
+                    <button
+                      type="button"
+                      class="dedication-gallery__thumbnail"
+                      data-gallery-index="{{ forloop.counter }}"
+                      aria-label="View larger image of {{ plant_image.caption|default:plant_image.image.title }}"
+                    >
+                      <img
+                        src="{{ thumbnail.url }}"
+                        width="{{ thumbnail.width }}"
+                        height="{{ thumbnail.height }}"
+                        alt="{{ plant_image.caption|default:plant_image.image.title }}"
+                      />
+                    </button>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </section>
+          {% endif %}
+
+          {% if collection.location %}
+            <section class="dedication-map-panel" aria-label="Dedication location">
           <div id="dedication-map" aria-label="Map showing this dedication location"></div>
           <p id="dedication-map-status" class="visually-hidden" aria-live="polite"></p>
+            </section>
+          {% endif %}
         </section>
       {% endif %}
     </div>
   </main>
+
+  {% if images %}
+    <div
+      class="modal fade"
+      id="dedication-gallery-modal"
+      tabindex="-1"
+      aria-labelledby="dedication-gallery-modal-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="dedication-gallery-modal-title">Dedication photos</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close photo viewer"></button>
+          </div>
+          <div class="modal-body dedication-gallery-modal__body">
+            {% for plant_image in images %}
+              {% image plant_image.image max-1600x1200 as modal_image %}
+              <div class="dedication-gallery-modal__slide" data-gallery-slide{% if not forloop.first %} hidden{% endif %}>
+                <img
+                  src="{{ modal_image.url }}"
+                  width="{{ modal_image.width }}"
+                  height="{{ modal_image.height }}"
+                  alt="{{ plant_image.caption|default:plant_image.image.title }}"
+                />
+              </div>
+            {% endfor %}
+            <p class="dedication-gallery-modal__caption" data-gallery-caption hidden></p>
+            <p class="dedication-gallery-modal__copyright" data-gallery-copyright hidden></p>
+            <p class="visually-hidden" data-gallery-status aria-live="polite"></p>
+          </div>
+          <div class="modal-footer dedication-gallery-modal__footer">
+            <div class="dedication-gallery-modal__navigation" aria-label="Photo navigation">
+              <button type="button" class="btn btn-outline-secondary" data-gallery-previous aria-label="Previous photo">Previous</button>
+              <span data-gallery-count aria-hidden="true"></span>
+              <button type="button" class="btn btn-outline-secondary" data-gallery-next aria-label="Next photo">Next</button>
+            </div>
+            <div class="dedication-gallery-modal__thumbnails" aria-label="Select a photo">
+              {% for plant_image in images %}
+                {% image plant_image.image height-75 as modal_thumbnail %}
+                <button
+                  type="button"
+                  class="dedication-gallery-modal__thumbnail"
+                  data-gallery-index="{{ forloop.counter0 }}"
+                  data-gallery-caption="{{ plant_image.caption }}"
+                  data-gallery-copyright="{{ plant_image.copyright }}"
+                  aria-label="View photo {{ forloop.counter }}: {{ plant_image.caption|default:plant_image.image.title }}"
+                >
+                  <img src="{{ modal_thumbnail.url }}" width="{{ modal_thumbnail.width }}" height="{{ modal_thumbnail.height }}" alt="" />
+                </button>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}
 
 {% block extra_js %}
   {{ mapbox_token|json_script:'mapboxToken' }}
   <script src="{% static 'plants/js/dedication_detail_map.js' %}"></script>
+  <script src="{% static 'plants/js/dedication_gallery.js' %}"></script>
 {% endblock %}
