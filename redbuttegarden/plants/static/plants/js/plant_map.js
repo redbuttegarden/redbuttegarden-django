@@ -1,9 +1,21 @@
+window.initializeMapboxMap = function initializePlantMap() {
 let refreshTimer = null;
-const mapboxToken = JSON.parse(document.getElementById('mapboxToken').textContent);
+const tokenElement = document.getElementById('mapboxToken');
+const mapContainer = document.getElementById('map');
+
+if (!tokenElement || !mapContainer) {
+    throw new Error("Map details are unavailable.");
+}
+
+const mapboxToken = JSON.parse(tokenElement.textContent);
+
+if (!mapboxToken) {
+    throw new Error("Map token is unavailable.");
+}
 
 mapboxgl.accessToken = mapboxToken;
 const map = new mapboxgl.Map({
-    container: 'map',
+    container: mapContainer,
     style: 'mapbox://styles/auslaner/ckrdvnurq2ix018o34dv8sxft',
     center: [-111.823807, 40.766367],
     zoom: 16
@@ -715,3 +727,6 @@ map.on('load', function () {
         await initialMapSetup(map);
     })();
 });
+
+return map;
+};

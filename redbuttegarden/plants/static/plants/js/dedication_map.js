@@ -1,9 +1,10 @@
 /** Enhance the dedication map without mixing it into the plant-map dataset. */
-(() => {
+window.initializeMapboxMap = function initializeDedicationMap() {
     const tokenElement = document.getElementById("mapboxToken");
     const listingElement = document.getElementById("feature-listing");
     const filterElement = document.getElementById("feature-filter");
     const token = tokenElement ? JSON.parse(tokenElement.textContent) : null;
+    const mapContainer = document.getElementById("map");
     let map;
     let popup;
     let visibleFeatures = [];
@@ -144,10 +145,12 @@
         map.addLayer({ id: "dedication-points", type: "circle", source: "dedications", filter: ["!", ["has", "point_count"]], paint: { "circle-color": "#404", "circle-radius": 8, "circle-stroke-width": 2, "circle-stroke-color": "#fff" } });
     }
 
-    if (!token || !window.mapboxgl) return;
+    if (!token || !mapContainer || !window.mapboxgl) {
+        throw new Error("Map token is unavailable.");
+    }
     mapboxgl.accessToken = token;
     popup = new mapboxgl.Popup({ closeButton: false });
-    map = new mapboxgl.Map({ container: "map", style: "mapbox://styles/auslaner/ckrdvnurq2ix018o34dv8sxft", center: [-111.823807, 40.766367], zoom: 16 });
+    map = new mapboxgl.Map({ container: mapContainer, style: "mapbox://styles/auslaner/ckrdvnurq2ix018o34dv8sxft", center: [-111.823807, 40.766367], zoom: 16 });
     map.on("load", async () => {
         try {
             await loadDedications(); addLayers(); setLoading(false); renderListings([]); bindForm(); setActiveFilters();
@@ -168,4 +171,5 @@
         const feature = event.features[0];
         new mapboxgl.Popup().setLngLat(feature.geometry.coordinates).setDOMContent(createPopupContent(feature.properties)).addTo(map);
     });
-})();
+    return map;
+};

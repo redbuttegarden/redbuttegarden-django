@@ -8,9 +8,8 @@
 {% endblock %}
 
 {% block extra_css %}
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" integrity="sha384-Sdx78Z6nqVgiCnAlgCe5s/P74CeyLMH/hI61WTXUO7kbN/HJ81e3MAkMTz1jxsm+" crossorigin="anonymous" />
   <link href="{% static 'plants/css/dedication.css' %}" rel="stylesheet" />
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js" integrity="sha384-/TrjtPGu/gYA2W0pthEIcd2shlv/VWamCvc9tZ776cfv6X9dyG34BWLygYZeItjZ" crossorigin="anonymous"></script>
+  <link href="{% static 'plants/css/map_placeholder.css' %}" rel="stylesheet" />
 {% endblock %}
 
 {% block content %}
@@ -93,8 +92,11 @@
 
           {% if collection.location %}
             <section class="dedication-map-panel" aria-label="Dedication location">
-          <div id="dedication-map" aria-label="Map showing this dedication location"></div>
-          <p id="dedication-map-status" class="visually-hidden" aria-live="polite"></p>
+          <div class="mapbox-map-shell" data-mapbox-container role="region" aria-label="Map showing this dedication location" aria-busy="false">
+            <div id="dedication-map"></div>
+            <div class="mapbox-map-placeholder" data-mapbox-placeholder><p data-mapbox-placeholder-message>Interactive map: click anywhere on this page or press any key to load it.</p></div>
+          </div>
+          <p id="dedication-map-status" class="visually-hidden" data-mapbox-status aria-live="polite"></p>
             </section>
           {% endif %}
         </section>
@@ -163,5 +165,6 @@
 {% block extra_js %}
   {{ mapbox_token|json_script:'mapboxToken' }}
   <script src="{% static 'plants/js/dedication_detail_map.js' %}"></script>
+  <script src="{% static 'plants/js/mapbox_interaction_loader.js' %}"></script>
   <script src="{% static 'plants/js/dedication_gallery.js' %}"></script>
 {% endblock %}

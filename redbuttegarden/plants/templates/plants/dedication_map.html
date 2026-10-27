@@ -4,15 +4,14 @@
 {% block title %}Dedication Map{% endblock %}
 
 {% block extra_css %}
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" integrity="sha384-Sdx78Z6nqVgiCnAlgCe5s/P74CeyLMH/hI61WTXUO7kbN/HJ81e3MAkMTz1jxsm+" crossorigin="anonymous" />
   <link href="{% static 'plants/css/plant_map.css' %}" rel="stylesheet" />
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js" integrity="sha384-/TrjtPGu/gYA2W0pthEIcd2shlv/VWamCvc9tZ776cfv6X9dyG34BWLygYZeItjZ" crossorigin="anonymous"></script>
+  <link href="{% static 'plants/css/map_placeholder.css' %}" rel="stylesheet" />
 {% endblock %}
 
 {% block abnormal_content %}
   <div class="container-fluid px-0">
     <h1 class="visually-hidden">Dedication Map</h1>
-    <div id="map-load-overlay"><div id="load-icon" role="status" aria-label="Loading dedication map"><span class="map-loading-spinner" aria-hidden="true"></span></div></div>
+    <div id="map-load-overlay" data-mapbox-loading-overlay role="status" aria-label="Loading interactive dedication map" hidden><div id="load-icon" aria-hidden="true"><span class="map-loading-spinner" aria-hidden="true"></span></div></div>
     <div class="map-overlay">
       <details class="map-filters" id="mapFilters" open>
         <summary class="map-filters__toggle"><span class="fw-semibold">Search filters</span><span id="active-filters" class="active-filters small text-muted ms-2"><noscript>{% if request.GET %}Active filters: {{ request.GET.urlencode }}{% else %}No active filters{% endif %}</noscript></span></summary>
@@ -31,19 +30,24 @@
       <p class="small text-center">Select a dedication to open its detail page.</p>
       <div id="feature-listing" class="listing" aria-live="polite"><noscript>{% for dedication in dedications %}<a href="{{ dedication.get_absolute_url }}">{{ dedication.commemoration_person|default:dedication.plant_id }}{% if dedication.garden and dedication.garden.name %} — {{ dedication.garden.name }}{% endif %}</a>{% empty %}<p>No dedications match these filters.</p>{% endfor %}</noscript></div>
     </div>
-    <div id="map">
-      <div id="mapMenu">
-        <input id="rbg-custom" type="radio" name="rtoggle" value="rbg" checked /><label for="rbg-custom">RBG&amp;A custom</label>
-        <input id="satellite-v9" type="radio" name="rtoggle" value="satellite" /><label for="satellite-v9">satellite</label>
-        <input id="light-v10" type="radio" name="rtoggle" value="light" /><label for="light-v10">light</label>
-        <input id="dark-v10" type="radio" name="rtoggle" value="dark" /><label for="dark-v10">dark</label>
-        <input id="streets-v11" type="radio" name="rtoggle" value="streets" /><label for="streets-v11">streets</label>
+    <div class="mapbox-map-shell" data-mapbox-container role="region" aria-label="Interactive dedication map" aria-busy="false">
+      <div id="map">
+        <div id="mapMenu">
+          <input id="rbg-custom" type="radio" name="rtoggle" value="rbg" checked /><label for="rbg-custom">RBG&amp;A custom</label>
+          <input id="satellite-v9" type="radio" name="rtoggle" value="satellite" /><label for="satellite-v9">satellite</label>
+          <input id="light-v10" type="radio" name="rtoggle" value="light" /><label for="light-v10">light</label>
+          <input id="dark-v10" type="radio" name="rtoggle" value="dark" /><label for="dark-v10">dark</label>
+          <input id="streets-v11" type="radio" name="rtoggle" value="streets" /><label for="streets-v11">streets</label>
+        </div>
       </div>
+      <div class="mapbox-map-placeholder" data-mapbox-placeholder><p data-mapbox-placeholder-message>Interactive map: click anywhere on this page or press any key to load it.</p></div>
     </div>
   </div>
 {% endblock %}
 
 {% block extra_js %}
   {{ mapbox_token|json_script:'mapboxToken' }}
+  <p class="visually-hidden" data-mapbox-status aria-live="polite"></p>
   <script src="{% static 'plants/js/dedication_map.js' %}"></script>
+  <script src="{% static 'plants/js/mapbox_interaction_loader.js' %}"></script>
 {% endblock %}

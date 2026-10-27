@@ -1,0 +1,23 @@
+/* Visible guidance before the optional interactive map has been requested. */
+.mapbox-map-shell {
+    position: relative;
+}
+
+.mapbox-map-placeholder {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    background: #f1f1ee;
+    color: #1f3324;
+    text-align: center;
+    pointer-events: none;
+}
+
+.mapbox-map-placeholder p {
+    max-width: 28rem;
+    margin: 0;
+    font-weight: 600;
+}
