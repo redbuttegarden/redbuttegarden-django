@@ -20,6 +20,11 @@ urlpatterns = [
         views.CollectionDetail.as_view(),
         name="api-collection-detail",
     ),
+    path(
+        "api/collections/bulk/",
+        views.bulk_collections,
+        name="api-collections-bulk",
+    ),
     path("api/species/", views.SpeciesList.as_view(), name="api-species-list"),
     path(
         "api/species/<int:pk>/",
@@ -36,6 +41,7 @@ urlpatterns = [
         views.set_plant_image,
         name="api-set-plant-image",
     ),
+    path("api/images/bulk/", views.bulk_images, name="api-images-bulk"),
     path("species-images/", views.SpeciesImageListView.as_view(), name="speciesimage-list"),
     path(
         "api/species-images/<int:pk>/image-description/",

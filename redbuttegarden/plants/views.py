@@ -1,6 +1,7 @@
 import logging
 import re
 import requests
+import json
 
 from decimal import Decimal, InvalidOperation
 from django.conf import settings
@@ -8,7 +9,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from django.core.paginator import PageNotAnInteger, EmptyPage
-from django.db import IntegrityError
+from django.db import DatabaseError, IntegrityError, transaction
 from django.db.models import Q, QuerySet
 from django.http import (
     HttpRequest,
@@ -37,7 +38,6 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.request import Request
 from rest_framework.response import Response
 from wagtail.models import Collection as WagtailCollection
-from wagtail.images.models import Image
 from wagtail.images.permissions import permission_policy as image_permission_policy
 
 from .tables import CollectionTable, TopTreesSpeciesTable
@@ -70,6 +70,7 @@ from .utils import (
     get_feature_collection,
     style_message,
 )
+from .services import ImageAssociationIntegrityError, create_brahms_image_association
 
 logger = logging.getLogger(__name__)
 
@@ -241,6 +242,48 @@ class CollectionDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CollectionSerializer
 
 
+@api_view(["POST"])
+def bulk_collections(request: Request) -> Response:
+    """Upsert at most 100 collection payloads without coupling item failures."""
+
+    payload = request.data
+    collections = payload.get("collections") if isinstance(payload, dict) else None
+    if not isinstance(collections, list):
+        return Response(
+            {"detail": "The request body must contain a collections list."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    if len(collections) > 100:
+        return Response(
+            {"detail": "At most 100 collections may be submitted."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    results = []
+    for item in collections:
+        serializer = CollectionSerializer(data=item)
+        if not serializer.is_valid():
+            results.append({"status": "error", "code": "invalid_collection", "detail": serializer.errors})
+            continue
+
+        plant_id = serializer.validated_data["plant_id"]
+        try:
+            with transaction.atomic():
+                created = not Collection.objects.filter(plant_id=plant_id).exists()
+                collection = serializer.save()
+        except DatabaseError:
+            logger.exception("Bulk collection upsert failed for a plant record.")
+            results.append(
+                {"plant_id": plant_id, "status": "error", "code": "database_error", "detail": "The collection could not be saved."}
+            )
+        else:
+            results.append(
+                {"plant_id": plant_id, "status": "success", "created": created, "collection": CollectionSerializer(collection).data}
+            )
+
+    return Response({"results": results})
+
+
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -277,40 +320,23 @@ def set_species_image(request: Request, pk: int) -> JsonResponse:
 
         species = Species.objects.get(pk=pk)
         uploaded_image = request.FILES.get("image")
-        img_title = uploaded_image.name
-
         try:
-            image, img_created = Image.objects.get_or_create(
-                title=img_title,
-                defaults={
-                    "file": uploaded_image,
-                    "collection": WagtailCollection.objects.get(name="BRAHMS Data"),
-                },
+            result = create_brahms_image_association(
+                uploaded_image, species, copyright_text
             )
         except WagtailCollection.DoesNotExist:
             logger.error(
                 '"BRAHMS DATA" Collection is missing. Unable to save new images.'
             )
             return JsonResponse({"status": "failure"})
-
-        if img_created:
-            image.tags.add("BRAHMS")
-
-        try:
-            species_image, species_img_created = SpeciesImage.objects.get_or_create(
-                species=species,
-                image=image,
-                copyright=copyright_text,
-                defaults={"caption": species.full_name},
-            )
-        except IntegrityError:
+        except ImageAssociationIntegrityError as error:
             logger.debug(
-                f"Failed to add image for species {species} ({pk}).\n\n\rImage: {image}\n\rCopyright: {copyright_text}"
+                "Failed to add image relationship for species %s (%s).", species, pk
             )
             return JsonResponse(
                 {
                     "status": "failure",
-                    "image_created": img_created,
+                    "image_created": error.image_created,
                     "species_image_created": False,
                 }
             )
@@ -318,8 +344,8 @@ def set_species_image(request: Request, pk: int) -> JsonResponse:
         return JsonResponse(
             {
                 "status": "success",
-                "image_created": img_created,
-                "species_image_created": species_img_created,
+                "image_created": result.image_created,
+                "species_image_created": result.association_created,
             }
         )
 
@@ -348,33 +374,18 @@ def set_plant_image(request: Request, plant_id: str) -> JsonResponse:
 
     copyright_text = request.data.get("copyright_info", "")
     try:
-        image, img_created = Image.objects.get_or_create(
-            title=uploaded_image.name,
-            defaults={
-                "file": uploaded_image,
-                "collection": WagtailCollection.objects.get(name="BRAHMS Data"),
-            },
+        result = create_brahms_image_association(
+            uploaded_image, collection, copyright_text
         )
     except WagtailCollection.DoesNotExist:
         logger.error('"BRAHMS DATA" Collection is missing. Unable to save new images.')
         return JsonResponse({"status": "failure"})
-
-    if img_created:
-        image.tags.add("BRAHMS")
-
-    try:
-        plant_image, plant_img_created = PlantImage.objects.get_or_create(
-            collection=collection,
-            image=image,
-            copyright=copyright_text,
-            defaults={"caption": collection.species.full_name},
-        )
-    except IntegrityError:
+    except ImageAssociationIntegrityError as error:
         logger.debug("Failed to add plant image relationship.")
         return JsonResponse(
             {
                 "status": "failure",
-                "image_created": img_created,
+                "image_created": error.image_created,
                 "plant_image_created": False,
             }
         )
@@ -382,10 +393,154 @@ def set_plant_image(request: Request, plant_id: str) -> JsonResponse:
     return JsonResponse(
         {
             "status": "success",
-            "image_created": img_created,
-            "plant_image_created": plant_img_created,
+            "image_created": result.image_created,
+            "plant_image_created": result.association_created,
         }
     )
+
+
+TAXONOMY_LOOKUP_FIELDS = (
+    "genus",
+    "name",
+    "subspecies",
+    "variety",
+    "subvariety",
+    "forma",
+    "subforma",
+    "cultivar",
+)
+
+
+def _image_result(client_id: object, code: str, detail: str) -> dict[str, object]:
+    """Build one stable error result for the bulk image API."""
+
+    return {
+        "client_id": client_id if isinstance(client_id, str) else "",
+        "status": "error",
+        "code": code,
+        "detail": detail,
+    }
+
+
+def _resolve_manifest_species(target: dict[str, object]) -> Species:
+    """Return the one species selected by a complete exact taxonomy target."""
+
+    if set(target) != set(TAXONOMY_LOOKUP_FIELDS):
+        raise ValueError("Species targets must contain every exact taxonomy field.")
+    if not isinstance(target["genus"], str):
+        raise ValueError("The species genus must be a string.")
+    if any(
+        not isinstance(target[field], (str, type(None)))
+        for field in TAXONOMY_LOOKUP_FIELDS
+        if field != "genus"
+    ):
+        raise ValueError("Species taxonomy fields must be strings or null.")
+
+    lookup = {field: target[field] for field in TAXONOMY_LOOKUP_FIELDS if field != "genus"}
+    matches = Species.objects.filter(genus__name=target["genus"], **lookup)
+    count = matches.count()
+    if count == 0:
+        raise Species.DoesNotExist
+    if count > 1:
+        raise Species.MultipleObjectsReturned
+    return matches.get()
+
+
+@api_view(["POST"])
+def bulk_images(request: Request) -> Response:
+    """Associate up to 20 uploaded images while isolating every manifest item."""
+
+    manifest_value = request.data.get("manifest")
+    try:
+        manifest = json.loads(manifest_value)
+    except (TypeError, json.JSONDecodeError):
+        return Response(
+            {"detail": "manifest must be a JSON list."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    if not isinstance(manifest, list):
+        return Response(
+            {"detail": "manifest must be a JSON list."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    if len(manifest) > 20:
+        return Response(
+            {"detail": "At most 20 images may be submitted."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    results: list[dict[str, object]] = []
+    for item in manifest:
+        client_id = item.get("client_id") if isinstance(item, dict) else ""
+        if not isinstance(item, dict) or not isinstance(client_id, str):
+            results.append(_image_result(client_id, "invalid_item", "Each item needs a string client_id."))
+            continue
+        file_field = item.get("file_field")
+        copyright_text = item.get("copyright_info")
+        if not isinstance(file_field, str) or not file_field:
+            results.append(_image_result(client_id, "missing_file", "The referenced file field is required."))
+            continue
+        if not isinstance(copyright_text, str):
+            results.append(_image_result(client_id, "invalid_item", "copyright_info must be a string."))
+            continue
+
+        has_plant = "plant_id" in item
+        has_species = "species" in item
+        if has_plant == has_species:
+            results.append(_image_result(client_id, "invalid_target", "Specify exactly one image target."))
+            continue
+        uploaded_image = request.FILES.get(file_field)
+        if uploaded_image is None:
+            results.append(_image_result(client_id, "missing_file", "The referenced upload was not provided."))
+            continue
+
+        try:
+            with transaction.atomic():
+                if has_plant:
+                    plant_id = item["plant_id"]
+                    if not isinstance(plant_id, str) or not plant_id:
+                        raise ValueError("plant_id must be a non-empty string.")
+                    try:
+                        target = Collection.objects.select_related("species").get(plant_id=plant_id)
+                    except Collection.DoesNotExist:
+                        results.append(_image_result(client_id, "plant_not_found", "No collection matches this plant_id."))
+                        continue
+                else:
+                    species_target = item["species"]
+                    if not isinstance(species_target, dict):
+                        raise ValueError("species must be an object.")
+                    try:
+                        target = _resolve_manifest_species(species_target)
+                    except Species.DoesNotExist:
+                        results.append(_image_result(client_id, "species_not_found", "No species matches this taxonomy."))
+                        continue
+                    except Species.MultipleObjectsReturned:
+                        results.append(_image_result(client_id, "species_ambiguous", "More than one species matches this taxonomy."))
+                        continue
+
+                association = create_brahms_image_association(
+                    uploaded_image, target, copyright_text
+                )
+        except ValueError as error:
+            results.append(_image_result(client_id, "invalid_target", str(error)))
+        except WagtailCollection.DoesNotExist:
+            logger.exception("BRAHMS Data collection missing during bulk image upload.")
+            results.append(_image_result(client_id, "storage_error", "The image could not be stored."))
+        except IntegrityError:
+            logger.exception("Database integrity error during bulk image upload.")
+            results.append(_image_result(client_id, "database_error", "The image association could not be saved."))
+        except DatabaseError:
+            logger.exception("Database error during bulk image upload.")
+            results.append(_image_result(client_id, "database_error", "The image association could not be saved."))
+        except Exception:
+            logger.exception("Storage error during bulk image upload.")
+            results.append(_image_result(client_id, "storage_error", "The image could not be stored."))
+        else:
+            results.append(
+                {"client_id": client_id, "status": "success", "created": association.association_created}
+            )
+
+    return Response({"results": results})
 
 
 class SpeciesImageListView(generics.ListAPIView):

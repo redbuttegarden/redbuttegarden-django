@@ -1,10 +1,13 @@
 from copy import deepcopy
 from io import BytesIO
+import json
+from unittest.mock import patch
 
 import pytest
 
 from django.contrib.auth import get_user_model
 from django.core.files.images import ImageFile
+from django.db import DatabaseError
 from django.urls import reverse
 from PIL import Image
 from rest_framework.authtoken.models import Token
@@ -424,3 +427,194 @@ def test_plant_image_setting_rejects_unknown_ids_missing_images_and_unauthentica
     if unauthenticated_response.status_code == 200:
         assert unauthenticated_response.json()["status"] == "failure"
     assert collection.plant_images.count() == 0
+
+
+def _bulk_upload(name):
+    """Build a minimal JPEG upload for multipart bulk image requests."""
+
+    file_obj = BytesIO()
+    Image.new("RGB", size=(1, 1), color=(255, 0, 0)).save(file_obj, "jpeg")
+    file_obj.seek(0)
+    return ImageFile(file_obj, name=name)
+
+
+def _species_target(species):
+    """Return the exact taxonomy manifest target for a species."""
+
+    return {
+        "genus": species.genus.name,
+        "name": species.name,
+        "subspecies": species.subspecies,
+        "variety": species.variety,
+        "subvariety": species.subvariety,
+        "forma": species.forma,
+        "subforma": species.subforma,
+        "cultivar": species.cultivar,
+    }
+
+
+@pytest.mark.django_db
+def test_bulk_collections_create_update_and_isolate_invalid_records(
+    collections_same_species_different_cultivars,
+):
+    """Bulk collection records retain the single-record upsert semantics."""
+    api_client = APITestSetup()
+    first = deepcopy(collections_same_species_different_cultivars[0])
+    second = deepcopy(collections_same_species_different_cultivars[1])
+    second["plant_id"] = "bulk-2"
+    invalid = {"plant_id": "missing-nested-data"}
+
+    response = api_client.auth_user.post(
+        reverse("plants:api-collections-bulk"),
+        {"collections": [first, invalid, second]},
+        format="json",
+    )
+
+    assert response.status_code == 200
+    assert [item["status"] for item in response.data["results"]] == [
+        "success", "error", "success"
+    ]
+    assert Collection.objects.filter(plant_id=first["plant_id"]).count() == 1
+    assert Collection.objects.filter(plant_id=second["plant_id"]).count() == 1
+
+    first["commemoration_person"] = "Updated Person"
+    retry = api_client.auth_user.post(
+        reverse("plants:api-collections-bulk"), {"collections": [first]}, format="json"
+    )
+    assert retry.data["results"][0]["created"] is False
+    assert Collection.objects.get(plant_id=first["plant_id"]).commemoration_person == "Updated Person"
+
+
+@pytest.mark.django_db
+def test_bulk_collections_rejects_invalid_envelopes_and_batch_sizes(
+    collections_same_species_different_cultivars,
+):
+    """Collection batch limits are enforced before any records are processed."""
+    api_client = APITestSetup()
+    endpoint = reverse("plants:api-collections-bulk")
+    assert api_client.auth_user.post(endpoint, {}, format="json").status_code == 400
+    payload = collections_same_species_different_cultivars[0]
+    response = api_client.auth_user.post(
+        endpoint, {"collections": [payload] * 101}, format="json"
+    )
+    assert response.status_code == 400
+    assert Collection.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_bulk_images_supports_plant_and_species_targets_and_retries():
+    """Both bulk target kinds retain BRAHMS association idempotency."""
+    api_client = APITestSetup()
+    plant = get_collection(plant_id="bulk-plant")
+    endpoint = reverse("plants:api-images-bulk")
+    manifest = [
+        {
+            "client_id": "plant",
+            "file_field": "plant_file",
+            "copyright_info": "RBG",
+            "plant_id": plant.plant_id,
+        },
+        {
+            "client_id": "species",
+            "file_field": "species_file",
+            "copyright_info": "RBG",
+            "species": _species_target(plant.species),
+        },
+    ]
+    response = api_client.auth_user.post(
+        endpoint,
+        {"manifest": json.dumps(manifest), "plant_file": _bulk_upload("bulk-plant.jpg"), "species_file": _bulk_upload("bulk-species.jpg")},
+    )
+    assert response.status_code == 200
+    assert response.json()["results"] == [
+        {"client_id": "plant", "status": "success", "created": True},
+        {"client_id": "species", "status": "success", "created": True},
+    ]
+    assert plant.plant_images.count() == 1
+    assert plant.species.species_images.count() == 1
+
+    retry_manifest = [
+        {
+            "client_id": "retry",
+            "file_field": "plant_file",
+            "copyright_info": "RBG",
+            "plant_id": plant.plant_id,
+        }
+    ]
+    retry = api_client.auth_user.post(
+        endpoint, {"manifest": json.dumps(retry_manifest), "plant_file": _bulk_upload("bulk-plant.jpg")}
+    )
+    assert retry.json()["results"][0]["created"] is False
+    assert plant.plant_images.count() == 1
+
+
+@pytest.mark.django_db
+def test_bulk_images_returns_independent_target_and_file_errors():
+    """A bad manifest item does not prevent a later valid image upload."""
+    api_client = APITestSetup()
+    plant = get_collection(plant_id="bulk-errors")
+    endpoint = reverse("plants:api-images-bulk")
+    ambiguous = get_collection(
+        plant_id="bulk-ambiguous", family_name="Other", genus_name=plant.species.genus.name,
+        species_name=plant.species.name, full_name="Other same species", cultivar=plant.species.cultivar,
+    )
+    assert ambiguous.species_id != plant.species_id
+    manifest = [
+        {"client_id": "missing", "file_field": "not_sent", "copyright_info": "", "plant_id": plant.plant_id},
+        {"client_id": "unknown", "file_field": "known", "copyright_info": "", "plant_id": "nope"},
+        {"client_id": "not-found", "file_field": "known", "copyright_info": "", "species": {**_species_target(plant.species), "name": "not-here"}},
+        {"client_id": "ambiguous", "file_field": "known", "copyright_info": "", "species": _species_target(plant.species)},
+        {"client_id": "bad-target", "file_field": "known", "copyright_info": "", "plant_id": plant.plant_id, "species": _species_target(plant.species)},
+        {"client_id": "valid", "file_field": "known", "copyright_info": "", "plant_id": plant.plant_id},
+    ]
+    response = api_client.auth_user.post(
+        endpoint, {"manifest": json.dumps(manifest), "known": _bulk_upload("valid.jpg")}
+    )
+    assert response.status_code == 200
+    assert [item["code"] if item["status"] == "error" else "success" for item in response.json()["results"]] == [
+        "missing_file", "plant_not_found", "species_not_found", "species_ambiguous", "invalid_target", "success"
+    ]
+    assert plant.plant_images.count() == 1
+
+
+@pytest.mark.django_db
+def test_bulk_images_rejects_invalid_manifest_and_batch_size():
+    """Only malformed or oversized manifest envelopes receive HTTP 400."""
+    api_client = APITestSetup()
+    endpoint = reverse("plants:api-images-bulk")
+    assert api_client.auth_user.post(endpoint, {"manifest": "not-json"}).status_code == 400
+    response = api_client.auth_user.post(endpoint, {"manifest": json.dumps([{}] * 21)})
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_bulk_images_returns_database_errors_per_item():
+    """A database failure is reported without changing the valid envelope status."""
+    api_client = APITestSetup()
+    plant = get_collection(plant_id="bulk-database-error")
+    manifest = [
+        {
+            "client_id": "database-error",
+            "file_field": "image",
+            "copyright_info": "",
+            "plant_id": plant.plant_id,
+        }
+    ]
+
+    with patch(
+        "plants.views.create_brahms_image_association", side_effect=DatabaseError()
+    ):
+        response = api_client.auth_user.post(
+            reverse("plants:api-images-bulk"),
+            {"manifest": json.dumps(manifest), "image": _bulk_upload("failure.jpg")},
+        )
+
+    assert response.status_code == 200
+    assert response.json()["results"] == [
+        {
+            "client_id": "database-error",
+            "status": "error",
+            "code": "database_error",
+            "detail": "The image association could not be saved.",
+        }
+    ]
