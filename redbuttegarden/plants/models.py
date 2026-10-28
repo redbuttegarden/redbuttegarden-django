@@ -1,8 +1,10 @@
 import logging
 import re
 import urllib.parse
+import uuid
 
 from django.contrib.postgres.fields import ArrayField
+from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models.functions import Length
@@ -313,6 +315,73 @@ class PlantImage(Orderable):
         FieldPanel("caption"),
         FieldPanel("copyright"),
     ]
+
+
+class BrahmsPendingUpload(models.Model):
+    """Track one authenticated, direct-to-S3 BRAHMS image upload."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="brahms_pending_uploads",
+    )
+    client_id = models.CharField(max_length=255)
+    collection = models.ForeignKey(
+        Collection,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="brahms_pending_uploads",
+    )
+    species = models.ForeignKey(
+        Species,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="brahms_pending_uploads",
+    )
+    original_filename = models.CharField(max_length=255)
+    copyright_info = models.CharField(max_length=300, blank=True)
+    content_type = models.CharField(max_length=255)
+    byte_size = models.PositiveIntegerField()
+    image_width = models.PositiveIntegerField()
+    image_height = models.PositiveIntegerField()
+    sha256 = models.CharField(max_length=64)
+    staging_key = models.CharField(max_length=255, unique=True)
+    expires_at = models.DateTimeField()
+    finalized_at = models.DateTimeField(null=True, blank=True)
+    image = models.ForeignKey(
+        "wagtailimages.Image",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
+    association_created = models.BooleanField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    models.Q(collection__isnull=False, species__isnull=True)
+                    | models.Q(collection__isnull=True, species__isnull=False)
+                ),
+                name="brahms_pending_upload_has_one_target",
+            ),
+            models.UniqueConstraint(
+                fields=("owner", "client_id"),
+                name="brahms_pending_upload_owner_client_id_unique",
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=("owner", "client_id"),
+                name="brahms_pend_owner_client_ix",
+            ),
+            models.Index(fields=("expires_at",), name="brahms_pend_expires_idx"),
+        ]
 
 
 class BloomEvent(models.Model):

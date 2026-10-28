@@ -42,6 +42,16 @@ urlpatterns = [
         name="api-set-plant-image",
     ),
     path("api/images/bulk/", views.bulk_images, name="api-images-bulk"),
+    path(
+        "api/images/direct-upload/initiate/",
+        views.initiate_direct_upload,
+        name="api-direct-upload-initiate",
+    ),
+    path(
+        "api/images/direct-upload/finalize/",
+        views.finalize_direct_upload,
+        name="api-direct-upload-finalize",
+    ),
     path("species-images/", views.SpeciesImageListView.as_view(), name="speciesimage-list"),
     path(
         "api/species-images/<int:pk>/image-description/",

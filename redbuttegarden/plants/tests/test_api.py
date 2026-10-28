@@ -25,6 +25,8 @@ class APITestSetup:
 
         # Create wagtail collection used during image upload view
         root_coll = WagtailCollection.get_first_root_node()
+        if root_coll is None:
+            root_coll = WagtailCollection.add_root(name="Root")
         root_coll.add_child(name='BRAHMS Data')
 
         self.auth_user = self.authenticated_client(user)

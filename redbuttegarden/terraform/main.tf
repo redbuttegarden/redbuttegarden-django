@@ -149,6 +149,36 @@ resource "aws_s3_bucket" "static_bucket" {
   force_destroy = true
 }
 
+resource "aws_iam_role_policy" "zappa_brahms_direct_upload" {
+  name = "${var.environment}-brahms-direct-upload"
+  role = var.zappa_execution_role_name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "ManageBrahmsPrivateStaging"
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+        ]
+        Resource = "arn:aws:s3:::${var.wagtail_media_bucket_name}/brahms-staging/*"
+      },
+      {
+        Sid    = "CopyAndCleanUpWagtailMedia"
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:DeleteObject",
+        ]
+        Resource = "arn:aws:s3:::${var.wagtail_media_bucket_name}/media/original_images/*"
+      },
+    ]
+  })
+}
+
 # resource "null_resource" "copy_s3_objects" {
 #   provisioner "local-exec" {
 #     command = "aws s3 sync s3://rbg-web-static s3://${aws_s3_bucket.static_bucket.bucket} --exclude \"*/VR-Tours/*\""

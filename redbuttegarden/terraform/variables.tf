@@ -62,3 +62,13 @@ variable "push_origin_header_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "wagtail_media_bucket_name" {
+  description = "Existing private S3 bucket used by the deployed Wagtail MediaStorage backend."
+  type        = string
+}
+
+variable "zappa_execution_role_name" {
+  description = "Existing Zappa-created Lambda execution role to receive the direct-upload S3 policy."
+  type        = string
+}

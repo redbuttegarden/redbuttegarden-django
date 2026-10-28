@@ -1,0 +1,10 @@
+{
+  "ID": "expire-brahms-staging-after-one-day",
+  "Status": "Enabled",
+  "Filter": {
+    "Prefix": "brahms-staging/"
+  },
+  "Expiration": {
+    "Days": 1
+  }
+}

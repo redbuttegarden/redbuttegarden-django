@@ -2,6 +2,7 @@ import logging
 import re
 import requests
 import json
+import uuid
 
 from decimal import Decimal, InvalidOperation
 from django.conf import settings
@@ -46,6 +47,7 @@ from .constants import DEDICATION_FAMILY_NAME
 from .selectors import dedication_collections, public_collections, public_species
 from .forms import FeedbackReportForm
 from .models import (
+    BrahmsPendingUpload,
     Family,
     Genus,
     Species,
@@ -71,6 +73,19 @@ from .utils import (
     style_message,
 )
 from .services import ImageAssociationIntegrityError, create_brahms_image_association
+from .direct_uploads import (
+    DirectUploadConfigurationError,
+    DirectUploadError,
+    MAX_BATCH_SIZE,
+    PENDING_EXPIRY,
+    StagingCopyFailed,
+    StagingObjectInvalid,
+    StagingObjectMissing,
+    create_presigned_post,
+    delete_staging_object,
+    finalize_pending_upload,
+    validate_direct_upload_metadata,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -540,6 +555,242 @@ def bulk_images(request: Request) -> Response:
                 {"client_id": client_id, "status": "success", "created": association.association_created}
             )
 
+    return Response({"results": results})
+
+
+def _direct_upload_result(client_id: object, code: str, detail: str) -> dict[str, object]:
+    """Build a stable per-item result for the direct-upload endpoints."""
+
+    return _image_result(client_id, code, detail)
+
+
+def _resolve_direct_upload_target(item: dict[str, object]) -> Collection | Species:
+    """Resolve one exact plant or species target before creating a pending upload."""
+
+    has_plant = "plant_id" in item
+    has_species = "species" in item
+    if has_plant == has_species:
+        raise ValueError("Specify exactly one image target.")
+    if has_plant:
+        plant_id = item["plant_id"]
+        if not isinstance(plant_id, str) or not plant_id:
+            raise ValueError("plant_id must be a non-empty string.")
+        return Collection.objects.select_related("species").get(plant_id=plant_id)
+
+    species_target = item["species"]
+    if not isinstance(species_target, dict):
+        raise ValueError("species must be an object.")
+    return _resolve_manifest_species(species_target)
+
+
+def _direct_upload_outer_items(request: Request, field_name: str) -> list[object] | None:
+    """Return a bounded JSON array or signal a malformed direct-upload envelope."""
+
+    payload = request.data
+    items = payload.get(field_name) if isinstance(payload, dict) else None
+    if not isinstance(items, list) or len(items) > MAX_BATCH_SIZE:
+        return None
+    return items
+
+
+@api_view(["POST"])
+def initiate_direct_upload(request: Request) -> Response:
+    """Create pending uploads and exact, short-lived private S3 POST policies."""
+
+    items = _direct_upload_outer_items(request, "uploads")
+    if items is None:
+        return Response(
+            {"detail": "uploads must be a JSON list containing at most 20 items."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    results: list[dict[str, object]] = []
+    for item in items:
+        client_id = item.get("client_id") if isinstance(item, dict) else ""
+        if not isinstance(item, dict) or not isinstance(client_id, str) or not client_id:
+            results.append(_direct_upload_result(client_id, "invalid_item", "Each item needs a string client_id."))
+            continue
+        copyright_info = item.get("copyright_info", "")
+        if not isinstance(copyright_info, str):
+            results.append(_direct_upload_result(client_id, "invalid_item", "copyright_info must be a string."))
+            continue
+        try:
+            (
+                filename,
+                content_type,
+                byte_size,
+                image_width,
+                image_height,
+                sha256,
+            ) = validate_direct_upload_metadata(item)
+            target = _resolve_direct_upload_target(item)
+        except Collection.DoesNotExist:
+            results.append(_direct_upload_result(client_id, "plant_not_found", "No collection matches this plant_id."))
+            continue
+        except Species.DoesNotExist:
+            results.append(_direct_upload_result(client_id, "species_not_found", "No species matches this taxonomy."))
+            continue
+        except Species.MultipleObjectsReturned:
+            results.append(_direct_upload_result(client_id, "species_ambiguous", "More than one species matches this taxonomy."))
+            continue
+        except ValueError as error:
+            results.append(_direct_upload_result(client_id, "invalid_upload", str(error)))
+            continue
+
+        with transaction.atomic():
+            pending, created = BrahmsPendingUpload.objects.get_or_create(
+                owner=request.user,
+                client_id=client_id,
+                defaults={
+                    "collection": target if isinstance(target, Collection) else None,
+                    "species": target if isinstance(target, Species) else None,
+                    "original_filename": filename,
+                    "copyright_info": copyright_info,
+                    "content_type": content_type,
+                    "byte_size": byte_size,
+                    "image_width": image_width,
+                    "image_height": image_height,
+                    "sha256": sha256,
+                    "staging_key": f"brahms-staging/{uuid.uuid4()}",
+                    "expires_at": timezone.now() + PENDING_EXPIRY,
+                },
+            )
+        if not created:
+            if pending.finalized_at is not None:
+                results.append(_direct_upload_result(client_id, "already_finalized", "This client_id was already finalized."))
+                continue
+            if (
+                pending.original_filename != filename
+                or pending.content_type != content_type
+                or pending.byte_size != byte_size
+                or pending.image_width != image_width
+                or pending.image_height != image_height
+                or pending.sha256 != sha256
+                or pending.copyright_info != copyright_info
+                or (
+                    isinstance(target, Collection)
+                    and pending.collection_id != target.pk
+                )
+                or (
+                    isinstance(target, Species)
+                    and pending.species_id != target.pk
+                )
+            ):
+                results.append(_direct_upload_result(client_id, "client_id_conflict", "This client_id already identifies a different upload."))
+                continue
+        try:
+            post = create_presigned_post(pending)
+        except DirectUploadConfigurationError as error:
+            logger.exception("Direct upload storage is not configured.")
+            results.append(_direct_upload_result(client_id, "storage_unavailable", str(error)))
+            continue
+        except Exception:
+            logger.exception("Could not create direct upload POST policy.")
+            results.append(_direct_upload_result(client_id, "storage_error", "Could not authorize the direct upload."))
+            continue
+        results.append(
+            {
+                "client_id": client_id,
+                "status": "success",
+                "pending_id": str(pending.pk),
+                "staging_key": pending.staging_key,
+                "expires_at": pending.expires_at.isoformat(),
+                "upload": post,
+            }
+        )
+    return Response({"results": results})
+
+
+def _get_owned_pending_upload(item: dict[str, object], user: object) -> BrahmsPendingUpload:
+    """Look up one caller-owned pending upload by opaque ID or client ID only."""
+
+    has_pending_id = "pending_id" in item
+    has_client_id = "client_id" in item
+    if has_pending_id == has_client_id:
+        raise ValueError("Specify exactly one pending_id or client_id.")
+    if has_pending_id:
+        pending_id = item["pending_id"]
+        if not isinstance(pending_id, str):
+            raise ValueError("pending_id must be a string.")
+        return BrahmsPendingUpload.objects.select_for_update().get(pk=pending_id, owner=user)
+    client_id = item["client_id"]
+    if not isinstance(client_id, str) or not client_id:
+        raise ValueError("client_id must be a non-empty string.")
+    return BrahmsPendingUpload.objects.select_for_update().get(owner=user, client_id=client_id)
+
+
+@api_view(["POST"])
+def finalize_direct_upload(request: Request) -> Response:
+    """Verify caller-owned staged objects and create their Wagtail associations."""
+
+    items = _direct_upload_outer_items(request, "uploads")
+    if items is None:
+        return Response(
+            {"detail": "uploads must be a JSON list containing at most 20 items."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    results: list[dict[str, object]] = []
+    successful: list[BrahmsPendingUpload] = []
+    for item in items:
+        client_id = item.get("client_id") if isinstance(item, dict) else ""
+        if not isinstance(item, dict):
+            results.append(_direct_upload_result(client_id, "invalid_item", "Each item must be an object."))
+            continue
+        try:
+            with transaction.atomic():
+                pending = _get_owned_pending_upload(item, request.user)
+                response_client_id = pending.client_id
+                if pending.finalized_at is not None:
+                    results.append(
+                        {
+                            "client_id": response_client_id,
+                            "status": "success",
+                            "created": pending.association_created,
+                            "finalized": True,
+                        }
+                    )
+                    continue
+                if pending.expires_at <= timezone.now():
+                    results.append(_direct_upload_result(response_client_id, "upload_expired", "The pending upload has expired."))
+                    continue
+                image, association_created = finalize_pending_upload(pending)
+                pending.image = image
+                pending.association_created = association_created
+                pending.finalized_at = timezone.now()
+                pending.save(update_fields=["image", "association_created", "finalized_at"])
+                successful.append(pending)
+                results.append(
+                    {
+                        "client_id": response_client_id,
+                        "status": "success",
+                        "created": association_created,
+                        "finalized": False,
+                    }
+                )
+        except BrahmsPendingUpload.DoesNotExist:
+            results.append(_direct_upload_result(client_id, "pending_not_found", "No pending upload is available."))
+        except ValueError as error:
+            results.append(_direct_upload_result(client_id, "invalid_item", str(error)))
+        except StagingObjectMissing as error:
+            results.append(_direct_upload_result(client_id, "staging_not_found", str(error)))
+        except StagingObjectInvalid as error:
+            results.append(_direct_upload_result(client_id, "staging_invalid", str(error)))
+        except (StagingCopyFailed, DirectUploadConfigurationError):
+            logger.exception("Could not finalize a BRAHMS direct upload.")
+            results.append(_direct_upload_result(client_id, "storage_error", "The staged upload could not be finalized."))
+        except IntegrityError:
+            logger.exception("Database integrity error finalizing a BRAHMS direct upload.")
+            results.append(_direct_upload_result(client_id, "database_error", "The image association could not be saved."))
+        except DatabaseError:
+            logger.exception("Database error finalizing a BRAHMS direct upload.")
+            results.append(_direct_upload_result(client_id, "database_error", "The image association could not be saved."))
+        except Exception:
+            logger.exception("Unexpected error finalizing a BRAHMS direct upload.")
+            results.append(_direct_upload_result(client_id, "storage_error", "The staged upload could not be finalized."))
+
+    for pending in successful:
+        delete_staging_object(pending)
     return Response({"results": results})
 
 

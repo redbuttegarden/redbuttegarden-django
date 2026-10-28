@@ -53,20 +53,7 @@ def create_brahms_image_association(
         image.tags.add("BRAHMS")
 
     try:
-        if isinstance(target, Species):
-            _, association_created = SpeciesImage.objects.get_or_create(
-                species=target,
-                image=image,
-                copyright=copyright_text,
-                defaults={"caption": target.full_name},
-            )
-        else:
-            _, association_created = PlantImage.objects.get_or_create(
-                collection=target,
-                image=image,
-                copyright=copyright_text,
-                defaults={"caption": target.species.full_name},
-            )
+        association_created = associate_brahms_image(image, target, copyright_text)
     except IntegrityError as error:
         raise ImageAssociationIntegrityError(image_created) from error
 
@@ -74,3 +61,28 @@ def create_brahms_image_association(
         image_created=image_created,
         association_created=association_created,
     )
+
+
+def associate_brahms_image(
+    image: Image,
+    target: Union[Collection, Species],
+    copyright_text: str,
+) -> bool:
+    """Attach an existing Wagtail image with the established BRAHMS semantics."""
+
+    if isinstance(target, Species):
+        _, association_created = SpeciesImage.objects.get_or_create(
+            species=target,
+            image=image,
+            copyright=copyright_text,
+            defaults={"caption": target.full_name},
+        )
+    else:
+        _, association_created = PlantImage.objects.get_or_create(
+            collection=target,
+            image=image,
+            copyright=copyright_text,
+            defaults={"caption": target.species.full_name},
+        )
+
+    return association_created
