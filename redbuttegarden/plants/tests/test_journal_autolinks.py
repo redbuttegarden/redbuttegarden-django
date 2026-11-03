@@ -128,11 +128,11 @@ class SpeciesAutoLinkerTests(TestCase):
 
         self.assertNotIn("<a href=", linked_html)
 
-    def test_link_html_excludes_dedication_species(self):
-        dedication_family = get_family(name="Dedicataceae")
-        dedication_genus = get_genus(dedication_family, name="Dedica")
-        dedication_species = get_species(
-            dedication_genus,
+    def test_link_html_excludes_memorial_tribute_species(self):
+        memorial_tribute_family = get_family(name="Dedicataceae")
+        memorial_tribute_genus = get_genus(memorial_tribute_family, name="Dedica")
+        memorial_tribute_species = get_species(
+            memorial_tribute_genus,
             name="honorata",
             full_name="Dedica honorata",
             subspecies=None,
@@ -141,7 +141,7 @@ class SpeciesAutoLinkerTests(TestCase):
             forma=None,
             subforma=None,
             cultivar=None,
-            vernacular_name="Dedication record",
+            vernacular_name="MemorialTribute record",
         )
 
         linker = SpeciesAutoLinker.from_database()
@@ -149,7 +149,7 @@ class SpeciesAutoLinkerTests(TestCase):
 
         self.assertNotIn("Dedica honorata</a>", linked_html)
         self.assertNotIn(
-            reverse("plants:species-detail", args=[dedication_species.pk]), linked_html
+            reverse("plants:species-detail", args=[memorial_tribute_species.pk]), linked_html
         )
 
     def test_link_html_skips_ambiguous_aliases(self):

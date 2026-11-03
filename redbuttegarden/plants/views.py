@@ -42,9 +42,9 @@ from wagtail.models import Collection as WagtailCollection
 from wagtail.images.permissions import permission_policy as image_permission_policy
 
 from .tables import CollectionTable, TopTreesSpeciesTable
-from .filters import CollectionFilter, DedicationFilter, TopTreesSpeciesFilter
-from .constants import DEDICATION_FAMILY_NAME
-from .selectors import dedication_collections, public_collections, public_species
+from .filters import CollectionFilter, MemorialTributeFilter, TopTreesSpeciesFilter
+from .constants import MEMORIAL_TRIBUTE_FAMILY_NAME
+from .selectors import memorial_tribute_collections, public_collections, public_species
 from .forms import FeedbackReportForm
 from .models import (
     BrahmsPendingUpload,
@@ -68,7 +68,7 @@ from .serializers import (
 )
 from .utils import (
     clean_querydict,
-    get_dedication_feature_collection,
+    get_memorial_tribute_feature_collection,
     get_feature_collection,
     style_message,
 )
@@ -926,7 +926,7 @@ def plant_map_view(request: HttpRequest) -> HttpResponse:
 
 
 def collection_detail(request: HttpRequest, collection_id: int) -> HttpResponse:
-    """Render a plant collection or redirect a dedication to its canonical URL."""
+    """Render a plant collection or redirect a memorial or tribute to its canonical URL."""
 
     collection = get_object_or_404(
         Collection.objects.select_related("species__genus__family").prefetch_related(
@@ -934,7 +934,7 @@ def collection_detail(request: HttpRequest, collection_id: int) -> HttpResponse:
         ),
         pk=collection_id,
     )
-    if collection.species.genus.family.name == DEDICATION_FAMILY_NAME:
+    if collection.species.genus.family.name == MEMORIAL_TRIBUTE_FAMILY_NAME:
         return HttpResponsePermanentRedirect(collection.get_absolute_url())
     mapbox_api_token = getattr(settings, "MAPBOX_API_TOKEN", None)
 
@@ -955,17 +955,17 @@ def collection_detail(request: HttpRequest, collection_id: int) -> HttpResponse:
     )
 
 
-def dedication_detail(request: HttpRequest, collection_id: int) -> HttpResponse:
-    """Render the public dedicated detail page for one dedication."""
+def memorial_tribute_detail(request: HttpRequest, collection_id: int) -> HttpResponse:
+    """Render the public detail page for one memorial or tribute."""
 
     collection = get_object_or_404(
-        dedication_collections().select_related("location", "garden", "species"),
+        memorial_tribute_collections().select_related("location", "garden", "species"),
         pk=collection_id,
     )
     plant_images = collection.plant_images.select_related("image")
     return render(
         request,
-        "plants/dedication_detail.html",
+        "plants/memorial_tribute_detail.html",
         {
             "collection": collection,
             "images": plant_images,
@@ -975,32 +975,32 @@ def dedication_detail(request: HttpRequest, collection_id: int) -> HttpResponse:
 
 
 @require_GET
-def dedications_geojson(request: HttpRequest) -> JsonResponse:
-    """Return mapped dedication records without exposing general plant records."""
+def memorial_tributes_geojson(request: HttpRequest) -> JsonResponse:
+    """Return mapped memorial-or-tribute records without exposing general plant records."""
 
-    queryset = dedication_collections().exclude(location=None).select_related(
+    queryset = memorial_tribute_collections().exclude(location=None).select_related(
         "location", "species__genus__family", "garden"
     )
-    filtered = DedicationFilter(request.GET or None, queryset=queryset).qs
+    filtered = MemorialTributeFilter(request.GET or None, queryset=queryset).qs
     return JsonResponse(
-        get_dedication_feature_collection(filtered.order_by("-id")[:MAX_FEATURES]),
+        get_memorial_tribute_feature_collection(filtered.order_by("-id")[:MAX_FEATURES]),
         safe=False,
     )
 
 
-def dedication_map_view(request: HttpRequest) -> HttpResponse:
-    """Render the dedicated map and its narrowly scoped discovery filters."""
+def memorial_tribute_map_view(request: HttpRequest) -> HttpResponse:
+    """Render the memorials-and-tributes map and its scoped discovery filters."""
 
-    queryset = dedication_collections().exclude(location=None).select_related(
+    queryset = memorial_tribute_collections().exclude(location=None).select_related(
         "location", "species__genus__family", "garden"
     )
-    dedication_filter = DedicationFilter(request.GET or None, queryset=queryset)
+    memorial_tribute_filter = MemorialTributeFilter(request.GET or None, queryset=queryset)
     return render(
         request,
-        "plants/dedication_map.html",
+        "plants/memorial_tribute_map.html",
         {
-            "filter": dedication_filter,
-            "dedications": dedication_filter.qs,
+            "filter": memorial_tribute_filter,
+            "memorials_and_tributes": memorial_tribute_filter.qs,
             "mapbox_token": getattr(settings, "MAPBOX_API_TOKEN", None),
         },
     )

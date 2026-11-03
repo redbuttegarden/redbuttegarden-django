@@ -2,29 +2,29 @@
 {% load static wagtailimages_tags %}
 
 {% block title %}
-  Dedication{% if collection.commemoration_person %}
+  Memorial or Tribute{% if collection.commemoration_person %}
     | {{ collection.commemoration_person }}
   {% endif %}
 {% endblock %}
 
 {% block extra_css %}
-  <link href="{% static 'plants/css/dedication.css' %}" rel="stylesheet" />
+  <link href="{% static 'plants/css/memorial_tribute.css' %}" rel="stylesheet" />
   <link href="{% static 'plants/css/map_placeholder.css' %}" rel="stylesheet" />
 {% endblock %}
 
 {% block content %}
   <main class="container py-4" id="main-content">
-    <h1>Dedication Detail</h1>
+    <h1>Memorial or Tribute Detail</h1>
     <div class="row g-4">
-      <section class="col-md-6" aria-label="Dedication details">
+      <section class="col-md-6" aria-label="Memorial or tribute details">
         {% if collection.species.vernacular_name %}
           <h2>{{ collection.species.vernacular_name }}</h2>
         {% endif %}
         {% if collection.commemoration_person %}
           <h3>{{ collection.commemoration_person }}</h3>
         {% endif %}
-        <dl class="dedication-details">
-          <dt>Dedication ID</dt>
+        <dl class="memorial-tribute-details">
+          <dt>Memorial or Tribute ID</dt>
           <dd>{{ collection.plant_id }}</dd>
           {% if collection.garden and collection.garden.name %}
             <dt>Garden</dt>
@@ -36,24 +36,24 @@
           {% endif %}
           {% if collection.location %}
             <dt>Location</dt>
-            <dd id="dedication-coordinates" data-latitude="{{ collection.location.latitude }}" data-longitude="{{ collection.location.longitude }}">{{ collection.location.latitude }}, {{ collection.location.longitude }}</dd>
+            <dd id="memorial-tribute-coordinates" data-latitude="{{ collection.location.latitude }}" data-longitude="{{ collection.location.longitude }}">{{ collection.location.latitude }}, {{ collection.location.longitude }}</dd>
           {% endif %}
           {% if collection.commemoration_text %}
-            <dt>Dedication</dt>
-            <dd class="dedication-text">{{ collection.commemoration_text|linebreaksbr }}</dd>
+            <dt>Memorial or Tribute</dt>
+            <dd class="memorial-tribute-text">{{ collection.commemoration_text|linebreaksbr }}</dd>
           {% endif %}
         </dl>
       </section>
 
       {% if images or collection.location %}
-        <section class="col-md-6 dedication-media">
+        <section class="col-md-6 memorial-tribute-media">
           {% if images %}
-            <section class="dedication-gallery" data-dedication-gallery aria-label="Dedication photos">
+            <section class="memorial-tribute-gallery" data-memorial-tribute-gallery aria-label="Memorial or tribute photos">
               {% with primary_image=images.first %}
                 {% image primary_image.image max-500x500 as primary_rendition %}
                 <button
                   type="button"
-                  class="dedication-gallery__primary"
+                  class="memorial-tribute-gallery__primary"
                   data-gallery-index="0"
                   aria-label="View larger image of {{ primary_image.caption|default:primary_image.image.title }}"
                 >
@@ -67,13 +67,13 @@
               {% endwith %}
 
               {% if images.count > 1 %}
-                <h2 class="dedication-gallery__heading">Additional photos</h2>
-                <div class="dedication-gallery__thumbnails">
+                <h2 class="memorial-tribute-gallery__heading">Additional photos</h2>
+                <div class="memorial-tribute-gallery__thumbnails">
                   {% for plant_image in images|slice:'1:' %}
                     {% image plant_image.image height-100 as thumbnail %}
                     <button
                       type="button"
-                      class="dedication-gallery__thumbnail"
+                      class="memorial-tribute-gallery__thumbnail"
                       data-gallery-index="{{ forloop.counter }}"
                       aria-label="View larger image of {{ plant_image.caption|default:plant_image.image.title }}"
                     >
@@ -91,12 +91,12 @@
           {% endif %}
 
           {% if collection.location %}
-            <section class="dedication-map-panel" aria-label="Dedication location">
-          <div class="mapbox-map-shell" data-mapbox-container role="region" aria-label="Map showing this dedication location" aria-busy="false">
-            <div id="dedication-map"></div>
+            <section class="memorial-tribute-map-panel" aria-label="Memorial or tribute location">
+          <div class="mapbox-map-shell" data-mapbox-container role="region" aria-label="Map showing this memorial or tribute location" aria-busy="false">
+            <div id="memorial-tribute-map"></div>
             <div class="mapbox-map-placeholder" data-mapbox-placeholder><p data-mapbox-placeholder-message>Interactive map: click anywhere on this page or press any key to load it.</p></div>
           </div>
-          <p id="dedication-map-status" class="visually-hidden" data-mapbox-status aria-live="polite"></p>
+          <p id="memorial-tribute-map-status" class="visually-hidden" data-mapbox-status aria-live="polite"></p>
             </section>
           {% endif %}
         </section>
@@ -107,21 +107,21 @@
   {% if images %}
     <div
       class="modal fade"
-      id="dedication-gallery-modal"
+      id="memorial-tribute-gallery-modal"
       tabindex="-1"
-      aria-labelledby="dedication-gallery-modal-title"
+      aria-labelledby="memorial-tribute-gallery-modal-title"
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
           <div class="modal-header">
-            <h2 class="modal-title fs-5" id="dedication-gallery-modal-title">Dedication photos</h2>
+            <h2 class="modal-title fs-5" id="memorial-tribute-gallery-modal-title">Memorial or tribute photos</h2>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close photo viewer"></button>
           </div>
-          <div class="modal-body dedication-gallery-modal__body">
+          <div class="modal-body memorial-tribute-gallery-modal__body">
             {% for plant_image in images %}
               {% image plant_image.image max-1600x1200 as modal_image %}
-              <div class="dedication-gallery-modal__slide" data-gallery-slide{% if not forloop.first %} hidden{% endif %}>
+              <div class="memorial-tribute-gallery-modal__slide" data-gallery-slide{% if not forloop.first %} hidden{% endif %}>
                 <img
                   src="{{ modal_image.url }}"
                   width="{{ modal_image.width }}"
@@ -130,22 +130,22 @@
                 />
               </div>
             {% endfor %}
-            <p class="dedication-gallery-modal__caption" data-gallery-caption hidden></p>
-            <p class="dedication-gallery-modal__copyright" data-gallery-copyright hidden></p>
+            <p class="memorial-tribute-gallery-modal__caption" data-gallery-caption hidden></p>
+            <p class="memorial-tribute-gallery-modal__copyright" data-gallery-copyright hidden></p>
             <p class="visually-hidden" data-gallery-status aria-live="polite"></p>
           </div>
-          <div class="modal-footer dedication-gallery-modal__footer">
-            <div class="dedication-gallery-modal__navigation" aria-label="Photo navigation">
+          <div class="modal-footer memorial-tribute-gallery-modal__footer">
+            <div class="memorial-tribute-gallery-modal__navigation" aria-label="Photo navigation">
               <button type="button" class="btn btn-outline-secondary" data-gallery-previous aria-label="Previous photo">Previous</button>
               <span data-gallery-count aria-hidden="true"></span>
               <button type="button" class="btn btn-outline-secondary" data-gallery-next aria-label="Next photo">Next</button>
             </div>
-            <div class="dedication-gallery-modal__thumbnails" aria-label="Select a photo">
+            <div class="memorial-tribute-gallery-modal__thumbnails" aria-label="Select a photo">
               {% for plant_image in images %}
                 {% image plant_image.image height-75 as modal_thumbnail %}
                 <button
                   type="button"
-                  class="dedication-gallery-modal__thumbnail"
+                  class="memorial-tribute-gallery-modal__thumbnail"
                   data-gallery-index="{{ forloop.counter0 }}"
                   data-gallery-caption="{{ plant_image.caption }}"
                   data-gallery-copyright="{{ plant_image.copyright }}"
@@ -164,7 +164,7 @@
 
 {% block extra_js %}
   {{ mapbox_token|json_script:'mapboxToken' }}
-  <script src="{% static 'plants/js/dedication_detail_map.js' %}"></script>
+  <script src="{% static 'plants/js/memorial_tribute_detail_map.js' %}"></script>
   <script src="{% static 'plants/js/mapbox_interaction_loader.js' %}"></script>
-  <script src="{% static 'plants/js/dedication_gallery.js' %}"></script>
+  <script src="{% static 'plants/js/memorial_tribute_gallery.js' %}"></script>
 {% endblock %}

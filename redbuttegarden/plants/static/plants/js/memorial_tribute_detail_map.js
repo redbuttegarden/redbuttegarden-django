@@ -1,7 +1,7 @@
-window.initializeMapboxMap = function initializeDedicationDetailMap() {
+window.initializeMapboxMap = function initializeMemorialTributeDetailMap() {
 const tokenElement = document.getElementById("mapboxToken");
-const coordinatesElement = document.getElementById("dedication-coordinates");
-const mapContainer = document.getElementById("dedication-map");
+const coordinatesElement = document.getElementById("memorial-tribute-coordinates");
+const mapContainer = document.getElementById("memorial-tribute-map");
 
 const token = tokenElement ? JSON.parse(tokenElement.textContent) : null;
 

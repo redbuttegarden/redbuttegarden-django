@@ -56,26 +56,26 @@ def get_feature_collection(collections: QuerySet[Collection]) -> FeatureCollecti
     return FeatureCollection(features)
 
 
-def get_dedication_feature_collection(
-    dedications: QuerySet[Collection],
+def get_memorial_tribute_feature_collection(
+    memorials_and_tributes: QuerySet[Collection],
 ) -> FeatureCollection:
-    """Return GeoJSON with only the fields needed by the public dedication map."""
+    """Return GeoJSON with only the fields needed by the public memorial-and-tribute map."""
 
     features = []
-    for dedication in dedications:
+    for memorial_tribute in memorials_and_tributes:
         features.append(
             Feature(
                 geometry=Point(
-                    (dedication.location.longitude, dedication.location.latitude)
+                    (memorial_tribute.location.longitude, memorial_tribute.location.latitude)
                 ),
                 properties={
-                    "id": dedication.id,
-                    "detail_url": dedication.get_absolute_url(),
-                    "dedication_id": dedication.plant_id,
-                    "honoree": dedication.commemoration_person,
-                    "garden_name": dedication.garden.name if dedication.garden else None,
-                    "garden_area": dedication.garden.area if dedication.garden else None,
-                    "garden_code": dedication.garden.code if dedication.garden else None,
+                    "id": memorial_tribute.id,
+                    "detail_url": memorial_tribute.get_absolute_url(),
+                    "memorial_tribute_id": memorial_tribute.plant_id,
+                    "honoree": memorial_tribute.commemoration_person,
+                    "garden_name": memorial_tribute.garden.name if memorial_tribute.garden else None,
+                    "garden_area": memorial_tribute.garden.area if memorial_tribute.garden else None,
+                    "garden_code": memorial_tribute.garden.code if memorial_tribute.garden else None,
                 },
             )
         )

@@ -10,8 +10,8 @@ from django.urls import reverse_lazy
 from django.utils.dates import MONTHS
 
 from .models import Collection, Species, Family
-from .constants import DEDICATION_FAMILY_NAME
-from .selectors import dedication_collections, public_collections, public_species
+from .constants import MEMORIAL_TRIBUTE_FAMILY_NAME
+from .selectors import memorial_tribute_collections, public_collections, public_species
 
 
 TRUE_VALUES = {"1", "true", "t", "yes", "y", "on"}
@@ -224,7 +224,7 @@ class CollectionFilter(django_filters.FilterSet):
 
         # Families
         family_choices = Family.objects.exclude(
-            name=DEDICATION_FAMILY_NAME
+            name=MEMORIAL_TRIBUTE_FAMILY_NAME
         ).order_by(
             "name").values_list("id", "name")
         self.form.fields["family_name"].choices = [
@@ -385,8 +385,8 @@ class CollectionFilter(django_filters.FilterSet):
         return qs.filter(commemoration_category="Available") if value else qs
 
 
-class DedicationFilter(django_filters.FilterSet):
-    """Limit dedication-map filtering to dedication garden and honoree choices."""
+class MemorialTributeFilter(django_filters.FilterSet):
+    """Limit memorial-and-tribute map filters to relevant gardens and honorees."""
 
     garden_name = django_filters.ChoiceFilter(
         field_name="garden__name", label="Garden name", choices=[], lookup_expr="iexact"
@@ -399,11 +399,11 @@ class DedicationFilter(django_filters.FilterSet):
     )
     q = django_filters.CharFilter(
         method="filter_search",
-        label="Search dedications",
+        label="Search memorials and tributes",
         max_length=200,
         widget=forms.SearchInput(
             attrs={
-                "placeholder": "Name, garden, or dedication text",
+                "placeholder": "Name, garden, memorial, or tribute text",
                 "autocomplete": "off",
             }
         ),
@@ -414,20 +414,20 @@ class DedicationFilter(django_filters.FilterSet):
         fields = ["q", "garden_name", "commemoration_person"]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Populate filter choices only from classified dedication records."""
+        """Populate filter choices only from classified memorial-or-tribute records."""
 
         super().__init__(*args, **kwargs)
-        dedications = dedication_collections()
+        memorials_and_tributes = memorial_tribute_collections()
         self.form.fields["garden_name"].choices = [
             (name, name)
-            for name in dedications.order_by("garden__name")
+            for name in memorials_and_tributes.order_by("garden__name")
             .values_list("garden__name", flat=True)
             .distinct()
             if name
         ]
         self.form.fields["commemoration_person"].choices = [
             (person, person)
-            for person in dedications.order_by("commemoration_person")
+            for person in memorials_and_tributes.order_by("commemoration_person")
             .values_list("commemoration_person", flat=True)
             .distinct()
             if person
@@ -438,7 +438,7 @@ class DedicationFilter(django_filters.FilterSet):
     def filter_search(
         self, queryset: QuerySet[Collection], name: str, value: str
     ) -> QuerySet[Collection]:
-        """Match a dedication's public name, garden, or commemoration text."""
+        """Match a memorial or tribute's public name, garden, or commemoration text."""
 
         query = value.strip()
         if not query:

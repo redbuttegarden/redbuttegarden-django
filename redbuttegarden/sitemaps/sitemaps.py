@@ -5,11 +5,11 @@ from django.db.models import QuerySet
 from django.urls import reverse
 
 from plants.models import Collection, Species
-from plants.selectors import dedication_collections, public_collections, public_species
+from plants.selectors import memorial_tribute_collections, public_collections, public_species
 
 
 class PlantsStaticViewsSitemap(Sitemap):
-    """List public plant and dedication discovery pages."""
+    """List public plant and memorial-and-tribute discovery pages."""
 
     changefreq = "weekly"
     priority = 0.5
@@ -19,7 +19,7 @@ class PlantsStaticViewsSitemap(Sitemap):
 
         return [
             "plants:plant-map",
-            "plants:dedication-map",
+            "plants:memorial-tribute-map",
             "plants:collection-search",
             "plants:top-trees",
         ]
@@ -38,7 +38,7 @@ class CollectionDetailSitemap(Sitemap):
     priority = 0.7
 
     def items(self) -> QuerySet[Collection]:
-        """Return normal plant collections without dedication records."""
+        """Return normal plant collections without memorial-or-tribute records."""
 
         return public_collections().only("id", "last_modified").order_by("id")
 
@@ -53,25 +53,25 @@ class CollectionDetailSitemap(Sitemap):
         return obj.last_modified
 
 
-class DedicationDetailSitemap(Sitemap):
-    """List canonical detail pages for public dedication records only."""
+class MemorialTributeDetailSitemap(Sitemap):
+    """List canonical detail pages for public memorial-or-tribute records only."""
 
     limit = 5000
     changefreq = "weekly"
     priority = 0.7
 
     def items(self) -> QuerySet[Collection]:
-        """Return dedication collections in a dedicated sitemap section."""
+        """Return memorial-or-tribute collections in a dedicated sitemap section."""
 
-        return dedication_collections().only("id", "last_modified").order_by("id")
+        return memorial_tribute_collections().only("id", "last_modified").order_by("id")
 
     def location(self, obj: Collection) -> str:
-        """Return a dedication's canonical public URL."""
+        """Return a memorial or tribute's canonical public URL."""
 
-        return reverse("plants:dedication-detail", kwargs={"collection_id": obj.pk})
+        return reverse("plants:memorial-tribute-detail", kwargs={"collection_id": obj.pk})
 
     def lastmod(self, obj: Collection) -> datetime:
-        """Return the most recent modification timestamp for a dedication."""
+        """Return the most recent modification timestamp for a memorial or tribute."""
 
         return obj.last_modified
 
@@ -84,7 +84,7 @@ class SpeciesDetailSitemap(Sitemap):
     priority = 0.6
 
     def items(self) -> QuerySet[Species]:
-        """Return normal plant species without dedication pseudo-species."""
+        """Return normal plant species without memorial-or-tribute pseudo-species."""
 
         return public_species().only("id").order_by("id")
 

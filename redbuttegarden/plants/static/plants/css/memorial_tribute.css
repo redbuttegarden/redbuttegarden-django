@@ -1,0 +1,118 @@
+#memorial-tribute-map {
+    min-height: 500px;
+}
+
+.memorial-tribute-details dt {
+    font-weight: 700;
+}
+
+.memorial-tribute-details dd {
+    margin-bottom: 0.75rem;
+}
+
+.memorial-tribute-media {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.memorial-tribute-gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.memorial-tribute-gallery__primary,
+.memorial-tribute-gallery__thumbnail,
+.memorial-tribute-gallery-modal__thumbnail {
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.memorial-tribute-gallery__primary {
+    max-width: 500px;
+}
+
+.memorial-tribute-gallery__primary img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.memorial-tribute-gallery__heading {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.memorial-tribute-gallery__thumbnails,
+.memorial-tribute-gallery-modal__thumbnails,
+.memorial-tribute-gallery-modal__navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.memorial-tribute-gallery__thumbnail img,
+.memorial-tribute-gallery-modal__thumbnail img {
+    display: block;
+    height: 100px;
+    width: auto;
+    max-width: 140px;
+    object-fit: cover;
+}
+
+.memorial-tribute-gallery-modal__thumbnail img {
+    height: 75px;
+    max-width: 105px;
+}
+
+.memorial-tribute-gallery__primary:focus-visible,
+.memorial-tribute-gallery__thumbnail:focus-visible,
+.memorial-tribute-gallery-modal__thumbnail:focus-visible {
+    outline: 3px solid var(--rbg-oak-green);
+    outline-offset: 3px;
+}
+
+.memorial-tribute-gallery-modal__body {
+    text-align: center;
+}
+
+.memorial-tribute-gallery-modal__slide img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 65vh;
+    height: auto;
+    margin: 0 auto;
+}
+
+.memorial-tribute-gallery-modal__caption,
+.memorial-tribute-gallery-modal__copyright {
+    margin: 1rem 0 0;
+}
+
+.memorial-tribute-gallery-modal__copyright {
+    font-size: 0.875rem;
+}
+
+.memorial-tribute-gallery-modal__footer {
+    justify-content: space-between;
+}
+
+@media (max-width: 767.98px) {
+    .memorial-tribute-gallery__primary {
+        max-width: 100%;
+    }
+
+    .memorial-tribute-gallery__thumbnails {
+        gap: 0.5rem;
+    }
+
+    .memorial-tribute-gallery-modal__footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

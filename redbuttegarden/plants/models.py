@@ -17,7 +17,7 @@ from wagtail.admin.panels import InlinePanel
 from wagtail.admin.panels import FieldPanel
 from wagtail.models import Orderable
 
-from .constants import DEDICATION_FAMILY_NAME
+from .constants import MEMORIAL_TRIBUTE_FAMILY_NAME
 
 models.CharField.register_lookup(Length)
 
@@ -290,8 +290,8 @@ class Collection(models.Model):
     def get_absolute_url(self) -> str:
         """Return the canonical public URL for this collection."""
 
-        if self.species.genus.family.name == DEDICATION_FAMILY_NAME:
-            return reverse("plants:dedication-detail", args=[self.pk])
+        if self.species.genus.family.name == MEMORIAL_TRIBUTE_FAMILY_NAME:
+            return reverse("plants:memorial-tribute-detail", args=[self.pk])
         return reverse("plants:collection-detail", args=[self.pk])
 
     def get_rich_text_link_title(self):

@@ -1,15 +1,15 @@
 /**
- * Enhance a dedication image gallery with an accessible Bootstrap photo viewer.
+ * Enhance a MemorialTribute image gallery with an accessible Bootstrap photo viewer.
  */
 document.addEventListener("DOMContentLoaded", () => {
-    const gallery = document.querySelector("[data-dedication-gallery]");
-    const modalElement = document.getElementById("dedication-gallery-modal");
+    const gallery = document.querySelector("[data-memorial-tribute-gallery]");
+    const modalElement = document.getElementById("memorial-tribute-gallery-modal");
 
     if (!gallery || !modalElement || !window.bootstrap) return;
 
     const slides = Array.from(modalElement.querySelectorAll("[data-gallery-slide]"));
     const thumbnailButtons = Array.from(
-        modalElement.querySelectorAll(".dedication-gallery-modal__thumbnail"),
+        modalElement.querySelectorAll(".memorial-tribute-gallery-modal__thumbnail"),
     );
     const caption = modalElement.querySelector("[data-gallery-caption]");
     const copyright = modalElement.querySelector("[data-gallery-copyright]");

@@ -25,7 +25,7 @@ from search import views as search_views
 from sitemaps.sitemaps import (
     PlantsStaticViewsSitemap,
     CollectionDetailSitemap,
-    DedicationDetailSitemap,
+    MemorialTributeDetailSitemap,
     SpeciesDetailSitemap,
 )
 
@@ -33,7 +33,7 @@ SITEMAPS = {
     "wagtail": WagtailSitemap,
     "plants-static": PlantsStaticViewsSitemap,
     "collections": CollectionDetailSitemap,
-    "dedications": DedicationDetailSitemap,
+    "memorials-and-tributes": MemorialTributeDetailSitemap,
     "species": SpeciesDetailSitemap,
 }
 

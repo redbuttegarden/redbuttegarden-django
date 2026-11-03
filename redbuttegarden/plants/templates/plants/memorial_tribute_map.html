@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Dedication Map{% endblock %}
+{% block title %}Memorials and Tributes Map{% endblock %}
 
 {% block extra_css %}
   <link href="{% static 'plants/css/plant_map.css' %}" rel="stylesheet" />
@@ -10,13 +10,13 @@
 
 {% block abnormal_content %}
   <div class="container-fluid px-0">
-    <h1 class="visually-hidden">Dedication Map</h1>
-    <div id="map-load-overlay" data-mapbox-loading-overlay role="status" aria-label="Loading interactive dedication map" hidden><div id="load-icon" aria-hidden="true"><span class="map-loading-spinner" aria-hidden="true"></span></div></div>
+    <h1 class="visually-hidden">Memorials and Tributes Map</h1>
+    <div id="map-load-overlay" data-mapbox-loading-overlay role="status" aria-label="Loading interactive memorials and tributes map" hidden><div id="load-icon" aria-hidden="true"><span class="map-loading-spinner" aria-hidden="true"></span></div></div>
     <div class="map-overlay">
       <details class="map-filters" id="mapFilters" open>
         <summary class="map-filters__toggle"><span class="fw-semibold">Search filters</span><span id="active-filters" class="active-filters small text-muted ms-2"><noscript>{% if request.GET %}Active filters: {{ request.GET.urlencode }}{% else %}No active filters{% endif %}</noscript></span></summary>
         <div class="map-filter-panel map-filters__body">
-          <form id="map-filters-form" method="get" action="{% url 'plants:dedication-map' %}">
+          <form id="map-filters-form" method="get" action="{% url 'plants:memorial-tribute-map' %}">
             <div class="filter-grid">
               <div class="filter-field">{{ filter.form.q.label_tag }}{{ filter.form.q }}</div>
               <div class="filter-field">{{ filter.form.garden_name.label_tag }}{{ filter.form.garden_name }}</div>
@@ -26,11 +26,11 @@
           </form>
         </div>
       </details>
-      <fieldset><label for="feature-filter">Filter visible dedications</label><input id="feature-filter" type="search" placeholder="Filter results by name or garden" autocomplete="off" /></fieldset>
-      <p class="small text-center">Select a dedication to open its detail page.</p>
-      <div id="feature-listing" class="listing" aria-live="polite"><noscript>{% for dedication in dedications %}<a href="{{ dedication.get_absolute_url }}">{{ dedication.commemoration_person|default:dedication.plant_id }}{% if dedication.garden and dedication.garden.name %} — {{ dedication.garden.name }}{% endif %}</a>{% empty %}<p>No dedications match these filters.</p>{% endfor %}</noscript></div>
+      <fieldset><label for="feature-filter">Filter visible memorials and tributes</label><input id="feature-filter" type="search" placeholder="Filter results by name or garden" autocomplete="off" /></fieldset>
+      <p class="small text-center">Select a memorial or tribute to open its detail page.</p>
+      <div id="feature-listing" class="listing" aria-live="polite"><noscript>{% for memorial_tribute in memorials_and_tributes %}<a href="{{ memorial_tribute.get_absolute_url }}">{{ memorial_tribute.commemoration_person|default:memorial_tribute.plant_id }}{% if memorial_tribute.garden and memorial_tribute.garden.name %} — {{ memorial_tribute.garden.name }}{% endif %}</a>{% empty %}<p>No memorials or tributes match these filters.</p>{% endfor %}</noscript></div>
     </div>
-    <div class="mapbox-map-shell" data-mapbox-container role="region" aria-label="Interactive dedication map" aria-busy="false">
+    <div class="mapbox-map-shell" data-mapbox-container role="region" aria-label="Interactive memorials and tributes map" aria-busy="false">
       <div id="map">
         <div id="mapMenu">
           <input id="rbg-custom" type="radio" name="rtoggle" value="rbg" checked /><label for="rbg-custom">RBG&amp;A custom</label>
@@ -48,6 +48,6 @@
 {% block extra_js %}
   {{ mapbox_token|json_script:'mapboxToken' }}
   <p class="visually-hidden" data-mapbox-status aria-live="polite"></p>
-  <script src="{% static 'plants/js/dedication_map.js' %}"></script>
+  <script src="{% static 'plants/js/memorial_tribute_map.js' %}"></script>
   <script src="{% static 'plants/js/mapbox_interaction_loader.js' %}"></script>
 {% endblock %}

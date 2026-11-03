@@ -22,3 +22,13 @@ CACHES = {
 
 SECRET_KEY = 'Testing'
 ALLOWED_HOSTS = ['localhost', '0.0.0.0']
+
+# Tests render templates directly without running collectstatic. Avoid coupling
+# them to a stale, ignored manifest while retaining manifest storage in every
+# deployed environment.
+STORAGES = {
+    **STORAGES,
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}

@@ -1,3 +1,3 @@
 """Shared constants for living collections discovery."""
 
-DEDICATION_FAMILY_NAME = "Dedicataceae"
+MEMORIAL_TRIBUTE_FAMILY_NAME = "Dedicataceae"

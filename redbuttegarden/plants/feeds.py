@@ -5,18 +5,18 @@ from django.db.models import QuerySet
 from django.urls import reverse
 from django_ical.views import ICalFeed
 
-from .constants import DEDICATION_FAMILY_NAME
+from .constants import MEMORIAL_TRIBUTE_FAMILY_NAME
 from .models import BloomEvent
 
 logger = logging.getLogger(__name__)
 
 
 def public_bloom_events() -> QuerySet[BloomEvent]:
-    """Return bloom events that do not include dedication-only collection records."""
+    """Return bloom events that exclude memorial-or-tribute collection records."""
 
     return (
-        BloomEvent.objects.exclude(species__genus__family__name=DEDICATION_FAMILY_NAME)
-        .exclude(collections__species__genus__family__name=DEDICATION_FAMILY_NAME)
+        BloomEvent.objects.exclude(species__genus__family__name=MEMORIAL_TRIBUTE_FAMILY_NAME)
+        .exclude(collections__species__genus__family__name=MEMORIAL_TRIBUTE_FAMILY_NAME)
         .distinct()
     )
 
@@ -57,7 +57,7 @@ class GardenBloomFeed(Feed):
     def item_link(self, item):
         if (
             item.species
-            and item.species.genus.family.name != DEDICATION_FAMILY_NAME
+            and item.species.genus.family.name != MEMORIAL_TRIBUTE_FAMILY_NAME
         ):
             return reverse('plants:species-detail', args=[item.species.id])
         collection = item.collections.first()
@@ -108,7 +108,7 @@ class GardenBloomICalFeed(ICalFeed):
     def item_link(self, item):
         if (
             item.species
-            and item.species.genus.family.name != DEDICATION_FAMILY_NAME
+            and item.species.genus.family.name != MEMORIAL_TRIBUTE_FAMILY_NAME
         ):
             return reverse('plants:species-detail', args=[item.species.id])
         # Prioritize a collection with a location so the link matches geolocation.

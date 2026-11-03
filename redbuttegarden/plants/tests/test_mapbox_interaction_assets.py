@@ -9,9 +9,9 @@ PLANTS_ROOT = Path(__file__).resolve().parents[1]
 MAPBOX_CDN_URL = "https://api.mapbox.com/mapbox-gl-js/"
 MAP_TEMPLATES = (
     "collection_map.html",
-    "dedication_map.html",
+    "memorial_tribute_map.html",
     "collection_detail.html",
-    "dedication_detail.html",
+    "memorial_tribute_detail.html",
 )
 
 

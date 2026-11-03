@@ -356,17 +356,17 @@ def test_species_image_setting(species):
 
 
 @pytest.mark.django_db
-def test_plant_image_setting_uses_exact_dedication_plant_id():
-    """The plant-image endpoint attaches an upload to one dedication only."""
+def test_plant_image_setting_uses_exact_memorial_tribute_plant_id():
+    """The plant-image endpoint attaches an upload to one memorial_tribute only."""
     api_client = APITestSetup()
-    first_dedication = get_collection(
+    first_memorial_tribute = get_collection(
         plant_id="2026-0295*70",
         family_name="Dedicataceae",
         genus_name="Dedica",
         species_name="bench",
         full_name="Dedica bench",
     )
-    second_dedication = get_collection(
+    second_memorial_tribute = get_collection(
         plant_id="2026-0295*71",
         family_name="Dedicataceae",
         genus_name="Dedica",
@@ -378,21 +378,21 @@ def test_plant_image_setting_uses_exact_dedication_plant_id():
     image_file_obj.seek(0)
 
     response = api_client.auth_user.post(
-        reverse("plants:api-set-plant-image", kwargs={"plant_id": first_dedication.plant_id}),
-        {"image": ImageFile(image_file_obj, name="dedication.jpg")},
+        reverse("plants:api-set-plant-image", kwargs={"plant_id": first_memorial_tribute.plant_id}),
+        {"image": ImageFile(image_file_obj, name="memorial_tribute.jpg")},
     )
 
     assert response.status_code == 200
     assert response.json()["status"] == "success"
-    assert first_dedication.plant_images.count() == 1
-    assert second_dedication.plant_images.count() == 0
-    assert PlantImage.objects.get(collection=first_dedication).image.tags.filter(
+    assert first_memorial_tribute.plant_images.count() == 1
+    assert second_memorial_tribute.plant_images.count() == 0
+    assert PlantImage.objects.get(collection=first_memorial_tribute).image.tags.filter(
         name="BRAHMS"
     ).exists()
 
 
 @pytest.mark.django_db
-def test_plant_image_setting_supports_non_dedication_collections():
+def test_plant_image_setting_supports_non_memorial_tribute_collections():
     """The plant-image endpoint accepts ordinary living-collection records."""
     api_client = APITestSetup()
     collection = get_collection(plant_id="2026-0400*1", family_name="Rosaceae")

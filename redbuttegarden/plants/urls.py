@@ -70,9 +70,9 @@ urlpatterns = [
         name="collection-detail",
     ),
     path(
-        "dedication/<int:collection_id>/",
-        views.dedication_detail,
-        name="dedication-detail",
+        "memorials-and-tributes/<int:collection_id>/",
+        views.memorial_tribute_detail,
+        name="memorial-tribute-detail",
     ),
     path("species/<int:species_id>/", views.species_detail, name="species-detail"),
     path(
@@ -81,11 +81,15 @@ urlpatterns = [
         name="species-preview",
     ),
     path("plant-map/", views.plant_map_view, name="plant-map"),
-    path("dedication-map/", views.dedication_map_view, name="dedication-map"),
     path(
-        "api/dedications-geojson/",
-        views.dedications_geojson,
-        name="api-dedications-geojson",
+        "memorials-and-tributes-map/",
+        views.memorial_tribute_map_view,
+        name="memorial-tribute-map",
+    ),
+    path(
+        "api/memorials-and-tributes-geojson/",
+        views.memorial_tributes_geojson,
+        name="api-memorials-and-tributes-geojson",
     ),
     path("collections/results/", views.collection_results, name="collection-results"),
     path("collections/search/", views.collection_search_page, name="collection-search"),

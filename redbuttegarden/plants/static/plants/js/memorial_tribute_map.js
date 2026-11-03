@@ -1,5 +1,5 @@
-/** Enhance the dedication map without mixing it into the plant-map dataset. */
-window.initializeMapboxMap = function initializeDedicationMap() {
+/** Enhance the memorialTribute map without mixing it into the plant-map dataset. */
+window.initializeMapboxMap = function initializeMemorialTributeMap() {
     const tokenElement = document.getElementById("mapboxToken");
     const listingElement = document.getElementById("feature-listing");
     const filterElement = document.getElementById("feature-filter");
@@ -32,9 +32,9 @@ window.initializeMapboxMap = function initializeDedicationMap() {
         linkRow.className = "pop-up-row";
         const link = document.createElement("a");
         link.href = properties.detail_url || "#";
-        link.textContent = "Dedication detail page";
+        link.textContent = "Memorial or tribute detail page";
         linkRow.append(link);
-        container.append(linkRow, createRow("Honoree", properties.honoree), createRow("Garden", properties.garden_name), createRow("Garden area", properties.garden_area), createRow("Dedication ID", properties.dedication_id));
+        container.append(linkRow, createRow("Honoree", properties.honoree), createRow("Garden", properties.garden_name), createRow("Garden area", properties.garden_area), createRow("Memorial or Tribute ID", properties.memorial_tribute_id));
         return container;
     }
 
@@ -77,35 +77,35 @@ window.initializeMapboxMap = function initializeDedicationMap() {
         });
     }
 
-    async function loadDedications() {
-        const endpoint = new URL("/plants/api/dedications-geojson/", window.location.origin);
+    async function loadMemorialsAndTributes() {
+        const endpoint = new URL("/plants/api/memorials-and-tributes-geojson/", window.location.origin);
         endpoint.search = window.location.search;
         const response = await fetch(endpoint, { headers: { Accept: "application/json" } });
         if (!response.ok) throw new Error(`GeoJSON HTTP ${response.status}`);
         const data = await response.json();
-        const source = map.getSource("dedications");
+        const source = map.getSource("memorials-and-tributes");
         if (source) source.setData(data);
-        else map.addSource("dedications", { type: "geojson", data, cluster: true, clusterMaxZoom: 17, clusterRadius: 40 });
+        else map.addSource("memorials-and-tributes", { type: "geojson", data, cluster: true, clusterMaxZoom: 17, clusterRadius: 40 });
     }
 
     function updateVisibleFeatures() {
-        const layers = ["dedication-clusters", "dedication-points"].filter((layer) => map.getLayer(layer));
+        const layers = ["memorial-tribute-clusters", "memorial-tribute-points"].filter((layer) => map.getLayer(layer));
         if (!layers.length) return;
         visibleFeatures = getUniqueFeatures(map.queryRenderedFeatures({ layers }));
         renderListings(visibleFeatures);
     }
 
     function resetQuickFilter() {
-        if (map.getLayer("dedication-points")) map.setFilter("dedication-points", ["!", ["has", "point_count"]]);
+        if (map.getLayer("memorial-tribute-points")) map.setFilter("memorial-tribute-points", ["!", ["has", "point_count"]]);
     }
 
-    function filterVisibleDedications() {
-        if (!filterElement || !map.getLayer("dedication-points")) return;
+    function filterVisibleMemorialsAndTributes() {
+        if (!filterElement || !map.getLayer("memorial-tribute-points")) return;
         const query = filterElement.value.trim().toLocaleLowerCase();
         if (!query) { resetQuickFilter(); renderListings(visibleFeatures); return; }
-        const filtered = visibleFeatures.filter((feature) => !feature.properties.cluster && [feature.properties.honoree, feature.properties.garden_name, feature.properties.dedication_id].some((value) => String(value || "").toLocaleLowerCase().includes(query)));
+        const filtered = visibleFeatures.filter((feature) => !feature.properties.cluster && [feature.properties.honoree, feature.properties.garden_name, feature.properties.memorial_tribute_id].some((value) => String(value || "").toLocaleLowerCase().includes(query)));
         renderListings(filtered);
-        map.setFilter("dedication-points", ["match", ["get", "id"], filtered.map((feature) => feature.properties.id), true, false]);
+        map.setFilter("memorial-tribute-points", ["match", ["get", "id"], filtered.map((feature) => feature.properties.id), true, false]);
     }
 
     function setActiveFilters() {
@@ -124,7 +124,7 @@ window.initializeMapboxMap = function initializeDedicationMap() {
             for (const [key, value] of [...query]) if (!value.trim()) query.delete(key);
             window.history.replaceState({}, "", `${window.location.pathname}${query.size ? `?${query}` : ""}`);
             setActiveFilters();
-            await loadDedications();
+            await loadMemorialsAndTributes();
             resetQuickFilter();
             map.once("idle", updateVisibleFeatures);
         });
@@ -132,17 +132,17 @@ window.initializeMapboxMap = function initializeDedicationMap() {
             form.reset();
             window.history.replaceState({}, "", window.location.pathname);
             setActiveFilters();
-            await loadDedications();
+            await loadMemorialsAndTributes();
             resetQuickFilter();
             map.once("idle", updateVisibleFeatures);
         });
     }
 
     function addLayers() {
-        if (map.getLayer("dedication-clusters")) return;
-        map.addLayer({ id: "dedication-clusters", type: "circle", source: "dedications", filter: ["has", "point_count"], paint: { "circle-color": ["step", ["get", "point_count"], "#51bbd6", 100, "#f1f075", 750, "#f28cb1"], "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40] } });
-        map.addLayer({ id: "dedication-cluster-count", type: "symbol", source: "dedications", filter: ["has", "point_count"], layout: { "text-field": "{point_count_abbreviated}", "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"], "text-size": 12 } });
-        map.addLayer({ id: "dedication-points", type: "circle", source: "dedications", filter: ["!", ["has", "point_count"]], paint: { "circle-color": "#404", "circle-radius": 8, "circle-stroke-width": 2, "circle-stroke-color": "#fff" } });
+        if (map.getLayer("memorial-tribute-clusters")) return;
+        map.addLayer({ id: "memorial-tribute-clusters", type: "circle", source: "memorials-and-tributes", filter: ["has", "point_count"], paint: { "circle-color": ["step", ["get", "point_count"], "#51bbd6", 100, "#f1f075", 750, "#f28cb1"], "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40] } });
+        map.addLayer({ id: "memorial-tribute-cluster-count", type: "symbol", source: "memorials-and-tributes", filter: ["has", "point_count"], layout: { "text-field": "{point_count_abbreviated}", "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"], "text-size": 12 } });
+        map.addLayer({ id: "memorial-tribute-points", type: "circle", source: "memorials-and-tributes", filter: ["!", ["has", "point_count"]], paint: { "circle-color": "#404", "circle-radius": 8, "circle-stroke-width": 2, "circle-stroke-color": "#fff" } });
     }
 
     if (!token || !mapContainer || !window.mapboxgl) {
@@ -153,21 +153,21 @@ window.initializeMapboxMap = function initializeDedicationMap() {
     map = new mapboxgl.Map({ container: mapContainer, style: "mapbox://styles/auslaner/ckrdvnurq2ix018o34dv8sxft", center: [-111.823807, 40.766367], zoom: 16 });
     map.on("load", async () => {
         try {
-            await loadDedications(); addLayers(); setLoading(false); renderListings([]); bindForm(); setActiveFilters();
-            if (filterElement) filterElement.addEventListener("input", filterVisibleDedications);
+            await loadMemorialsAndTributes(); addLayers(); setLoading(false); renderListings([]); bindForm(); setActiveFilters();
+            if (filterElement) filterElement.addEventListener("input", filterVisibleMemorialsAndTributes);
         } catch (error) {
             setLoading(false);
-            if (listingElement) listingElement.textContent = "Unable to load dedications.";
+            if (listingElement) listingElement.textContent = "Unable to load memorials and tributes.";
         }
     });
     document.querySelectorAll("#mapMenu input").forEach((input) => input.addEventListener("click", () => { if (input.id !== "rbg-custom") map.setStyle(`mapbox://styles/mapbox/${input.id}`); }));
-    map.on("style.load", async () => { await loadDedications(); addLayers(); });
+    map.on("style.load", async () => { await loadMemorialsAndTributes(); addLayers(); });
     map.on("moveend", () => map.once("idle", updateVisibleFeatures));
-    map.on("click", "dedication-clusters", (event) => {
-        const feature = map.queryRenderedFeatures(event.point, { layers: ["dedication-clusters"] })[0];
-        map.getSource("dedications").getClusterExpansionZoom(feature.properties.cluster_id, (error, zoom) => { if (!error) map.easeTo({ center: feature.geometry.coordinates, zoom }); });
+    map.on("click", "memorial-tribute-clusters", (event) => {
+        const feature = map.queryRenderedFeatures(event.point, { layers: ["memorial-tribute-clusters"] })[0];
+        map.getSource("memorials-and-tributes").getClusterExpansionZoom(feature.properties.cluster_id, (error, zoom) => { if (!error) map.easeTo({ center: feature.geometry.coordinates, zoom }); });
     });
-    map.on("click", "dedication-points", (event) => {
+    map.on("click", "memorial-tribute-points", (event) => {
         const feature = event.features[0];
         new mapboxgl.Popup().setLngLat(feature.geometry.coordinates).setDOMContent(createPopupContent(feature.properties)).addTo(map);
     });
