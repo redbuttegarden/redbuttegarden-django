@@ -16,6 +16,7 @@ from PIL import Image as PillowImage
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from wagtail.images import get_image_model
+from wagtail.images.models import Image
 from wagtail.models import Collection as WagtailCollection
 
 from plants.direct_uploads import (
@@ -24,6 +25,7 @@ from plants.direct_uploads import (
     StagingObjectMissing,
     _copy_staging_object,
     _create_or_reuse_image,
+    _destination_name,
     _verified_staging_object,
     create_presigned_post,
     finalize_pending_upload,
@@ -117,6 +119,37 @@ def test_initiate_validates_target_metadata_and_size_before_signing():
         "invalid_upload",
         "invalid_upload",
     ]
+    assert not BrahmsPendingUpload.objects.exists()
+
+
+@pytest.mark.django_db
+def test_initiate_rejects_filename_longer_than_pending_or_image_title_limit():
+    """Overlong filenames fail validation before a pending upload is persisted."""
+
+    plant = get_collection(plant_id="direct-long-filename")
+    client, _ = _authenticated_client()
+    max_filename_length = min(
+        BrahmsPendingUpload._meta.get_field("original_filename").max_length,
+        Image._meta.get_field("title").max_length,
+    )
+
+    response = client.post(
+        reverse("plants:api-direct-upload-initiate"),
+        {
+            "uploads": [
+                _payload(
+                    plant.plant_id,
+                    original_filename=f"{'a' * max_filename_length}.jpg",
+                )
+            ]
+        },
+        format="json",
+    )
+
+    assert response.status_code == 200
+    result = response.json()["results"][0]
+    assert result["code"] == "invalid_upload"
+    assert "original_filename exceeds" in result["detail"]
     assert not BrahmsPendingUpload.objects.exists()
 
 
@@ -375,6 +408,30 @@ def test_server_side_copy_preserves_verified_content_metadata():
     assert kwargs["MetadataDirective"] == "COPY"
     assert "ContentType" not in kwargs
     assert kwargs["ServerSideEncryption"] == "AES256"
+
+
+def test_destination_name_honors_image_file_length_and_keeps_extension():
+    """Long upload names fit the configured Wagtail file field without losing type."""
+
+    pending = SimpleNamespace(pk="long-upload", original_filename=f"{'a' * 200}.jpeg")
+    file_field = SimpleNamespace(max_length=48)
+
+    with patch.object(Image._meta, "get_field", return_value=file_field):
+        destination = _destination_name(pending)
+
+    assert len(destination) <= file_field.max_length
+    assert destination.startswith("original_images/brahms-long-upload-")
+    assert destination.endswith(".jpeg")
+
+
+def test_destination_name_retains_image_fallback_for_empty_safe_names():
+    """Sanitized empty upload names continue to use the stable image fallback."""
+
+    pending = SimpleNamespace(pk="fallback", original_filename="ignored")
+    with patch("plants.direct_uploads.get_valid_filename", return_value=""):
+        destination = _destination_name(pending)
+
+    assert destination.endswith("-image")
 
 
 def test_finalize_rejects_staged_dimension_metadata_mismatch():

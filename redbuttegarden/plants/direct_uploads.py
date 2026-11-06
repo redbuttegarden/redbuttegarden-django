@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import logging
+import os
 import re
 import uuid
 from dataclasses import dataclass
@@ -103,7 +104,19 @@ def _destination_name(pending: BrahmsPendingUpload) -> str:
     """Return the storage-relative Wagtail original-image name for one upload."""
 
     safe_filename = get_valid_filename(pending.original_filename) or "image"
-    return f"original_images/brahms-{pending.pk}-{safe_filename}"
+    prefix = f"original_images/brahms-{pending.pk}-"
+    max_length = Image._meta.get_field("file").max_length
+    available_filename_length = max_length - len(prefix)
+    if available_filename_length <= 0:
+        return prefix[:max_length]
+
+    stem, extension = os.path.splitext(safe_filename)
+    if len(safe_filename) > available_filename_length:
+        if extension and len(extension) < available_filename_length:
+            safe_filename = f"{stem[:available_filename_length - len(extension)]}{extension}"
+        else:
+            safe_filename = safe_filename[:available_filename_length]
+    return f"{prefix}{safe_filename}"
 
 
 def _destination_key(config: MediaStorageConfig, pending: BrahmsPendingUpload) -> str:
@@ -125,6 +138,12 @@ def validate_direct_upload_metadata(item: dict[str, object]) -> tuple[str, str, 
     max_size = int(settings.WAGTAILIMAGES_MAX_UPLOAD_SIZE)
     if not isinstance(filename, str) or not filename.strip():
         raise ValueError("original_filename must be a non-empty string.")
+    max_filename_length = min(
+        BrahmsPendingUpload._meta.get_field("original_filename").max_length,
+        Image._meta.get_field("title").max_length,
+    )
+    if len(filename) > max_filename_length:
+        raise ValueError("original_filename exceeds the supported length.")
     if not isinstance(content_type, str) or not content_type.startswith("image/"):
         raise ValueError("content_type must be an image MIME type.")
     if isinstance(byte_size, bool) or not isinstance(byte_size, int) or byte_size <= 0:
