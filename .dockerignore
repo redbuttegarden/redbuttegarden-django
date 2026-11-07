@@ -25,6 +25,7 @@
 **/.coverage
 nginx/
 README.md
+/PERFORMANCE_OPERATIONS.md
 
 # Agent/orchestration metadata
 AGENTS.md
