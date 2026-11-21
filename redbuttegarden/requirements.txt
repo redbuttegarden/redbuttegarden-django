@@ -74,7 +74,7 @@ s3transfer==0.13.0
 setuptools==84.1.0
 simplejson==3.19.3
 six==1.16.0
-soupsieve==2.9
+soupsieve==4.0
 sqlparse==0.6.0
 tablib==3.10.0
 TatSu==5.8.3
