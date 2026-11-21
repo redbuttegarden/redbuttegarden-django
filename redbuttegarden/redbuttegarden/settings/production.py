@@ -147,12 +147,12 @@ CSP_CONNECT_SRC = (
 CSP_WORKER_SRC = ("'self'", "blob:")
 
 CORS_ALLOWED_ORIGINS = [
-    "redbuttegarden.org",
-    "train.redbuttegarden.org",
-    "davlmcslie.execute-api.us-east-1.amazonaws.com",
+    "https://redbuttegarden.org",
+    "https://train.redbuttegarden.org",
+    "https://davlmcslie.execute-api.us-east-1.amazonaws.com",
     "https://rbg-web-code.s3.amazonaws.com",
     "https://rbg-web-static.s3.amazonaws.com",
-    "d1mg1drmxhfql.cloudfront.net",
+    "https://d1mg1drmxhfql.cloudfront.net",
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
