@@ -186,6 +186,7 @@ AUTH_USER_MODEL = "custom_user.User"
 # Wagtail settings
 WAGTAIL_SITE_NAME = "redbuttegarden"
 WAGTAILEMBEDS_RESPONSIVE_HTML = True
+WAGTAILDOCS_DOCUMENT_MODEL = "wagtaildocs.Document"
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = (
     4.5 * 1024 * 1024
 )  # i.e. 4.5MB - Needed to avoid hitting AWS API Gateway payload limits
